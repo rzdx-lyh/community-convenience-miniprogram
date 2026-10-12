@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["ES2019"],
+    "types": ["miniprogram-api-typings", "node"],
+    "baseUrl": ".",
+    "paths": { "@/*": ["miniprogram/*"] }
+  },
+  "include": ["miniprogram/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules", "dist", "coverage", "cloudfunctions", "tools"]
+}

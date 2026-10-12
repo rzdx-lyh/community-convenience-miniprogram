@@ -1,0 +1,42 @@
+{
+  "compileType": "miniprogram",
+  "miniprogramRoot": "miniprogram/",
+  "appid": "wx6af52092db32a671",
+  "projectname": "community-convenience",
+  "description": "公共服务 · 社区便民（AI 问答 + 报修工单 + 便民电话簿）",
+  "setting": {
+    "useCompilerPlugins": ["typescript"],
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false,
+    "coverView": true,
+    "ignoreUploadUnusedFiles": true,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "condition": false,
+    "babelSetting": { "ignore": [], "disablePlugins": [], "outputPath": "" }
+  },
+  "condition": {
+    "miniprogram": {
+      "list": [
+        { "name": "首页", "pathName": "pages/index/index", "query": "", "scene": null },
+        { "name": "AI 助手", "pathName": "pages/assistant/index", "query": "", "scene": null },
+        { "name": "报修创建", "pathName": "pages/repair/create/index", "query": "", "scene": null },
+        { "name": "报修详情", "pathName": "pages/repair/detail/index", "query": "id=demo-repair-1", "scene": null },
+        { "name": "通知列表", "pathName": "pages/notice/list/index", "query": "", "scene": null }
+      ]
+    }
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": { "ignore": [], "include": [] },
+  "editorSetting": {}
+}
