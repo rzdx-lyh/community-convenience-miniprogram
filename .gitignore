@@ -5,3 +5,7 @@ dist/
 .idea/
 project.private.config.json
 miniprogram_npm/
+
+# 分发用临时目录与压缩包（内容为 skillpkg 的副本，不入库）
+deliver/
+*.zip
