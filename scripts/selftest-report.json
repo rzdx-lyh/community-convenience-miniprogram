@@ -1,7 +1,7 @@
 {
-  "ranAt": "2026-10-13T18:23:35.051Z",
-  "total": 148,
-  "passed": 148,
+  "ranAt": "2026-10-13T18:23:22.476Z",
+  "total": 163,
+  "passed": 163,
   "failed": 0,
   "results": [
     {
@@ -50,13 +50,13 @@
       "card": "BE-12",
       "name": "accountId 格式合法 /^[a-z][a-z0-9_]{3,19}$/",
       "pass": true,
-      "detail": "linju_6pm5z8"
+      "detail": "linju_r52wwq"
     },
     {
       "card": "BE-12",
       "name": "accountId 前缀 linju_",
       "pass": true,
-      "detail": "linju_6pm5z8"
+      "detail": "linju_r52wwq"
     },
     {
       "card": "BE-12",
@@ -68,7 +68,7 @@
       "card": "BE-12",
       "name": "生成结果全部符合格式",
       "pass": true,
-      "detail": "linju_7bmmrv,linju_ue6qgz,linju_szhdjq"
+      "detail": "linju_57g3tr,linju_zs7ube,linju_hyujpn"
     },
     {
       "card": "BE-12",
@@ -86,13 +86,13 @@
       "card": "BE-12",
       "name": "懒迁移后 accountId 有值",
       "pass": true,
-      "detail": "linju_xpbq7j"
+      "detail": "linju_vuu7kh"
     },
     {
       "card": "BE-12",
       "name": "懒迁移已回写 users 集合",
       "pass": true,
-      "detail": "linju_xpbq7j"
+      "detail": "linju_vuu7kh"
     },
     {
       "card": "BE-12",
@@ -891,6 +891,96 @@
       "name": "劳动纠纷「拖欠工资」话术含 12348",
       "pass": true,
       "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材"
+    },
+    {
+      "card": "CR-013",
+      "name": "话术物业号 = 电话簿物业号",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "话术居委会号 = 电话簿居委会号",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "话术急救号 = 电话簿急救号",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "话术报警号 = 电话簿报警号",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "话术火警号 = 电话簿火警号",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "紧急话术含物业值班号",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "涉医话术含物业值班号",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "涉法话术含居委会号",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "涉法话术含 12348",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "legal 词表含「工伤」",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "legal 词表含「工伤认定」",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "legal 词表含「伤残鉴定」",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "legal 词表含「拖欠工资」",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "三类话术均含真实号码",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "话术不含「AI 生成仅供参考」",
+      "pass": true,
+      "detail": ""
     }
   ]
 }

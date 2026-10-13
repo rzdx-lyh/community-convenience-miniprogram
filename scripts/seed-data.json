@@ -8,8 +8,8 @@
       "building": "3栋2单元",
       "elderMode": false,
       "accountId": "linju_7k3m9a",
-      "createdAt": "2026-09-13T17:55:22.117Z",
-      "updatedAt": "2026-09-13T17:55:22.117Z"
+      "createdAt": "2026-09-13T18:21:36.314Z",
+      "updatedAt": "2026-09-13T18:21:36.314Z"
     },
     {
       "_id": "u-property-1",
@@ -19,8 +19,8 @@
       "building": "1栋物业前台",
       "elderMode": false,
       "accountId": "linju_p2q8zt",
-      "createdAt": "2026-09-13T17:55:22.117Z",
-      "updatedAt": "2026-09-13T17:55:22.117Z"
+      "createdAt": "2026-09-13T18:21:36.314Z",
+      "updatedAt": "2026-09-13T18:21:36.314Z"
     },
     {
       "_id": "u-admin-1",
@@ -30,8 +30,8 @@
       "building": "社区居委会",
       "elderMode": false,
       "accountId": "linju_h4v6rc",
-      "createdAt": "2026-09-13T17:55:22.117Z",
-      "updatedAt": "2026-09-13T17:55:22.117Z"
+      "createdAt": "2026-09-13T18:21:36.314Z",
+      "updatedAt": "2026-09-13T18:21:36.314Z"
     },
     {
       "_id": "u-legacy-1",
@@ -41,8 +41,8 @@
       "building": "6栋1单元",
       "elderMode": true,
       "accountId": "",
-      "createdAt": "2026-08-14T17:55:22.117Z",
-      "updatedAt": "2026-08-14T17:55:22.117Z"
+      "createdAt": "2026-08-14T18:21:36.314Z",
+      "updatedAt": "2026-08-14T18:21:36.314Z"
     }
   ],
   "workorders": [
@@ -55,8 +55,8 @@
       "images": [],
       "status": "pending",
       "aiSummary": "厨房水管接头漏水，建议 24 小时内上门更换密封垫，优先级：高。",
-      "createdAt": "2026-10-11T17:55:22.117Z",
-      "updatedAt": "2026-10-11T17:55:22.117Z"
+      "createdAt": "2026-10-11T18:21:36.314Z",
+      "updatedAt": "2026-10-11T18:21:36.314Z"
     },
     {
       "_id": "wo-2",
@@ -69,8 +69,8 @@
       "assignee": "mock-property-1",
       "handleNote": "已派电工上门，预计今日完成。",
       "aiSummary": "楼道照明故障，需更换灯管，优先级：中。",
-      "createdAt": "2026-10-08T17:55:22.117Z",
-      "updatedAt": "2026-10-12T17:55:22.117Z"
+      "createdAt": "2026-10-08T18:21:36.314Z",
+      "updatedAt": "2026-10-12T18:21:36.314Z"
     },
     {
       "_id": "wo-3",
@@ -83,8 +83,8 @@
       "assignee": "mock-property-1",
       "handleNote": "门禁读头更换完成，已恢复正常。",
       "aiSummary": "门禁读头故障，已更换，优先级：高。",
-      "createdAt": "2026-10-03T17:55:22.117Z",
-      "updatedAt": "2026-10-05T17:55:22.117Z"
+      "createdAt": "2026-10-03T18:21:36.314Z",
+      "updatedAt": "2026-10-05T18:21:36.314Z"
     }
   ],
   "notices": [
@@ -94,7 +94,7 @@
       "content": "本周六 9:00-17:00 将对小区主管网进行停水检修，请提前储水。",
       "type": "notice",
       "status": "published",
-      "publishAt": "2026-10-10T17:55:22.117Z"
+      "publishAt": "2026-10-10T18:21:36.314Z"
     },
     {
       "_id": "nt-2",
@@ -102,7 +102,7 @@
       "content": "下周起逐栋入户检查燃气管道与阀门，请家中留人配合。",
       "type": "notice",
       "status": "published",
-      "publishAt": "2026-10-11T17:55:22.117Z"
+      "publishAt": "2026-10-11T18:21:36.314Z"
     },
     {
       "_id": "nt-3",
@@ -110,9 +110,9 @@
       "content": "10月22日 社区广场开展义诊与文艺汇演，欢迎 60 岁以上居民报名参加。",
       "type": "activity",
       "status": "published",
-      "publishAt": "2026-10-12T17:55:22.117Z",
+      "publishAt": "2026-10-12T18:21:36.314Z",
       "location": "社区广场",
-      "signupDeadline": "2026-10-18T17:55:22.117Z"
+      "signupDeadline": "2026-10-18T18:21:36.314Z"
     },
     {
       "_id": "nt-4",
@@ -120,20 +120,20 @@
       "content": "草稿内容",
       "type": "notice",
       "status": "draft",
-      "publishAt": "2026-10-12T17:55:22.117Z"
+      "publishAt": "2026-10-12T18:21:36.314Z"
     },
     {
       "_id": "nu-1",
       "title": "10月14日 3号楼停水通知",
-      "content": "因主管网检修，3 号楼自 10月14日 00:55 起停水，预计 48 小时内恢复。请提前储水，恢复供水后可能出现短暂浑浊，排放数分钟即可。",
+      "content": "因主管网检修，3 号楼自 10月14日 01:21 起停水，预计 48 小时内恢复。请提前储水，恢复供水后可能出现短暂浑浊，排放数分钟即可。",
       "type": "urgent",
       "status": "published",
-      "publishAt": "2026-10-13T05:55:22.117Z",
+      "publishAt": "2026-10-13T06:21:36.314Z",
       "location": "3号楼",
       "level": "high",
-      "startAt": "2026-10-13T16:55:22.117Z",
-      "endAt": "2026-10-15T17:55:22.117Z",
-      "summary": "10月14日 00:55 起停水 · 3号楼"
+      "startAt": "2026-10-13T17:21:36.314Z",
+      "endAt": "2026-10-15T18:21:36.314Z",
+      "summary": "10月14日 01:21 起停水 · 3号楼"
     },
     {
       "_id": "nu-2",
@@ -141,11 +141,11 @@
       "content": "南门进出道路分段检修，施工期间车道变窄，建议车辆由西门绕行，行人注意安全。",
       "type": "urgent",
       "status": "published",
-      "publishAt": "2026-10-12T21:55:22.117Z",
+      "publishAt": "2026-10-12T22:21:36.314Z",
       "location": "小区南门",
       "level": "normal",
-      "startAt": "2026-10-13T11:55:22.117Z",
-      "endAt": "2026-10-20T17:55:22.117Z",
+      "startAt": "2026-10-13T12:21:36.314Z",
+      "endAt": "2026-10-20T18:21:36.314Z",
       "summary": "南门道路检修，车辆请绕行西门"
     },
     {
@@ -154,11 +154,11 @@
       "content": "10月12日 至 10月16日 期间 5 号楼两台电梯进行年检，每日 10:00-16:00 停用，请高层住户提前安排出行。",
       "type": "urgent",
       "status": "published",
-      "publishAt": "2026-10-12T11:55:22.117Z",
+      "publishAt": "2026-10-12T12:21:36.314Z",
       "location": "5号楼",
       "level": "critical",
-      "startAt": "2026-10-11T17:55:22.117Z",
-      "endAt": "2026-10-15T17:55:22.117Z",
+      "startAt": "2026-10-11T18:21:36.314Z",
+      "endAt": "2026-10-15T18:21:36.314Z",
       "summary": "5号楼电梯年检，10:00-16:00 停用"
     }
   ],
@@ -267,9 +267,9 @@
       "status": "published",
       "topFlag": true,
       "viewCount": 268,
-      "publishAt": "2026-10-13T15:55:22.117Z",
-      "createdAt": "2026-10-13T15:55:22.117Z",
-      "updatedAt": "2026-10-13T15:55:22.117Z"
+      "publishAt": "2026-10-13T16:21:36.314Z",
+      "createdAt": "2026-10-13T16:21:36.314Z",
+      "updatedAt": "2026-10-13T16:21:36.314Z"
     },
     {
       "_id": "cp-2",
@@ -288,9 +288,9 @@
       "status": "published",
       "topFlag": false,
       "viewCount": 132,
-      "publishAt": "2026-10-13T09:55:22.117Z",
-      "createdAt": "2026-10-13T09:55:22.117Z",
-      "updatedAt": "2026-10-13T09:55:22.117Z"
+      "publishAt": "2026-10-13T10:21:36.314Z",
+      "createdAt": "2026-10-13T10:21:36.314Z",
+      "updatedAt": "2026-10-13T10:21:36.314Z"
     },
     {
       "_id": "cp-3",
@@ -309,9 +309,9 @@
       "status": "published",
       "topFlag": false,
       "viewCount": 96,
-      "publishAt": "2026-10-12T15:55:22.117Z",
-      "createdAt": "2026-10-12T15:55:22.117Z",
-      "updatedAt": "2026-10-12T15:55:22.117Z"
+      "publishAt": "2026-10-12T16:21:36.314Z",
+      "createdAt": "2026-10-12T16:21:36.314Z",
+      "updatedAt": "2026-10-12T16:21:36.314Z"
     },
     {
       "_id": "cp-4",
@@ -329,9 +329,9 @@
       "status": "published",
       "topFlag": false,
       "viewCount": 210,
-      "publishAt": "2026-10-10T17:55:22.117Z",
-      "createdAt": "2026-10-10T17:55:22.117Z",
-      "updatedAt": "2026-10-10T17:55:22.117Z"
+      "publishAt": "2026-10-10T18:21:36.314Z",
+      "createdAt": "2026-10-10T18:21:36.314Z",
+      "updatedAt": "2026-10-10T18:21:36.314Z"
     },
     {
       "_id": "cp-5",
@@ -351,9 +351,9 @@
       "status": "published",
       "topFlag": false,
       "viewCount": 175,
-      "publishAt": "2026-10-11T17:55:22.117Z",
-      "createdAt": "2026-10-11T17:55:22.117Z",
-      "updatedAt": "2026-10-11T17:55:22.117Z"
+      "publishAt": "2026-10-11T18:21:36.314Z",
+      "createdAt": "2026-10-11T18:21:36.314Z",
+      "updatedAt": "2026-10-11T18:21:36.314Z"
     },
     {
       "_id": "cp-6",
@@ -372,9 +372,9 @@
       "status": "published",
       "topFlag": false,
       "viewCount": 88,
-      "publishAt": "2026-10-08T17:55:22.117Z",
-      "createdAt": "2026-10-08T17:55:22.117Z",
-      "updatedAt": "2026-10-08T17:55:22.117Z"
+      "publishAt": "2026-10-08T18:21:36.314Z",
+      "createdAt": "2026-10-08T18:21:36.314Z",
+      "updatedAt": "2026-10-08T18:21:36.314Z"
     },
     {
       "_id": "cp-7",
@@ -393,9 +393,9 @@
       "status": "published",
       "topFlag": false,
       "viewCount": 143,
-      "publishAt": "2026-10-09T17:55:22.117Z",
-      "createdAt": "2026-10-09T17:55:22.117Z",
-      "updatedAt": "2026-10-09T17:55:22.117Z"
+      "publishAt": "2026-10-09T18:21:36.314Z",
+      "createdAt": "2026-10-09T18:21:36.314Z",
+      "updatedAt": "2026-10-09T18:21:36.314Z"
     },
     {
       "_id": "cp-8",
@@ -414,9 +414,9 @@
       "status": "published",
       "topFlag": false,
       "viewCount": 302,
-      "publishAt": "2026-10-07T17:55:22.117Z",
-      "createdAt": "2026-10-07T17:55:22.117Z",
-      "updatedAt": "2026-10-07T17:55:22.117Z"
+      "publishAt": "2026-10-07T18:21:36.314Z",
+      "createdAt": "2026-10-07T18:21:36.314Z",
+      "updatedAt": "2026-10-07T18:21:36.314Z"
     }
   ],
   "service_category": [
@@ -459,8 +459,8 @@
           }
         }
       ],
-      "createdAt": "2026-10-13T17:55:22.117Z",
-      "updatedAt": "2026-10-13T17:55:22.117Z"
+      "createdAt": "2026-10-13T18:21:36.314Z",
+      "updatedAt": "2026-10-13T18:21:36.314Z"
     },
     {
       "_id": "sc-elder",
@@ -501,8 +501,8 @@
           }
         }
       ],
-      "createdAt": "2026-10-13T17:55:22.117Z",
-      "updatedAt": "2026-10-13T17:55:22.117Z"
+      "createdAt": "2026-10-13T18:21:36.314Z",
+      "updatedAt": "2026-10-13T18:21:36.314Z"
     },
     {
       "_id": "sc-support",
@@ -534,8 +534,8 @@
           }
         }
       ],
-      "createdAt": "2026-10-13T17:55:22.117Z",
-      "updatedAt": "2026-10-13T17:55:22.117Z"
+      "createdAt": "2026-10-13T18:21:36.314Z",
+      "updatedAt": "2026-10-13T18:21:36.314Z"
     },
     {
       "_id": "sc-culture",
@@ -567,8 +567,8 @@
           }
         }
       ],
-      "createdAt": "2026-10-13T17:55:22.117Z",
-      "updatedAt": "2026-10-13T17:55:22.117Z"
+      "createdAt": "2026-10-13T18:21:36.314Z",
+      "updatedAt": "2026-10-13T18:21:36.314Z"
     }
   ]
 }
