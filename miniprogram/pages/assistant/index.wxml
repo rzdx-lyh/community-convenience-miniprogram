@@ -106,7 +106,4 @@
       <text class="send-text">发送</text>
     </view>
   </view>
-
-  <!-- 演示模式标识（CR-017-c） -->
-  <mock-banner />
 </view>

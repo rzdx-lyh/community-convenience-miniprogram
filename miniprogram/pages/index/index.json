@@ -2,8 +2,5 @@
   "navigationStyle": "custom",
   "navigationBarTitleText": "社区便民",
   "enablePullDownRefresh": true,
-  "backgroundTextStyle": "light",
-  "usingComponents": {
-    "mock-banner": "/components/mock-banner/index"
-  }
+  "backgroundTextStyle": "light"
 }

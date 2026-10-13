@@ -1,6 +1,3 @@
 {
-  "navigationBarTitleText": "AI 办事助手",
-  "usingComponents": {
-    "mock-banner": "/components/mock-banner/index"
-  }
+  "navigationBarTitleText": "AI 办事助手"
 }
