@@ -71,7 +71,9 @@
     <!-- 核心功能 2×2 宫格 -->
     <view class="section">
       <view class="section__title">核心功能</view>
-      <view class="grid {{elderMode ? 'grid--care' : ''}}">
+      <!-- 关怀模式 1 列重排走 .care-mode .grid / .care-mode .fn 祖先选择器，
+           这里不再挂 grid--care（该类从未在 wxss 定义，留着会误导后来维护的人） -->
+      <view class="grid">
         <view
           wx:for="{{grid}}"
           wx:key="key"

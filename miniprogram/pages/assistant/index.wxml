@@ -90,9 +90,12 @@
     <view class="voice" bindtap="onVoice">
       <text class="voice-icon">🎤</text>
     </view>
+    <!-- focus：仅当带 ?presetQuestion= 进来时自动聚焦（键盘弹起，用户直接说话）
+         ⚠ 契约硬红线：只聚焦、**绝不自动发送**；发送必须由用户点「发送」或快捷提问触发 -->
     <input
       class="input"
       value="{{inputText}}"
+      focus="{{hasPreset}}"
       placeholder="输入你的问题…"
       placeholder-class="input-ph"
       confirm-type="send"

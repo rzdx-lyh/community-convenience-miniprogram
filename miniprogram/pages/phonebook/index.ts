@@ -97,7 +97,6 @@ Page({
     /** 服务端原始数据，搜索在本地做 */
     raw: [] as PhoneItem[],
     sections: [] as PhoneSection[],
-    total: 0,
     loading: true,
     elderMode: false,
   },
@@ -151,7 +150,6 @@ Page({
       const raw = res.list ?? [];
       this.setData({
         raw,
-        total: raw.length,
         sections: buildPhoneSections(filterPhoneItems(raw, this.data.keyword)),
       });
     } catch {

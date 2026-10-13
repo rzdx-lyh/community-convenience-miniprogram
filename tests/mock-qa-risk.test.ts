@@ -244,12 +244,34 @@ describe('端到端 · 话术唯一来源守卫（契约 v1.4）', () => {
 });
 
 /**
- * ⚠ 已知缺口（对齐快照，不是期望行为）
- * 后端 RISK_RULES 的 legal 正则目前不含「工伤」，因此「工伤怎么赔偿」会走普通回答路径。
- * 已上报 be-engineer 评估是否补词。**后端补词后本用例会失败，届时同步更新本文件与 risk-rules.ts**。
+ * CR-013：后端已在 legal 词表补 `工伤 / 工伤认定 / 伤残鉴定 / 拖欠工资`
+ * （后端 cloudfunctions/shared/safety.js）。前端 mock 副本已同步，这里把补的词钉死，
+ * 防止后续任一侧回退导致「mock 绿、真机不一致」。
  */
-describe('已知缺口快照 · 后端补词后需要同步', () => {
-  it('「工伤」当前未纳入 legal（后端现状快照）', () => {
-    expect(rules.detectRisk('工伤怎么赔偿')).toBeNull();
+describe('CR-013 补词 · legal 新增四个劳动纠纷高频词', () => {
+  const WORDS = ['工伤怎么赔偿', '工伤认定怎么办', '伤残鉴定去哪做', '老板拖欠工资怎么办'];
+
+  it('四个词全部命中 legal（detectRisk + riskLevelOf）', () => {
+    for (const q of WORDS) {
+      expect(rules.detectRisk(q)?.level, q).toBe('legal');
+      expect(rules.riskLevelOf(q), q).toBe('legal');
+    }
+  });
+
+  it('走 mock handler 也返回 legal 安全话术（含 12348 与居委会号）', async () => {
+    for (const q of WORDS) {
+      const res = await ask(q);
+      expect(res._riskLevel, q).toBe('legal');
+      expect(res.degraded, q).toBe(true);
+      expect(res.sources, q).toEqual([]);
+      expect(res.answer, q).toContain('12348');
+      expect(res.answer, q).toContain('020-88886666');
+    }
+  });
+
+  it('补词不得误伤普通问题（关键词仍要精准）', () => {
+    expect(rules.detectRisk('物业费怎么交？')).toBeNull();
+    expect(rules.detectRisk('停水通知在哪里看')).toBeNull();
+    expect(rules.detectRisk('老年卡怎么办理')).toBeNull();
   });
 });
