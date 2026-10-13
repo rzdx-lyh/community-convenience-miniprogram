@@ -218,3 +218,49 @@ describe('toBubbleVM · qa:history 单轮转气泡', () => {
     expect(vm.timeText).toBeTruthy();
   });
 });
+
+describe('isSafety · CR-012 安全话术标记（驱动 wxml 隐藏 👍/👎）', () => {
+  it('_riskLevel 存在且 !== none → true', () => {
+    expect(mod.isSafetyLevel('medical')).toBe(true);
+    expect(mod.isSafetyLevel('legal')).toBe(true);
+    expect(mod.isSafetyLevel('emergency')).toBe(true);
+  });
+
+  it('none / undefined / 空串 / 未知值中的 none → false', () => {
+    expect(mod.isSafetyLevel('none')).toBe(false);
+    expect(mod.isSafetyLevel(undefined)).toBe(false);
+    expect(mod.isSafetyLevel('')).toBe(false);
+  });
+
+  it('buildAiBubble：命中安全话术 → isSafety=true，且正文原文保留', () => {
+    const answer = '请尽快就医或拨打 120';
+    const bubble = mod.buildAiBubble(answer, [], true, 'a_s1', 'medical');
+    expect(bubble.isSafety).toBe(true);
+    expect(bubble.text).toBe(answer);
+  });
+
+  it('buildAiBubble：普通回答 / 未降级 / riskLevel=none → isSafety=false（反馈照常显示）', () => {
+    expect(mod.buildAiBubble('物业费可在物业中心缴纳', ['办事指南'], false, 'a_s2').isSafety).toBe(false);
+    expect(mod.buildAiBubble('暂时无法回答', [], true, 'a_s3', 'none').isSafety).toBe(false);
+    expect(mod.buildAiBubble('暂时无法回答', [], true, 'a_s4').isSafety).toBe(false);
+  });
+
+  it('buildUserBubble：用户气泡恒为 false', () => {
+    expect(mod.buildUserBubble('胸痛怎么办').isSafety).toBe(false);
+  });
+
+  it('toBubbleVM：历史轮次带 _riskLevel → isSafety=true；不带 / none → false', () => {
+    const base = { role: 'assistant' as const, content: 'x', createdAt: '2026-10-14T02:00:00.000Z' };
+    expect(mod.toBubbleVM({ ...base, degraded: true, _riskLevel: 'medical' }).isSafety).toBe(true);
+    expect(mod.toBubbleVM({ ...base, degraded: true, _riskLevel: 'none' }).isSafety).toBe(false);
+    expect(mod.toBubbleVM({ ...base, degraded: true }).isSafety).toBe(false);
+  });
+
+  it('wxml 守卫条件与字段一致：answerId 存在但不安全时才显示反馈', () => {
+    // wxml: wx:if="{{item.answerId && !item.isSafety}}"
+    const safety = mod.buildAiBubble('请尽快就医或拨打 120', [], true, 'a_s5', 'medical');
+    const normal = mod.buildAiBubble('可在物业中心缴纳', ['办事指南'], false, 'a_s6');
+    expect(Boolean(safety.answerId && !safety.isSafety)).toBe(false);
+    expect(Boolean(normal.answerId && !normal.isSafety)).toBe(true);
+  });
+});

@@ -36,6 +36,20 @@ export interface BubbleVM {
   answerId: string;
   useful: boolean | null;
   timeText: string;
+  /**
+   * CR-012：本条 answer 是否为**固定安全话术**（`_riskLevel` 存在且 !== 'none'）。
+   * 为 true 时 wxml 隐藏 👍/👎 反馈区（固定文案评"有没有用"没意义，且会污染反馈数据），
+   * 但**气泡正文照常渲染**安全话术，绝不替换。
+   */
+  isSafety: boolean;
+}
+
+/**
+ * 判定是否为 CR-012 安全话术（纯函数，便于单测）。
+ * `_riskLevel` 存在且 !== 'none' → true；缺省 / 'none' / 空串 → false。
+ */
+export function isSafetyLevel(riskLevel?: string): boolean {
+  return Boolean(riskLevel) && riskLevel !== 'none';
 }
 
 let seq = 0;
@@ -66,6 +80,7 @@ export function buildUserBubble(text: string): BubbleVM {
     answerId: '',
     useful: null,
     timeText: toShortDateTime(Date.now()),
+    isSafety: false,
   };
 }
 
@@ -87,6 +102,7 @@ export function buildAiBubble(
     answerId: answerId ?? '',
     useful: null,
     timeText: toShortDateTime(Date.now()),
+    isSafety: isSafetyLevel(riskLevel),
   };
 }
 
@@ -103,6 +119,7 @@ export function toBubbleVM(turn: QaTurn): BubbleVM {
     answerId: turn.answerId ?? '',
     useful: null,
     timeText: toShortDateTime(turn.createdAt),
+    isSafety: isSafetyLevel(turn._riskLevel),
   };
 }
 

@@ -38,6 +38,10 @@ const CASES: Array<[string, 'medical' | 'legal' | 'emergency']> = [
 
 beforeAll(async () => {
   const g = globalThis as unknown as Record<string, unknown>;
+  // 页面模块在 Node 下加载需要 Page 全局桩（末条用例要 import pages/assistant/index）
+  g.Page = () => ({});
+  g.Component = () => ({});
+  g.App = () => ({});
   g.wx = {
     showToast: () => undefined,
     showLoading: () => undefined,
@@ -185,6 +189,57 @@ describe('全链路 · utils/request.ts call("qa:ask") 在 USE_MOCK 下也命中
     expect(res._riskLevel).toBe('medical');
     expect(res.degraded).toBe(true);
     expect(res.answer).toContain('请尽快就医或拨打 120');
+  });
+});
+
+/**
+ * 契约 v1.4 §「🛡 安全话术表（CR-012 · 唯一来源，前后端共用同一份文案）」守卫。
+ * 断言按契约「必含动作 / 强制要求」列编写（而非逐字比对某一侧的实现），
+ * 这样契约原文与后端实现两种措辞都能通过，但把话术改成模糊表述（如"建议就医"）会立刻红。
+ */
+describe('端到端 · 话术唯一来源守卫（契约 v1.4）', () => {
+  it('「胸痛怎么办」走完整调用链：answer 含 120、degraded=true、sources 为空', async () => {
+    const { call } = await import('../miniprogram/utils/request');
+    const res = await call<QaAskResult>('qa:ask', { question: '胸痛怎么办' });
+    expect(res.answer).toContain('120');
+    expect(res.degraded).toBe(true);
+    expect(res.sources).toEqual([]);
+  });
+
+  it('medical：必含「请尽快就医」语义 + 120（禁止"建议""可以"这类模糊表述）', async () => {
+    const res = await ask('胸痛怎么办');
+    expect(res.answer).toMatch(/请尽快就医/);
+    expect(res.answer).toContain('120');
+    expect(res.answer).not.toMatch(/建议你|您可以考虑/);
+  });
+
+  it('legal：必含 110 与法律援助渠道', async () => {
+    const res = await ask('劳动仲裁怎么申请');
+    expect(res.answer).toContain('110');
+    expect(res.answer).toMatch(/法律援助/);
+  });
+
+  it('emergency：必含 119 / 110 / 120 与便民电话簿入口', async () => {
+    const res = await ask('着火了怎么办');
+    expect(res.answer).toContain('119');
+    expect(res.answer).toContain('110');
+    expect(res.answer).toContain('120');
+    expect(res.answer).toMatch(/便民电话|电话簿/);
+  });
+
+  it('命中安全话术的气泡：正文被保留、isSafety 置位（wxml 据此隐藏 👍/👎）', async () => {
+    const assistant = await import('../miniprogram/pages/assistant/index');
+    const res = await ask('胸痛怎么办');
+    const bubble = assistant.buildAiBubble(
+      res.answer,
+      res.sources,
+      res.degraded,
+      res.answerId,
+      res._riskLevel,
+    );
+    expect(bubble.text).toBe(res.answer);
+    expect(bubble.isSafety).toBe(true);
+    expect(bubble.degradedTip).toBe('以上为安全提示，社区无法提供专业医疗或法律意见');
   });
 });
 

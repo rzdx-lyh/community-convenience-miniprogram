@@ -37,8 +37,11 @@
             </view>
           </view>
 
-          <!-- 有用/无用反馈 -->
-          <view wx:if="{{item.answerId}}" class="feedback">
+          <!-- 有用/无用反馈
+               CR-012：命中安全话术时（isSafety）**不展示反馈按钮**——
+               固定文案让用户评「有没有用」没有意义，还会污染 qa:feedback 数据。
+               气泡正文照常渲染服务端下发的安全话术，只摘掉反馈区。 -->
+          <view wx:if="{{item.answerId && !item.isSafety}}" class="feedback">
             <view class="fb {{item.useful === true ? 'fb-on' : ''}}" data-id="{{item.id}}" data-useful="1" bindtap="onFeedback">
               <text>👍 有用</text>
             </view>

@@ -1,5 +1,6 @@
 /**
- * FE-13：社区账号格式校验（契约 CR-009 / 后端强校验同一正则）
+ * FE-13 社区账号格式校验（契约 CR-009 / 后端强校验同一正则）
+ * + FE-8 隐私弹窗判定与关怀模式开关归一化
  * 页面模块在 Node 下加载需要 Page 与 wx 两个全局桩，故用动态 import 先桩后载。
  */
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -65,5 +66,38 @@ describe('normalizeAccountId', () => {
   it('去首尾空白并转小写（与后端入库规则一致）', () => {
     expect(mod.normalizeAccountId('  LINJU_0523  ')).toBe('linju_0523');
     expect(mod.normalizeAccountId('Linju')).toBe('linju');
+  });
+
+  it('归一化后再校验：大小写+空格输入应判为合法', () => {
+    expect(mod.isValidAccountId(mod.normalizeAccountId('  Linju_0523 '))).toBe(true);
+  });
+});
+
+describe('shouldAgreePrivacy · 首启隐私弹窗判定（E2）', () => {
+  it('未同意 / 空值 / 非布尔真值 → 需要弹窗', () => {
+    expect(mod.shouldAgreePrivacy(false)).toBe(true);
+    expect(mod.shouldAgreePrivacy(undefined)).toBe(true);
+    expect(mod.shouldAgreePrivacy(null)).toBe(true);
+    expect(mod.shouldAgreePrivacy('true')).toBe(true); // 字符串 'true' 不算已同意
+  });
+
+  it('显式 true → 不再弹窗', () => {
+    expect(mod.shouldAgreePrivacy(true)).toBe(false);
+  });
+});
+
+describe('normalizeElderMode · 关怀模式开关（D2）', () => {
+  it('只有布尔 true 才算开启', () => {
+    expect(mod.normalizeElderMode(true)).toBe(true);
+    expect(mod.normalizeElderMode(false)).toBe(false);
+    expect(mod.normalizeElderMode(undefined)).toBe(false);
+    expect(mod.normalizeElderMode('true')).toBe(false);
+    expect(mod.normalizeElderMode(1)).toBe(false);
+  });
+});
+
+describe('ACCOUNT_FORMAT_TIP', () => {
+  it('与契约 CR-009 / 后端 400 msg 逐字一致', () => {
+    expect(mod.ACCOUNT_FORMAT_TIP).toBe('社区账号需 4-20 位小写字母开头，可含数字和下划线');
   });
 });

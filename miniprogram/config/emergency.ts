@@ -17,16 +17,21 @@ export interface EmergencyContact {
  * 后端种子现已补齐 110（报警求助）与 119（火警），首页按 phone 去重合并且以接口数据为准，
  * 断网时才回落到本常量。⚠ 号码若变更必须同步 seeds 与 miniprogram/mock/data.ts。
  */
+/**
+ * ⚠ 名称与后端 phonebook 种子**逐字一致**（seed：报警求助 / 火警 / 急救中心 /
+ * 社区居委会 / 物业服务中心 / 社区养老服务中心）。
+ * 原因：同一条目断网显示「110 报警」、联网显示「报警求助」会被一眼看出不一致。
+ */
 export const LOCAL_EMERGENCY_CONTACTS: EmergencyContact[] = [
-  { name: '110 报警', phone: '110', remark: '治安/人身安全' },
-  { name: '119 火警', phone: '119', remark: '火灾/抢险救援' },
-  { name: '120 急救', phone: '120', remark: '医疗急救' },
+  { name: '报警求助', phone: '110', remark: '治安/人身安全' },
+  { name: '火警', phone: '119', remark: '火灾/抢险救援' },
+  { name: '急救中心', phone: '120', remark: '医疗急救' },
   {
     name: '社区居委会',
     phone: '020-88886666',
     remark: '政务/居委会（与后端 phonebook 种子一致）',
   },
-  { name: '物业值班', phone: '020-88888888', remark: '24 小时值班（与后端种子一致）' },
+  { name: '物业服务中心', phone: '020-88888888', remark: '24 小时值班（与后端种子一致）' },
   {
     name: '社区养老服务中心',
     phone: '020-88880000',
