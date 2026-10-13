@@ -479,6 +479,14 @@ current = 'CR-013';
   expect('话术报警号 = 电话簿报警号', HOTLINE.POLICE, pbBy('报警求助') && pbBy('报警求助').phone);
   expect('话术火警号 = 电话簿火警号', HOTLINE.FIRE, pbBy('火警') && pbBy('火警').phone);
 
+  // ①-b 真源划分：11 条 = hotline 真源 5 条 + 社区服务号 6 条；12348 只在话术里，不在集合内
+  const hotlineVals = Object.values(HOTLINE);
+  const fromHotline = (seed.phonebook || []).filter((p) => hotlineVals.includes(p.phone));
+  expect('phonebook 总条数 = 11', (seed.phonebook || []).length, 11);
+  expect('其中取自 hotline 真源的 = 5 条', fromHotline.length, 5);
+  expectTrue('12348 不在 phonebook 集合内（仅存在于话术）',
+    !(seed.phonebook || []).some((p) => p.phone === HOTLINE.LEGAL_AID));
+
   // ② 号码确实出现在对应话术里（常量改了话术会跟着变，反向兜底）
   expectTrue('紧急话术含物业值班号', textOf('emergency').includes(HOTLINE.PROPERTY));
   expectTrue('涉医话术含物业值班号', textOf('medical').includes(HOTLINE.PROPERTY));
