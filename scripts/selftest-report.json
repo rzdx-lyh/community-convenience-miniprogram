@@ -1,7 +1,7 @@
 {
-  "ranAt": "2026-10-13T18:28:42.415Z",
-  "total": 164,
-  "passed": 164,
+  "ranAt": "2026-10-13T18:35:08.449Z",
+  "total": 167,
+  "passed": 167,
   "failed": 0,
   "results": [
     {
@@ -50,13 +50,13 @@
       "card": "BE-12",
       "name": "accountId 格式合法 /^[a-z][a-z0-9_]{3,19}$/",
       "pass": true,
-      "detail": "linju_anryhc"
+      "detail": "linju_w4fq6v"
     },
     {
       "card": "BE-12",
       "name": "accountId 前缀 linju_",
       "pass": true,
-      "detail": "linju_anryhc"
+      "detail": "linju_w4fq6v"
     },
     {
       "card": "BE-12",
@@ -68,7 +68,7 @@
       "card": "BE-12",
       "name": "生成结果全部符合格式",
       "pass": true,
-      "detail": "linju_bksgfb,linju_xdj7aq,linju_rc73jk"
+      "detail": "linju_94bz7n,linju_huaxpq,linju_rhnyh3"
     },
     {
       "card": "BE-12",
@@ -86,13 +86,13 @@
       "card": "BE-12",
       "name": "懒迁移后 accountId 有值",
       "pass": true,
-      "detail": "linju_u2nju3"
+      "detail": "linju_fvhfx7"
     },
     {
       "card": "BE-12",
       "name": "懒迁移已回写 users 集合",
       "pass": true,
-      "detail": "linju_u2nju3"
+      "detail": "linju_fvhfx7"
     },
     {
       "card": "BE-12",
@@ -925,6 +925,24 @@
     {
       "card": "CR-013",
       "name": "话术火警号 = 电话簿火警号",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "phonebook 总条数 = 11",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "其中取自 hotline 真源的 = 5 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-013",
+      "name": "12348 不在 phonebook 集合内（仅存在于话术）",
       "pass": true,
       "detail": ""
     },

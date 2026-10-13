@@ -315,3 +315,5 @@ console.log(`  users=${users.length}  workorders=${workorders.length}  notices=$
 console.log(`  紧急通知 ${urgent.length} 条，其中当前有效 ${inEffect.length} 条：` +
   urgent.map((n) => `${n._id}(${n.level}${inEffect.includes(n) ? '·有效' : '·不在有效期'})`).join(' '));
 console.log('  ⚠ 10-23 打包前请重跑本脚本，确保紧急通知仍在有效期内。');
+console.log('  ⚠ phonebook 的社区服务号（020-8888xxxx 段）为演示占位号，真环境需整体替换；' +
+  '改号路径：改 shared/hotline.js → 重跑本脚本 → 重新导入 → 通知前端同步 mock → 跑 selftest。');
