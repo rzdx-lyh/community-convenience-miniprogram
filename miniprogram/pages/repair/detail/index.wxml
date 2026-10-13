@@ -1,4 +1,81 @@
-<!-- 报修详情 · 脚手架占位页（FE-5 实现后删除本占位） -->
-<view class="page">
-  <text>报修详情 · 待 FE-5 实现</text>
+<!-- 报修详情（FE-5） -->
+<view class="page {{elderMode ? 'care-mode' : ''}}">
+  <view wx:if="{{loading}}" class="loading">
+    <text class="loading-text">加载中…</text>
+  </view>
+
+  <block wx:if="{{!loading && vm}}">
+    <!-- 标题 + 状态 -->
+    <view class="head">
+      <view class="head-top">
+        <text class="title">{{vm.title}}</text>
+        <view class="tag tag-{{vm.statusKey}}">
+          <text class="tag-text">{{vm.statusLabel}}</text>
+        </view>
+      </view>
+      <view class="meta">
+        <text class="meta-text">{{vm.categoryLabel}}</text>
+        <text class="meta-text">提交于 {{vm.createdText}}</text>
+      </view>
+    </view>
+
+    <!-- 状态时间轴 -->
+    <view class="panel">
+      <text class="panel-title">处理进度</text>
+      <view class="flow">
+        <block wx:for="{{vm.timeline}}" wx:key="key">
+          <view class="node {{item.reached ? 'node-on' : ''}} {{item.current ? 'node-cur' : ''}}">
+            <view class="dot {{item.reached ? 'dot-on' : ''}}"></view>
+            <text class="node-text">{{item.label}}</text>
+          </view>
+        </block>
+      </view>
+      <view wx:if="{{vm.terminal}}" class="terminal">
+        <text class="terminal-text">{{vm.terminal}}</text>
+      </view>
+      <text class="updated">更新于 {{vm.updatedText}}</text>
+    </view>
+
+    <!-- 问题描述 -->
+    <view class="panel">
+      <text class="panel-title">问题描述</text>
+      <text class="desc">{{vm.description}}</text>
+      <view wx:if="{{vm.hasImages}}" class="imgs">
+        <block wx:for="{{vm.images}}" wx:key="*this">
+          <image
+            class="img"
+            src="{{item}}"
+            mode="aspectFill"
+            data-index="{{index}}"
+            bindtap="onPreviewImage"
+          />
+        </block>
+      </view>
+    </view>
+
+    <!-- AI 摘要（无值整块不渲染） -->
+    <view wx:if="{{vm.hasSummary}}" class="panel ai">
+      <view class="ai-head">
+        <text class="ai-badge">AI</text>
+        <text class="panel-title">智能摘要</text>
+      </view>
+      <text class="desc">{{vm.aiSummary}}</text>
+      <text class="ai-footer">* {{aiFooter}}，具体以物业回复为准</text>
+    </view>
+
+    <!-- 物业处理（无值整块不渲染） -->
+    <view wx:if="{{vm.hasHandle}}" class="panel">
+      <text class="panel-title">物业处理</text>
+      <text wx:if="{{vm.assignee}}" class="desc">处理人：{{vm.assignee}}</text>
+      <text wx:if="{{vm.handleNote}}" class="desc">{{vm.handleNote}}</text>
+    </view>
+
+    <!-- 取消（仅待受理可点） -->
+    <view wx:if="{{vm.canCancel}}" class="footer">
+      <view class="cancel" bindtap="onCancel">
+        <text class="cancel-text">取消报修</text>
+      </view>
+      <text class="tip">取消后需要重新提交，物业将不再跟进本单</text>
+    </view>
+  </block>
 </view>

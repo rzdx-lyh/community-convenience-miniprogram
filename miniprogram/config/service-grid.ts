@@ -63,7 +63,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = [
         key: 'bath',
         name: '助浴',
         targetType: 'phone',
-        targetParams: { phone: '020-87654321' },
+        // 占位号，真环境替换（lead 2026-10-14 统一口径）；后端 service:list 下发后立即覆盖本值
+        targetParams: { phone: '020-88880000' },
         sort: 2,
       },
       {

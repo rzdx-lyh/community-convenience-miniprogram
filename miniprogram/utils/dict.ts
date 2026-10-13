@@ -58,6 +58,13 @@ export const PHONE_CATEGORY_LABELS: Record<PhoneItem['category'], string> = {
   emergency: '急救',
 };
 
+/** 用户角色（契约 User.role 全集） */
+export const ROLE_LABELS: Record<User['role'], string> = {
+  resident: '居民',
+  property: '物业',
+  admin: '管理员',
+};
+
 /** 兜底取值：字典缺失时回退原始值，绝不返回空字符串导致白块 */
 export function labelOf<K extends string>(dict: Record<K, string>, key: string, fallback = ''): string {
   return dict[key as K] ?? key ?? fallback;

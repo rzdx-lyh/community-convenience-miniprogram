@@ -57,7 +57,13 @@ declare interface WorkOrderCancelResult {
 }
 declare interface WorkOrderHandleParams {
   id: string;
+  /** v1.2 契约入参；兼容读法（后端仍支持） */
   action: 'assign' | 'process' | 'done';
+  /**
+   * CR-011（架构师待补，主理人 2026-10-14 裁决）：业务参数**定稿名** `handleAction`。
+   * 原因：`action` 与云函数分发键同名会产生歧义，故新增可选参数；与 action 同值下发，后端优先读它。
+   */
+  handleAction?: 'assign' | 'process' | 'done';
   note?: string;
 }
 declare interface WorkOrderHandleResult {

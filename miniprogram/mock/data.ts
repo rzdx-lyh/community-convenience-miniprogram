@@ -255,9 +255,10 @@ const MOCK_CIRCLE_POSTS: CirclePost[] = [
 
 /* ============================== 便民电话 ============================== */
 const MOCK_PHONEBOOK: PhoneItem[] = [
-  { _id: 'p_1', name: '社区居委会', phone: '020-87650001', category: 'government', sort: 1, remark: '工作日 9:00-18:00' },
-  { _id: 'p_2', name: '物业服务中心', phone: '020-87650002', category: 'property', sort: 2, remark: '24 小时值班' },
-  { _id: 'p_3', name: '社区养老服务中心', phone: '020-87654321', category: 'life', sort: 3, remark: '助餐 / 助浴预约' },
+  // 号码与后端 phonebook 种子保持一致（居委会 020-88886666 / 物业 020-88888888 / 养老中心 020-88880000）
+  { _id: 'p_1', name: '社区居委会', phone: '020-88886666', category: 'government', sort: 1, remark: '工作日 9:00-18:00' },
+  { _id: 'p_2', name: '物业服务中心', phone: '020-88888888', category: 'property', sort: 2, remark: '24 小时值班' },
+  { _id: 'p_3', name: '社区养老服务中心', phone: '020-88880000', category: 'life', sort: 3, remark: '助餐 / 助浴预约' },
   { _id: 'p_4', name: '社区卫生站', phone: '020-87651120', category: 'medical', sort: 4, remark: '门诊 8:00-17:30' },
   { _id: 'p_5', name: '急救中心', phone: '120', category: 'emergency', sort: 5, remark: '医疗急救' },
   { _id: 'p_6', name: '火警', phone: '119', category: 'emergency', sort: 6, remark: '火灾救援' },
@@ -380,7 +381,8 @@ export const mockHandlers: Record<string, Handler> = {
   }),
   'workorder:cancel': () => ({ ok: true }),
   'workorder:handle': (data) => ({
-    workorder: { ...MOCK_WORKORDERS[0], status: String(data.action ?? 'processing') },
+    // CR-011：优先读定稿参数 handleAction，兼容读 action
+    workorder: { ...MOCK_WORKORDERS[0], status: String(data.handleAction ?? data.action ?? 'processing') },
   }),
 
   /* ---------- qa ---------- */

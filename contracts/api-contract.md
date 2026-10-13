@@ -1,12 +1,39 @@
 # API 契约（唯一契约，前后端共同遵守）
 
-> 版本：**v1.2**｜更新日期：2026-10-13｜资源 **8 个**（auth / user / workorder / notice / circle / service / phonebook / qa）｜动作 **19 个**（v1.1 的 15 个 + v1.2 新增 4 个）
-> 计数口径：`name:action` 逐个计数（v1.1 抬头的「14」为旧口径笔误，以本行 15 为准）。
-> 风格：云函数 `callFunction` 直调，按资源分组命名：`name = "<资源>:<动作>"`。
+> 版本：**v1.3**｜更新日期：2026-10-13｜资源 **8 个**（auth / user / workorder / notice / circle / service / phonebook / qa）｜动作 **19 个**｜错误码 **8 个**（本版零新增）
+> 计数口径：按独立的 `<资源>:<动作>` 逐个计数，当前 **19 个**
+> - **新增 4 个（v1.2）**：`notice:urgentLatest`、`circle:list`、`circle:detail`、`service:list`
+> - **扩展 3 个（v1.2）**：`notice:list`（+`includeExpired`、+`type=urgent`）、`user:updateProfile`（+`accountId`）、`auth:login`（出参 +`accountId`）
+> - 资源清单（8）：`auth` `user` `workorder` `notice` `circle` `service` `phonebook` `qa`
+>
+> ## ⚠ 调用形态（**唯一合法写法 · 形态 B**，全篇通用，见 CR-011-a）
+> ```js
+> wx.cloud.callFunction({
+>   name: '<资源>',                          // ① 云函数名 = 资源名，**不含冒号**
+>   data: { action: '<动作>', ...业务参数 }   // ② 动作一律放在 data.action，恒为分发键
+> })
+> // 例：wx.cloud.callFunction({ name: 'notice', data: { action: 'urgentLatest', limit: 5 } })
+> ```
+> - 文档中的 `xxx:yyy`（如 `notice:urgentLatest`）只是**逻辑名记法**，用于指代某个动作；**它不能出现在 `name` 字段里**。
+>   ✅ 正确：`{ name:'notice', data:{ action:'urgentLatest' } }`　❌ 错误：`{ name:'notice:urgentLatest' }`
+> - 理由：① **微信云函数名不支持冒号**；② 后端已按「资源 + action 分发」实现 8 个云函数。
+> - ⚠ **`data.action` 恒为分发键**：任何调用里 `data.action` 只能取该资源下的动作名。**禁止**把业务参数也命名为 `action`
+>   → 这是 `workorder:handle` 必须改用 `handleAction` 的根因，见该接口章节与 CR-011-b。
+> - 前端 `utils/request.ts` 已按形态 B 实现：对外的 `'notice:list'` 会被自动拆成 `name='notice'` + `data.action='list'`，与本节约定一致。
+>
+> 风格要点：`callFunction` 直调，一资源一函数，函数内以 `event.action` 路由。
 > 统一响应：`{ code: 0, msg: "ok", data: ... }`；`code !== 0` 为失败，`msg` 为可展示文案。
 > 分页：`page` 从 1 起，`pageSize` 默认 10 上限 50；时间格式 ISO8601；图片走云存储 fileID。
 > 鉴权：云函数自动取 `wxContext.OPENID`，写操作按 `users.role` 校验；不另发 token。
 > 冻结：本契约发布后冻结。变更必须更新本文件并在 `contracts/契约变更记录.md` 登记，同步前后端。
+>
+> **v1.3 变更（CR-011，措辞修正 + 参数定名，非破坏性，详见《契约变更记录》）**：
+> - **调用形态定稿为「形态 B」**：纠正抬头 `name="<资源>:<动作>"` 与示例的矛盾写法，全文统一 `name='<资源>' + data.action='<动作>'`（CR-011-a）
+> - **`workorder:handle` 业务参数定名 `handleAction`**（`assign` / `process` / `done`）；原 `action` 标注 **deprecated**，`to` 为过渡别名；后端兼容读取顺序 **`handleAction` → `to` → `action`**；新对接方一律用 `handleAction`（CR-011-b）
+> - **计数口径订正**：资源 8 个、动作 19 个、错误码 8 个（CR-011-e，修正档案残留的旧口误）
+>
+> - **`notice:urgentLatest` 的 `total`** 定稿为**截断后的 `list.length`**（CR-011-c）
+> - **`qa:ask` 知识库未命中**：`code=0` + `degraded=true` + 兜底话术 + 便民电话，**本期不新增字段**；前端按降级态渲染，**不做错误 toast**（CR-011-d）
 >
 > **v1.2 变更**（详见《契约变更记录》**CR-005 ~ CR-010**，承接已批准变更 C1「首页改版」）：
 > - `notice`：`type` 增加 `urgent` 枚举值；新增 `level` / `startAt` / `endAt` / `summary` 字段；新增 **`notice:urgentLatest`**（首页紧急区专用，取当前有效紧急通知）
@@ -17,7 +44,8 @@
 >
 > **v1.1 变更**：qa 分组补齐会话能力 —— `qa:ask` 增加 `sessionId`，新增 `qa:history`、`qa:clear`。
 >
-> **v1.2 向后兼容总纲**：① 不删除任何既有字段；② 不修改任何既有入参/出参语义；③ 只做「新增字段、新增枚举值、新增可选参数、新增接口」四类动作；④ 不新增任何错误码（完整复用下方 8 码表）。
+> **向后兼容总纲**：① 不删除任何既有字段；② 不修改任何既有入参/出参语义；③ 只做「新增字段、新增枚举值、新增可选参数、新增接口」四类动作；④ 不新增任何错误码（完整复用下方 8 码表）。
+> **`v1.3` 向后兼容性**：CR-011 全部为**措辞修正 + 参数定名**，无删除、无语义变更、无新错误码。已按旧写法实现的代码在 v1.3 下仍可正常工作（唯一需注意的是 `workorder:handle`，但因后端保留三态兼容读取，**前后端均无需返工**）。
 
 ## 错误码表
 | code | 含义 |
@@ -78,9 +106,41 @@
 - 说明：仅创建人本人，且状态为 pending 时可取消
 
 ### workorder:handle（物业/管理员）
-- 入参：`{ id: string, action: "assign" | "process" | "done", note?: string }`
+- **v1.3 定稿入参（CR-011-b）**：`{ id: string, handleAction: "assign" | "process" | "done", note?: string }`
 - 出参：`{ workorder: WorkOrder }`
 - 说明：状态流转 pending→assigned→processing→done；done 时触发订阅消息通知报修人
+- **⚠ 为什么必须叫 `handleAction` 而不能叫 `action`（冲突根因）**：
+  本接口的实际调用形态是 `{ name:'workorder', data:{ action:'handle', ... } }`——**`data.action` 已被占用为分发键，其值恒为 `'handle'`**。
+  若业务参数也命名为 `action`，后端按 `event.action` 分发到 `handle` 分支后，业务代码再读 `event.action` 只会得到 `'handle'`，**真正的流转指令被分发键覆盖丢失**（后端自测已实际踩到此坑）。
+  → 故业务入参正式定名 **`handleAction`**。这是全文**唯一**允许业务字段带 "action" 字样的地方。
+- **取值与状态映射（后端据此流转）**：
+
+  | handleAction | 流转后 `status` | 含义 |
+  | --- | --- | --- |
+  | `assign` | `assigned` | 物业派单给处理人 |
+  | `process` | `processing` | 处理人开始处理 |
+  | `done` | `done` | 处理完成；触发订阅消息通知报修人 |
+
+  > 注意：动作值是 `process`，目标状态是 `processing`，两者**不等名**，勿混写。
+- **兼容与废弃策略（CR-011-b）**：
+
+  | 参数名 | 状态 | 说明 |
+  | --- | --- | --- |
+  | `handleAction` | ✅ **正式** | **新对接方一律使用此名** |
+  | `to` | ⚠️ 过渡别名 | 保留兼容，取值同 `handleAction`；不作文档推荐写法 |
+  | `action`（业务入参） | 🚫 **deprecated** | 与分发键冲突，已废弃。**仅**作为历史调用的兜底读取，新代码禁止再写 |
+
+- **后端兼容读取顺序（强制实现）**：**`handleAction` → `to` → `action`**，取第一个非空且合法的流转值；三者皆空或取值非法 → 返回 **400**。
+  > `action` 必须排最后：形态 B 下它恒为 `'handle'`（非法流转值），只有在「调用方未走分发键」的历史路径里才可能携带真实值。
+- **前端约定**：`services/workorder.ts` 采用形态 B 下发——`data.action='handle'`（**分发键，恒为 `'handle'`**）+ `data.handleAction='<流转指令>'`（**业务参，取 `assign`/`process`/`done`**）。两者键名不同、来源不同、职责分离，不可互相替代。
+- 请求示例：
+  ```js
+  wx.cloud.callFunction({ name: 'workorder', data: { action: 'handle', id: 'wo_123', handleAction: 'process', note: '王师傅已上门' } })
+  ```
+- 响应示例：
+  ```json
+  { "code": 0, "msg": "ok", "data": { "workorder": { "id": "wo_123", "status": "processing", "handleNote": "王师傅已上门" } } }
+  ```
 
 ---
 
@@ -110,6 +170,10 @@
   - **筛选条件（后端硬实现）**：`status === 'published'` **且** `type === 'urgent'` **且** `startAt` 为空或 `startAt <= now` **且** `endAt` 为空或 `endAt >= now`。
   - **排序**：`level` 权重降序（`critical=3` > `high=2` > `normal=1`）→ `startAt` 降序 → `publishAt` 降序。
   - **截断**：取前 `limit` 条，`limit` 默认 **5**、上限 **10**（超出按 10 处理，不报错）。`limit < 1` 按 1 处理。
+  - **`total` 口径定稿（CR-011-c）**：`total` = **截断后的 `list.length`**，**不是**库中满足条件的总数。
+    - 理由：接口用途是「给首页轮播卡片取 TopN」，不是给「查看全部」做分页计数。若返库内总数（如 8）而 `list` 只有 5 条，前端会误判"还有 3 条没加载"从而渲染错误的分页/入口。
+    - 前端据此直接决定是否展示「查看全部」入口：`list.length > 0` → 展示；`= 0` → 空态。
+    - ⚠️ 「符合条件的总条数」如需统计，请调 `notice:list({ type: 'urgent', pageSize: 1 })` 读其 `total`。
   - **空态协议（重要）**：无数据时返回 `{ code: 0, msg: "ok", data: { list: [], total: 0 } }`，**不是错误**。前端收到空数组即渲染空态（文案「暂无紧急通知，社区运行正常」）。
   - **展示字段约定**：紧急区轮播单行文案优先取 `summary`，`summary` 为空时回退 `title`；详情页跳转用 `_id`。
 - 错误码：401（未登录）｜500（服务内部错误）
@@ -223,6 +287,10 @@
   - `sessionId` 缺省时服务端新建会话并在出参返回；前端需缓存并在后续提问回传，否则无法多轮。
   - **多轮上下文规则（硬性，防 token 爆炸）**：仅保留最近 **3 轮**；单条 message 截断至 **300 字**；总上下文超 **2000 tokens（估算）** 时丢弃最早轮次；会话最后活动 **2 小时**后失效。
   - 知识库检索优先；最高分低于阈值视为**未命中**，直接返回兜底话术 + 便民电话，**不调用大模型**。
+    - **未命中时的响应口径定稿（CR-011-d）**：`{ code: 0, msg: 'ok', data: { answerId, sessionId, answer: <兜底话术>, sources: [], degraded: true, <便民电话> } }`。
+    - **本期不新增任何字段**——复用既有 `degraded` + `sources` + 兜底文案里的电话信息表达"未命中"。
+    - ⚠️ **前端约定：按降级态渲染，不做错误 toast。** 未命中不是失败，`code` 为 **0**，`request` 封装层**不得**触发错误提示；渲染要求：回答区展示兜底话术 + 便民电话一键拨号，页脚保留"AI 生成仅供参考"。
+    - ❌ 对齐约定：不返回 404，不返回 503——**503 只用于 AI 服务调用失败**，**未命中一律走 `code=0 + degraded=true`**，两者前端分支必须区分处理。
   - `degraded=true` 表示 AI 不可用已降级，此时**必须**同时返回便民电话，不得只给文案。
   - 回答页脚固定展示"AI 生成仅供参考"（**服务端注入**，不依赖前端渲染）；回答字数上限 500 字。
   - 输出护栏：回答中出现的电话号码 / 政策名称 / 金额必须能在本次命中知识库文档中找到，否则替换为原文片段，仍无则降级。
@@ -427,9 +495,9 @@ interface QaSession {
 
 ---
 
-## 附 B：错误码使用说明（v1.2）
+## 附 B：错误码使用说明（v1.2 / **v1.3 修订**）
 
-> **本轮不新增任何错误码**，全部复用上方 8 码表。新增接口的码表归属如下，前后端按此实现，避免各自发挥：
+> **本轮不新增任何错误码**，全部复用上方 8 码表。各接口的码表归属如下，前后端按此实现，避免各自发挥：
 
 | 接口 | 400 | 401 | 403 | 404 | 429 | 500 | 503 |
 | --- | --- | :-: | :-: | :-: | :-: | :-: | :-: |
@@ -439,5 +507,18 @@ interface QaSession {
 | `circle:detail` | — | ✅ | — | ✅ 不存在/未发布 | — | ✅ | — |
 | `service:list` | — | ✅ | — | — | — | ✅ | — |
 | `user:updateProfile` | ✅ 格式非法 / 账号被占用 | ✅ | — | — | — | ✅ | — |
+| `workorder:handle` | ✅ **`handleAction`/`to`/`action` 三者均空或非法流转** | ✅ | ✅ 非物业/管理员 | ✅ 工单不存在 | — | ✅ | — |
+| `qa:ask` | ✅ 空输入 / 超长 / 注入 / 非社区域 | ✅ | — | — | ✅ 同 openid 10s 1 次 | ✅ | ✅ LLM 调用失败（**非未命中**） |
 
 **空态统一协议**：`list` 类接口在数据为空时一律 `{ code: 0, msg: 'ok', data: { list: [], total: 0 } }`，**禁止**用 404 表示"没数据"；只有按 ID 查询的单条接口才用 404。
+
+**v1.3 补充的判定边界（CR-011-c / CR-011-d）**
+
+| 场景 | `code` | 前端动作 |
+| --- | --- | :-: |
+| `qa:ask` **知识库未命中**（命中分 < 阈值，未调 LLM） | **0** + `degraded=true` | 按**降级态**渲染（兜底话术 + 便民电话一键拨号 + 免责页脚），**不 toast** |
+| `qa:ask` **LLM 调用失败/超时** | **0** + `degraded=true`（或 503） | 同上降级渲染；收到 503 时同样展示电话簿 Top3，**不得弹错误弹窗** |
+| `notice:urgentLatest` 无有效紧急通知 | **0** + `list:[]` | 渲染空态，不 toast |
+| `service:list` 异常 | **0** + `list:[]**（后端不得返 500） | 回退本地常量 `config/service-grid.ts` |
+
+> 一句话原则：**只有真正的业务失败（参数错/未登录/越权/不存在/限流/服务异常）才 toast；"查得到但结果为空/降级" 一律静默渲染。**

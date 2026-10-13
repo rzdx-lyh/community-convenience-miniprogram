@@ -7,7 +7,6 @@
  */
 import { EMERGENCY_FOOTER_TIP, LOCAL_EMERGENCY_CONTACTS, type EmergencyContact } from '../../config/emergency';
 import { ENV, STORAGE_KEYS } from '../../config/env';
-import { GRID_ICON_TEXT } from '../../config/service-grid';
 import { getProfile } from '../../services/auth';
 import { listUrgentLatest } from '../../services/notice';
 import { listPhonebook } from '../../services/phonebook';
@@ -19,49 +18,14 @@ import { displayName, initialOf } from '../../utils/format';
 import { track, trackPageView } from '../../utils/logger';
 import { goCircleRoad, goNoticeList, navigateByTarget } from '../../utils/navigator';
 import { toast } from '../../utils/ui';
-
-/** 社区名（本期为静态文案；后续可由定位或后端配置下发） */
-export const COMMUNITY_NAME = '阳光社区';
-
-export type UrgentState = 'loading' | 'normal' | 'empty' | 'error';
-
-export interface UrgentVM {
-  id: string;
-  title: string;
-  sub: string;
-}
-
-export interface GridVM {
-  key: string;
-  title: string;
-  /** 小字第 1 行（≤2 项，`｜` 分隔） */
-  subLine1: string;
-  /** 小字第 2 行 */
-  subLine2: string;
-  iconText: string;
-  theme: string;
-  decoText: string;
-}
-
-/** 宫格小字按 2 行排版：'挂号｜义诊｜疫苗档案' → '挂号｜义诊' / '疫苗档案' */
-export function splitSubtitle(subtitle: string): { line1: string; line2: string } {
-  const parts = String(subtitle ?? '').split('｜');
-  return { line1: parts.slice(0, 2).join('｜'), line2: parts.slice(2).join('｜') };
-}
-
-/** ServiceCategory → 宫格视图模型 */
-export function toGridVM(category: ServiceCategory): GridVM {
-  const { line1, line2 } = splitSubtitle(category.subtitle);
-  return {
-    key: category.key,
-    title: category.title,
-    subLine1: line1,
-    subLine2: line2,
-    iconText: GRID_ICON_TEXT[category.key] ?? '🏠',
-    theme: category.iconTheme,
-    decoText: '＋',
-  };
-}
+import {
+  COMMUNITY_NAME,
+  toGridVM,
+  toUrgentVM,
+  type GridVM,
+  type UrgentState,
+  type UrgentVM,
+} from './viewmodel';
 
 /** 模块级：宫格原始分类（保留 items 供点击分发）与轮播定时器 */
 let categories: ServiceCategory[] = [];
@@ -147,11 +111,7 @@ Page({
     this.setData({ urgentState: 'loading', urgentTitle: '加载中…', urgentSub: '正在获取社区紧急通知' });
     try {
       const res = await listUrgentLatest({ limit: ENV.URGENT_LIMIT });
-      const list = (res.list ?? []).map<UrgentVM>((n) => ({
-        id: n._id,
-        title: n.title,
-        sub: n.summary || n.title, // 契约：summary 为空回退 title
-      }));
+      const list = (res.list ?? []).map<UrgentVM>(toUrgentVM); // summary 为空回退 title（契约约定）
       if (list.length === 0) {
         // 空态协议：空数组是合法结果，不是错误
         this.stopSwipe();
@@ -220,14 +180,7 @@ Page({
       goNoticeList({});
       return;
     }
-    const current = this.data.urgentList[this.data.urgentIndex];
-    if (current) {
-      wx.navigateTo({
-        url: `/pages/notice/list/index?type=urgent&id=${current.id}`,
-        fail: () => goNoticeList({ type: 'urgent' }),
-      });
-      return;
-    }
+    // 契约附 A.3：通知列表页只认 type / tag 两个入参；不再自造 id 参数（lead 2026-10-14 裁决）
     goNoticeList({ type: 'urgent' });
   },
 

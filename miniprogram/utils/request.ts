@@ -83,11 +83,32 @@ async function rawCallWithRelogin<T>(name: string, data: Record<string, unknown>
 }
 
 /**
+ * 真实通道分发（形态 B，2026-10-14 与后端定稿）
+ *
+ * 调用形态：`wx.cloud.callFunction({ name: '<资源>', data: { action: '<动作>', ...业务入参 } })`
+ * - `name` = 云函数目录名（auth / user / workorder / notice / circle / service / phonebook / qa）
+ * - `data.action` = 分发键（动作名）
+ *
+ * service 层仍以契约的 `'<资源>:<动作>'` 字符串（如 `'workorder:handle'`）调用，
+ * 由本函数统一拆分 —— service 层永不手写 name，也不必关心分发键。
+ *
+ * ⚠ 契约抬头那句 `name = "<资源>:<动作>"` 与它自己的 `notice:urgentLatest` 请求示例矛盾，
+ *    属表述残留；以**请求示例 + 后端实现**为准（形态 B），架构师将在 CR-011 订正抬头表述。
+ * ⚠ `action` 必须放在展开的**最后**：形态 B 下它与业务入参同名（如 workorder:handle 的业务入参
+ *    历史上也叫 action），放在最后可保证分发键永不被业务字段覆盖；业务值一律走 `handleAction`。
+ */
+function dispatch<T>(name: string, data: Record<string, unknown>): Promise<T> {
+  if (name.indexOf(':') < 0) return rawCallWithRelogin<T>(name, data);
+  const [resource, action] = name.split(':');
+  return rawCallWithRelogin<T>(resource, { ...data, action });
+}
+
+/**
  * 全站唯一请求出口。
  * @param name 云函数动作名，严格照抄契约，如 'notice:urgentLatest'（半角冒号）
  * @param data 入参对象，字段与契约入参一致
  */
 export function call<T>(name: string, data: Record<string, unknown> = {}): Promise<T> {
   if (ENV.USE_MOCK) return mockDispatch<T>(name, data);
-  return rawCallWithRelogin<T>(name, data);
+  return dispatch<T>(name, data);
 }

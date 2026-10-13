@@ -4,7 +4,17 @@
  */
 import { ENV } from '../config/env';
 
-export type TrackEvent = 'page_view' | 'btn_click' | 'api_call' | 'api_fail';
+/**
+ * 埋点事件名。
+ * 说明：'workorder_create' 为报修提交成功事件（FE-3 页面已使用），故在此登记。
+ * 新增事件请在此扩展，避免页面层传字符串字面量被 TS 拦下。
+ */
+export type TrackEvent =
+  | 'page_view'
+  | 'btn_click'
+  | 'api_call'
+  | 'api_fail'
+  | 'workorder_create';
 
 export function track(event: TrackEvent, params: Record<string, unknown> = {}): void {
   const record = { event, params, ts: Date.now() };
