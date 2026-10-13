@@ -442,6 +442,18 @@ current = 'CR-012';
   expect('高风险连续提问不被限流拦截', emg2.code, 0);
   expect('高风险连续提问仍返回 emergency', emg2.data._riskLevel, 'emergency');
 
+  // ⑧ 劳动纠纷类补词（工伤 / 伤残鉴定 / 拖欠工资）须落 legal，而非被 medical 吞掉或走大模型
+  for (const [q, label] of [
+    ['工伤怎么赔偿？', '工伤'],
+    ['工伤认定怎么办，需要什么材料？', '工伤认定'],
+    ['伤残鉴定去哪里做', '伤残鉴定'],
+    ['公司拖欠工资三个月了', '拖欠工资'],
+  ]) {
+    const r = await call('qa', 'ask', { question: q }, 'mock-risk-legal-1');
+    expect(`劳动纠纷「${label}」命中 legal`, r.data._riskLevel, 'legal');
+    expectTrue(`劳动纠纷「${label}」话术含 12348`, /12348/.test(r.data.answer), r.data.answer.slice(0, 40));
+  }
+
   console.log('[CR-012] 示例话术（涉医）：' + med.data.answer);
   console.log('[CR-012] 示例话术（涉法）：' + legal.data.answer);
   console.log('[CR-012] 示例话术（紧急）：' + emg.data.answer);

@@ -1,7 +1,7 @@
 {
-  "ranAt": "2026-10-13T17:57:05.328Z",
-  "total": 140,
-  "passed": 140,
+  "ranAt": "2026-10-13T18:05:27.377Z",
+  "total": 148,
+  "passed": 148,
   "failed": 0,
   "results": [
     {
@@ -50,13 +50,13 @@
       "card": "BE-12",
       "name": "accountId 格式合法 /^[a-z][a-z0-9_]{3,19}$/",
       "pass": true,
-      "detail": "linju_udfx4x"
+      "detail": "linju_kjrp57"
     },
     {
       "card": "BE-12",
       "name": "accountId 前缀 linju_",
       "pass": true,
-      "detail": "linju_udfx4x"
+      "detail": "linju_kjrp57"
     },
     {
       "card": "BE-12",
@@ -68,7 +68,7 @@
       "card": "BE-12",
       "name": "生成结果全部符合格式",
       "pass": true,
-      "detail": "linju_xr6zn9,linju_t8eubw,linju_z8bqfq"
+      "detail": "linju_a9uzu7,linju_8mdh29,linju_szyx7n"
     },
     {
       "card": "BE-12",
@@ -86,13 +86,13 @@
       "card": "BE-12",
       "name": "懒迁移后 accountId 有值",
       "pass": true,
-      "detail": "linju_s6qq9r"
+      "detail": "linju_6286n2"
     },
     {
       "card": "BE-12",
       "name": "懒迁移已回写 users 集合",
       "pass": true,
-      "detail": "linju_s6qq9r"
+      "detail": "linju_6286n2"
     },
     {
       "card": "BE-12",
@@ -843,6 +843,54 @@
       "name": "高风险连续提问仍返回 emergency",
       "pass": true,
       "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「工伤」命中 legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「工伤」话术含 12348",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材"
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「工伤认定」命中 legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「工伤认定」话术含 12348",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材"
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「伤残鉴定」命中 legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「伤残鉴定」话术含 12348",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材"
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「拖欠工资」命中 legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「拖欠工资」话术含 12348",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材"
     }
   ]
 }
