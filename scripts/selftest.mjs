@@ -315,8 +315,12 @@ current = 'BE-1~8';
 {
   // phonebook
   const pb = await call('phonebook', 'list', {}, 'mock-resident-1');
-  expect('phonebook:list 返回 9 条', pb.data.list.length, 9);
+  expect('phonebook:list 返回 11 条', pb.data.list.length, 11);
   expect('phonebook category=medical → 1 条', (await call('phonebook', 'list', { category: 'medical' }, 'mock-resident-1')).data.list.length, 1);
+  // 紧急求助面板数据源：110 / 119 / 120 三条必须齐全（CR-011 后口径以 seed-data.json 为真源）
+  const pbEmg = await call('phonebook', 'list', { category: 'emergency' }, 'mock-resident-1');
+  expect('phonebook category=emergency → 3 条', pbEmg.data.list.length, 3);
+  expect('emergency 号码集合为 120/110/119', pbEmg.data.list.map((p) => p.phone).sort(), ['110', '119', '120']);
 
   // workorder 数据隔离
   const mine = await call('workorder', 'list', {}, 'mock-resident-1');
