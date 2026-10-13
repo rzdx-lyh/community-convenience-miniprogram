@@ -13,3 +13,7 @@ miniprogram/**/*.js
 
 # 自测产物：每次 node scripts/selftest.mjs 都会重写，留着只会制造合并冲突
 scripts/selftest-report.json
+
+# 种子数据产物：由 node scripts/seed.mjs 生成（真源是 seed.mjs 本身），
+# 每次重跑都会因相对时间戳而改变，入库只会制造冲突；需要时重跑脚本即可
+scripts/seed-data.json

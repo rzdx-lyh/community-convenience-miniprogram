@@ -315,5 +315,9 @@ console.log(`  users=${users.length}  workorders=${workorders.length}  notices=$
 console.log(`  紧急通知 ${urgent.length} 条，其中当前有效 ${inEffect.length} 条：` +
   urgent.map((n) => `${n._id}(${n.level}${inEffect.includes(n) ? '·有效' : '·不在有效期'})`).join(' '));
 console.log('  ⚠ 10-23 打包前请重跑本脚本，确保紧急通知仍在有效期内。');
-console.log('  ⚠ phonebook 的社区服务号（020-8888xxxx 段）为演示占位号，真环境需整体替换；' +
-  '改号路径：改 shared/hotline.js → 重跑本脚本 → 重新导入 → 通知前端同步 mock → 跑 selftest。');
+console.log('  ⚠ phonebook 共 11 条，替换范围分两类（CR-015-a / CR-016）：');
+console.log('     可替换 8 条：020-8888xxxx 段社区服务号（演示占位号，真环境替换为各社区实际号码）');
+console.log('     ⛔ 严禁替换 3 条：110 / 119 / 120 —— 国家公开紧急号码，');
+console.log('        换掉会导致居民照安全话术拨错号，属安全事故，不是体验问题。');
+console.log('     改号唯一路径：改 shared/hotline.js → 重跑本脚本 → 重新导入 → 通知前端同步 mock → 跑 selftest。');
+console.log('     ⛔ 禁止在云控制台手工编辑 phonebook 号码（hotline.js 是唯一真源）。');
