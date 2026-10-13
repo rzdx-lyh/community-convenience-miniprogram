@@ -667,6 +667,21 @@ module.exports = { checkRole }
 
 ### 7.7 AI 调用链设计（DeepSeek 完整方案）
 
+> ⚠️ **本节已于 2026-10-13 部分被 `09-AI工程师-skill.md` + 契约 v1.1 取代（CR-001 / CR-002）**。阅读时注意以下差异：
+>
+> | 本节内容 | v1.1 定稿 | 权威来源 |
+> | --- | --- | --- |
+> | `qa.ask` 入参 `{ question, history? }` | 改为 `{ question, elderMode?, sessionId? }`，新增 `sessionId` 出参 | `api-contract.md` §qa |
+> | 无会话概念 | 新增 `qa_sessions` 集合，多轮上下文保留最近 3 轮 | `db-schema.md` §qa_sessions |
+> | 知识库塞进 `qa_feedback` 集合 | 改为 `cloudfunctions/shared/kb/kb.json`；`qa_feedback` 收敛为纯反馈表 | `api-contract.md` 末节附录 |
+> | 无输入/输出护栏 | 新增双层护栏：输入侧 6 条规则、输出侧引用校验 | `09-AI工程师-skill.md` §7-④⑤ |
+> | 错误码 `3001/3002/3003` | 统一为 **503** | 本文件 §7.4 |
+> | 无未命中阈值 | 检索最高分 < 1.0 → 不调用模型，直接兜底 | `09-AI工程师-skill.md` §7-⑤ / §12 |
+>
+> **本节仍然有效的部分**：DeepSeek 请求体写法、RAG 关键词检索**基础**算法、8s 超时降级实现、成本估算方法、Prompt 模板骨架。**新增的护栏、引用校验、会话压缩、未命中阈值、Prompt 版本化与评测体系，一律以 `09-AI工程师-skill.md` 为准。**
+>
+> **角色归属变更**：AI 相关规格（契约提案、检索与护栏规则、Prompt 版本、Eval Harness、AI 埋点与成本口径）自 v1.1 起由**新增的 AI 工程师角色**负责；架构师保留调用链与云函数超时预算的决策权。
+
 **链路**：小程序 → `qa`/`workorder` 云函数 → RAG 关键词检索（云数据库）→ DeepSeek `chat/completions` → 结构化输出 → 日志入库 → 返回；失败走降级。
 
 **DeepSeek 请求体（cloudfunctions/common/llm.js，真实可跑）**：
