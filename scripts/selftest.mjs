@@ -390,6 +390,59 @@ current = 'BE-1~8';
   expect('qa:suggest → 5 条快捷提问', (await call('qa', 'suggest', {}, 'mock-resident-1')).data.questions.length, 5);
 }
 
+/* ============================== CR-012 安全话术 ============================== */
+current = 'CR-012';
+{
+  // 前置：qa:ask 需登录态，为三个风险场景 openid 建档（首次登录自动建档）
+  for (const oid of ['mock-risk-med-1', 'mock-risk-legal-1', 'mock-risk-emg-1', 'mock-risk-none-1']) {
+    await call('auth', 'login', {}, oid);
+  }
+
+  // ① 涉医 —— 命中即固定话术，含「请尽快就医或拨打 120」，不调模型
+  const med = await call('qa', 'ask', { question: '我爸突然胸痛出汗，怎么办？' }, 'mock-risk-med-1');
+  expect('涉医 → 200（不是 400）', med.code, 0);
+  expect('涉医 _riskLevel=medical', med.data._riskLevel, 'medical');
+  expect('涉医 degraded=true', med.data.degraded, true);
+  expect('涉医 sources 为空（未走知识库）', med.data.sources, []);
+  expectTrue('涉医话术含「请尽快就医或拨打 120」', /请尽快就医或拨打 120/.test(med.data.answer), med.data.answer.slice(0, 60));
+
+  // ② 涉法 —— 引导到社区法律援助，不调模型
+  const legal = await call('qa', 'ask', { question: '物业一直不修，我想起诉他们' }, 'mock-risk-legal-1');
+  expect('涉法 _riskLevel=legal', legal.data._riskLevel, 'legal');
+  expectTrue('涉法话术含法律援助引导', /法律援助/.test(legal.data.answer), legal.data.answer.slice(0, 60));
+  expectTrue('涉法话术含居委会电话 020-88886666', /020-88886666/.test(legal.data.answer));
+
+  // ③ 紧急求助 —— 直接给应急号码
+  const emg = await call('qa', 'ask', { question: '楼道里着火了，我该怎么办' }, 'mock-risk-emg-1');
+  expect('紧急求助 _riskLevel=emergency', emg.data._riskLevel, 'emergency');
+  expectTrue('紧急话术含 119', /119/.test(emg.data.answer));
+  expectTrue('紧急话术含 110 与 120', /110/.test(emg.data.answer) && /120/.test(emg.data.answer));
+  expectTrue('紧急话术提示便民电话簿', /便民电话簿/.test(emg.data.answer));
+
+  // ④ 高风险不触发大模型：话术不含知识库原文（无 Key 时本会回落知识库原文）
+  expectTrue('高风险未回落知识库原文（未调用大模型）', !/报修流程指南/.test(med.data.answer));
+  expectTrue('安全话术未追加「AI 生成仅供参考」（非 AI 生成）', !/AI 生成仅供参考/.test(med.data.answer));
+
+  // ⑤ 普通问题不受影响，_riskLevel 恒为 none（向后兼容）
+  const normal = await call('qa', 'ask', { question: '家里水管漏水怎么报修？' }, 'mock-risk-none-1');
+  expect('普通问题 _riskLevel=none', normal.data._riskLevel, 'none');
+  expectTrue('普通问题仍走知识库（sources 非空）', (normal.data.sources || []).length > 0);
+
+  // ⑥ _riskLevel 字段在全部 qa:ask 出参中存在（新增可选字段，向后兼容）
+  expectTrue('qa:ask 出参恒含 _riskLevel 字段',
+    ['medical', 'legal', 'emergency', 'none'].includes(med.data._riskLevel) &&
+    ['none'].includes(normal.data._riskLevel));
+
+  // ⑦ 高风险不受 1 次/2s 限流阻塞（连续两次同类提问都返回 200）
+  const emg2 = await call('qa', 'ask', { question: '厨房燃气泄漏了' }, 'mock-risk-emg-1');
+  expect('高风险连续提问不被限流拦截', emg2.code, 0);
+  expect('高风险连续提问仍返回 emergency', emg2.data._riskLevel, 'emergency');
+
+  console.log('[CR-012] 示例话术（涉医）：' + med.data.answer);
+  console.log('[CR-012] 示例话术（涉法）：' + legal.data.answer);
+  console.log('[CR-012] 示例话术（紧急）：' + emg.data.answer);
+}
+
 /* --------------------------------- 汇总输出 --------------------------------- */
 const passed = results.filter((r) => r.pass).length;
 const failed = results.length - passed;

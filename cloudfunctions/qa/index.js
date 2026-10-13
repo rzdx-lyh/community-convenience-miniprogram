@@ -23,6 +23,50 @@ const MAX_TURNS = 6;
 const MAX_ANSWER_LEN = 500;
 const INJECTION_RE = /(忽略(以上|前面|之前|上述)|ignore\s+(previous|above)|无视(以上|前面))/i;
 
+/* ------------------------------------------------------------------ *
+ * CR-012 · 高风险输入护栏（涉医 / 涉法 / 紧急求助）
+ * 命中即返回固定安全话术 + _riskLevel，【不调用大模型】：
+ *   ① 省 token  ② 避免模型在急症/法律场景下胡说  ③ 话术给出明确动作，不含"建议"等模糊表述
+ * 新增字段 _riskLevel 为可选出参（'none'|'medical'|'legal'|'emergency'），纯向后兼容，零新增错误码。
+ * 判定顺序：紧急求助 → 涉医 → 涉法（同一问题命中多类时取最需要立即行动的一类）。
+ * ------------------------------------------------------------------ */
+const RISK_RULES = [
+  {
+    level: 'emergency',
+    re: /(着火|起火|火灾|煤气泄漏|燃气泄漏|燃气味|漏水漏电|电梯困人|被困电梯|有人晕倒|救命|急病|突发疾病)/,
+    text:
+      '这是紧急情况，请立刻拨打应急电话：火警 119 / 报警 110 / 急救 120。' +
+      '接通后说明小区名称、楼栋单元与现场情况，并在安全位置等待救援。' +
+      '如需联系物业协助，请拨打物业值班电话 020-88888888；更多号码可在小程序「便民电话簿」查看。',
+  },
+  {
+    level: 'medical',
+    re: /(胸痛|胸闷|心梗|中风|昏迷|晕倒|抽搐|大出血|止不住血|中毒|误服|窒息|呼吸困难|高烧不退|剧烈疼痛|流产|骨折|烫伤|触电|溺水|自杀|想死|轻生)/,
+    text:
+      '身体不适我不能给出判断，请尽快就医或拨打 120。现在就做：' +
+      '1）立即停止自行用药与自行处理；2）让家人陪同前往最近医院急诊；' +
+      '3）独居老人可按紧急呼叫按钮或拨打物业值班电话 020-88888888 求助；' +
+      '4）出现意识不清、呼吸困难、大量出血时直接打 120，不要自行前往。',
+  },
+  {
+    level: 'legal',
+    re: /(起诉|打官司|律师|法院|开庭|离婚|遗产|遗嘱|抚养权|劳动仲裁|合同违约|违约赔偿|赔偿标准|立案|被拘留|被抓)/,
+    text:
+      '法律纠纷我不能给出结论性意见。现在就做：' +
+      '1）携带身份证、合同、照片与缴费凭证等材料；2）到社区居委会（020-88886666）申请免费法律援助，由值班律师当面解答；' +
+      '3）需要即时咨询请拨打公共法律服务热线 12348；4）涉及人身安全或正在发生的违法行为，先拨打 110。',
+  },
+];
+
+/** 返回命中的风险规则，未命中返回 null */
+function detectRisk(question) {
+  const q = String(question || '');
+  for (const rule of RISK_RULES) {
+    if (rule.re.test(q)) return rule;
+  }
+  return null;
+}
+
 const newSessionId = () => 's_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 const newAnswerId = () => 'qa_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
@@ -76,6 +120,43 @@ async function ask(event) {
   if (!question) return fail(CODES.PARAM, '问题不能为空');
   if (question.length > 300) return fail(CODES.PARAM, '问题不超过 300 字');
   if (INJECTION_RE.test(question)) return fail(CODES.PARAM, '问题包含不合规内容，请换个说法');
+
+  // CR-012：高风险优先判定 —— 放在限流之前，紧急求助不应被频率限制挡住
+  const risk = detectRisk(question);
+  if (risk) {
+    console.log(`[qa][risk] 命中高风险：${risk.level}（不调用大模型）`);
+    const riskAnswerId = newAnswerId();
+    const riskNow = isoNow();
+    const riskSessionId = String(event.sessionId || '').trim() || newSessionId();
+    const riskSession = await loadSession(openid, riskSessionId);
+    const riskHistory = riskSession && Array.isArray(riskSession.turns) ? riskSession.turns.slice() : [];
+    const riskTurns = trimTurns([
+      ...riskHistory,
+      { role: 'user', content: question.slice(0, 300), createdAt: riskNow },
+      { role: 'assistant', content: risk.text.slice(0, 300), createdAt: riskNow, answerId: riskAnswerId, sources: [], degraded: true, _riskLevel: risk.level },
+    ]);
+    const riskPayload = {
+      _openid: openid,
+      sessionId: riskSessionId,
+      turns: riskTurns,
+      turnCount: (riskSession && riskSession.turnCount ? riskSession.turnCount : 0) + 1,
+      updatedAt: riskNow,
+    };
+    if (riskSession) {
+      await db.collection('qa_sessions').doc(riskSession._id).update({ data: riskPayload }).catch(() => ({ stats: { updated: 0 } }));
+    } else {
+      await db.collection('qa_sessions').add({ data: Object.assign({ createdAt: riskNow }, riskPayload) }).catch(() => ({}));
+    }
+    // 安全话术非 AI 生成，不追加「AI 生成仅供参考」免责声明
+    return ok({
+      answerId: riskAnswerId,
+      sessionId: riskSessionId,
+      answer: risk.text,
+      sources: [],
+      degraded: true,
+      _riskLevel: risk.level,
+    });
+  }
 
   if (overLimit(`qa:ask:${openid}`, RULE.QA_ASK.limit, RULE.QA_ASK.windowMs)) {
     return fail(CODES.RATE, '提问太频繁，请稍后再试');
@@ -152,7 +233,8 @@ async function ask(event) {
   }
 
   console.log(`[qa] ask degraded=${degraded} hits=${hits.length} session=${sessionId}`);
-  return ok({ answerId, sessionId, answer, sources, degraded });
+  // _riskLevel='none' 为 CR-012 新增可选字段，未命中高风险时恒为 'none'（向后兼容）
+  return ok({ answerId, sessionId, answer, sources, degraded, _riskLevel: 'none' });
 }
 
 /* ------------------------------ qa:history ------------------------------ */

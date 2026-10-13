@@ -1,7 +1,7 @@
 {
-  "ranAt": "2026-10-13T17:00:12.937Z",
-  "total": 119,
-  "passed": 119,
+  "ranAt": "2026-10-13T17:49:50.109Z",
+  "total": 138,
+  "passed": 138,
   "failed": 0,
   "results": [
     {
@@ -50,13 +50,13 @@
       "card": "BE-12",
       "name": "accountId 格式合法 /^[a-z][a-z0-9_]{3,19}$/",
       "pass": true,
-      "detail": "linju_jjuz5t"
+      "detail": "linju_bzevbj"
     },
     {
       "card": "BE-12",
       "name": "accountId 前缀 linju_",
       "pass": true,
-      "detail": "linju_jjuz5t"
+      "detail": "linju_bzevbj"
     },
     {
       "card": "BE-12",
@@ -68,7 +68,7 @@
       "card": "BE-12",
       "name": "生成结果全部符合格式",
       "pass": true,
-      "detail": "linju_xhrmnd,linju_zhtahs,linju_94h2vy"
+      "detail": "linju_qpqvn6,linju_dvefp4,linju_yb4k3y"
     },
     {
       "card": "BE-12",
@@ -86,13 +86,13 @@
       "card": "BE-12",
       "name": "懒迁移后 accountId 有值",
       "pass": true,
-      "detail": "linju_w5p9ya"
+      "detail": "linju_wvhzek"
     },
     {
       "card": "BE-12",
       "name": "懒迁移已回写 users 集合",
       "pass": true,
-      "detail": "linju_w5p9ya"
+      "detail": "linju_wvhzek"
     },
     {
       "card": "BE-12",
@@ -715,6 +715,120 @@
     {
       "card": "BE-1~8",
       "name": "qa:suggest → 5 条快捷提问",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医 → 200（不是 400）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医 _riskLevel=medical",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医 degraded=true",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医 sources 为空（未走知识库）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医话术含「请尽快就医或拨打 120」",
+      "pass": true,
+      "detail": "身体不适我不能给出判断，请尽快就医或拨打 120。现在就做：1）立即停止自行用药与自行处理；2）让家人陪同前往最近医院急"
+    },
+    {
+      "card": "CR-012",
+      "name": "涉法 _riskLevel=legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉法话术含法律援助引导",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材料；2）到社区居委会（020-88886"
+    },
+    {
+      "card": "CR-012",
+      "name": "涉法话术含居委会电话 020-88886666",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "紧急求助 _riskLevel=emergency",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "紧急话术含 119",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "紧急话术含 110 与 120",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "紧急话术提示便民电话簿",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "高风险未回落知识库原文（未调用大模型）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "安全话术未追加「AI 生成仅供参考」（非 AI 生成）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "普通问题 _riskLevel=none",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "普通问题仍走知识库（sources 非空）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "qa:ask 出参恒含 _riskLevel 字段",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "高风险连续提问不被限流拦截",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "高风险连续提问仍返回 emergency",
       "pass": true,
       "detail": ""
     }
