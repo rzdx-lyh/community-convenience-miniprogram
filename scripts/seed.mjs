@@ -161,6 +161,7 @@ const phonebook = [
   { _id: 'pb-7', name: '开锁服务', phone: '020-88881111', category: 'life', sort: 7, remark: '公安局备案' },
   { _id: 'pb-8', name: '急救中心', phone: '120', category: 'emergency', sort: 8 },
   // v1.2 增量：宫格「助浴」一键拨号的承接目标（契约 §service:list 承接方案）
+  // ⚠ 020-88880000 为占位号，真环境请替换为社区养老服务中心真实号码（改这里即可，service_category 与知识库已同步引用该号）
   { _id: 'pb-9', name: '社区养老服务中心', phone: '020-88880000', category: 'life', sort: 9, remark: '助餐｜助浴｜上门陪护' },
 ];
 
