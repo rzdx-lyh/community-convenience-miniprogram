@@ -1,0 +1,896 @@
+{
+  "ranAt": "2026-10-13T18:08:24.689Z",
+  "total": 148,
+  "passed": 148,
+  "failed": 0,
+  "results": [
+    {
+      "card": "BE-0",
+      "name": "统一响应恒为 {code,msg,data}",
+      "pass": true,
+      "detail": "[\"code\",\"msg\",\"data\"]"
+    },
+    {
+      "card": "BE-0",
+      "name": "成功响应 code=0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-0",
+      "name": "未知 action → 400（不发明新码）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-0",
+      "name": "无云环境时自动切 mock DB",
+      "pass": true,
+      "detail": "__isMock=true"
+    },
+    {
+      "card": "BE-0",
+      "name": "DEEPSEEK_API_KEY 未配置（验证无 Key 降级路径）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-0",
+      "name": "mock DB 自动载入种子 notices",
+      "pass": true,
+      "detail": "notices=7"
+    },
+    {
+      "card": "BE-12",
+      "name": "新用户登录 profile.accountId 有值",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-12",
+      "name": "accountId 格式合法 /^[a-z][a-z0-9_]{3,19}$/",
+      "pass": true,
+      "detail": "linju_8dy9qp"
+    },
+    {
+      "card": "BE-12",
+      "name": "accountId 前缀 linju_",
+      "pass": true,
+      "detail": "linju_8dy9qp"
+    },
+    {
+      "card": "BE-12",
+      "name": "生成 20 次全部唯一（0 冲突）",
+      "pass": true,
+      "detail": "unique=20/20"
+    },
+    {
+      "card": "BE-12",
+      "name": "生成结果全部符合格式",
+      "pass": true,
+      "detail": "linju_tbbcb4,linju_ddwwd8,linju_tafvp3"
+    },
+    {
+      "card": "BE-12",
+      "name": "种子含 accountId 为空的老用户（前置条件）",
+      "pass": true,
+      "detail": "mock-legacy-1"
+    },
+    {
+      "card": "BE-12",
+      "name": "老用户懒迁移后返回成功",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-12",
+      "name": "懒迁移后 accountId 有值",
+      "pass": true,
+      "detail": "linju_xh9p8k"
+    },
+    {
+      "card": "BE-12",
+      "name": "懒迁移已回写 users 集合",
+      "pass": true,
+      "detail": "linju_xh9p8k"
+    },
+    {
+      "card": "BE-12",
+      "name": "非法格式「Abc」→ 400",
+      "pass": true,
+      "detail": "code=400 msg=社区账号需 4-20 位小写字母开头，可含数字和下划线"
+    },
+    {
+      "card": "BE-12",
+      "name": "非法格式「ab」→ 400",
+      "pass": true,
+      "detail": "code=400 msg=社区账号需 4-20 位小写字母开头，可含数字和下划线"
+    },
+    {
+      "card": "BE-12",
+      "name": "非法格式「a b c」→ 400",
+      "pass": true,
+      "detail": "code=400 msg=社区账号需 4-20 位小写字母开头，可含数字和下划线"
+    },
+    {
+      "card": "BE-12",
+      "name": "非法格式「中文账号」→ 400",
+      "pass": true,
+      "detail": "code=400 msg=社区账号需 4-20 位小写字母开头，可含数字和下划线"
+    },
+    {
+      "card": "BE-12",
+      "name": "占用他人账号 → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-12",
+      "name": "占用他人账号 msg 与契约一致",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-12",
+      "name": "改为自己当前账号 → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-12",
+      "name": "自己当前账号保持不变",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-12",
+      "name": "合法修改 → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-12",
+      "name": "入库前 toLowerCase().trim()",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-12",
+      "name": "未登录修改资料 → 401",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "urgentLatest code=0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "urgentLatest 返回 3 条当前有效紧急通知",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "每条都带 summary 字段",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "level 排序：critical 在最前",
+      "pass": true,
+      "detail": "critical"
+    },
+    {
+      "card": "BE-9",
+      "name": "total 与 list 一致",
+      "pass": true,
+      "detail": "total=3"
+    },
+    {
+      "card": "BE-9",
+      "name": "limit=0 按 1 处理",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "limit=999 按上限 10 处理",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "全部过期 → code=0（不是 404/500）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "全部过期 → 空态 {list:[],total:0}",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "startAt 未到生效时间 → 不返回",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "notice:list(type=notice) total=2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "不含 urgent 与 draft",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "notice:list(type=activity) total=1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "notice:list() 全量 published = 6",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "notice:list(type=urgent) 默认 3 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "notice:list 默认过滤已过期 urgent",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "includeExpired=true 返回全部",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "pageSize=1 返回 1 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "total 仍为过滤后总数 2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "type 取值非法 → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "未登录 → 401",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "未登录 urgentLatest → 401",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "detail 不存在 → 404",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "detail 草稿 → 404",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "detail 正常 → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-9",
+      "name": "detail 出参为 {notice}",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "circle:list 无参返回 8 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "仅返回 published",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "draft 被过滤（仍为 8 条）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "type=road 返回 ≥3 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "type 取值非法 → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "tag 精确匹配「施工」→ 1 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "tag 无匹配 → 0 条且 code=0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "keyword 模糊匹配命中 ≥1 条",
+      "pass": true,
+      "detail": "total=1"
+    },
+    {
+      "card": "BE-10",
+      "name": "排序：topFlag 优先",
+      "pass": true,
+      "detail": "cp-1"
+    },
+    {
+      "card": "BE-10",
+      "name": "分页 pageSize=3 → 3 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "分页 total=8",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "circle:detail → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "出参不含 authorOpenid",
+      "pass": true,
+      "detail": "_id,title,content,type,tags,authorName,authorRole,images,sourceType,status,topFlag,viewCount,publishAt,createdAt,updatedAt"
+    },
+    {
+      "card": "BE-10",
+      "name": "连续调用 2 次 viewCount 递增 2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "detail 不存在 → 404",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "未登录 → 401",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-10",
+      "name": "列表出参同样剔除 authorOpenid",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "service:list code=0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "返回 4 条分类",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "按 sort 升序",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "每条含非空 items",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "targetType 全在契约枚举内",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "8 个子项中 0 个 toast",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "phone 类型号码合法",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "targetType=page 的 targetPath 均在 app.json pages 内",
+      "pass": true,
+      "detail": "pages/phonebook/index,pages/repair/create/index"
+    },
+    {
+      "card": "BE-11",
+      "name": "key=life 只返 1 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "key 不存在 → code=0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "key 不存在 → 空数组（不报错）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "未登录 → 401",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "DB 异常/无数据 → code=0（不返 500）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-11",
+      "name": "DB 异常 → 空列表（前端回退本地常量）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "phonebook:list 返回 11 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "phonebook category=medical → 1 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "phonebook category=emergency → 3 条",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "emergency 号码集合为 120/110/119",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "居民仅见本人工单（3 条）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "物业可见全部工单",
+      "pass": true,
+      "detail": "total=3"
+    },
+    {
+      "card": "BE-1~8",
+      "name": "越权查看他人工单 → 403",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "工单不存在 → 404",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "workorder:create → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "无 Key 时 aiSummary 仍有兜底值",
+      "pass": true,
+      "detail": "卫生间地漏返味：卫生间地漏返味严重，怀疑存水弯干涸，请上门检查。"
+    },
+    {
+      "card": "BE-1~8",
+      "name": "内容安全未通过 → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "标题为空 → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "分类非法 → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "居民 handle → 403",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "pending→assigned 合法",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "assigned→processing 合法",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "processing→done 合法（触发订阅消息降级日志）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "终态后再流转 → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "兼容 action 被覆盖的写法（{action:\"assign\"}）",
+      "pass": true,
+      "detail": "code=400 msg=状态流转不合法：processing→assigned"
+    },
+    {
+      "card": "BE-1~8",
+      "name": "本人取消 pending 工单 → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "取消他人待受理工单 → 403",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "qa:ask 知识库命中 → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "无 Key 时 degraded=true",
+      "pass": true,
+      "detail": "degraded=true"
+    },
+    {
+      "card": "BE-1~8",
+      "name": "命中时 sources 非空（来源可溯）",
+      "pass": true,
+      "detail": "报修流程指南"
+    },
+    {
+      "card": "BE-1~8",
+      "name": "出参含 sessionId",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "未命中 → 仍返回 200（不报错）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "未命中 sources 为空",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "未命中时必须附便民电话",
+      "pass": true,
+      "detail": "抱歉，我暂时无法回答这个问题。您可以：1）拨打物业服务中心 020-888888"
+    },
+    {
+      "card": "BE-1~8",
+      "name": "降级回知识库原文时注入免责声明",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "qa:ask 空输入 → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "qa:ask 超长（>300 字）→ 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "qa:ask 提示注入 → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "qa:history → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "history 至少含 1 问 1 答",
+      "pass": true,
+      "detail": "total=2"
+    },
+    {
+      "card": "BE-1~8",
+      "name": "qa:feedback 缺 answerId → 400",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "qa:feedback → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "qa:clear → 200",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "BE-1~8",
+      "name": "qa:suggest → 5 条快捷提问",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医 → 200（不是 400）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医 _riskLevel=medical",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医 degraded=true",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医 sources 为空（未走知识库）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉医话术含「请尽快就医或拨打 120」",
+      "pass": true,
+      "detail": "身体不适我不能给出判断，请尽快就医或拨打 120。现在就做：1）立即停止自行用药与自行处理；2）让家人陪同前往最近医院急"
+    },
+    {
+      "card": "CR-012",
+      "name": "涉法 _riskLevel=legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "涉法话术含法律援助引导",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材料；2）到社区居委会（020-88886"
+    },
+    {
+      "card": "CR-012",
+      "name": "涉法话术含居委会电话 020-88886666",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "紧急求助 _riskLevel=emergency",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "紧急话术含 119",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "紧急话术含 110 与 120",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "紧急话术提示便民电话簿",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "高风险未回落知识库原文（未调用大模型）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "安全话术未追加「AI 生成仅供参考」（非 AI 生成）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "普通问题 _riskLevel=none",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "普通问题仍走知识库（sources 非空）",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "qa:ask 出参恒含 _riskLevel 字段",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "高风险连续提问不被限流拦截",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "高风险连续提问仍返回 emergency",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「工伤」命中 legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「工伤」话术含 12348",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材"
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「工伤认定」命中 legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「工伤认定」话术含 12348",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材"
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「伤残鉴定」命中 legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「伤残鉴定」话术含 12348",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材"
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「拖欠工资」命中 legal",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "card": "CR-012",
+      "name": "劳动纠纷「拖欠工资」话术含 12348",
+      "pass": true,
+      "detail": "法律纠纷我不能给出结论性意见。现在就做：1）携带身份证、合同、照片与缴费凭证等材"
+    }
+  ]
+}
