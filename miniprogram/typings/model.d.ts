@@ -145,6 +145,11 @@ declare interface QaTurn {
   sources?: string[];
   /** assistant 轮次才有 */
   degraded?: boolean;
+  /**
+   * CR-012（后端已实现）：高风险类别，'medical' | 'legal' | 'emergency' | 'none'。
+   * 历史恢复时用它决定降级引导卡文案，避免把安全话术又显示成「没查到」。
+   */
+  _riskLevel?: string;
 }
 
 /** AI 会话（qa_sessions 集合） */

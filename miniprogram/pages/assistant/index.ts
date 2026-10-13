@@ -99,7 +99,7 @@ export function toBubbleVM(turn: QaTurn): BubbleVM {
     text: turn.content ?? '',
     sources: turn.sources ?? [],
     degraded: Boolean(turn.degraded),
-    degradedTip: turn.degraded ? toDegradedTip() : '',
+    degradedTip: turn.degraded ? toDegradedTip(turn._riskLevel) : '',
     answerId: turn.answerId ?? '',
     useful: null,
     timeText: toShortDateTime(turn.createdAt),

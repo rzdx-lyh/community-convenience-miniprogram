@@ -191,6 +191,20 @@ describe('toBubbleVM · qa:history 单轮转气泡', () => {
     expect(vm.degradedTip).toBe(TIP_NOT_FOUND);
   });
 
+  it('CR-012：历史轮次带 _riskLevel=medical → 降级文案为安全提示，不退回「没查到」', () => {
+    const vm = mod.toBubbleVM({
+      role: 'assistant',
+      content: '请尽快就医或拨打 120',
+      createdAt: baseTime,
+      answerId: 'a_9',
+      degraded: true,
+      _riskLevel: 'medical',
+    });
+    expect(vm.degraded).toBe(true);
+    expect(vm.text).toBe('请尽快就医或拨打 120');
+    expect(vm.degradedTip).toBe(TIP_SAFETY);
+  });
+
   it('缺字段兜底：content / sources / answerId 为空时不抛错', () => {
     const vm = mod.toBubbleVM({ role: 'assistant', content: '', createdAt: baseTime });
     expect(vm.text).toBe('');
