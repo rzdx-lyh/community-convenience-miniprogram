@@ -11,8 +11,11 @@ export interface EmergencyContact {
 }
 
 /**
- * ⚠ 110/119 目前后端 phonebook 种子只有 120，**必须保留本地兜底**
- * （后端已承诺补 `报警服务 110` / `消防火警 119` 两条种子，补完并确认后再评估是否撤掉）。
+ * ⚠ 断网/接口失败保命用，**必须保留本地兜底**（首页紧急求助面板首屏就渲染这份常量）。
+ * 号码已与后端 phonebook 种子（scripts/seed-data.json pb-1…pb-11）同源核对：
+ *   110 / 119 / 120 / 居委会 020-88886666 / 物业 020-88888888 / 养老中心 020-88880000。
+ * 后端种子现已补齐 110（报警求助）与 119（火警），首页按 phone 去重合并且以接口数据为准，
+ * 断网时才回落到本常量。⚠ 号码若变更必须同步 seeds 与 miniprogram/mock/data.ts。
  */
 export const LOCAL_EMERGENCY_CONTACTS: EmergencyContact[] = [
   { name: '110 报警', phone: '110', remark: '治安/人身安全' },

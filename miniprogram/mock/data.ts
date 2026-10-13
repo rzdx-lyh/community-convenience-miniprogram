@@ -4,6 +4,7 @@
  * ⚠ 全部为演示用假数据，联调阶段由真实云函数 + scripts/seed.mjs 覆盖，届时整文件删除。
  */
 import { LOCAL_SERVICE_CATEGORIES } from '../config/service-grid';
+import { tryBuildRiskAnswer } from './risk-rules';
 
 const DAY = 24 * 60 * 60 * 1000;
 const HOUR = 60 * 60 * 1000;
@@ -254,16 +255,32 @@ const MOCK_CIRCLE_POSTS: CirclePost[] = [
 ];
 
 /* ============================== 便民电话 ============================== */
+/**
+ * 便民电话 11 条 —— 与后端 scripts/seed-data.json 的 phonebook（pb-1 … pb-11）**逐字段对齐**
+ * （_id / name / phone / category / sort / remark 全部同源）。
+ * ⚠ 原 mock 只有 8 条，其中「社区卫生站 020-87651120」「自来水报修 020-87653333」
+ *   是**虚构号段 020-8765xxxx**，演示时会显示一套根本不存在的号码，已按真源修正为 020-8888xxxx。
+ * ⚠ 后端若改种子，本表必须同步（tests/mock-phonebook.test.ts 会用条数 + 号码集合兜底）。
+ */
 const MOCK_PHONEBOOK: PhoneItem[] = [
-  // 号码与后端 phonebook 种子保持一致（居委会 020-88886666 / 物业 020-88888888 / 养老中心 020-88880000）
-  { _id: 'p_1', name: '社区居委会', phone: '020-88886666', category: 'government', sort: 1, remark: '工作日 9:00-18:00' },
-  { _id: 'p_2', name: '物业服务中心', phone: '020-88888888', category: 'property', sort: 2, remark: '24 小时值班' },
-  { _id: 'p_3', name: '社区养老服务中心', phone: '020-88880000', category: 'life', sort: 3, remark: '助餐 / 助浴预约' },
-  { _id: 'p_4', name: '社区卫生站', phone: '020-87651120', category: 'medical', sort: 4, remark: '门诊 8:00-17:30' },
-  { _id: 'p_5', name: '急救中心', phone: '120', category: 'emergency', sort: 5, remark: '医疗急救' },
-  { _id: 'p_6', name: '火警', phone: '119', category: 'emergency', sort: 6, remark: '火灾救援' },
-  { _id: 'p_7', name: '报警', phone: '110', category: 'emergency', sort: 7, remark: '治安求助' },
-  { _id: 'p_8', name: '自来水报修', phone: '020-87653333', category: 'life', sort: 8, remark: '水管 / 漏水' },
+  { _id: 'pb-1', name: '物业服务中心', phone: '020-88888888', category: 'property', sort: 1, remark: '24 小时值班' },
+  { _id: 'pb-2', name: '社区居委会', phone: '020-88886666', category: 'government', sort: 2 },
+  { _id: 'pb-3', name: '社区卫生服务站', phone: '020-88885555', category: 'medical', sort: 3 },
+  { _id: 'pb-4', name: '自来水供水热线', phone: '020-88884444', category: 'life', sort: 4 },
+  { _id: 'pb-5', name: '供电服务热线', phone: '020-88883333', category: 'life', sort: 5 },
+  { _id: 'pb-6', name: '燃气服务热线', phone: '020-88882222', category: 'life', sort: 6 },
+  { _id: 'pb-7', name: '开锁服务', phone: '020-88881111', category: 'life', sort: 7, remark: '公安局备案' },
+  { _id: 'pb-8', name: '急救中心', phone: '120', category: 'emergency', sort: 8 },
+  {
+    _id: 'pb-9',
+    name: '社区养老服务中心',
+    phone: '020-88880000',
+    category: 'life',
+    sort: 9,
+    remark: '助餐｜助浴｜上门陪护',
+  },
+  { _id: 'pb-10', name: '报警求助', phone: '110', category: 'emergency', sort: 10, remark: '匪警·治安求助' },
+  { _id: 'pb-11', name: '火警', phone: '119', category: 'emergency', sort: 11, remark: '火灾报警救援' },
 ];
 
 /* ============================== 报修工单 ============================== */
@@ -389,13 +406,22 @@ export const mockHandlers: Record<string, Handler> = {
   'qa:suggest': () => ({
     questions: ['物业费怎么交？', '停水通知在哪里看？', '老年卡怎么办？'],
   }),
-  'qa:ask': (data) => ({
-    answerId: `a_mock_${Date.now()}`,
-    sessionId: String(data.sessionId ?? `s_mock_${Date.now()}`),
-    answer: `（mock 回答）关于「${String(data.question ?? '')}」，建议联系社区居委会或物业服务中心咨询。`,
-    sources: ['社区办事指南'],
-    degraded: false,
-  }),
+  'qa:ask': (data) => {
+    const question = String(data.question ?? '');
+    const sessionId = String(data.sessionId ?? `s_mock_${Date.now()}`);
+    // CR-012：高风险问题在 mock 通道同样短路返回固定安全话术（语义与后端 cloudfunctions/qa/index.js
+    // 完全一致，且不调用大模型、不进知识库检索），保证 USE_MOCK=true 的演示现场也能演示出安全话术。
+    const riskAnswer = tryBuildRiskAnswer(question, sessionId);
+    if (riskAnswer) return riskAnswer;
+    return {
+      answerId: `a_mock_${Date.now()}`,
+      sessionId,
+      answer: `（mock 回答）关于「${question}」，建议联系社区居委会或物业服务中心咨询。`,
+      sources: ['社区办事指南'],
+      degraded: false,
+      _riskLevel: 'none',
+    };
+  },
   'qa:history': () => ({ list: [], total: 0 }),
   'qa:clear': () => ({ ok: true }),
   'qa:feedback': () => ({ ok: true }),
