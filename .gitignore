@@ -6,3 +6,7 @@ dist/
 project.private.config.json
 miniprogram_npm/
 cloudfunctions/*/shared/
+
+# 小程序内 .js 均为 TS 编译产物（源码是 .ts）；
+# 微信开发者工具「新建页面」会生成空 Page({}) 模板顶替真实页面，同样不入库
+miniprogram/**/*.js
