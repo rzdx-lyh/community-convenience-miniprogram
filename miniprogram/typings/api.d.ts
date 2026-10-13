@@ -149,6 +149,12 @@ declare interface QaAskResult {
   answer: string;
   sources: string[];
   degraded: boolean;
+  /**
+   * CR-012（安全护栏，架构师待登记）：高风险问题命中标记。
+   * 'medical' | 'legal' | 'emergency' 时 answer 为固定安全话术、degraded 恒为 true 且不调用大模型。
+   * 前端据此切换降级引导文案；字段可选，老版本后端不返回时按 'none' 处理。
+   */
+  _riskLevel?: 'none' | 'medical' | 'legal' | 'emergency';
 }
 declare interface QaHistoryParams {
   sessionId?: string;

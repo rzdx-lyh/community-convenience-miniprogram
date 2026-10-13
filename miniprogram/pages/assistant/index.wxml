@@ -28,9 +28,10 @@
             <text class="source-text">来源：{{item.sources[0]}}</text>
           </view>
 
-          <!-- 降级态：兜底引导（不弹错误 toast） -->
-          <view wx:if="{{item.degraded}}" class="degraded">
-            <text class="degraded-text">这个问题我没查到，你可以直接打电话问</text>
+          <!-- 降级态：照常渲染 answer 文本，只是额外挂一张引导卡（不弹错误 toast）
+               文案由 toDegradedTip 给出：CR-012 安全话术命中时改提示，不再说「我没查到」 -->
+          <view wx:if="{{item.degraded && item.degradedTip}}" class="degraded">
+            <text class="degraded-text">{{item.degradedTip}}</text>
             <view class="degraded-btn" bindtap="onGoPhonebook">
               <text class="degraded-btn-text">查看便民电话</text>
             </view>
