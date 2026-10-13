@@ -28,9 +28,11 @@ import type { RiskRule } from '../miniprogram/mock/risk-rules';
 type RiskRulesModule = typeof import('../miniprogram/mock/risk-rules');
 type MockDataModule = typeof import('../miniprogram/mock/data');
 type RequestModule = typeof import('../miniprogram/utils/request');
+type AssistantModule = typeof import('../miniprogram/pages/assistant/index');
 
 let rules: RiskRulesModule;
 let mockData: MockDataModule;
+let assistant: AssistantModule;
 /** 与后端 detectRisk 一致的期望表：[提问, 期望等级] */
 const CASES: Array<[string, 'medical' | 'legal' | 'emergency']> = [
   ['胸痛怎么办', 'medical'],
@@ -51,12 +53,20 @@ beforeAll(async () => {
     showToast: () => undefined,
     showLoading: () => undefined,
     hideLoading: () => undefined,
+    showModal: () => undefined,
+    setClipboardData: () => undefined,
+    navigateTo: () => undefined,
+    navigateBack: () => undefined,
+    switchTab: () => undefined,
     getStorageSync: () => '',
     setStorageSync: () => undefined,
+    removeStorageSync: () => undefined,
+    getWindowInfo: () => ({ statusBarHeight: 20 }),
     cloud: { init: () => undefined, callFunction: () => undefined },
   };
   rules = await import('../miniprogram/mock/risk-rules');
   mockData = await import('../miniprogram/mock/data');
+  assistant = await import('../miniprogram/pages/assistant/index');
   // mock 通道默认 300ms 模拟延迟，单测里置 0 保持快速
   const { ENV } = await import('../miniprogram/config/env');
   ENV.MOCK_DELAY = 0;
@@ -159,11 +169,15 @@ describe('mockHandlers[qa:ask] · CR-012 短路出参', () => {
     }
   });
 
-  it('普通问题：走原 mock 路径，degraded=false、_riskLevel=none', async () => {
+  it('普通问题：未命中知识库，degraded=true，且兜底话术不得自曝 mock/演示/模拟', async () => {
     const res = await ask('物业费怎么交？');
     expect(res._riskLevel).toBe('none');
-    expect(res.degraded).toBe(false);
-    expect(res.answer).toContain('（mock 回答）');
+    // CR-021：未命中知识库时必须 degraded=true（但 answer 仍带完整兜底话术）
+    expect(res.degraded).toBe(true);
+    expect(res.answer).not.toContain('（mock 回答）');
+    expect(res.answer).not.toContain('mock');
+    expect(res.answer).not.toContain('模拟');
+    expect(res.answer).not.toContain('演示');
     expect(res.sources.length).toBeGreaterThan(0);
   });
 
@@ -233,7 +247,6 @@ describe('端到端 · 话术唯一来源守卫（契约 v1.4）', () => {
   });
 
   it('命中安全话术的气泡：正文被保留、isSafety 置位（wxml 据此隐藏 👍/👎）', async () => {
-    const assistant = await import('../miniprogram/pages/assistant/index');
     const res = await ask('胸痛怎么办');
     const bubble = assistant.buildAiBubble(
       res.answer,

@@ -23,7 +23,7 @@ Component({
   },
 
   lifetimes: {
-    attached(): void {
+    attached() {
       this.setData({ visible: shouldShowMockBanner(ENV.USE_MOCK, ENV.DEMO_MODE) });
     },
   },

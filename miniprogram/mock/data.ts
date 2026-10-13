@@ -409,7 +409,13 @@ export const mockHandlers: Record<string, Handler> = {
     id: `w_mock_${Date.now()}`,
     aiSummary: `（mock）${String(data.title ?? '')}：已生成智能摘要，等待物业受理。`,
   }),
-  'workorder:list': (data) => paginate<WorkOrder>(MOCK_WORKORDERS, data),
+  'workorder:list': (data) => {
+    // CR-017-c：原实现忽略 status，导致订单页四个 Tab 都返回同一批 3 条
+    // （切「已完成」会看到「处理中」的单子，演示时一眼穿帮）。按契约入参补状态过滤。
+    const status = data.status as WorkOrder['status'] | undefined;
+    const list = status ? MOCK_WORKORDERS.filter((w) => w.status === status) : MOCK_WORKORDERS;
+    return paginate<WorkOrder>(list, data);
+  },
   'workorder:detail': (data) => ({
     workorder: MOCK_WORKORDERS.find((w) => w._id === String(data.id ?? '')) ?? MOCK_WORKORDERS[0],
   }),
@@ -433,9 +439,12 @@ export const mockHandlers: Record<string, Handler> = {
     return {
       answerId: `a_mock_${Date.now()}`,
       sessionId,
-      answer: `（mock 回答）关于「${question}」，建议联系社区居委会或物业服务中心咨询。`,
+      // ⛔ CR-020-d：不得出现「mock / 演示 / 模拟」等字样——演示现场评委就在旁边看，
+      // 暴露演示身份等于自曝。兜底话术必须与线上口径一致。
+      answer: `关于「${question}」，社区知识库暂未收录这方面的内容，建议联系社区居委会或物业服务中心咨询。`,
       sources: ['社区办事指南'],
-      degraded: false,
+      // 未命中知识库 → degraded=true，但 answer 仍然完整（含兜底话术），前端严禁据此替换为写死文案
+      degraded: true,
       _riskLevel: 'none',
     };
   },

@@ -36,10 +36,9 @@ export interface EnvConfig {
 
 export const ENV: EnvConfig = {
   USE_MOCK: true, // TODO(FE-10): 联调通过后置 false
-  // CR-017-c：默认 true（隐藏「演示数据模式」标识）。
-  // 本轮已确定全程 mock 演示，自曝风险 > 提醒价值；开发期需提示时手动置 false。
-  DEMO_MODE: true,
-  CLOUD_ENV_ID: '', // TODO(FE-10): 云开发环境 ID
+  // CR-017-c：默认 false（开发/自测时显示「演示数据模式」标识，演示当天置 true 隐藏）
+  DEMO_MODE: false,
+  CLOUD_ENV_ID: 'cloud1-d5g1xuxxf9eb5b758', // 用户提供（2026-10-14）
   MOCK_DELAY: 300,
   SUBSCRIBE_TEMPLATE_IDS: [], // TODO(E1): 模板 ID 未申请，空数组静默跳过
   PAGE_SIZE: 10,

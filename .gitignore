@@ -11,6 +11,10 @@ cloudfunctions/*/shared/
 # 微信开发者工具「新建页面」会生成空 Page({}) 模板顶替真实页面，同样不入库
 miniprogram/**/*.js
 
+# ⛔ 例外：自定义组件源码用原生 .js（DevTools 对组件目录的 TS 编译插件不稳定，
+# 容易出现 components/xxx/index.js is not defined）。保留 .js 源文件，避免部署/克隆后白屏。
+!miniprogram/components/**/*.js
+
 # 自测产物：每次 node scripts/selftest.mjs 都会重写，留着只会制造合并冲突
 scripts/selftest-report.json
 
