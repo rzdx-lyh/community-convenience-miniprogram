@@ -72,4 +72,7 @@
       查看并同意
     </view>
   </view>
+
+  <!-- 演示模式标识（CR-017-c） -->
+  <mock-banner />
 </view>

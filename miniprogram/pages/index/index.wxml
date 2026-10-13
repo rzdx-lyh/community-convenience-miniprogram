@@ -110,4 +110,8 @@
       <view class="sheet__footer">{{emergencyTip}}</view>
     </view>
   </view>
+
+  <!-- 演示模式标识（CR-017-c）：只读本地 ENV，不调接口；fixed 浮层不占文档流，
+       不影响头部负边距叠压版式。演示当天置 ENV.DEMO_MODE=true 即隐藏。 -->
+  <mock-banner />
 </view>

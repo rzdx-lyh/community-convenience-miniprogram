@@ -1,0 +1,9 @@
+<!--
+  演示模式标识（CR-017-c）
+  ⚠ 根节点用 wx:if（不是 hidden / opacity:0）：不显示时**完全不进渲染树**，
+     不占位、不占层级。
+-->
+<view wx:if="{{visible}}" class="mock-banner">
+  <text class="mock-banner__dot"></text>
+  <text class="mock-banner__text">{{text}}</text>
+</view>

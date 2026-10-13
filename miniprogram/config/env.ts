@@ -5,6 +5,13 @@
 export interface EnvConfig {
   /** mock 开关：true=内存 mock（后端未就绪），false=真实云函数（联调/演示） */
   USE_MOCK: boolean;
+  /**
+   * 演示模式开关（CR-017-c）。
+   * `USE_MOCK=true` 且 `DEMO_MODE=false` 时，界面显示「演示数据模式 · 未连接云端」标识；
+   * 演示当天置 `true` 即隐藏该标识（避免主动向评委自曝"这是演示数据"）。
+   * ⚠ 它**只影响标识显隐**，不改变数据通道：DEMO_MODE=true 时数据仍来自 mock。
+   */
+  DEMO_MODE: boolean;
   /** 云开发环境 ID（DevTools 云开发控制台查） */
   CLOUD_ENV_ID: string;
   /** mock 模拟网络延迟（ms） */
@@ -29,6 +36,9 @@ export interface EnvConfig {
 
 export const ENV: EnvConfig = {
   USE_MOCK: true, // TODO(FE-10): 联调通过后置 false
+  // CR-017-c：默认 true（隐藏「演示数据模式」标识）。
+  // 本轮已确定全程 mock 演示，自曝风险 > 提醒价值；开发期需提示时手动置 false。
+  DEMO_MODE: true,
   CLOUD_ENV_ID: '', // TODO(FE-10): 云开发环境 ID
   MOCK_DELAY: 300,
   SUBSCRIBE_TEMPLATE_IDS: [], // TODO(E1): 模板 ID 未申请，空数组静默跳过
@@ -40,6 +50,22 @@ export const ENV: EnvConfig = {
   URGENT_LIMIT: 5,
   URGENT_SWIPE_INTERVAL: 3000,
 };
+
+/**
+ * CR-017-c：演示模式标识是否显示（纯函数，便于单测）。
+ *
+ * 显示条件：**`USE_MOCK === true` 且 `DEMO_MODE === false`**——
+ * 即"数据来自本地 mock、且当前不是正式演示"时才提示，避免演示当天自曝。
+ *
+ * ⚠ 设计原则（CR-018-b）：只依赖**本地配置常量**，不读任何接口出参、不发请求——
+ * 「我在降级」这类状态提示绝不能依赖它正在降级的那个通道来传递，否则故障时会一起失效。
+ *
+ * @param useMock 是否走 mock 通道
+ * @param demoMode 是否为演示模式（演示当天置 true）
+ */
+export function shouldShowMockBanner(useMock: boolean, demoMode: boolean): boolean {
+  return useMock === true && demoMode === false;
+}
 
 /** storage 键名集中管理，避免各处硬编码字符串 */
 export const STORAGE_KEYS = {

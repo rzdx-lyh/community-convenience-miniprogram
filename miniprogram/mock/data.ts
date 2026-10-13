@@ -310,6 +310,20 @@ const MOCK_WORKORDERS: WorkOrder[] = [
     createdAt: iso(-5 * DAY),
     updatedAt: iso(-4 * DAY),
   },
+  {
+    // CR-017-c 演示完整性补齐：原 mock 只有 processing / done 两条，
+    // 服务订单页「待受理」Tab 在演示时会落到空态，故补一条 pending。
+    _id: 'w_3',
+    _openid: 'o_mock_openid_001',
+    title: '卫生间地漏返味',
+    description: '主卫地漏有异味返上来，已试过清水冲洗无效，希望上门疏通。',
+    category: 'water',
+    images: [],
+    status: 'pending',
+    aiSummary: '地漏存水弯干涸或堵塞导致返味，需疏通并检查存水弯。',
+    createdAt: iso(-2 * HOUR),
+    updatedAt: iso(-2 * HOUR),
+  },
 ];
 
 /* ============================ mock 路由表 ============================ */
@@ -334,7 +348,10 @@ export const mockHandlers: Record<string, Handler> = {
   /* ---------- notice ---------- */
   'notice:list': (data) => {
     const type = data.type as Notice['type'] | undefined;
-    const list = type === 'urgent' ? MOCK_URGENT_NOTICES : MOCK_NOTICES.filter((n) => !type || n.type === type);
+    // CR-017-c：原实现「全部」只取 MOCK_NOTICES（漏掉 3 条紧急通知），与"全部"语义不符、
+    // 演示时切到「全部」看不到我们主打的紧急通知。改为紧急 + 普通合并后按类型过滤。
+    const all: Notice[] = [...MOCK_URGENT_NOTICES, ...MOCK_NOTICES];
+    const list = all.filter((n) => !type || n.type === type);
     return paginate<Notice>(list, data);
   },
   'notice:detail': (data) => {

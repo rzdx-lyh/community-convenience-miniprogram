@@ -16,6 +16,11 @@
  *    后端 scripts/mock-server.mjs 属后端目录树，前端不得改动。
  *
  * 关键词表与话术必须与后端 RISK_RULES 逐字对齐（判定顺序：紧急 → 涉医 → 涉法）。
+ *
+ * ⚠ 通道声明（契约 v1.4 附 C「验收口径」）：本文件运行在 **mock 通道**（`USE_MOCK=true`）。
+ *   它只能证明「前端渲染逻辑对 + mock 表没漂移」，**不构成契约验收证据**——
+ *   云函数 action 分发、错误码、降级字段、安全护栏、种子数据在 mock 通道下全都不经过。
+ *   契约一致性结论必须在 `USE_MOCK=false` 的真机通道重跑取得。
  */
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { RiskRule } from '../miniprogram/mock/risk-rules';
