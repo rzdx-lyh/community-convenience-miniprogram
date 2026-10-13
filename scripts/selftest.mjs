@@ -426,6 +426,10 @@ current = 'CR-012';
   // ④ 高风险不触发大模型：话术不含知识库原文（无 Key 时本会回落知识库原文）
   expectTrue('高风险未回落知识库原文（未调用大模型）', !/报修流程指南/.test(med.data.answer));
   expectTrue('安全话术未追加「AI 生成仅供参考」（非 AI 生成）', !/AI 生成仅供参考/.test(med.data.answer));
+  // CR-014-b：免责页脚只对「大模型生成」的回答注入，三类安全话术（人工编写固定文本）一律不注入
+  expectTrue('三类安全话术出参均不含免责页脚（CR-014-b）',
+    [med, legal, emg].every((r) => !/AI 生成仅供参考/.test(r.data.answer)),
+    [med, legal, emg].map((r) => r.data._riskLevel).join('/'));
 
   // ⑤ 普通问题不受影响，_riskLevel 恒为 none（向后兼容）
   const normal = await call('qa', 'ask', { question: '家里水管漏水怎么报修？' }, 'mock-risk-none-1');
