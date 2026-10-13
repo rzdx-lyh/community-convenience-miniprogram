@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-10-13T17:55:22.684Z",
+  "ranAt": "2026-10-13T17:57:05.328Z",
   "total": 140,
   "passed": 140,
   "failed": 0,
@@ -50,13 +50,13 @@
       "card": "BE-12",
       "name": "accountId 格式合法 /^[a-z][a-z0-9_]{3,19}$/",
       "pass": true,
-      "detail": "linju_zsu684"
+      "detail": "linju_udfx4x"
     },
     {
       "card": "BE-12",
       "name": "accountId 前缀 linju_",
       "pass": true,
-      "detail": "linju_zsu684"
+      "detail": "linju_udfx4x"
     },
     {
       "card": "BE-12",
@@ -68,7 +68,7 @@
       "card": "BE-12",
       "name": "生成结果全部符合格式",
       "pass": true,
-      "detail": "linju_t7h3v3,linju_7rs94s,linju_dfxyrk"
+      "detail": "linju_xr6zn9,linju_t8eubw,linju_z8bqfq"
     },
     {
       "card": "BE-12",
@@ -86,13 +86,13 @@
       "card": "BE-12",
       "name": "懒迁移后 accountId 有值",
       "pass": true,
-      "detail": "linju_uewccp"
+      "detail": "linju_s6qq9r"
     },
     {
       "card": "BE-12",
       "name": "懒迁移已回写 users 集合",
       "pass": true,
-      "detail": "linju_uewccp"
+      "detail": "linju_s6qq9r"
     },
     {
       "card": "BE-12",
