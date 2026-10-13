@@ -1,4 +1,67 @@
-<!-- 我要报修 · 脚手架占位页（FE-3 实现后删除本占位） -->
-<view class="page">
-  <text>我要报修 · 待 FE-3 实现</text>
+<!-- 我要报修（FE-3）· 单页表单（老人友好，不做分步向导） -->
+<view class="page {{elderMode ? 'care-mode' : ''}}">
+  <!-- 报修类型（单选，必选） -->
+  <view class="block">
+    <text class="block-title">报修类型 <text class="required">*</text></text>
+    <view class="cats">
+      <block wx:for="{{categories}}" wx:key="key">
+        <view class="cat {{item.key === category ? 'cat-on' : ''}}" data-key="{{item.key}}" bindtap="onPickCategory">
+          <text class="cat-text">{{item.label}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 标题 -->
+  <view class="block">
+    <text class="block-title">问题标题 <text class="required">*</text></text>
+    <input
+      class="input"
+      value="{{title}}"
+      placeholder="如：卫生间水管漏水"
+      placeholder-class="input-ph"
+      maxlength="30"
+      bindinput="onTitleInput"
+    />
+  </view>
+
+  <!-- 描述 -->
+  <view class="block">
+    <text class="block-title">问题描述 <text class="required">*</text></text>
+    <textarea
+      class="textarea"
+      value="{{description}}"
+      placeholder="请描述问题，至少 5 个字（可说明位置、出现时间）"
+      placeholder-class="input-ph"
+      maxlength="200"
+      bindinput="onDescInput"
+    />
+    <text class="counter">{{description.length}}/200</text>
+  </view>
+
+  <!-- 照片（选填） -->
+  <view class="block">
+    <text class="block-title">现场照片（选填，最多 {{maxImages}} 张）</text>
+    <view class="imgs">
+      <block wx:for="{{images}}" wx:key="*this">
+        <view class="img-wrap">
+          <image class="img" src="{{item}}" mode="aspectFill" />
+          <view class="img-del" data-index="{{index}}" bindtap="onRemoveImage">
+            <text class="img-del-text">×</text>
+          </view>
+        </view>
+      </block>
+      <view wx:if="{{images.length < maxImages}}" class="img-add" bindtap="onChooseImage">
+        <text class="img-add-text">+ 拍照/相册</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交 -->
+  <view class="footer">
+    <view class="submit {{submitting ? 'submit-off' : ''}}" bindtap="onSubmit">
+      <text class="submit-text">{{submitting ? '提交中…' : '提交报修'}}</text>
+    </view>
+    <text class="tip">提交后 AI 会自动生成工单摘要，方便物业快速处理</text>
+  </view>
 </view>

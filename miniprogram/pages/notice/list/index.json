@@ -1,3 +1,7 @@
 {
-  "navigationBarTitleText": "社区通知"
+  "navigationBarTitleText": "社区通知",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty-state": "/components/empty-state/index"
+  }
 }

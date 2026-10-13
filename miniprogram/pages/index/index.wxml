@@ -1,4 +1,111 @@
-<!-- 社区便民 · 脚手架占位页（FE-1 实现后删除本占位） -->
-<view class="page">
-  <text>社区便民 · 待 FE-1 实现</text>
+<!--
+  首页 v1.2（FE-11 · 对照 docs/03-preview/index.html 1:1 实现）
+  ⚠ 红线：绿色头部与下方内容在**同一滚动容器**（整页自然流）内做负边距叠压，
+    不得把内容放进独立 overflow:auto 容器，否则通知卡顶部会被裁切。
+-->
+<view class="page {{elderMode ? 'care-mode' : ''}}">
+  <!-- ========== 区域 1：绿色渐变头部（填满顶部，含状态栏） ========== -->
+  <view class="header" style="padding-top: {{statusBarHeight}}px">
+    <!-- 定位行：📍 当前社区；右侧为微信胶囊避让 -->
+    <view class="header__nav">
+      <text class="header__pin">📍</text>
+      <text class="header__loc">当前社区：{{communityName}}</text>
+      <view class="header__capsule" style="width: {{capsuleWidth}}px"></view>
+    </view>
+
+    <!-- 用户信息行：头像 + 昵称 + 社区账号 -->
+    <view class="header__user">
+      <view class="header__avatar">{{avatarText}}</view>
+      <view class="header__info">
+        <view class="header__nick">{{nickName}}</view>
+        <view class="header__account">🔖 社区账号 {{accountId}}</view>
+      </view>
+    </view>
+
+    <!-- 紧急援助行：左侧红色徽标 + 右侧白底 pill -->
+    <view class="header__aid">
+      <view class="header__aid-left">
+        <view class="header__badge">⚡</view>
+        <text class="header__aid-text">紧急援助</text>
+      </view>
+      <view class="header__aid-btn" hover-class="header__aid-btn--hover" bindtap="onUrgentTap">
+        <text class="header__aid-btn-icon">⚡</text>
+        <text class="header__aid-btn-text">紧急求助</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 区域 2~4：内容区（通知卡负边距压在头部下缘） ========== -->
+  <view class="content">
+    <!-- 白色通知卡 -->
+    <view class="notice" bindtap="onNoticeTap">
+      <view class="notice__main">
+        <view class="notice__icon">
+          <block wx:if="{{urgentState === 'empty'}}">✓</block>
+          <block wx:elif="{{urgentState === 'error'}}">⚠</block>
+          <block wx:else>📄</block>
+        </view>
+        <view class="notice__text">
+          <view class="notice__title">{{urgentTitle}}</view>
+          <view class="notice__sub">{{urgentSub}}</view>
+        </view>
+        <view class="notice__deco"></view>
+      </view>
+
+      <view wx:if="{{urgentState === 'error'}}" class="notice__retry" catchtap="onRetryUrgent">重试</view>
+      <view wx:else class="notice__divider"></view>
+
+      <!-- 快捷 pill -->
+      <view class="pills">
+        <view class="pill" catchtap="onNoticePillTap">
+          <text class="pill__icon">📢</text>
+          <text class="pill__text">本周公告</text>
+        </view>
+        <view class="pill" catchtap="onRoadPillTap">
+          <text class="pill__icon">🚧</text>
+          <text class="pill__text">最近路况</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 核心功能 2×2 宫格 -->
+    <view class="section">
+      <view class="section__title">核心功能</view>
+      <view class="grid {{elderMode ? 'grid--care' : ''}}">
+        <view
+          wx:for="{{grid}}"
+          wx:key="key"
+          class="fn fn--{{item.theme}}"
+          hover-class="fn--hover"
+          data-key="{{item.key}}"
+          bindtap="onGridTap"
+        >
+          <view class="fn__icon">{{item.iconText}}</view>
+          <view class="fn__name">{{item.title}}</view>
+          <view class="fn__sub">
+            <view class="fn__sub-line">{{item.subLine1}}</view>
+            <view wx:if="{{item.subLine2}}" class="fn__sub-line">{{item.subLine2}}</view>
+          </view>
+          <view class="fn__deco">{{item.decoText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 紧急求助半屏弹层（设计预览 §4.2） ========== -->
+  <view wx:if="{{showEmergency}}" class="mask" bindtap="closeEmergency">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet__title">紧急求助</view>
+      <view wx:for="{{contacts}}" wx:key="phone" class="sheet__row">
+        <view class="sheet__info">
+          <view class="sheet__name">{{item.name}}</view>
+          <view wx:if="{{item.remark}}" class="sheet__remark">{{item.remark}}</view>
+        </view>
+        <view class="sheet__btn" hover-class="sheet__btn--hover" data-phone="{{item.phone}}" catchtap="onCallPhone">
+          拨号
+        </view>
+      </view>
+      <view class="sheet__footer">{{emergencyTip}}</view>
+    </view>
+  </view>
 </view>

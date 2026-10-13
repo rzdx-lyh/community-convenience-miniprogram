@@ -1,1 +1,149 @@
-/* 我的报修 · 页面样式（FE-4） */
+/* 服务订单（FE-4）· 全部取 Design Token v1.1 */
+.page {
+  min-height: 100vh;
+  padding-bottom: 160rpx;
+  background: var(--bg);
+}
+
+/* 筛选 Tab */
+.tabs {
+  display: flex;
+  padding: var(--space-3) var(--space-4);
+  gap: var(--space-2);
+  background: var(--card);
+  border-bottom: 2rpx solid var(--line);
+}
+.tab {
+  height: 64rpx;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
+  border: 2rpx solid var(--line);
+  font-size: var(--font-sub);
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+}
+.tab-on {
+  background: var(--brand-light);
+  border-color: var(--brand);
+  color: var(--brand);
+  font-weight: 600;
+}
+
+/* 列表 */
+.list {
+  padding: var(--space-3) var(--space-4);
+}
+.card {
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title {
+  flex: 1;
+  font-size: var(--font-card);
+  font-weight: 700;
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-summary {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--font-sub);
+  color: var(--text-2);
+  line-height: 1.4;
+}
+.card-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-3);
+}
+.card-cat {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+.card-time {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 状态标签（文字+颜色双编码，色弱可辨） */
+.tag {
+  height: 48rpx;
+  padding: 0 20rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-cap);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  flex: none;
+  margin-left: var(--space-2);
+}
+.tag-pending {
+  background: #fbf0e0;
+  color: #d98e32;
+}
+.tag-assigned {
+  background: #e8f1f7;
+  color: #3a7ca5;
+}
+.tag-processing {
+  background: #f0ebf8;
+  color: #7a5bb8;
+}
+.tag-done,
+.tag-closed {
+  background: #e7f2ea;
+  color: #3e8e5a;
+}
+.tag-canceled {
+  background: #f0f0f0;
+  color: #9b9b9b;
+}
+
+/* 加载 */
+.loading {
+  padding: var(--space-4);
+  text-align: center;
+}
+.loading-text {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 悬浮按钮 */
+.fab {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+  height: 96rpx;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--brand-gradient);
+  box-shadow: var(--shadow-float);
+  display: flex;
+  align-items: center;
+  z-index: var(--z-fab);
+}
+.fab-text {
+  font-size: var(--font-btn);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* 关怀模式 */
+.care-mode .card-title {
+  font-size: var(--font-title);
+}
+.care-mode .fab {
+  height: 110rpx;
+}

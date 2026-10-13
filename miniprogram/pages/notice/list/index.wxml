@@ -1,4 +1,84 @@
-<!-- 社区通知 · 脚手架占位页（FE-6 实现后删除本占位） -->
-<view class="page">
-  <text>社区通知 · 待 FE-6 实现</text>
+<!-- 通知 / 活动 / 紧急通知列表（FE-6） -->
+<view class="page {{elderMode ? 'care-mode' : ''}}">
+  <!-- 类型 Tab -->
+  <view class="tabs">
+    <block wx:for="{{tabs}}" wx:key="value">
+      <view class="tab {{item.value === activeType ? 'tab-on' : ''}}" data-value="{{item.value}}" bindtap="onTabTap">
+        <text>{{item.label}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 标签筛选 chip（首页带 ?tag= 进入时出现） -->
+  <view wx:if="{{activeTag}}" class="chip-row">
+    <view class="chip">
+      <text class="chip-text"># {{activeTag}}</text>
+      <text class="chip-x" bindtap="onClearTag">×</text>
+    </view>
+  </view>
+
+  <!-- 列表 -->
+  <view class="list">
+    <block wx:for="{{list}}" wx:key="_id">
+      <view class="card {{item.typeKey}}" data-id="{{item._id}}" bindtap="onCardTap">
+        <view class="card-head">
+          <text class="card-title">{{item.title}}</text>
+          <view class="tag tag-{{item.typeKey}}">
+            <text class="tag-text">{{item.typeLabel}}</text>
+          </view>
+        </view>
+
+        <!-- 紧急项：级别徽标 + 单行摘要 + 起止 -->
+        <block wx:if="{{item.typeKey === 'urgent'}}">
+          <view class="urg-line">
+            <view wx:if="{{item.levelLabel}}" class="level">
+              <text class="level-text">{{item.levelLabel}}</text>
+            </view>
+            <text class="summary">{{item.summary}}</text>
+          </view>
+          <text wx:if="{{item.rangeText}}" class="range">{{item.rangeText}}</text>
+        </block>
+
+        <!-- 活动项：地点 + 报名截止 -->
+        <block wx:elif="{{item.typeKey === 'activity'}}">
+          <text wx:if="{{item.location}}" class="line">地点：{{item.location}}</text>
+          <text wx:if="{{item.deadlineText}}" class="line hot">{{item.deadlineText}}</text>
+        </block>
+
+        <text class="time">{{item.publishText}}</text>
+      </view>
+    </block>
+
+    <view wx:if="{{loadingMore}}" class="loading">
+      <text class="loading-text">加载中…</text>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <empty-state
+    wx:if="{{list.length === 0 && !loadingMore}}"
+    type="notice"
+    text="{{emptyText}}"
+    subText="{{emptySubText}}"
+  />
+
+  <!-- 内联详情弹层（零新增页面，与社区圈子详情同一交互范式） -->
+  <view wx:if="{{detail}}" class="mask" bindtap="onCloseDetail">
+    <view class="sheet" catchtap="onCloseDetail">
+      <view class="sheet-head">
+        <text class="sheet-title">{{detail.title}}</text>
+        <text class="sheet-close" bindtap="onCloseDetail">×</text>
+      </view>
+      <view class="sheet-meta">
+        <text class="sheet-tag">{{detail.typeLabel}}</text>
+        <text wx:if="{{detail.rangeText}}" class="sheet-text">{{detail.rangeText}}</text>
+        <text wx:if="{{detail.location}}" class="sheet-text">{{detail.location}}</text>
+        <text wx:if="{{detail.deadlineText}}" class="sheet-text">{{detail.deadlineText}}</text>
+        <text class="sheet-text">{{detail.publishText}}</text>
+      </view>
+      <scroll-view class="sheet-body" scroll-y>
+        <text class="sheet-content">{{detailContent}}</text>
+      </scroll-view>
+    </view>
+  </view>
 </view>

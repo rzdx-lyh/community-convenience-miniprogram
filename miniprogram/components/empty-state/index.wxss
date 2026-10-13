@@ -1,0 +1,70 @@
+/* empty-state · 空状态组件（图标纯 CSS 绘制，避免额外图片资源与包体积） */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx var(--space-4);
+}
+
+.empty__icon {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: var(--brand-light);
+  position: relative;
+}
+
+.empty__icon::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 80rpx;
+  height: 80rpx;
+  transform: translate(-50%, -60%) rotate(45deg);
+  border: 6rpx solid var(--brand);
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-radius: var(--radius-s);
+  opacity: 0.35;
+}
+
+/* 通知类空态：图标块内显示对勾（设计预览 §0 五态） */
+.empty__icon--notice::after,
+.empty__icon--circle::after {
+  content: '✓';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 64rpx;
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.empty__text {
+  margin-top: var(--space-3);
+  font-size: var(--font-body);
+  color: var(--text-1);
+}
+
+.empty__sub {
+  margin-top: var(--space-1);
+  font-size: var(--font-cap);
+  color: var(--text-2);
+}
+
+.empty__btn {
+  margin-top: var(--space-4);
+  padding: 0 var(--space-5);
+  height: 76rpx;
+  line-height: 76rpx;
+  font-size: var(--font-body);
+  color: var(--card);
+  background: var(--brand);
+  border-radius: var(--radius-full);
+}
+
+.empty__btn--hover {
+  opacity: 0.85;
+}

@@ -1,4 +1,75 @@
-<!-- 我的 · 脚手架占位页（FE-8 实现后删除本占位） -->
-<view class="page">
-  <text>我的 · 待 FE-8 实现</text>
+<!--
+  我的（FE-8）
+  - 根节点挂 .care-mode：关怀模式下由 app.wxss 的 CSS 变量整体放大字号（非整页缩放）
+  - 未同意隐私政策时不渲染任何个人信息（合规硬要求）
+-->
+<view class="page {{elderMode ? 'care-mode' : ''}}">
+  <block wx:if="{{agreedPrivacy}}">
+    <!-- 用户信息卡 -->
+    <view class="user">
+      <view class="user__avatar">{{avatarText}}</view>
+      <view class="user__info">
+        <view class="user__nick">{{nickName}}</view>
+        <view wx:if="{{roleLabel}}" class="user__role">{{roleLabel}}</view>
+      </view>
+    </view>
+
+    <!-- 我的工单入口（Tab 页，switchTab） -->
+    <view class="card">
+      <view class="row" bindtap="onGoOrders">
+        <view class="row__label">
+          <view class="row__title">我的服务订单</view>
+          <view class="row__sub">报修进度、处理结果</view>
+        </view>
+        <view class="row__arrow">›</view>
+      </view>
+    </view>
+
+    <!-- 社区账号（可编辑，规则见契约 CR-009） -->
+    <view class="card">
+      <view class="row" bindtap="onEditAccountId">
+        <view class="row__label">
+          <view class="row__title">社区账号</view>
+          <view class="row__sub">4-20 位小写字母开头，可含数字和下划线</view>
+        </view>
+        <view class="row__value">{{accountId}}</view>
+        <view class="row__arrow">›</view>
+      </view>
+    </view>
+
+    <!-- 关怀模式开关 -->
+    <view class="card">
+      <view class="row">
+        <view class="row__label">
+          <view class="row__title">关怀模式</view>
+          <view class="row__sub">放大全站字号，便于阅读</view>
+        </view>
+        <switch
+          class="row__switch"
+          checked="{{elderMode}}"
+          color="var(--brand)"
+          bindchange="onElderModeChange"
+        />
+      </view>
+    </view>
+
+    <!-- 隐私政策入口 -->
+    <view class="card">
+      <view class="row" bindtap="onViewPrivacy">
+        <view class="row__label">
+          <view class="row__title">隐私政策</view>
+        </view>
+        <view class="row__arrow">›</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 未同意隐私政策：停留在此，不展示任何个人信息 -->
+  <view wx:else class="privacy">
+    <view class="privacy__icon">🔒</view>
+    <view class="privacy__text">未同意隐私政策，暂不展示个人信息</view>
+    <view class="privacy__btn" hover-class="privacy__btn--hover" bindtap="showPrivacyModal">
+      查看并同意
+    </view>
+  </view>
 </view>

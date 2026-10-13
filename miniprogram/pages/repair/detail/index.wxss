@@ -1,1 +1,229 @@
-/* 报修详情 · 页面样式（FE-5） */
+/* 报修详情（FE-5）· 全部取 Design Token v1.1 */
+.page {
+  min-height: 100vh;
+  padding: var(--space-3) var(--space-4) var(--space-6);
+  background: var(--bg);
+}
+
+.loading {
+  padding: var(--space-6);
+  text-align: center;
+}
+.loading-text {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 标题区 */
+.head {
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+}
+.head-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.title {
+  flex: 1;
+  font-size: var(--font-card);
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1.35;
+}
+.meta {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+.meta-text {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 状态标签（与列表页同款：浅底深字双编码，色弱可辨） */
+.tag {
+  height: 48rpx;
+  padding: 0 20rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-cap);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  flex: none;
+  margin-left: var(--space-2);
+}
+.tag-pending {
+  background: #fbf0e0;
+  color: #d98e32;
+}
+.tag-assigned {
+  background: #e8f1f7;
+  color: #3a7ca5;
+}
+.tag-processing {
+  background: #f0ebf8;
+  color: #7a5bb8;
+}
+.tag-done,
+.tag-closed {
+  background: #e7f2ea;
+  color: #3e8e5a;
+}
+.tag-canceled {
+  background: #f0f0f0;
+  color: #9b9b9b;
+}
+
+/* 通用面板 */
+.panel {
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+  margin-top: var(--space-3);
+}
+.panel-title {
+  display: block;
+  font-size: var(--font-body);
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: var(--space-3);
+}
+.desc {
+  display: block;
+  font-size: var(--font-sub);
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+/* 时间轴 */
+.flow {
+  display: flex;
+  align-items: flex-start;
+}
+.node {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: var(--radius-full);
+  background: var(--line);
+  margin-bottom: var(--space-2);
+}
+.dot-on {
+  background: var(--brand);
+  box-shadow: 0 0 0 8rpx var(--brand-light);
+}
+.node-text {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+.node-on .node-text {
+  color: var(--text-1);
+}
+.node-cur .node-text {
+  color: var(--brand);
+  font-weight: 700;
+}
+.terminal {
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-m);
+  background: var(--urgent-bg);
+}
+.terminal-text {
+  font-size: var(--font-sub);
+  color: var(--urgent);
+  font-weight: 700;
+}
+.updated {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 现场照片 */
+.imgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.img {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: var(--radius-m);
+  background: var(--line);
+}
+
+/* AI 摘要 */
+.ai {
+  border-left: 8rpx solid var(--brand-mid);
+}
+.ai-head {
+  display: flex;
+  align-items: center;
+}
+.ai-badge {
+  height: 40rpx;
+  padding: 0 16rpx;
+  margin-right: var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--brand-light);
+  color: var(--brand);
+  font-size: var(--font-cap);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+.ai-head .panel-title {
+  margin-bottom: var(--space-3);
+}
+.ai-footer {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 底部取消 */
+.footer {
+  margin-top: var(--space-5);
+}
+.cancel {
+  height: 96rpx;
+  border-radius: var(--radius-full);
+  border: 2rpx solid var(--urgent-line);
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cancel-text {
+  font-size: var(--font-btn);
+  color: var(--urgent);
+  font-weight: 700;
+}
+.tip {
+  display: block;
+  margin-top: var(--space-2);
+  text-align: center;
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 关怀模式 */
+.care-mode .title {
+  font-size: var(--font-title);
+}
+.care-mode .cancel {
+  height: 110rpx;
+}

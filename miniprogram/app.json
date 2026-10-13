@@ -1,13 +1,14 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/assistant/index",
-    "pages/repair/create/index",
     "pages/repair/list/index",
+    "pages/circle/index",
+    "pages/profile/index",
+    "pages/repair/create/index",
     "pages/repair/detail/index",
     "pages/notice/list/index",
-    "pages/phonebook/index",
-    "pages/profile/index"
+    "pages/assistant/index",
+    "pages/phonebook/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FAF6F1",
@@ -18,20 +19,21 @@
   },
   "tabBar": {
     "color": "#9B9B9B",
-    "selectedColor": "#C0522F",
+    "selectedColor": "#1E8252",
     "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/index",
         "text": "首页"
       },
       {
-        "pagePath": "pages/assistant/index",
-        "text": "AI助手"
+        "pagePath": "pages/repair/list/index",
+        "text": "服务订单"
       },
       {
-        "pagePath": "pages/repair/list/index",
-        "text": "报修"
+        "pagePath": "pages/circle/index",
+        "text": "社区圈子"
       },
       {
         "pagePath": "pages/profile/index",
