@@ -1,0 +1,23 @@
+/* ============================================================
+ * app.wxss · 全局样式与占位 Design Token
+ * 来源：05-前端工程师-skill.md §7.8（占位值，非最终品牌色）
+ * UI 的 docs/03-design-tokens.md 落盘后：仅替换变量值，页面结构不返工
+ * ============================================================ */
+page {
+  --color-primary: #3a7afe; --color-primary-light: #eaf1ff;
+  --color-text: #1f2329; --color-text-secondary: #86909c;
+  --color-bg: #f5f6f8; --color-card: #ffffff;
+  --color-success: #00b578; --color-warning: #ff8f1f; --color-danger: #f53f3f;
+  --radius-sm: 8rpx; --radius-md: 16rpx; --radius-lg: 24rpx;
+  --font-xs: 22rpx; --font-sm: 24rpx; --font-md: 28rpx;
+  --font-lg: 32rpx; --font-xl: 36rpx; --font-xxl: 44rpx;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-md);
+}
+
+/* 关怀模式：页面根节点挂 elder-mode 类，字号整体放大（D2） */
+.elder-mode {
+  --font-xs: 26rpx; --font-sm: 30rpx; --font-md: 36rpx;
+  --font-lg: 40rpx; --font-xl: 46rpx; --font-xxl: 56rpx;
+}

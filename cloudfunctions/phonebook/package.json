@@ -1,0 +1,10 @@
+{
+  "name": "ccf-phonebook",
+  "version": "0.1.0",
+  "private": true,
+  "description": "社区便民 · phonebook 资源云函数（actions: list；契约见 contracts/api-contract.md）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

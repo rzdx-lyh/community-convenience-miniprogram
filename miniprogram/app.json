@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/assistant/index",
+    "pages/repair/create/index",
+    "pages/repair/list/index",
+    "pages/repair/detail/index",
+    "pages/notice/list/index",
+    "pages/phonebook/index",
+    "pages/profile/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FAF6F1",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "社区便民",
+    "backgroundColor": "#FAF6F1",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#9B9B9B",
+    "selectedColor": "#C0522F",
+    "backgroundColor": "#FFFFFF",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/assistant/index",
+        "text": "AI助手"
+      },
+      {
+        "pagePath": "pages/repair/list/index",
+        "text": "报修"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
