@@ -9,9 +9,15 @@
  */
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 
+const require = createRequire(import.meta.url);
 const OUT = path.join(path.dirname(fileURLToPath(import.meta.url)), 'seed-data.json');
+
+// 号码真源：与 CR-012 安全话术共用 cloudfunctions/shared/hotline.js，
+// 避免「话术让打 A 号、便民电话簿里是 B 号」（架构评审新增约束）。
+const { HOTLINE } = require('../cloudfunctions/shared/hotline.js');
 
 const NOW = Date.now();
 const H = 3600000;
@@ -152,20 +158,20 @@ notices.push(
 
 /* ----------------------------------------- phonebook ----------------------------------------- */
 const phonebook = [
-  { _id: 'pb-1', name: '物业服务中心', phone: '020-88888888', category: 'property', sort: 1, remark: '24 小时值班' },
-  { _id: 'pb-2', name: '社区居委会', phone: '020-88886666', category: 'government', sort: 2 },
+  { _id: 'pb-1', name: '物业服务中心', phone: HOTLINE.PROPERTY, category: 'property', sort: 1, remark: '24 小时值班' },
+  { _id: 'pb-2', name: '社区居委会', phone: HOTLINE.COMMITTEE, category: 'government', sort: 2 },
   { _id: 'pb-3', name: '社区卫生服务站', phone: '020-88885555', category: 'medical', sort: 3 },
   { _id: 'pb-4', name: '自来水供水热线', phone: '020-88884444', category: 'life', sort: 4 },
   { _id: 'pb-5', name: '供电服务热线', phone: '020-88883333', category: 'life', sort: 5 },
   { _id: 'pb-6', name: '燃气服务热线', phone: '020-88882222', category: 'life', sort: 6 },
   { _id: 'pb-7', name: '开锁服务', phone: '020-88881111', category: 'life', sort: 7, remark: '公安局备案' },
-  { _id: 'pb-8', name: '急救中心', phone: '120', category: 'emergency', sort: 8 },
+  { _id: 'pb-8', name: '急救中心', phone: HOTLINE.MEDICAL, category: 'emergency', sort: 8 },
   // v1.2 增量：宫格「助浴」一键拨号的承接目标（契约 §service:list 承接方案）
   // ⚠ 020-88880000 为占位号，真环境请替换为社区养老服务中心真实号码（改这里即可，service_category 与知识库已同步引用该号）
   { _id: 'pb-9', name: '社区养老服务中心', phone: '020-88880000', category: 'life', sort: 9, remark: '助餐｜助浴｜上门陪护' },
   // 国家公开紧急号码：匪警 110 / 火警 119（与急救 120 共同支撑首页「紧急求助」面板）
-  { _id: 'pb-10', name: '报警求助', phone: '110', category: 'emergency', sort: 10, remark: '匪警·治安求助' },
-  { _id: 'pb-11', name: '火警', phone: '119', category: 'emergency', sort: 11, remark: '火灾报警救援' },
+  { _id: 'pb-10', name: '报警求助', phone: HOTLINE.POLICE, category: 'emergency', sort: 10, remark: '匪警·治安求助' },
+  { _id: 'pb-11', name: '火警', phone: HOTLINE.FIRE, category: 'emergency', sort: 11, remark: '火灾报警救援' },
 ];
 
 /* ---------------------------------------- circle_post ---------------------------------------- */

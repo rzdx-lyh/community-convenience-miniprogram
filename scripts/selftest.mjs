@@ -459,6 +459,39 @@ current = 'CR-012';
   console.log('[CR-012] 示例话术（紧急）：' + emg.data.answer);
 }
 
+/* ===================== CR-013 · 号码真源一致性（话术 vs 电话簿） ===================== */
+current = 'CR-013';
+{
+  const { HOTLINE } = require(path.join(ROOT, 'cloudfunctions', 'shared', 'hotline.js'));
+  const { RISK_RULES } = require(path.join(ROOT, 'cloudfunctions', 'shared', 'safety.js'));
+  const seed = JSON.parse(readFileSync(SEED, 'utf8'));
+  const pbBy = (name) => (seed.phonebook || []).find((p) => p.name === name);
+  const textOf = (level) => RISK_RULES.find((r) => r.level === level).text;
+
+  // ① 话术里的号码与 phonebook 种子同源（防「话术打 A 号、电话簿是 B 号」，评委照号拨打能发现）
+  expect('话术物业号 = 电话簿物业号', HOTLINE.PROPERTY, pbBy('物业服务中心') && pbBy('物业服务中心').phone);
+  expect('话术居委会号 = 电话簿居委会号', HOTLINE.COMMITTEE, pbBy('社区居委会') && pbBy('社区居委会').phone);
+  expect('话术急救号 = 电话簿急救号', HOTLINE.MEDICAL, pbBy('急救中心') && pbBy('急救中心').phone);
+  expect('话术报警号 = 电话簿报警号', HOTLINE.POLICE, pbBy('报警求助') && pbBy('报警求助').phone);
+  expect('话术火警号 = 电话簿火警号', HOTLINE.FIRE, pbBy('火警') && pbBy('火警').phone);
+
+  // ② 号码确实出现在对应话术里（常量改了话术会跟着变，反向兜底）
+  expectTrue('紧急话术含物业值班号', textOf('emergency').includes(HOTLINE.PROPERTY));
+  expectTrue('涉医话术含物业值班号', textOf('medical').includes(HOTLINE.PROPERTY));
+  expectTrue('涉法话术含居委会号', textOf('legal').includes(HOTLINE.COMMITTEE));
+  expectTrue('涉法话术含 12348', textOf('legal').includes(HOTLINE.LEGAL_AID));
+
+  // ③ 词表迭代（CR-013）：legal 需含 4 个劳动纠纷词，且「工伤认定」显式列出便于前端逐字拷贝
+  const legalRe = RISK_RULES.find((r) => r.level === 'legal').re;
+  for (const word of ['工伤', '工伤认定', '伤残鉴定', '拖欠工资']) {
+    expectTrue(`legal 词表含「${word}」`, legalRe.test(word));
+  }
+
+  // ④ 话术迁移后措辞未变：三类话术仍带真实号码且不含「建议」类模糊表述
+  expectTrue('三类话术均含真实号码', RISK_RULES.every((r) => /\d{3}/.test(r.text)));
+  expectTrue('话术不含「AI 生成仅供参考」', RISK_RULES.every((r) => !/AI 生成仅供参考/.test(r.text)));
+}
+
 /* --------------------------------- 汇总输出 --------------------------------- */
 const passed = results.filter((r) => r.pass).length;
 const failed = results.length - passed;
