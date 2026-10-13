@@ -299,7 +299,7 @@ ci.upload({
   - 为什么问：契约范围 = 任务卡范围 = 工期，必须一次对齐。
   - 兜底：以 PRD P0/P1 功能映射生成，冻结后新增走契约变更。
 - **C8 幂等与防重**：表单提交防重复？
-  - 推荐：**是**：前端提交带 `clientToken`（UUID），后端按 clientToken 去重（4001）。
+  - 推荐：**是**：前端提交带 `clientToken`（UUID），后端按 clientToken 去重（400）。
   - 为什么问：云开发调用在弱网下可能重试，重复工单/重复报名是最常见生产 bug。
   - 兜底：clientToken 进契约必填字段。
 - **C9 订阅消息**：模板 ID 谁申请？触发点？
@@ -322,7 +322,7 @@ ci.upload({
   - 为什么问：工单含住址等敏感信息，互看即越权。
   - 兜底：固定，过滤逻辑进 7.5 角色矩阵。
 - **D3 内容安全**：接微信 msgSecCheck？
-  - 推荐：**是**：居民 UGC（反馈/评论/互助）先审后发，未过审返回 code 2004。
+  - 推荐：**是**：居民 UGC（反馈/评论/互助）先审后发，未过审返回 code 400。
   - 为什么问：大赛"内容安全"是微信生态能力加分项，也是合规要求。
   - 兜底：固定；云函数 `security.msgSecCheck`，不可省。
 - **D4 隐私政策**：预留页面与文案？
@@ -458,89 +458,96 @@ flowchart TB
 - 分页：入参 `page`（1 起）/`pageSize`（默认 10，上限 50）；出参 `data.list` + `data.total`。
 - 时间：ISO8601 UTC 字符串（如 `2026-10-13T08:00:00.000Z`），前端本地化展示。
 - 鉴权：openid 由云函数上下文取得，前端不传；角色校验见 7.5。
-- 幂等：写接口必带 `clientToken`（前端 UUID），重复提交返回 4001。
+- 幂等：写接口必带 `clientToken`（前端 UUID），重复提交返回 400。
 
 **① auth.login（登录/注册）**
 - 云函数 `auth` | action `login` | 权限：公开 | 幂等：否
 - 入参：`{ nickname?, avatar? }`；出参 data：`{ openid, role, isNew }`
-- 错误码：1001
+- 错误码：400
 - 请求：`{ action: 'login', nickname: '张阿姨', avatar: '' }`
 - 响应：`{ "code": 0, "msg": "ok", "data": { "openid": "oX1a...", "role": "resident", "isNew": true } }`
 
 **② user.getProfile（我的资料）**
 - 云函数 `user` | action `getProfile` | 权限：登录用户 | 入参：`{}` | 出参：`{ user: { nickname, avatar, role, community, building, room, points, phoneMask } }`
-- 错误码：1002
+- 错误码：401
 - 响应：`{ "code": 0, "msg": "ok", "data": { "user": { "nickname": "张阿姨", "role": "resident", "community": "幸福里小区", "points": 120, "phoneMask": "138****1234" } } }`
 
 **③ user.updateProfile（完善资料）**
 - 云函数 `user` | action `updateProfile` | 权限：登录用户 | 入参：`{ nickname?, community, building, room, phone? }`（phone 后端 AES 加密）
-- 错误码：1001/2005
+- 错误码：400
 - 响应：`{ "code": 0, "msg": "保存成功", "data": null }`
 
 **④ workorder.create（提交报修）**
 - 云函数 `workorder` | action `create` | 权限：resident/admin | 幂等：clientToken 必填
 - 入参：`{ title, desc, category, images?: string[], address, contactPhone?, clientToken, aiDraft? }`，category 枚举：`water/electric/repair/clean/other`
 - 出参 data：`{ workorderId, workorderNo, status }`（status 初始 pending）
-- 错误码：1001/1002/2004/4001
+- 错误码：400（参数／审核未过／幂等冲突）、401（未登录）
 - 请求：`{ action: 'create', title: '厨房水管漏水', desc: '水龙头下方渗水，晚上 7 点后在家', category: 'water', address: '3 栋 502', clientToken: 'a1b2-...', aiDraft: { fault: '水管漏水', urgency: 'high', suggest: '先关总阀' } }`
 - 响应：`{ "code": 0, "msg": "已提交，物业将尽快联系您", "data": { "workorderId": "wo_123", "workorderNo": "WO20261013001", "status": "pending" } }`
 
 **⑤ workorder.list（工单列表）**
 - 云函数 `workorder` | action `list` | 权限：登录用户（居民只见自己，物业/管理员见全部，7.5）
 - 入参：`{ status?, page, pageSize }` | 出参：`{ list: [{ workorderId, workorderNo, title, category, status, createTime, statusText }], total }`
-- 错误码：1001
+- 错误码：400
 - 响应：`{ "code": 0, "msg": "ok", "data": { "list": [{ "workorderId": "wo_123", "title": "厨房水管漏水", "category": "water", "status": "accepted", "createTime": "2026-10-13T08:00:00.000Z", "statusText": "物业已接单" }], "total": 1 } }`
 
 **⑥ workorder.detail（工单详情+进度）**
 - 云函数 `workorder` | action `detail` | 权限：本人/物业/admin | 入参：`{ workorderId }`
 - 出参：`{ workorder: { ...全字段, timeline: [{ status, time, note }], feedback? } }`
-- 错误码：1001/1003/2001
+- 错误码：400（参数）、403（越权）、404（工单不存在）
 - 响应：`{ "code": 0, "msg": "ok", "data": { "workorder": { "title": "厨房水管漏水", "status": "processing", "timeline": [{ "status": "accepted", "time": "2026-10-13T09:00:00.000Z", "note": "王师傅已接单" }] } } }`
 
 **⑦ notice.list（通知列表）**
 - 云函数 `notice` | action `list` | 权限：登录用户（只返已过审） | 入参：`{ type?, page, pageSize }` | 出参：`{ list: [{ noticeId, title, type, isTop, publishTime }], total }`
-- 错误码：1001
+- 错误码：400
 - 响应：`{ "code": 0, "msg": "ok", "data": { "list": [{ "noticeId": "n_1", "title": "10 月 15 日停水通知", "type": "notice", "isTop": true, "publishTime": "2026-10-12T02:00:00.000Z" }], "total": 1 } }`
 
 **⑧ activity.join（活动报名）**
 - 云函数 `activity` | action `join` | 权限：resident | 幂等：clientToken
 - 入参：`{ activityId, clientToken }` | 出参：`{ joinId, quotaLeft }`
-- 错误码：1001/2002/2003/4001
+- 错误码：400（参数／已报名／报名已满／幂等冲突）
 - 响应：`{ "code": 0, "msg": "报名成功", "data": { "joinId": "j_1", "quotaLeft": 18 } }`
 
 **⑨ phonebook.list（便民电话簿）**
 - 云函数 `phonebook` | action `list` | 权限：登录用户 | 入参：`{ category?, keyword?, page, pageSize }`
 - 出参：`{ list: [{ phoneId, name, phone, category, address, workTime }], total }`
-- 错误码：1001
+- 错误码：400
 - 响应：`{ "code": 0, "msg": "ok", "data": { "list": [{ "phoneId": "p_1", "name": "幸福里物业服务中心", "phone": "020-88886666", "category": "property", "address": "小区东门 1 楼", "workTime": "8:30-18:00" }], "total": 1 } }`
 
 **⑩ qa.ask（办事指南 AI 问答 / RAG）**
-- 云函数 `qa` | action `ask` | 权限：登录用户 | 入参：`{ question, history?: [{ role, content }] }`
-- 出参：`{ answer, sources: [{ title, snippet }], degraded: boolean, suggest?: string }`
-- 错误码：1001/3001/3002/3003
-- 请求：`{ action: 'ask', question: '外地户口怎么给孩子办居住证？', history: [] }`
+- 云函数 `qa` | action `ask` | 权限：登录用户 | 入参：`{ question, elderMode?, sessionId? }`（**v1.1**：多轮由 sessionId 承载，不再传 history）
+- 出参：`{ answerId, sessionId, answer, sources: [{ title, snippet }], degraded: boolean, suggest?: string }`（服务端只保留最近 3 轮上下文）
+- 错误码：400（参数）、429（限流）、503（AI 不可用已降级）
+- 请求：`{ action: 'ask', question: '外地户口怎么给孩子办居住证？', sessionId: 's_abc123' }`
 - 响应：`{ "code": 0, "msg": "ok", "data": { "answer": "办理居住证需：1. 监护人身份证；2. 孩子户口本；3. 社区居住证明……", "sources": [{ "title": "居住证办理指南", "snippet": "……" }], "degraded": false, "suggest": "如需人工帮助，可拨 020-88886666" } }`
 
-### 7.4 错误码表（写进 api-contract.md，我唯一维护）
+### 7.4 错误码表（**已由 `contracts/api-contract.md` v1.1 冻结，本节为实现依据**）
 
-| 段 | 码 | 含义 | 前端动作 |
+> ⚠️ **本节已于 2026-10-13 统一（CR-003）**。下方为唯一有效的 8 码表，实现一律以此为准。
+> 早期草案曾设计 `1001~1005 / 2001~2006 / 3001~3003 / 4001` 分段码，**已废止**——改码原因是两套码表并存会导致前端按契约分支、后端按本 skill 实现时**错误码全部漏判且静默失败**。
+> 阅读本文档旧章节（§7.3 接口清单、§13 示例、任务卡验收）见到旧码时，按下表换算。
+
+| code | 含义 | 前端动作 |
+| --- | --- | --- |
+| 0 | 成功 | — |
+| 400 | 参数错误／内容审核未通过／幂等冲突／非法状态流转 | toast 具体字段提示；审核未过保留草稿 |
+| 401 | 未登录／登录态失效 | 触发静默登录后重试 |
+| 403 | 无权限（角色不足或越权访问他人工单） | toast「无权限」，隐藏入口 |
+| 404 | 资源不存在 | 返回列表页 |
+| 429 | 请求过于频繁 | toast，稍后可重试 |
+| 500 | 服务内部错误 | 统一兜底话术 |
+| 503 | AI 服务暂时不可用（**已降级**） | 展示降级话术 + 电话簿 Top3 |
+
+**旧码 → 新码换算表**（仅供阅读旧章节时对照）：
+
+| 旧码 | 新码 | 旧码 | 新码 |
 | --- | --- | --- | --- |
-| 0 | 0 | 成功 | — |
-| 1xxx 通用 | 1001 | 参数错误/缺失 | toast 具体字段提示 |
-| | 1002 | 未登录 | 触发静默登录后重试 |
-| | 1003 | 无权限（角色不足） | toast "无权限"，隐藏入口 |
-| | 1004 | 请求过于频繁 | toast，2s 后可重试 |
-| | 1005 | 系统繁忙 | 统一兜底话术 |
-| 2xxx 业务 | 2001 | 工单不存在 | 返回列表页 |
-| | 2002 | 已报名 | toast，按钮置灰 |
-| | 2003 | 报名已满 | toast，展示候补提示 |
-| | 2004 | 内容审核未通过 | toast 合规提示，保留草稿 |
-| | 2005 | 手机号格式错误 | 聚焦输入框 |
-| | 2006 | 工单已关闭，不可评价 | 隐藏评价入口 |
-| 3xxx AI | 3001 | AI 响应超时 | 展示降级话术+电话簿 |
-| | 3002 | AI 服务不可用 | 同 3001 |
-| | 3003 | 知识库为空 | 提示"资料整理中" |
-| 4xxx 数据 | 4001 | 重复提交（幂等冲突） | 静默忽略，回显原结果 |
+| 1001 参数错误 | **400** | 2001 工单不存在 | **404** |
+| 1002 未登录 | **401** | 2002 已报名 / 2003 报名已满 | **400** |
+| 1003 无权限 | **403** | 2004 审核未通过 | **400** |
+| 1004 请求过于频繁 | **429** | 2005 手机号格式错误 | **400** |
+| 1005 系统繁忙 | **500** | 2006 工单已关闭不可评价 | **400** |
+| 3001 AI 超时 / 3002 AI 不可用 / 3003 知识库为空 | **503** | 4001 重复提交（幂等冲突） | **400** |
 
 ### 7.5 鉴权与角色矩阵
 
@@ -554,11 +561,11 @@ const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const checkRole = async (openid, requiredRoles) => {
-  if (!openid) return { ok: false, code: 1002, msg: '未登录' }
+  if (!openid) return { ok: false, code: 401, msg: '未登录' }
   const u = await db.collection('users').where({ openid }).limit(1).get()
   const role = (u.data[0] && u.data[0].role) || 'resident'
   if (requiredRoles && requiredRoles.length && !requiredRoles.includes(role)) {
-    return { ok: false, code: 1003, msg: '无权限', role }
+    return { ok: false, code: 403, msg: '无权限', role }
   }
   return { ok: true, role, code: 0 }
 }
@@ -635,6 +642,14 @@ module.exports = { checkRole }
 索引：`category+sort` 组合。权限：仅云函数。
 
 **集合 5：qa_feedback（知识库+反馈，type 区分）**
+
+> ⚠️ **本节设计已于 2026-10-13 废止（CR-002）**。最终定稿见 `contracts/db-schema.md` v1.1 与 `api-contract.md` 末节：
+> - **知识库不进数据库**，改为 `cloudfunctions/shared/kb/kb.json`（JSON 内置文件，含 `id/title/content/category/keywords[]/synonyms[]`）。理由：规模小、变更少、免接口免权限、可进 git 做版本管理与审阅。
+> - **`qa_feedback` 收敛为纯反馈表**（`question/answerId/sessionId/useful/createdAt`），不再用 `type` 混存知识库与问答日志。
+> - **新增 `qa_sessions` 集合**承载多轮会话（`turns` 只保留最近 3 轮）。
+>
+> 下方字段表仅作历史设计参考，**实现不得照此建表**。
+
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | _id | string | 主键 |
@@ -783,11 +798,11 @@ try {
 **BE 任务卡（9 张）**：
 - **BE-1 云环境+云函数骨架+auth.login**（6h）：cloudfunctions 骨架、common/（响应体/错误码/auth/llm）、config.json 超时设置、auth 函数；验收：本地调试通过、环境变量就位。
 - **BE-2 user**（4h）：getProfile/updateProfile、手机号 AES+脱敏；验收：D1 规则、无明文落库。
-- **BE-3 workorder**（10h）：create/list/detail/状态流转、clientToken 幂等、角色过滤、AI 追问接口；验收：7.5 矩阵逐条可测、重复提交返回 4001。
-- **BE-4 notice+msgSecCheck**（6h）：list/detail/publish（property/admin）、先审后发；验收：违规文案被拦截 code 2004。
+- **BE-3 workorder**（10h）：create/list/detail/状态流转、clientToken 幂等、角色过滤、AI 追问接口；验收：7.5 矩阵逐条可测、重复提交返回 400。
+- **BE-4 notice+msgSecCheck**（6h）：list/detail/publish（property/admin）、先审后发；验收：违规文案被拦截 code 400。
 - **BE-5 activity**（6h）：list/detail/join/满员计数；验收：并发报名不超员（事务/原子更新）。
 - **BE-6 phonebook+种子数据**（4h）：list+分类搜索、scripts/seed.js 全量种子；验收：seed 一键可重建演示数据。
-- **BE-7 qa.ask（RAG+DeepSeek）**（10h）：rag.js 检索+llm.js 调用+降级+限流+qa_log 落库；验收：B11 降级链路、3001/3002 错误码、无 Key 也能返回命中文档。
+- **BE-7 qa.ask（RAG+DeepSeek）**（10h）：rag.js 检索+llm.js 调用+降级+限流+qa_log 落库；验收：B11 降级链路、503 错误码、无 Key 也能返回命中文档。
 - **BE-8 报修 AI 追问 Agent**（8h）：多轮追问状态机（按 openid+会话缓存）、JSON 结构化输出解析、aiDraft 回填；验收：追问 ≤2 轮、JSON 解析失败自动兜底重试 1 次。
 - **BE-9 points+feedback+订阅消息触发器**（6h）：积分流水、feedback 提交（msgSecCheck）、状态变更触发订阅消息；验收：积分只增不减可审计、订阅模板 ID 可配置。
 
@@ -988,7 +1003,7 @@ E3 CI：赛期不做自动化，用 scripts/upload.js 手动上传
   | aiDraft | object | 否 | AI 追问抽取 {fault,urgency,suggest} |
   | clientToken | string | 是 | UUID，防重复提交 |
 - 出参 data：{ workorderId, workorderNo, status }
-- 错误码：1001 参数错误｜1002 未登录｜1003 无权限｜2004 审核未过｜4001 重复提交
+- 错误码：400（参数／审核未过／幂等冲突）｜401（未登录）｜403（无权限）
 - 请求示例：wx.cloud.callFunction({ name:'workorder', data:{ action:'create', title:'厨房水管漏水', desc:'水龙头下方渗水', category:'water', address:'3栋502', clientToken:'a1b2-c3d4' } })
 - 响应示例：{ "code":0, "msg":"已提交，物业将尽快联系您", "data":{ "workorderId":"wo_123", "workorderNo":"WO20261013001", "status":"pending" } }
 ```
@@ -1003,11 +1018,11 @@ E3 CI：赛期不做自动化，用 scripts/upload.js 手动上传
 - 验收标准：
   1) 提问"怎么办居住证"返回步骤+材料清单，sources 非空且可点击；
   2) 断 Key（环境变量置空）时返回命中文档摘要，degraded=true，不报错；
-  3) 知识库为空返回 code 3003；
+  3) 知识库为空返回 code 503；
   4) 8s 超时（网络模拟）返回降级话术+电话簿 top3；
-  5) 10s 内重复提问返回 1004；
+  5) 10s 内重复提问返回 429；
   6) 响应体严格 {code,msg,data}，code=0；
-- 相关接口：qa.ask；错误码：1001/1004/3001/3002/3003
+- 相关接口：qa.ask；错误码：400（参数）、429（限流）、503（AI 不可用／知识库为空）
 ```
 
 ### 13.4 云函数骨架（cloudfunctions/workorder/index.js，真实可跑）
@@ -1025,11 +1040,11 @@ exports.main = async (event) => {
     const auth = await checkRole(OPENID, null)       // 只要求登录
     if (!auth.ok) return fail(auth.code, auth.msg)
     const action = event.action
-    if (!handlers[action]) return fail(1001, '未知 action：' + action)
+    if (!handlers[action]) return fail(400, '未知 action：' + action)
     return await handlers[action]({ ...event, openid: OPENID, role: auth.role })
   } catch (e) {
     console.error('[workorder]', e)
-    return fail(1005, '系统繁忙，请稍后再试')
+    return fail(500, '系统繁忙，请稍后再试')
   }
 }
 ```
