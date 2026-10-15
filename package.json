@@ -12,8 +12,9 @@
     "lint:fix": "eslint miniprogram tests --fix",
     "format": "prettier --write \"{miniprogram,tests,docs,tools,cloudfunctions}/**/*.{ts,mjs,js,json,wxml,wxss,md}\" \"*.{json,md}\"",
     "verify": "npm run typecheck && npm run lint && npm run test",
-    "mock": "node tools/mock-server/server.mjs",
-    "mock:smoke": "node tools/mock-server/smoke.mjs"
+    "mock": "node scripts/mock-server.mjs",
+    "mock:smoke": "node scripts/selftest.mjs",
+    "build:cf": "node scripts/build-cf.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

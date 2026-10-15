@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>社区便民 · 首页设计预览 v1.2（G3）</title>
+<style>
+  :root{
+    /* Design Token v1.1 · 清新绿（rpx÷2 = px） */
+    --brand:#1E8252; --brand-mid:#2FA36B; --brand-press:#166A42; --brand-light:#E6F5EE;
+    --brand-gradient:linear-gradient(170deg,#3BB27E 0%,#2FA36B 45%,#1E8252 100%);
+    --accent-warm:#E0862F; --accent-warm-light:#FDF3E7;
+    --bg:#FAF6F1; --card:#FFFFFF;
+    --text-1:#2B2B2B; --text-2:#6B6B6B; --text-3:#9B9B9B; --line:#EEEAE3;
+    --urgent:#C0392B; --urgent-press:#A32E22;
+    --radius-l:12px;
+    --shadow-card:0 2px 8px rgba(43,43,43,.06);
+    --font-card:17px; --font-body:16px; --font-sub:14px; --font-cap:12px;
+  }
+  body.care-mode{
+    --font-card:22px; --font-body:20px; --font-sub:18px; --font-cap:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#EDE9E4;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--text-1);display:flex;flex-direction:column;align-items:center;
+    padding:24px 12px 40px;gap:14px;
+  }
+  .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
+    font-size:13px;color:#5b5b5b;background:#fff;border-radius:10px;padding:10px 16px;
+    box-shadow:var(--shadow-card);max-width:440px;text-align:center}
+  .switch{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--brand);font-weight:600}
+  /* ===== 手机外框 375×667 ===== */
+  .phone{width:375px;height:667px;background:var(--bg);border-radius:22px;overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.18);position:relative;display:flex;flex-direction:column}
+  /* ===== 整体滚动区（头部+内容同一容器，负边距压边不被裁切） ===== */
+  .scrollarea{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+  .scrollarea::-webkit-scrollbar{display:none}
+  /* ===== 填满式绿色头部 ===== */
+  .header{
+    background:var(--brand-gradient);flex:none;
+    padding:0 16px 48px;position:relative;
+  }
+  .statusbar{height:24px;display:flex;align-items:center;justify-content:space-between;
+    font-size:11px;color:#fff;opacity:.95}
+  .navrow{height:44px;display:flex;align-items:center;justify-content:flex-end}
+  .locrow{height:44px;display:flex;align-items:center;gap:6px}
+  .locrow svg{flex:none}
+  .locrow .loctext{font-size:17px;font-weight:700;color:#fff;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .capsule{width:87px;height:32px;border:1px solid rgba(255,255,255,.35);
+    border-radius:16px;background:rgba(255,255,255,.15);display:flex;align-items:center;
+    justify-content:space-around;flex:none}
+  .capsule .dot{width:3px;height:3px;background:#fff;border-radius:50%;box-shadow:6px 0 0 #fff,12px 0 0 #fff}
+  .capsule .ring{width:11px;height:11px;border:1.4px solid #fff;border-radius:50%}
+  /* 用户信息行 */
+  .userbar{display:flex;align-items:center;gap:10px;padding:2px 0 10px}
+  .avatar{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.25);
+    border:2px solid rgba(255,255,255,.9);flex:none;color:#fff;font-size:18px;font-weight:600;
+    display:flex;align-items:center;justify-content:center}
+  body.care-mode .avatar{width:58px;height:58px;font-size:22px}
+  .uinfo{min-width:0;flex:1}
+  .uname{font-size:var(--font-card);font-weight:700;color:#fff;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .uaccount{font-size:var(--font-cap);color:rgba(255,255,255,.72);margin-top:2px}
+  /* 紧急援助行：红色徽标（不同色系，突出紧急语义） */
+  .aidrow{display:flex;align-items:center;justify-content:space-between;height:44px}
+  .aidlabel{display:inline-flex;align-items:center;gap:8px;font-size:var(--font-body);
+    font-weight:700;color:#fff}
+  .aidbadge{width:26px;height:26px;border-radius:8px;background:var(--urgent);flex:none;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+  body.care-mode .aidbadge{width:32px;height:32px}
+  .aidbtn{height:36px;min-width:96px;display:inline-flex;align-items:center;justify-content:center;gap:5px;
+    padding:0 14px;border-radius:999px;background:#fff;color:var(--urgent);
+    font-size:var(--font-sub);font-weight:700;border:none;cursor:pointer;flex:none;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);transition:transform .1s ease}
+  body.care-mode .aidbtn{height:48px;font-size:18px}
+  .aidbtn:active{transform:scale(.96)}
+  /* ===== 内容区 ===== */
+  .content{padding:0 16px 12px}
+  /* 通知卡：压在头部下缘（同一滚动容器内负边距，不会被裁切） */
+  .noticecard{
+    background:#fff;border-radius:var(--radius-l);box-shadow:var(--shadow-card);
+    padding:16px;margin-top:-36px;position:relative;z-index:2;
+  }
+  .notice-main{display:flex;align-items:center;gap:12px;cursor:pointer}
+  .notice-icon{width:44px;height:44px;border-radius:10px;background:var(--brand-light);
+    color:var(--brand);display:flex;align-items:center;justify-content:center;flex:none}
+  body.care-mode .notice-icon{width:52px;height:52px}
+  .notice-text{flex:1;min-width:0}
+  .notice-title{font-size:var(--font-card);font-weight:700;display:block;
+    transition:opacity .2s ease}
+  .notice-sub{font-size:var(--font-sub);color:var(--text-2);margin-top:3px;display:block;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:opacity .2s ease}
+  .notice-deco{width:64px;height:44px;flex:none;border-radius:8px;
+    background:linear-gradient(135deg,#DFF2E8,#C8E8D8);position:relative;overflow:hidden}
+  .notice-deco::after{content:"";position:absolute;left:12px;bottom:0;width:18px;height:26px;
+    background:rgba(255,255,255,.75);border-radius:4px 4px 0 0;box-shadow:22px 6px 0 -4px rgba(255,255,255,.6)}
+  .notice-divider{height:1px;background:var(--line);margin:12px 0}
+  .pills{display:flex;gap:8px}
+  .pill{height:28px;display:inline-flex;align-items:center;gap:4px;padding:0 12px;border-radius:999px;
+    background:var(--brand-light);color:var(--brand);font-size:var(--font-cap);font-weight:600;cursor:pointer}
+  body.care-mode .pill{height:36px;font-size:15px}
+  .pill:active{background:#D3ECDF}
+  /* 核心功能 */
+  .sec-head{display:flex;align-items:center;justify-content:space-between;margin:16px 0 12px}
+  .sec-title{font-size:var(--font-card);font-weight:800}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  body.care-mode .grid{grid-template-columns:1fr}
+  .fn{
+    background:#fff;border-radius:var(--radius-l);box-shadow:var(--shadow-card);
+    padding:16px 12px 14px;position:relative;cursor:pointer;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;text-align:center;min-height:150px;
+    transition:transform .12s ease}
+  body.care-mode .fn{min-height:170px}
+  .fn:active{transform:scale(.98)}
+  .fnicon{width:36px;height:36px;color:var(--brand);display:flex;align-items:center;justify-content:center}
+  .fn.warm .fnicon{color:var(--accent-warm)}
+  body.care-mode .fnicon{width:44px;height:44px}
+  .fnicon svg{width:100%;height:100%}
+  .fnname{font-size:var(--font-body);font-weight:700;margin-top:8px}
+  .fnsub{font-size:var(--font-cap);color:var(--text-2);margin-top:6px;line-height:1.7}
+  .fndeco{position:absolute;right:8px;bottom:8px;width:26px;height:26px;border-radius:7px;
+    background:var(--brand-light);color:var(--brand);opacity:.85;
+    display:flex;align-items:center;justify-content:center}
+  .fn.warm .fndeco{background:var(--accent-warm-light);color:var(--accent-warm)}
+  .fndeco svg{width:15px;height:15px}
+  /* TabBar */
+  .tabbar{height:49px;background:#fff;border-top:1px solid var(--line);display:flex;flex:none}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    font-size:11px;color:#9B9B9B;cursor:pointer}
+  .tab.active{color:var(--brand);font-weight:700}
+  .tab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;
+    stroke-linecap:round;stroke-linejoin:round}
+  /* 其他 Tab 占位 */
+  .placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:480px;gap:10px;color:var(--text-2);text-align:center;padding:0 32px}
+  .placeholder h3{font-size:var(--font-card);color:var(--text-1)}
+  .placeholder p{font-size:var(--font-sub);line-height:1.6}
+  .empty-illu{width:96px;height:96px;border-radius:50%;background:var(--brand-light);
+    display:flex;align-items:center;justify-content:center;color:var(--brand)}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <span>G3 设计预览 v1.2 · 修复：通知卡完整显示 / 紧急援助红色徽标</span>
+    <label class="switch"><input type="checkbox" id="careToggle"> 关怀模式</label>
+  </div>
+
+  <div class="phone" id="phone">
+    <!-- ===== 整体滚动区：头部与内容同容器 ===== -->
+    <div class="scrollarea" id="scrollarea">
+      <!-- 绿色渐变头部（填满顶部） -->
+      <div class="header" id="header">
+        <div class="statusbar"><span>9:41</span><span>•••  ᯤ  ▮</span></div>
+        <div class="navrow" id="navrow">
+          <span class="capsule"><span class="dot"></span><span class="ring"></span></span>
+        </div>
+        <div class="locrow">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
+            <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>
+          </svg>
+          <span class="loctext">当前社区：阳光社区</span>
+        </div>
+        <div class="userbar">
+          <div class="avatar">明</div>
+          <div class="uinfo">
+            <div class="uname">阿明的小院</div>
+            <div class="uaccount">🔖 社区账号 linju_0523</div>
+          </div>
+        </div>
+        <div class="aidrow">
+          <span class="aidlabel">
+            <span class="aidbadge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/>
+              </svg>
+            </span>
+            紧急援助
+          </span>
+          <button class="aidbtn" id="urgentBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/>
+            </svg>
+            紧急求助
+          </button>
+        </div>
+      </div>
+
+      <!-- 首页内容 -->
+      <div class="content" id="screenHome">
+        <!-- 通知卡（压头部下缘，完整显示） -->
+        <div class="noticecard">
+          <div class="notice-main">
+            <span class="notice-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>
+              </svg>
+            </span>
+            <span class="notice-text">
+              <span class="notice-title" id="noticeTitle">停水通知</span>
+              <span class="notice-sub" id="noticeSub">10-14 09:00-17:00 · 3 号楼，请提前储水</span>
+            </span>
+            <span class="notice-deco"></span>
+          </div>
+          <div class="notice-divider"></div>
+          <div class="pills">
+            <span class="pill">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3l12 5V4L3 9z"/><path d="M15 8a4 4 0 0 1 0 8"/></svg>
+              本周公告
+            </span>
+            <span class="pill">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19l5-5"/><path d="M6 4h13v13"/><path d="M11 8h5M11 12h5"/></svg>
+              最近路况
+            </span>
+          </div>
+        </div>
+
+        <!-- 核心功能 2×2 -->
+        <div class="sec-head"><span class="sec-title">核心功能</span></div>
+        <div class="grid">
+          <div class="fn">
+            <span class="fnicon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.4"/><path d="M14.5 19a4.5 4.5 0 0 1 6.5-4"/></svg>
+            </span>
+            <span class="fnname">生活基础服务</span>
+            <span class="fnsub">挂号｜义诊<br>疫苗档案</span>
+            <span class="fndeco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 12l2 2 4-4"/></svg></span>
+          </div>
+          <div class="fn">
+            <span class="fnicon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+            </span>
+            <span class="fnname">健康养老服务</span>
+            <span class="fnsub">助餐｜助浴<br>上门陪护</span>
+            <span class="fndeco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6"/></svg></span>
+          </div>
+          <div class="fn warm">
+            <span class="fnicon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 1 5 5L11 20l-3 1 1-3z"/><path d="M5 5l4 4"/></svg>
+            </span>
+            <span class="fnname">便民配套服务</span>
+            <span class="fnsub">水电燃气<br>适老化改造</span>
+            <span class="fndeco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+          </div>
+          <div class="fn warm">
+            <span class="fnicon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v18H8z"/><path d="M8 7l-3 1v9l3-1M16 7l3 1v9l-3-1"/></svg>
+            </span>
+            <span class="fnname">文化便民服务</span>
+            <span class="fnsub">每周义诊<br>健康报告</span>
+            <span class="fndeco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8c2-2 5-2 7 0 2-2 5-2 7 0"/><path d="M5 16c2-2 5-2 7 0 2-2 5-2 7 0"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 其他 Tab 占位 -->
+      <div class="content hidden" id="screenOrder">
+        <div class="placeholder">
+          <div class="empty-illu"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div>
+          <h3>服务订单</h3><p>原「报修列表」改名，数据源不变<br>状态筛选：全部 / 进行中 / 已完成</p>
+        </div>
+      </div>
+      <div class="content hidden" id="screenCircle">
+        <div class="placeholder">
+          <div class="empty-illu"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-3-6.2"/><path d="M8 11h8M8 15h5"/></svg></div>
+          <h3>社区圈子</h3><p>变更 C1 新增页（最小版：路况 / 公告 / 活动）<br>待架构师补契约与任务卡</p>
+        </div>
+      </div>
+      <div class="content hidden" id="screenMine">
+        <div class="placeholder">
+          <div class="empty-illu"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></div>
+          <h3>我的</h3><p>头像卡 / 报修统计 / 角色切换 / 关怀模式开关 / 隐私政策</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TabBar -->
+    <nav class="tabbar" id="tabbar">
+      <div class="tab active" data-screen="screenHome">
+        <svg viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-5v-5h-4v5H5a1 1 0 0 1-1-1z"/></svg>
+        <span>首页</span>
+      </div>
+      <div class="tab" data-screen="screenOrder">
+        <svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+        <span>服务订单</span>
+      </div>
+      <div class="tab" data-screen="screenCircle">
+        <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-3-6.2"/><path d="M8 11h8M8 15h5"/></svg>
+        <span>社区圈子</span>
+      </div>
+      <div class="tab" data-screen="screenMine">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>
+        <span>我的</span>
+      </div>
+    </nav>
+  </div>
+
+<script>
+  // 关怀模式（等价小程序根节点 .care-mode）
+  document.getElementById('careToggle').addEventListener('change', function (e) {
+    document.body.classList.toggle('care-mode', e.target.checked);
+  });
+
+  // TabBar 切换
+  var tabs = document.querySelectorAll('.tab');
+  var screens = ['screenHome', 'screenOrder', 'screenCircle', 'screenMine'];
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      screens.forEach(function (id) {
+        document.getElementById(id).classList.toggle('hidden', id !== tab.dataset.screen);
+      });
+      // 非首页隐藏绿色头部（演示用；真机各 Tab 页有各自导航）
+      document.getElementById('header').style.display = tab.dataset.screen === 'screenHome' ? '' : 'none';
+      document.getElementById('scrollarea').scrollTop = 0;
+    });
+  });
+
+  // 紧急通知轮播（演示，3s 一条）
+  var items = [
+    ['停水通知', '10-14 09:00-17:00 · 3 号楼，请提前储水'],
+    ['道路检修', '10-15 起 2 号门封闭施工，请绕行东门'],
+    ['停电通知', '10-16 08:00-12:00 · 5-8 号楼例行检修']
+  ];
+  var idx = 0;
+  setInterval(function () {
+    idx = (idx + 1) % items.length;
+    var t = document.getElementById('noticeTitle'), s = document.getElementById('noticeSub');
+    t.style.opacity = 0; s.style.opacity = 0;
+    setTimeout(function () {
+      t.textContent = items[idx][0]; s.textContent = items[idx][1];
+      t.style.opacity = 1; s.style.opacity = 1;
+    }, 200);
+  }, 3000);
+
+  // 紧急求助 → 演示（真机为底部半屏弹层）
+  document.getElementById('urgentBtn').addEventListener('click', function () {
+    alert('紧急求助面板（半屏弹层）\n\n110 报警 / 119 火警 / 120 急救\n社区值班电话 · 物业值班电话\n\n每行高 96rpx，整行可点，右侧「拨号」\n底部提示：紧急情况请优先拨打 110/119/120');
+  });
+</script>
+</body>
+</html>

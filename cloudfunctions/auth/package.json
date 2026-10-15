@@ -1,0 +1,10 @@
+{
+  "name": "ccf-auth",
+  "version": "0.1.0",
+  "private": true,
+  "description": "社区便民 · auth 资源云函数（actions: login / updateProfile；契约见 contracts/api-contract.md）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

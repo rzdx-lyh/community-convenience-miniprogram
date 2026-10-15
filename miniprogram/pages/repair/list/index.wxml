@@ -1,0 +1,49 @@
+<!-- 服务订单（FE-4 · 原报修列表改名；TabBar 第 2 项） -->
+<view class="page {{elderMode ? 'care-mode' : ''}}">
+  <!-- 状态筛选 Tab -->
+  <view class="tabs">
+    <block wx:for="{{tabs}}" wx:key="value">
+      <view class="tab {{item.value === activeStatus ? 'tab-on' : ''}}" data-value="{{item.value}}" bindtap="onTabTap">
+        <text>{{item.label}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 列表 -->
+  <view class="list">
+    <block wx:for="{{list}}" wx:key="_id">
+      <view class="card" data-id="{{item._id}}" bindtap="onCardTap">
+        <view class="card-head">
+          <text class="card-title">{{item.title}}</text>
+          <view class="tag tag-{{item.statusKey}}">
+            <text class="tag-text">{{item.statusLabel}}</text>
+          </view>
+        </view>
+        <text class="card-summary">{{item.summary}}</text>
+        <view class="card-foot">
+          <text class="card-cat">{{item.categoryLabel}}</text>
+          <text class="card-time">{{item.timeText}}</text>
+        </view>
+      </view>
+    </block>
+
+    <view wx:if="{{loadingMore}}" class="loading">
+      <text class="loading-text">加载中…</text>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <empty-state
+    wx:if="{{list.length === 0 && !loadingMore}}"
+    type="order"
+    text="{{emptyText}}"
+    subText="{{emptySubText}}"
+    buttonText="去报修"
+    bind:action="onCreate"
+  />
+
+  <!-- 悬浮报修按钮 -->
+  <view class="fab" bindtap="onCreate">
+    <text class="fab-text">+ 我要报修</text>
+  </view>
+</view>

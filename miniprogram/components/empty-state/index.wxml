@@ -1,0 +1,9 @@
+<view class="empty">
+  <view class="empty__icon empty__icon--{{type}}"></view>
+  <view class="empty__text">{{text}}</view>
+  <view wx:if="{{subText}}" class="empty__sub">{{subText}}</view>
+  <view wx:if="{{buttonText}}" class="empty__btn" hover-class="empty__btn--hover" bindtap="onAction">
+    {{buttonText}}
+  </view>
+  <slot />
+</view>

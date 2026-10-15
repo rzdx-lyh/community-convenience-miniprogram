@@ -1,0 +1,131 @@
+/* ============================================================
+ * app.wxss · 全局样式与 Design Token
+ * 来源：docs/03-design-tokens.md v1.1（清新绿版，UI 设计师 2026-10-13）
+ * 硬规则：组件/页面样式一律 var(--token)，禁止硬编码色值与字号。
+ * ============================================================ */
+
+/* ===== 正式 Design Token v1.1（清新绿 · CHANGELOG #3） ===== */
+page {
+  /* 品牌色 */
+  --brand: #1E8252;
+  --brand-mid: #2FA36B;
+  --brand-press: #166A42;
+  --brand-light: #E6F5EE;
+  --brand-gradient: linear-gradient(170deg, #3BB27E 0%, #2FA36B 45%, #1E8252 100%);
+  --accent-warm: #E0862F;
+  --accent-warm-light: #FDF3E7;
+  /* 辅助色（青砖绿·岭南点缀） */
+  --green: #3E6E5F;
+  --green-light: #E7F0ED;
+  /* 中性色 */
+  --bg: #FAF6F1;
+  --card: #FFFFFF;
+  --text-1: #2B2B2B;
+  --text-2: #6B6B6B;
+  --text-3: #9B9B9B;
+  --line: #EEEAE3;
+  --mask: rgba(0, 0, 0, 0.6);
+  /* 功能色 */
+  --success: #3E8E5A;
+  --warning: #D98E32;
+  --info: #3A7CA5;
+  --processing: #7A5BB8;
+  --error: #C0392B;
+  --disabled: #9B9B9B;
+  /* 紧急模块（变更 C1） */
+  --urgent: #C0392B;
+  --urgent-press: #A32E22;
+  --urgent-bg: #FDF0EC;
+  --urgent-line: #E0532F;
+  /* 字号阶梯（常规） */
+  --font-hero: 48rpx;
+  --font-title: 40rpx;
+  --font-card: 34rpx;
+  --font-body: 32rpx;
+  --font-sub: 28rpx;
+  --font-cap: 24rpx;
+  --font-btn: 34rpx;
+  /* 间距（8px 栅格） */
+  --space-1: 8rpx;
+  --space-2: 16rpx;
+  --space-3: 24rpx;
+  --space-4: 32rpx;
+  --space-5: 48rpx;
+  --space-6: 64rpx;
+  /* 圆角 */
+  --radius-s: 8rpx;
+  --radius-m: 16rpx;
+  --radius-l: 24rpx;
+  --radius-full: 999rpx;
+  /* 阴影 */
+  --shadow-card: 0 4rpx 16rpx rgba(43, 43, 43, 0.06);
+  --shadow-urgent: 0 4rpx 16rpx rgba(192, 57, 43, 0.18);
+  --shadow-float: 0 8rpx 24rpx rgba(30, 130, 82, 0.25);
+  --shadow-modal: 0 16rpx 48rpx rgba(0, 0, 0, 0.12);
+  /* 层级 */
+  --z-content: 0;
+  --z-sticky: 10;
+  --z-fab: 100;
+  --z-mask: 900;
+  --z-modal: 1000;
+  --z-toast: 2000;
+
+  /* ----- 旧占位变量别名（迁移对照 design-tokens §⑧，页面替换完成后删除） ----- */
+  --color-primary: var(--brand);
+  --color-primary-light: var(--brand-light);
+  --color-text: var(--text-1);
+  --color-text-secondary: var(--text-2);
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--error);
+  --radius-sm: var(--radius-s);
+  --radius-md: var(--radius-m);
+  --radius-lg: var(--radius-l);
+  --font-xs: var(--font-cap);
+  --font-sm: var(--font-sub);
+  --font-md: var(--font-body);
+  --font-lg: var(--font-card);
+  --font-xl: var(--font-title);
+  --font-xxl: var(--font-hero);
+
+  background: var(--bg);
+  color: var(--text-1);
+  font-size: var(--font-body);
+  line-height: 1.4;
+}
+
+/* ===== 关怀模式（全局唯一类名 .care-mode；旧 .elder-mode 保留别名过渡） ===== */
+page.care-mode,
+.care-mode,
+.elder-mode {
+  --font-hero: 60rpx;
+  --font-title: 52rpx;
+  --font-card: 44rpx;
+  --font-body: 40rpx;
+  --font-sub: 36rpx;
+  --font-cap: 32rpx;
+  --font-btn: 42rpx;
+  line-height: 1.5;
+}
+
+/* ===== 通用工具类 ===== */
+.u-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.u-ellipsis-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.u-card {
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+}

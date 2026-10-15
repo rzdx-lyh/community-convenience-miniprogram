@@ -1,0 +1,161 @@
+/* 我的（FE-8）
+   硬规则：一律 var(--token)，禁止硬编码色值与字号；关怀模式靠 .care-mode 变量放大，不做整页 scale。 */
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: var(--space-4) var(--space-4) var(--space-5);
+}
+
+/* ===== 用户信息卡 ===== */
+.user {
+  background: var(--brand-gradient);
+  border-radius: var(--radius-l);
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.user__avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--card);
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--card);
+  font-size: var(--font-title);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.user__info {
+  min-width: 0;
+  flex: 1;
+}
+
+.user__nick {
+  font-size: var(--font-title);
+  font-weight: 700;
+  color: var(--card);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.user__role {
+  margin-top: var(--space-1);
+  display: inline-block;
+  padding: 0 var(--space-2);
+  height: 40rpx;
+  line-height: 40rpx;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.24);
+  color: var(--card);
+  font-size: var(--font-cap);
+}
+
+/* ===== 列表卡 ===== */
+.card {
+  margin-top: var(--space-3);
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: 0 var(--space-4);
+}
+
+.row {
+  min-height: 128rpx;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.row__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.row__title {
+  font-size: var(--font-body);
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.row__sub {
+  margin-top: 4rpx;
+  font-size: var(--font-cap);
+  color: var(--text-2);
+}
+
+.row__value {
+  font-size: var(--font-sub);
+  color: var(--brand);
+  font-weight: 600;
+  max-width: 300rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.row__arrow {
+  font-size: var(--font-body);
+  color: var(--text-3);
+  flex: none;
+}
+
+.row__switch {
+  flex: none;
+  transform: scale(0.9);
+}
+
+/* ===== 未同意隐私政策态 ===== */
+.privacy {
+  padding: 160rpx var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.privacy__icon {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: var(--brand-light);
+  color: var(--brand);
+  font-size: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.privacy__text {
+  margin-top: var(--space-3);
+  font-size: var(--font-body);
+  color: var(--text-2);
+  text-align: center;
+}
+
+.privacy__btn {
+  margin-top: var(--space-4);
+  padding: 0 var(--space-5);
+  height: 76rpx;
+  line-height: 76rpx;
+  font-size: var(--font-body);
+  color: var(--card);
+  background: var(--brand);
+  border-radius: var(--radius-full);
+}
+
+.privacy__btn--hover {
+  opacity: 0.85;
+}
+
+/* 关怀模式：辅助文字升为次级文字（design-tokens §③ 对比度升级） */
+.care-mode .row__sub,
+.care-mode .row__arrow,
+.care-mode .privacy__text {
+  color: var(--text-2);
+}

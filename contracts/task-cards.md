@@ -1,12 +1,19 @@
 # 任务卡（前后端并行工作依据）
 
-> 版本：**v1.1**｜更新日期：2026-10-13（变更详见 `contracts/契约变更记录.md`）
+> 版本：**v1.2**｜更新日期：2026-10-13（变更详见 `contracts/契约变更记录.md` **CR-005 ~ CR-010**）
 > 粒度：1 卡 = 1 页面或 1 接口。依赖：无前置标注的卡可立即开工。
 > 验收：完成=代码 + 自测通过 + 在本文档勾选。提交分支：前端→feature/frontend，后端→feature/backend。
 >
 > **v1.1 影响的任务卡**：FE-2（多轮 sessionId + 历史）、BE-6（会话读写 + 上下文压缩 + 双层护栏 + 未命中阈值）。其余卡不变。
+>
+> **v1.2 增量卡片（承接变更 C1 首页改版，本次新增）**：
+> **FE-11 / FE-12 / FE-13**（前端，合计 2.0 人天，可并行，关键路径 ≈1.25 天）
+> **BE-9 / BE-10 / BE-11 / BE-12**（后端，合计 1.75 人天，4 张全并行，关键路径 ≈0.75 天）
+> ⏱ **关键路径增量合计 ≈ +1.0~1.25 天**。若不并入 FE/BE 既有排期会导致 10-20 开发完成节点失守 → 必须见文末「v1.2 增量排期与降级红线」。
 
 ## 前端任务卡（feature/frontend）
+
+> 本节为 v1.1 既有卡（FE-0~FE-10）。**v1.2 新增的前端卡 FE-11~FE-13 见下文「v1.2 增量任务卡」章节**，勿遗漏。
 
 ### FE-0 工程与基础层（无依赖）
 - 内容：`miniprogram/` 骨架（app.ts/app.json/app.wxss/sitemap.json）、utils（request/storage/format/pagination/logger）、config/env.ts、typings（model.d.ts/api.d.ts）
@@ -65,7 +72,210 @@
 - 内容：按契约逐页联调；产出 `docs/05-前端自测记录.md`
 - 验收：P0 页面全部走通主链路；问题记入 contracts/联调问题清单.md
 
+---
+
+## v1.2 增量任务卡（承接变更 C1 首页改版）
+
+> 📍 **本节同时包含前端卡（FE-11~13）与后端卡（BE-9~12）**，是 2026-10-13 变更 C1 通过后的新增工作量，
+> 编号接既有序列向后延续（既有 FE-0~10 / BE-0~8 见上文，本节不重复列出）。
+
+> **总工期：前端 2.0 人天 / 后端 1.75 人天；关键路径增量 ≈ +1.0~1.25 天（并行后）。**
+> **所有卡都标注了「降级方案」——10-19 未完成则按降级交付，不得拖垮 M5 开发完成节点。**
+
+### FE-11 首页 v1.2 改版 + app.json 路由（pages/index/index）
+- 负责人：前端工程师｜分支 `feature/frontend`｜**工期：1.0 天**
+- 依赖：FE-0（request 封装）、FE-9（公共组件）、契约 `notice:urgentLatest`、`service:list`、`auth:login`（accountId）、设计预览 v1.1 §0
+- 内容：
+  1. **顶部绿色渐变头部**（460rpx）：定位行、用户信息条（头像 + 昵称 + **`accountId` 社区账号 24rpx 白70%**）、紧急求助行（红徽标 + 白 pill 按钮）
+  2. **白色通知卡**（负边距 -72rpx 叠压）：紧急通知标题 + 摘要轮播（3s）+ 右侧插画区；点击 → `pages/notice/list/index?type=urgent`
+  3. 「本周公告」「最近路况」双 pill → 通知列表 / 圈子 `road` 筛选
+  4. **2×2 四类服务宫格**：调 `service:list` 渲染（title / subtitle / icon / iconTheme）
+  5. **app.json**：TabBar 改 4 项 + `selectedColor: #1E8252` + pages 数组调整 + TabBar 图标就位
+  6. 紧急求助半屏弹层（110/119/120 + 值班电话，号码 `phonebook:list` 分类 emergency/property + 本地兜底常量）
+- 验收标准：
+  1) ⚠ **头部与内容必须在同一滚动容器内再做负边距叠压**（设计预览 §0 v1.2 修复项：否则通知卡顶部被裁切）；
+  2) 紧急区：`notice:urgentLatest` 有数据→轮播；**空数组→空态文案「暂无紧急通知，社区运行正常」**（不得报错）；接口 500→区内「公告加载失败」+ 重试按钮；
+  3) 宫格：`service:list` 失败或返回空 → **回退本地常量** `config/service-grid.ts`，4 格仍可渲染可点击（0 白屏）；
+  4) 宫格 8 个子项点击全部**可达且有内容**（不得出现「建设中」toast）；6 种 `targetType` 分发工具函数单测覆盖；
+  5) TabBar 4 项切换正常；AI 助手**不再是 Tab**，但从首页宫格/入口 `navigateTo` 可达且左上角有返回；
+  6) 关怀模式下宫格改 1 列 4 行、头部行高 +25%，无溢出；
+  7) 首屏 ≤2s（含 2 次云函数调用：`urgentLatest` + `service:list`，建议 Promise.all 并发）。
+- 受影响文件：`miniprogram/app.json`、`pages/index/index.{wxml,wxss,ts,json}`、`utils/navigator.ts`（targetType 分发）、`config/service-grid.ts`（本地兜底常量）、`assets/icons/icon-tab-*-81.png`
+- **降级方案（-0.25 天）**：宫格数据直接写死本地常量，不接 `service:list`；紧急区降级为 `notice:list({type:'urgent',pageSize:5})`。
+
+### FE-12 社区圈子页（pages/circle/index）
+- 负责人：前端工程师｜分支 `feature/frontend`｜**工期：0.5 天**
+- 依赖：FE-0、契约 `circle:list` / `circle:detail`、设计预览 §6「社区圈子」
+- 内容：
+  1. 页面骨架（**第一步必须先建空壳并注册进 app.json，否则 TabBar 编译报错**）
+  2. Tag 分类 Tab（全部 / 路况 / 公告 / 活动）+ `circle:list` 分页下拉加载
+  3. 卡片：标题 + 摘要 2 行省略 + 作者（`authorRole=official` 显示「官方」徽标）+ tags + 相对时间
+  4. `circle:detail` 详情页（或半屏展开）
+  5. 消费全局 `pendingCircleFilter`（来自首页「最近路况」pill 与宫格 `circle` 跳转），`onShow` 读取后立即清除
+- 验收标准：
+  1) TabBar 第 3 项可点且选中色 `#1E8252`；
+  2) 列表默认展示 8 条种子数据，路况 Tab 有 ≥3 条；
+  3) 空态用 `empty-state` 组件（文案「还没有邻居发言」），**不得白屏**；
+  4) 从首页「最近路况」进圈子时自动切到「路况」Tab 并完成筛选，返回再进不残留筛选；
+  5) 分页触底加载正确，`total` 到底显示「没有更多了」；
+  6) 详情页 404（帖子被下架）→ toast + 返回列表。
+- 受影响文件：`pages/circle/index.*`（新增）、`pages/circle/detail/index.*`（新增，若做二级页）、`app.json`
+- **降级方案（-0.25 天）**：取消详情页，列表卡点击后由 `wx.showActionSheet` 或卡片内联展开全文 —— 少 1 个页面，验收项 6 改为内联展开。
+
+### FE-13 现有页 URL 入参改造 + 社区账号编辑
+- 负责人：前端工程师｜分支 `feature/frontend`｜**工期：0.5 天**
+- 依赖：FE-0、契约 `user:updateProfile`（accountId）、`auth:login`
+- 内容（对照契约「附 A.3」）：
+  1. `pages/repair/create/index` 支持 `?category=`；`pages/phonebook/index` 支持 `?category=`；
+  2. `pages/notice/list/index` 支持 `?type=`（含 `urgent`）与 `?tag=`；
+  3. `pages/assistant/index` 支持 `?presetQuestion=`（**只填充输入框，不自动发送**）；
+  4. 「我的」页新增**社区账号**编辑项（调 `user:updateProfile({accountId})`），首页 userInfo 条展示 `auth:login` 返回的 `profile.accountId`；
+  5. 「服务订单」页标题文案改动（`pages/repair/list/index`）。
+- 验收标准：
+  1) 4 个页面 URL 入参生效，无参数时行为与改造前**完全一致**（回归项）；
+  2) 社区账号编辑：非法格式 → 后端 400，`request` 层按契约 toast 原文；被占用 → toast「社区账号已被使用，换一个试试」；成功 → 首页账号即时刷新；
+  3) `assistant` 的 presetQuestion 只填充不发送（防止演示误触发 LLM 计费）；
+  4) 服务订单页 navbar 标题为「服务订单」，数据仍是 `workorder:list`，列表行为无回归。
+- 受影响文件：`pages/repair/create/index.ts`、`pages/phonebook/index.ts`、`pages/notice/list/index.ts`、`pages/assistant/index.ts`、`pages/profile/index.{wxml,ts}`、`pages/repair/list/index.json`
+- **降级方案（-0.25 天）**：accountId 编辑项不做（仅展示服务端生成的默认值），保留 URL 入参改造即可。
+
+---
+
+### BE-9 notice 扩展：urgent 类型 + notice:urgentLatest
+- 负责人：后端工程师｜分支 `feature/backend`｜**工期：0.5 天**
+- 依赖：BE-0、BE-4（`notice:list`/`detail`）
+- 内容：
+  1. `notices` 集合补字段（集合本身无需重建，新字段可空）
+  2. 新增 action `notice:urgentLatest`：`status=published AND type=urgent AND startAt<=now(空则跳过) AND endAt>=now(空则跳过)`，排序 `level` 权重 → `startAt` → `publishAt` 降序，取 `limit`（默认 5、上限 10）
+  3. `notice:list` 增加可选入参 `includeExpired`（默认 false → 过滤已过期 urgent）
+  4. `scripts/seed.mjs` 补 3 条 `type=urgent` 种子，**日期用相对时间生成**
+  5. 索引：`type + endAt`（可选，见慢查询再补）
+- 验收标准：
+  1) `urgentLatest` 返回**当前未过期**的紧急通知，含 `summary` 字段；
+  2) **过期验证**：把某条 `endAt` 改成昨天 → 该条立即消失；`startAt` 改成明天 → 同样消失（未到生效时间）；
+  3) 无任何 urgent 数据时返回 `{code:0,msg:'ok',data:{list:[],total:0}}`，**不得返回 404/500**；
+  4) `notice:list({type:'notice'})` 行为与 v1.1 **完全一致**（回归测试必做）；
+  5) `notice:list({type:'urgent'})` 默认过滤过期；`includeExpired:true` 时全部返回；
+  6) `limit` 越界（0 / 999）不报错，按 1 / 10 处理。
+- 受影响文件：`cloudfunctions/notice/index.js`（或 handlers）、`scripts/seed.mjs`、`contracts/db-schema.md`
+- **降级方案（-0.25 天）**：跳过 `urgentLatest` 与 `includeExpired`，前端直接用 `notice:list({type:'urgent'})`（唯一损失：`level` 排序与 `startAt` 未生效过滤）。
+
+### BE-10 circle 只读接口 + 种子数据
+- 负责人：后端工程师｜分支 `feature/backend`｜**工期：0.5 天**
+- 依赖：BE-0
+- 内容：
+  1. 新建 `cloudfunctions/circle/`（index.js + package.json + config.json，`timeout: 20`）
+  2. `circle:list`：`status=published`，支持 `type`/`tag`（精确）/`keyword`（模糊），排序 `topFlag` → `publishAt` 降序，分页
+  3. `circle:detail`：返回 published 单条 + `viewCount` 原子自增（`_.inc(1)`，失败静默）
+  4. **`authorOpenid` 不下发**给前端（出参剔除）
+  5. `scripts/seed.mjs` 补 8 条种子（road≥3 / notice 3 / activity 2，official 4 / resident 4，含 1 条置顶 + 1 条带图）
+  6. 索引：`status+publishAt`、`type+status+publishAt`、`tags`
+- 验收标准：
+  1) `circle:list({type:'road'})` 返回 ≥3 条（首页「最近路况」必须有数据）；
+  2) 无参调用返回全部 8 条，`draft` 的 0 条（若灌了 draft 必须被过滤）；
+  3) `tag` 精确匹配、`keyword` 模糊匹配可用；
+  4) `circle:detail` 连续调用 2 次，`viewCount` 递增 2；不存在的 id → 404；
+  5) 出参**不含** `authorOpenid`；
+  6) 响应严格 `{code,msg,data}`；列表空时 `list:[]` 不报错。
+- 受影响文件：`cloudfunctions/circle/*`（新增）、`scripts/seed.mjs`
+- **降级方案（-0.25 天）**：种子缩减到 4 条（road 2 / notice 1 / activity 1），接口保持 2 个不变（删一期会失去 Tab 页数据源，不建议）。
+
+### BE-11 service:list + service_category 集合 + 种子
+- 负责人：后端工程师｜分支 `feature/backend`｜**工期：0.5 天**
+- 依赖：BE-0
+- 内容：
+  1. 新建 `cloudfunctions/service/`，实现 `service:list`（支持 `key?`，只返 `status=online`，按 `sort` 升序，**不分页**）
+  2. `service_category` 集合建 `key` 唯一索引、`status+sort` 索引
+  3. `scripts/seed.mjs` 灌 4 条分类 + 共 8~11 个子项（按契约 §service:list 承接方案表）
+  4. 兜底：接口异常时**仍返回 `{code:0, data:{list:[]}}`** 而非 500（让前端走本地常量回退）
+- 验收标准：
+  1) `service:list` 返回 4 条分类，每条含 `items` 数组，字段与 `ServiceCategory`/`ServiceItem` 完全一致；
+  2) `service:list({key:'life'})` 只返 1 条；key 不存在 → `list:[]` **不报错**；
+  3) `items[].targetType` 取值只在契约枚举内；`targetType=page` 的 `targetPath` 必须是 **app.json 中已存在的页面**（后端需人工核对一遍清单）；
+  4) `phone` 类型的 `targetParams.phone` 为纯数字/含 `-` 的合法号码字符串；
+  5) 8 个子项中 **0 个** `targetType=toast`。
+- 受影响文件：`cloudfunctions/service/*`（新增）、`scripts/seed.mjs`
+- **降级方案（-0.5 天）**：整卡不做，前端用本地常量 `config/service-grid.ts` 硬编码。**这是工期告急时的第一顺位砍项**（前端 UX 完全一致，仅失去"不发版改文案"能力）。
+
+### BE-12 user.accountId 生成与唯一性校验
+- 负责人：后端工程师｜分支 `feature/backend`｜**工期：0.25 天**
+- 依赖：BE-0、BE-1（auth/user）
+- 内容：
+  1. `auth:login` 建档时生成默认 `accountId`（`linju_` + 6 位随机串，字符集排除 `0/o/1/l/i`；查库校验唯一，最多重试 3 次；仍冲突 → 降级 openid 末 6 位）
+  2. **懒迁移**：`auth:login` / `user:updateProfile` 返回前检测 `accountId` 为空则生成并写回
+  3. `user:updateProfile` 支持 `accountId` 入参：`trim().toLowerCase()` → 正则 `/^[a-z][a-z0-9_]{3,19}$/` 校验 → 查库唯一（排除本人 `_id`）
+  4. `users` 集合建 `accountId` **唯一索引**
+  5. 出参 `profile` 剔除内部字段，保留 `accountId`
+  6. 3 个种子测试账号补 `accountId`
+- 验收标准：
+  1) 新用户登录 → `profile.accountId` **必有值**且格式合法；
+  2) 同一个钉钉串生成 +n 次不重复（跑 20 次生成，0 冲突）；
+  3) 改为他人已用账号 → 400 + msg「社区账号已被使用，换一个试试」；
+  4) 改为自己当前账号 → 200 成功（**不得**报重复）；
+  5) 非法格式（`Abc`、`ab`、`a b c`、`中文`）→ 400 + msg「社区账号需 4-20 位小写字母开头，可含数字和下划线」；
+  6) 手把一个老用户的 `accountId` 置空后调 `auth:login` → 自动补回（懒迁移生效）；
+  7) `users.accountId` 唯一索引存在（并发重复写入会被数据库拒绝，不产生脏数据）。
+- 受影响文件：`cloudfunctions/auth/index.js`、`cloudfunctions/user/index.js`（或 handlers）、`scripts/seed.mjs`
+- **降级方案：不可降级**（首页用户信息条第 3 行依赖该字段，属 P0）。工期已满工期 0.25 天，无压缩空间。
+
+---
+
+## v1.2 增量排期与降级红线
+
+### 工期合计
+
+> ⚠️ **2026-10-13 复核更新（team-lead 决策）**：`circle:list/detail` 与我方页面**全部保留**；
+> `cloudfunctions/circle`、`cloudfunctions/service` **已实现并自测 119/119 全绿**，BE-9~BE-12 **后端部分已交付完成**。
+> 因此下表「串行人天」为**历史排期口径（从零实现）**，**实际剩余工作量见下方「现行口径」**。
+
+| 角色 | 新增卡 | 串行人天（历史口径） | **并行后关键路径（历史口径）** |
+| --- | --- | --- | --- |
+| 前端 | FE-11 / FE-12 / FE-13 | 2.0 | **≈1.25 天**（FE-11 与 FE-12/13 部分并行） |
+| 后端 | BE-9 / BE-10 / BE-11 / BE-12 | 1.75 | **≈0.75 天**（4 卡互不依赖，全并行） |
+| **合计** | **7 张** | **3.75 人天** | **≈ +1.0~1.25 天** |
+
+**现行口径（实际剩余，按此排期）**
+
+| 范围 | 状态 | 剩余 |
+| --- | --- | :-: |
+| BE-9 / BE-10 / BE-11 / BE-12 | ✅ **后端已实现 + 自测 119/119 全绿** | 仅剩**联调验证 ≈0.5 天**（0.1+0.2+0.1+0.1） |
+| FE-11 首页改版 + app.json | 🔨 进行中 | **≈0.5~0.8 天** |
+| FE-12 社区圈子页（**保留**） | 🔨 进行中 | **≈0.3~0.4 天** |
+| FE-13 URL 入参 + 账号编辑 | 🔨 进行中 | **≈0.3~0.4 天** |
+| **剩余合计（关键路径）** | | **≈ 前端 1.1~1.6 天 + 联调/测试 0.5~0.8 天** |
+
+### 建议排期（终点 2026-10-25 23:59）
+
+| 日期 | 动作 |
+| --- | --- |
+| 10-14 | FE/BE 并行：原有 FE-0~10 / BE-0~8 开工；后端优先做 **BE-12（0.25 天，前端 FE-11 依赖）** |
+| 10-15~16 | 后端完成 BE-9/10/11/12 全部；前端完成 FE-0/FE-9 公共层 |
+| 10-15~18 | 前端 FE-11（首页改版）/ FE-12（圈子）/ FE-13（入参改造）并行推进 |
+| 10-19 | **M5 开发完成**（含 v1.2 增量），未达标则当日触发降级 |
+| 10-20~21 | 联调 + 缓冲（缓冲只剩 2 天，很薄） |
+| 10-21~22 | 测试（G5） |
+| 10-23 | 体验版 + 演示视频 + 重跑种子脚本（确认紧急通知未过期） |
+| 10-24 | 预打包演练 |
+| 10-25 | 打包提交 G6 |
+
+### 降级优先级（工期不足时按顺序砍，先砍最便宜的）
+
+> ⚠️ **第 1 项（砍 BE-11）已于 2026-10-13 作废**：后端已完成并自测全绿，砍它只会**丢产出不省时间**。
+> 现行候选**只剩前端侧**，见下表。
+
+| 顺序 | 砍法 | 省 | 损失 |
+| --- | --- | --- | --- |
+| ~~1~~ | ~~**BE-11 整卡不做**（service:list）~~ | ~~0.5 天~~ | ❌ **作废**——后端已实现，不省时间只丢产出 |
+| 1（现行） | **circle:detail 二级页**（FE-12 降级） | 0.25 天 | 详情页改为卡片内联展开；**圈子列表页保留** |
+| 2 | **accountId 编辑项**（FE-13 部分降级） | 0.25 天 | 账号仍展示（服务端生成），只是不可编辑 |
+| 3 | **notice:urgentLatest**（前端侧降级，不碰后端） | 0.1 天 | 紧急区改用 `notice:list`，失去 level 排序与 startAt 生效判定 |
+| ⛔ | **不可砍**：BE-12（accountId 生成）、BE-10（circle:list）、FE-11（首页改版本体）、FE-12 列表页 | — | 这些是变更 C1 的验收面，砍了等于没做 C1 |
+
+---
+
 ## 后端任务卡（feature/backend）
+
+> 本节为 v1.1 既有卡（BE-0~BE-8）。**v1.2 新增的后端卡 BE-9~BE-12 见上文「v1.2 增量任务卡」章节**，勿遗漏。
 
 ### BE-0 工程与基础层（无依赖）
 - 内容：`cloudfunctions/` 目录、共享工具（响应封装/错误码/时间格式化）、`scripts/seed.mjs` 种子数据脚本、云开发环境配置说明

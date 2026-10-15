@@ -1,0 +1,160 @@
+/* 我要报修（FE-3）· 全部取 Design Token v1.1 */
+.page {
+  min-height: 100vh;
+  padding: var(--space-3) var(--space-4) 200rpx;
+  background: var(--bg);
+}
+.block {
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+.block-title {
+  font-size: var(--font-card);
+  font-weight: 700;
+  color: var(--text-1);
+}
+.required {
+  color: var(--urgent);
+}
+
+/* 分类宫格 */
+.cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.cat {
+  height: 80rpx;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-m);
+  border: 2rpx solid var(--line);
+  background: var(--card);
+  display: flex;
+  align-items: center;
+}
+.cat-on {
+  background: var(--brand-light);
+  border-color: var(--brand);
+}
+.cat-text {
+  font-size: var(--font-sub);
+  color: var(--text-1);
+}
+.cat-on .cat-text {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+/* 输入 */
+.input,
+.textarea {
+  width: 100%;
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  box-sizing: border-box;
+  border: 2rpx solid var(--line);
+  border-radius: var(--radius-m);
+  font-size: var(--font-body);
+  background: var(--card);
+}
+.textarea {
+  min-height: 160rpx;
+}
+.input-ph {
+  color: var(--text-3);
+}
+.counter {
+  display: block;
+  margin-top: var(--space-1);
+  text-align: right;
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 图片 */
+.imgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.img-wrap {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+}
+.img {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: var(--radius-m);
+}
+.img-del {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.img-del-text {
+  color: #ffffff;
+  font-size: 28rpx;
+}
+.img-add {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: var(--radius-m);
+  border: 2rpx dashed var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.img-add-text {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 提交 */
+.footer {
+  padding: var(--space-3) 0;
+}
+.submit {
+  height: 96rpx;
+  border-radius: var(--radius-m);
+  background: var(--brand-gradient);
+  box-shadow: var(--shadow-float);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.submit-off {
+  opacity: 0.5;
+}
+.submit-text {
+  font-size: var(--font-btn);
+  font-weight: 700;
+  color: #ffffff;
+}
+.tip {
+  display: block;
+  margin-top: var(--space-2);
+  text-align: center;
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 关怀模式 */
+.care-mode .submit {
+  height: 110rpx;
+}
+.care-mode .cat {
+  height: 96rpx;
+}

@@ -1,0 +1,60 @@
+<!-- 便民电话簿（FE-7）· 一键拨号必须由用户点击触发 -->
+<view class="page {{elderMode ? 'care-mode' : ''}}">
+  <!-- 分类 Tab -->
+  <view class="tabs">
+    <block wx:for="{{tabs}}" wx:key="value">
+      <view class="tab {{item.value === activeCategory ? 'tab-on' : ''}}" data-value="{{item.value}}" bindtap="onTabTap">
+        <text>{{item.label}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 搜索（本地即时过滤） -->
+  <view class="search">
+    <input
+      class="search-input"
+      value="{{keyword}}"
+      placeholder="搜名称 / 号码 / 备注"
+      placeholder-class="search-ph"
+      confirm-type="search"
+      bindinput="onSearchInput"
+    />
+    <text wx:if="{{keyword}}" class="search-clear" bindtap="onClearKeyword">×</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">
+    <text class="loading-text">加载中…</text>
+  </view>
+
+  <!-- 分组列表 -->
+  <view class="groups">
+    <block wx:for="{{sections}}" wx:key="key">
+      <view class="group">
+        <view class="group-head">
+          <text class="group-title">{{item.label}}</text>
+        </view>
+        <block wx:for="{{item.items}}" wx:key="_id">
+          <view class="row" data-phone="{{item.phone}}" bindtap="onCall">
+            <view class="row-main">
+              <text class="row-name">{{item.name}}</text>
+              <text wx:if="{{item.remark}}" class="row-remark">{{item.remark}}</text>
+            </view>
+            <view class="row-right">
+              <text class="row-phone">{{item.phone}}</text>
+              <text class="row-call">拨号</text>
+            </view>
+          </view>
+        </block>
+      </view>
+    </block>
+  </view>
+
+  <empty-state
+    wx:if="{{sections.length === 0 && !loading}}"
+    type="search"
+    text="没有找到相关号码"
+    subText="换个关键词，或切换到「全部」分类"
+  />
+
+  <text class="foot">点击号码直接拨出，号码均为社区公示的公共服务电话</text>
+</view>

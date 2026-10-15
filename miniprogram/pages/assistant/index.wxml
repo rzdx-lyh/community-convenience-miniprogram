@@ -1,0 +1,109 @@
+<!-- AI 办事助手（FE-2）
+     结构：顶部导航（返回/朗读/清空）→ 对话区（气泡列表）→ 底部常驻输入栏
+     每条 AI 回答固定三件套：来源引用条 + 有用/无用反馈 + 免责声明 -->
+<view class="page {{elderMode ? 'care-mode' : ''}}">
+  <!-- 顶部导航 -->
+  <view class="nav">
+    <view class="nav-back" bindtap="onBack">
+      <text class="nav-back-icon">‹</text>
+    </view>
+    <text class="nav-title">AI 办事助手</text>
+    <view class="nav-actions">
+      <text class="nav-act" bindtap="onReadAloud">朗读</text>
+      <text class="nav-act" bindtap="onClear">清空</text>
+    </view>
+  </view>
+
+  <!-- 对话区 -->
+  <scroll-view class="chat" scroll-y enable-flex scroll-into-view="{{lastBubbleId}}" scroll-with-animation>
+    <block wx:for="{{bubbles}}" wx:key="id">
+      <!-- AI 气泡 -->
+      <view wx:if="{{item.role === 'ai'}}" class="row row-ai" id="{{item.id}}">
+        <view class="avatar avatar-ai">AI</view>
+        <view class="bubble bubble-ai">
+          <text class="bubble-text">{{item.text}}</text>
+
+          <!-- 来源引用条 -->
+          <view wx:if="{{item.sources.length > 0}}" class="source">
+            <text class="source-text">来源：{{item.sources[0]}}</text>
+          </view>
+
+          <!-- 降级态：照常渲染 answer 文本，只是额外挂一张引导卡（不弹错误 toast）
+               文案由 toDegradedTip 给出：CR-012 安全话术命中时改提示，不再说「我没查到」 -->
+          <view wx:if="{{item.degraded && item.degradedTip}}" class="degraded">
+            <text class="degraded-text">{{item.degradedTip}}</text>
+            <view class="degraded-btn" bindtap="onGoPhonebook">
+              <text class="degraded-btn-text">查看便民电话</text>
+            </view>
+          </view>
+
+          <!-- 有用/无用反馈
+               CR-012：命中安全话术时（isSafety）**不展示反馈按钮**——
+               固定文案让用户评「有没有用」没有意义，还会污染 qa:feedback 数据。
+               气泡正文照常渲染服务端下发的安全话术，只摘掉反馈区。 -->
+          <view wx:if="{{item.answerId && !item.isSafety}}" class="feedback">
+            <view class="fb {{item.useful === true ? 'fb-on' : ''}}" data-id="{{item.id}}" data-useful="1" bindtap="onFeedback">
+              <text>👍 有用</text>
+            </view>
+            <view class="fb {{item.useful === false ? 'fb-on' : ''}}" data-id="{{item.id}}" data-useful="0" bindtap="onFeedback">
+              <text>👎 没用</text>
+            </view>
+          </view>
+
+          <text class="disclaimer">{{footerText}}</text>
+          <text class="bubble-time">{{item.timeText}}</text>
+        </view>
+      </view>
+
+      <!-- 用户气泡 -->
+      <view wx:else class="row row-user" id="{{item.id}}">
+        <view class="bubble bubble-user">
+          <text class="bubble-text bubble-user-text">{{item.text}}</text>
+          <text class="bubble-time bubble-time-user">{{item.timeText}}</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- 思考中 -->
+    <view wx:if="{{loading}}" class="row row-ai">
+      <view class="avatar avatar-ai">AI</view>
+      <view class="bubble bubble-ai">
+        <text class="thinking">正在思考…</text>
+      </view>
+    </view>
+
+    <!-- 快捷提问（仅会话开始） -->
+    <view wx:if="{{showSuggest && suggestions.length > 0}}" class="suggest">
+      <text class="suggest-title">快捷提问（点击即发送）</text>
+      <view class="suggest-list">
+        <block wx:for="{{suggestions}}" wx:key="*this">
+          <view class="suggest-pill" data-q="{{item}}" bindtap="onSuggestTap">
+            <text>{{item}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部常驻输入栏 -->
+  <view class="composer">
+    <view class="voice" bindtap="onVoice">
+      <text class="voice-icon">🎤</text>
+    </view>
+    <!-- focus：仅当带 ?presetQuestion= 进来时自动聚焦（键盘弹起，用户直接说话）
+         ⚠ 契约硬红线：只聚焦、**绝不自动发送**；发送必须由用户点「发送」或快捷提问触发 -->
+    <input
+      class="input"
+      value="{{inputText}}"
+      focus="{{hasPreset}}"
+      placeholder="输入你的问题…"
+      placeholder-class="input-ph"
+      confirm-type="send"
+      bindinput="onInput"
+      bindconfirm="send"
+    />
+    <view class="send {{loading ? 'send-off' : ''}}" bindtap="send">
+      <text class="send-text">发送</text>
+    </view>
+  </view>
+</view>
