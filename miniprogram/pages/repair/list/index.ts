@@ -71,10 +71,12 @@ Page({
     emptySubText: '遇到问题？点下方按钮提交报修',
   },
 
+  /** 请求代际：每次 refresh 自增，过期响应直接丢弃，避免 onLoad/onShow 双触发与切 Tab 竞态导致数据重复/混杂（BUG-001/002） */
+  genId: 0,
+
   onLoad() {
     trackPageView('pages/repair/list/index');
     this.setData({ elderMode: store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false) });
-    void this.refresh();
   },
 
   onShow() {
@@ -117,24 +119,26 @@ Page({
   },
 
   async refresh(): Promise<void> {
+    const gen = ++this.genId;
     pager.reset();
     this.setData({ list: [], hasMore: true, loadingMore: true });
     try {
-      await this.loadMore();
+      await this.loadMore(gen);
     } finally {
-      this.setData({ loadingMore: false });
+      if (gen === this.genId) this.setData({ loadingMore: false });
     }
   },
 
-  async loadMore(): Promise<void> {
+  async loadMore(gen?: number): Promise<void> {
     if (!pager.hasMore() || pager.loading()) return;
     this.setData({ loadingMore: true });
     try {
       const res = await pager.next();
+      if (gen !== undefined && gen !== this.genId) return; // 过期响应丢弃（切 Tab/下拉刷新竞态）
       const list = this.data.list.concat(res.list.map(toOrderVM));
       this.setData({ list, loadingMore: false, hasMore: pager.hasMore() });
     } catch {
-      this.setData({ loadingMore: false });
+      if (gen === undefined || gen === this.genId) this.setData({ loadingMore: false });
     }
   },
 

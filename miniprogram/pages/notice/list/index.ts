@@ -126,6 +126,9 @@ Page({
     emptySubText: '社区有消息会第一时间发布',
   },
 
+  /** 请求代际：每次 refresh 自增，过期响应丢弃，避免切 Tab/下拉竞态导致数据混杂（BUG-002） */
+  genId: 0,
+
   onLoad(options: Record<string, string | undefined>) {
     trackPageView('pages/notice/list/index');
     this.setData({ elderMode: store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false) });
@@ -188,27 +191,32 @@ Page({
     this.setData({ detail: null, detailContent: '' });
   },
 
+  /** 拦截弹层内部点击冒泡，避免误触关闭（BUG-003） */
+  noop(): void {},
+
   async refresh(): Promise<void> {
+    const gen = ++this.genId;
     pager.reset();
     this.setData({ list: [], hasMore: true, loadingMore: true });
     try {
-      await this.loadMore();
+      await this.loadMore(gen);
     } finally {
-      this.setData({ loadingMore: false });
+      if (gen === this.genId) this.setData({ loadingMore: false });
     }
   },
 
-  async loadMore(): Promise<void> {
+  async loadMore(gen?: number): Promise<void> {
     if (!pager.hasMore() || pager.loading()) return;
     this.setData({ loadingMore: true });
     try {
       const res = await pager.next();
       // tag 为本地关键词筛选，服务端无对应入参
       const filtered = (res.list ?? []).filter((n) => matchTag(n, this.data.activeTag));
+      if (gen !== undefined && gen !== this.genId) return; // 过期响应丢弃（切 Tab/下拉刷新竞态）
       const list = this.data.list.concat(filtered.map(toNoticeVM));
       this.setData({ list, loadingMore: false, hasMore: pager.hasMore() });
     } catch {
-      this.setData({ loadingMore: false });
+      if (gen === undefined || gen === this.genId) this.setData({ loadingMore: false });
     }
   },
 });

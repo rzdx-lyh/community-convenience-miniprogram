@@ -16,7 +16,15 @@
   position: relative;
 }
 
-/* 定位行（88rpx） */
+/* 胶囊占位行（88rpx）：与微信胶囊/灵动岛等高对齐，独占一行 */
+.header__capsule-row {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* 定位行（88rpx）：位于胶囊/灵动岛下方 */
 .header__nav {
   height: 88rpx;
   display: flex;
@@ -40,7 +48,6 @@
 .header__capsule {
   height: 1rpx;
   flex: none;
-  margin-left: auto; /* 右侧避让微信胶囊 */
 }
 
 /* 用户信息行 */

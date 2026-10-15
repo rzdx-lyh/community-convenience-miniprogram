@@ -6,11 +6,15 @@
 <view class="page {{elderMode ? 'care-mode' : ''}}">
   <!-- ========== 区域 1：绿色渐变头部（填满顶部，含状态栏） ========== -->
   <view class="header" style="padding-top: {{statusBarHeight}}px">
-    <!-- 定位行：📍 当前社区；右侧为微信胶囊避让 -->
+    <!-- 胶囊占位行：独占一行避让微信胶囊/灵动岛，社区定位放在它的下面 -->
+    <view class="header__capsule-row">
+      <view class="header__capsule" style="width: {{capsuleWidth}}px"></view>
+    </view>
+
+    <!-- 定位行：📍 当前社区（位于胶囊/灵动岛下方） -->
     <view class="header__nav">
       <text class="header__pin">📍</text>
       <text class="header__loc">当前社区：{{communityName}}</text>
-      <view class="header__capsule" style="width: {{capsuleWidth}}px"></view>
     </view>
 
     <!-- 用户信息行：头像 + 昵称 + 社区账号 -->

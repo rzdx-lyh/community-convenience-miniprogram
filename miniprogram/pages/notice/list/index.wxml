@@ -64,7 +64,7 @@
 
   <!-- 内联详情弹层（零新增页面，与社区圈子详情同一交互范式） -->
   <view wx:if="{{detail}}" class="mask" bindtap="onCloseDetail">
-    <view class="sheet" catchtap="onCloseDetail">
+    <view class="sheet" catchtap="noop">
       <view class="sheet-head">
         <text class="sheet-title">{{detail.title}}</text>
         <text class="sheet-close" bindtap="onCloseDetail">×</text>
