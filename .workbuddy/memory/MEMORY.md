@@ -12,10 +12,12 @@
 - 团队名：**猎奇小分队**。
 
 ## GitHub（重要）
-- 仓库：**rzdx-lyh/community-convenience-miniprogram**（public，main）。
-- **本机 github.com 直连不通**（tunnel 502 / curl 超时）→ 一律用 **GitHub Git Data API** 绕行（api.github.com 可达）。
-  - 脚本：`C:\Users\Administrator\Desktop\code\ai web\.wb_push\push_github.py`（全量后序建树 + 增量 `base_tree` + 重试）。
+- 仓库：**rzdx-lyh/community-convenience-miniprogram**（public，main）。已 `git remote add origin` 到本仓库。
+- ✅ **本机可直连 GitHub**（2026-10-16 更正）：`git -c http.sslVerify=false` 即可 clone/pull/fetch/push；本仓库已 `git config http.sslVerify false`。
+  - 根因：本机走本地代理 + Windows schannel 吊销检查失败 → 关校验即通。
+  - 兜底（直连不可用时）：API 绕行脚本 `C:\Users\Administrator\Desktop\code\ai web\.wb_push\push_github.py`（全量后序建树 + 增量 `base_tree` + 重试）。
   - 账号 rzdx-lyh；令牌在 Windows 凭据管理器（`git credential fill` 取 `gho_`）；git user：rzdx-lyh / lyh687154@gmail.com。
+- ⚠️ **本地历史与远程历史不相关**：本地是 46 条真实开发历史；远程 main 是"快照式"（API 推的大提交 + 几个提交）。协作前建议先统一（见 `docs/11-协作与分支操作指南.md`）。
 - **版本号规范（用户定义）**：`MAJOR.MINOR.PATCH` = 正式完全上传次数 / 开发功能完全次数 / 提交次数。当前 **v0.0.1**。
 
 ## 项目约定
