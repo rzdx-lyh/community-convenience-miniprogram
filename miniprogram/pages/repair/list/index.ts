@@ -1,16 +1,33 @@
 /**
- * 服务订单页（FE-4 · 变更 C1：由「我的报修/报修列表」改名）
- * 契约：workorder:list（数据源不变，后端零改动）；改名仅影响页面文案与筛选口径。
- * - 状态筛选 Tab：全部 / 待受理 / 处理中 / 已完成
- * - 分页下拉加载；空态用 empty-state 组件
+ * 办事大厅（v1.0.2 / CR-019）
+ *
+ * 沿革：FE-4「报修列表」→ C1 改名「服务订单」→ v1.0.2 改名「办事大厅」并升格为聚合入口。
+ * 结构：① 搜索（本地匹配 8 个服务子项）② 四类服务入口 ③ 我的报修记录（状态筛选 + 分页）
+ *
+ * 数据源（两条，互不阻塞）：
+ * - service:list → 四类服务（失败回退 config/service-grid.ts 本地常量，0 白屏）
+ * - workorder:list → 报修记录（**行为零回归**：分页/筛选/下拉刷新/代际去重全部沿用 FE-4 实现）
+ *
+ * 红线：本页是 Tab 页，`switchTab` 不支持 query —— 搜索态只存在页面内，不通过 URL 传递。
  */
 import { ENV, STORAGE_KEYS } from '../../../config/env';
+import { listServices } from '../../../services/service';
 import { listWorkOrders } from '../../../services/workorder';
 import { store } from '../../../store/global';
 import { CATEGORY_LABELS, STATUS_LABELS, labelOf } from '../../../utils/dict';
 import { toShortDateTime } from '../../../utils/format';
 import { track, trackPageView } from '../../../utils/logger';
+import { navigateByTarget } from '../../../utils/navigator';
 import { createPager, normalizePage } from '../../../utils/pagination';
+import { toast } from '../../../utils/ui';
+import {
+  buildHallRows,
+  searchHallRows,
+  toHallCatVM,
+  type HallCatVM,
+  type HallRow,
+  type HallRowVM,
+} from './viewmodel';
 
 export interface OrderTab {
   label: string;
@@ -50,6 +67,12 @@ export function toOrderVM(order: WorkOrder): OrderVM {
 /** 当前筛选状态（模块级，供 pager 的 fetcher 读取） */
 let currentStatus = '';
 
+/** 服务检索行（模块级：带 ServiceItem，用于点击跳转；不进 setData） */
+let hallRows: HallRow[] = [];
+
+/** 分类原始数据（供「整卡热区 → ActionSheet 选子项」使用） */
+let categories: ServiceCategory[] = [];
+
 const pager = createPager<WorkOrder>(async (page, pageSize) => {
   const res = await listWorkOrders({
     status: (currentStatus || undefined) as WorkOrder['status'] | undefined,
@@ -61,13 +84,19 @@ const pager = createPager<WorkOrder>(async (page, pageSize) => {
 
 Page({
   data: {
+    /** 四类服务入口 */
+    categories: [] as HallCatVM[],
+    /** 搜索关键词与命中结果 */
+    keyword: '',
+    matchList: [] as HallRowVM[],
+
     tabs: ORDER_TABS,
     activeStatus: '',
     list: [] as OrderVM[],
     loadingMore: false,
     hasMore: true,
     elderMode: false,
-    emptyText: '还没有服务订单',
+    emptyText: '还没有报修记录',
     emptySubText: '遇到问题？点下方按钮提交报修',
   },
 
@@ -77,6 +106,7 @@ Page({
   onLoad() {
     trackPageView('pages/repair/list/index');
     this.setData({ elderMode: store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false) });
+    void this.loadServices();
   },
 
   onShow() {
@@ -97,6 +127,95 @@ Page({
   onReachBottom() {
     void this.loadMore();
   },
+
+  /* ============================ 四类服务入口 ============================ */
+
+  async loadServices(): Promise<void> {
+    const list = await listServices(); // 内部已兜底：空/失败 → 本地常量
+    categories = list;
+    hallRows = buildHallRows(list);
+    this.setData({ categories: list.map(toHallCatVM) });
+  },
+
+  /** 入口卡点击：ActionSheet 展开该分类全部子项（与首页宫格同一交互口径） */
+  onCatTap(e: WechatMiniprogram.TouchEvent): void {
+    const key = String((e.currentTarget.dataset as { key?: string }).key ?? '');
+    const category = categories.find((c) => c.key === key);
+    const items = category?.items ?? [];
+    if (items.length === 0) {
+      toast('该服务暂未开通');
+      return;
+    }
+    track('btn_click', { page: 'hall', target: `cat_${key}` });
+    wx.showActionSheet({
+      itemList: items.map((i) => i.name),
+      success: (res) => {
+        const item = items[res.tapIndex];
+        if (item) navigateByTarget(item);
+      },
+      fail: () => {
+        /* 用户取消，静默 */
+      },
+    });
+  },
+
+  /* ============================ 搜索 ============================ */
+
+  /** 输入即筛（本地纯函数，无网络请求），并同步当前关键词 */
+  onKeywordInput(e: WechatMiniprogram.Input): void {
+    this.applyKeyword(String(e.detail.value ?? ''));
+  },
+
+  onClearKeyword(): void {
+    this.applyKeyword('');
+  },
+
+  applyKeyword(keyword: string): void {
+    const query = keyword.slice(0, 30);
+    const matched = searchHallRows(hallRows, query);
+    this.setData({
+      keyword: query,
+      matchList: matched.map(({ key, name, categoryKey, categoryTitle, iconText }) => ({
+        key,
+        name,
+        categoryKey,
+        categoryTitle,
+        iconText,
+      })),
+    });
+  },
+
+  /** 键盘「搜索」：唯一命中直接跳转；多命中保持列表；0 命中引导问 AI */
+  onSearchConfirm(): void {
+    const matched = searchHallRows(hallRows, this.data.keyword);
+    track('btn_click', { page: 'hall', target: 'search_confirm', hits: matched.length });
+    if (matched.length === 1) {
+      navigateByTarget(matched[0].item);
+      return;
+    }
+    if (matched.length === 0) this.onAskAi();
+  },
+
+  /** 命中行点击 → 按契约 targetType 分发 */
+  onRowTap(e: WechatMiniprogram.TouchEvent): void {
+    const key = String((e.currentTarget.dataset as { key?: string }).key ?? '');
+    const row = hallRows.find((r) => r.key === key);
+    if (!row) return;
+    track('btn_click', { page: 'hall', target: `search_${row.item.key}` });
+    navigateByTarget(row.item);
+  },
+
+  /** 搜不到 → 带着关键词去问 AI 助手（presetQuestion 只填充输入框，不自动发送） */
+  onAskAi(): void {
+    const preset = this.data.keyword.trim();
+    track('btn_click', { page: 'hall', target: 'search_ask_ai' });
+    wx.navigateTo({
+      url: `/pages/assistant/index${preset ? `?presetQuestion=${encodeURIComponent(preset)}` : ''}`,
+      fail: () => toast('页面暂时打不开，请稍后再试'),
+    });
+  },
+
+  /* ============================ 我的报修记录（FE-4 原逻辑，零回归） ============================ */
 
   onTabTap(e: WechatMiniprogram.TouchEvent) {
     const value = String((e.currentTarget.dataset as { value?: string }).value ?? '');

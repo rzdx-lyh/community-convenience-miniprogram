@@ -1,23 +1,245 @@
-/* 服务订单（FE-4）· 全部取 Design Token v1.1 */
+/* 办事大厅（v1.0.2 / CR-019）· 全部取 Design Token v1.1 */
 .page {
   min-height: 100vh;
   padding-bottom: 160rpx;
   background: var(--bg);
 }
 
-/* 筛选 Tab */
-.tabs {
-  display: flex;
+/* ================= ① 搜索 ================= */
+.search {
   padding: var(--space-3) var(--space-4);
-  gap: var(--space-2);
   background: var(--card);
   border-bottom: 2rpx solid var(--line);
+}
+
+.search__box {
+  height: 80rpx;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.search__icon {
+  font-size: var(--font-sub);
+  flex: none;
+}
+
+.search__input {
+  flex: 1;
+  min-width: 0;
+  height: 80rpx;
+  font-size: var(--font-sub);
+  color: var(--text-1);
+}
+
+.search__ph {
+  color: var(--text-3);
+  font-size: var(--font-sub);
+}
+
+.search__clear {
+  flex: none;
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-2);
+  font-size: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ================= ①-b 搜索结果 ================= */
+.match {
+  padding: var(--space-3) var(--space-4) 0;
+}
+
+.match__list {
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: 0 var(--space-4);
+}
+
+.match__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+}
+
+.match__row + .match__row {
+  border-top: 2rpx solid var(--line);
+}
+
+.match__row--hover {
+  background: #FBF8F4;
+}
+
+.match__icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--radius-m);
+  background: var(--brand-light);
+  font-size: 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.match__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.match__name {
+  font-size: var(--font-card);
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.match__cat {
+  margin-top: 4rpx;
+  font-size: var(--font-cap);
+  color: var(--text-3);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.match__arrow {
+  flex: none;
+  font-size: var(--font-title);
+  color: var(--text-3);
+  line-height: 1;
+}
+
+.match__empty {
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+}
+
+.match__empty-text {
+  font-size: var(--font-sub);
+  color: var(--text-2);
+}
+
+.match__ai {
+  margin: var(--space-3) auto 0;
+  height: 72rpx;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--brand-light);
+  color: var(--brand);
+  font-size: var(--font-sub);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+
+.match__ai--hover {
+  background: #DCF0E6;
+}
+
+/* ================= ② 四类服务入口 ================= */
+.cats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-4) 0;
+}
+
+.cat {
+  width: calc(50% - 8rpx); /* 百分比栅格：旧首页写死 331rpx 的教训（余量为 0 会掉成 1 列） */
+  min-height: 132rpx;
+  margin-bottom: var(--space-2);
+  padding: var(--space-3);
+  box-sizing: border-box;
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cat--hover {
+  background: #FBF8F4;
+  transform: scale(0.99);
+}
+
+.cat__icon {
+  font-size: 48rpx;
+  line-height: 1;
+  flex: none;
+}
+
+.cat__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.cat__name {
+  font-size: var(--font-sub);
+  font-weight: 700;
+  color: var(--text-1);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cat__sub {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: var(--text-3);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ================= ③ 我的报修记录 ================= */
+.orders {
+  margin-top: var(--space-4);
+}
+
+.orders__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-4) var(--space-2);
+}
+
+.orders__title {
+  font-size: var(--font-title);
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.orders__count {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 筛选 Tab（v1.0.2：由整条白底栏改为页内 pill 组，与"分区"语义一致） */
+.tabs {
+  display: flex;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-2);
 }
 .tab {
   height: 64rpx;
   padding: 0 var(--space-3);
   border-radius: var(--radius-full);
   border: 2rpx solid var(--line);
+  background: var(--card);
   font-size: var(--font-sub);
   color: var(--text-2);
   display: flex;
@@ -32,7 +254,7 @@
 
 /* 列表 */
 .list {
-  padding: var(--space-3) var(--space-4);
+  padding: 0 var(--space-4);
 }
 .card {
   background: var(--card);
@@ -140,10 +362,25 @@
   font-weight: 700;
 }
 
-/* 关怀模式 */
+/* ================= 关怀模式 ================= */
 .care-mode .card-title {
   font-size: var(--font-title);
 }
 .care-mode .fab {
   height: 110rpx;
+}
+.care-mode .search__box,
+.care-mode .search__input {
+  height: 96rpx;
+}
+.care-mode .cat {
+  width: 100%; /* 关怀模式单列，避免窄卡里放不下 6 字分类名 */
+  min-height: 150rpx;
+}
+.care-mode .cat__sub {
+  font-size: var(--font-cap);
+}
+.care-mode .tabs {
+  flex-wrap: wrap;
+  row-gap: var(--space-2);
 }

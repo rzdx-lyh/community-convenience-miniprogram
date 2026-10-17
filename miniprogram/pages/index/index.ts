@@ -8,7 +8,7 @@
 import { EMERGENCY_FOOTER_TIP, LOCAL_EMERGENCY_CONTACTS, type EmergencyContact } from '../../config/emergency';
 import { ENV, STORAGE_KEYS } from '../../config/env';
 import { getProfile } from '../../services/auth';
-import { listUrgentLatest } from '../../services/notice';
+import { listNotices, listUrgentLatest } from '../../services/notice';
 import { listPhonebook } from '../../services/phonebook';
 import { listServices } from '../../services/service';
 import { store } from '../../store/global';
@@ -16,12 +16,15 @@ import { PHONE_CATEGORY_LABELS } from '../../utils/dict';
 import { getCapsuleSafeWidth, getStatusBarHeight } from '../../utils/device';
 import { displayName, initialOf } from '../../utils/format';
 import { track, trackPageView } from '../../utils/logger';
-import { goCircleRoad, goNoticeList, navigateByTarget } from '../../utils/navigator';
+import { goNoticeList, goCircleRoad, navigateByTarget } from '../../utils/navigator';
 import { toast } from '../../utils/ui';
 import {
   COMMUNITY_NAME,
+  FEED_LIMIT,
+  toFeedVM,
   toGridVM,
   toUrgentVM,
+  type FeedVM,
   type GridVM,
   type UrgentState,
   type UrgentVM,
@@ -50,6 +53,9 @@ Page({
 
     grid: [] as GridVM[],
 
+    /** v1.0.2 / CR-019：首屏补全 —— 社区动态 3 条（空则整块隐藏） */
+    feed: [] as FeedVM[],
+
     showEmergency: false,
     contacts: [] as EmergencyContact[],
     emergencyTip: EMERGENCY_FOOTER_TIP,
@@ -63,8 +69,8 @@ Page({
       elderMode: store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false),
       contacts: LOCAL_EMERGENCY_CONTACTS,
     });
-    // 首屏两个接口并发（契约建议 Promise.all，避免串行拖慢首屏）
-    void Promise.all([this.loadProfile(), this.loadUrgent(), this.loadServices()]);
+    // 首屏三个数据源并发（契约建议 Promise.all，避免串行拖慢首屏）
+    void Promise.all([this.loadProfile(), this.loadUrgent(), this.loadServices(), this.loadFeed()]);
   },
 
   onShow() {
@@ -84,7 +90,9 @@ Page({
   },
 
   onPullDownRefresh() {
-    void Promise.all([this.loadUrgent(), this.loadServices()]).finally(() => wx.stopPullDownRefresh());
+    void Promise.all([this.loadUrgent(), this.loadServices(), this.loadFeed()]).finally(() =>
+      wx.stopPullDownRefresh(),
+    );
   },
 
   /* ============================ 数据加载 ============================ */
@@ -146,6 +154,20 @@ Page({
     const list = await listServices();
     categories = list;
     this.setData({ grid: list.map(toGridVM) });
+  },
+
+  /**
+   * v1.0.2 / CR-019：加载「社区动态」3 条（复用 notice:list，零新增接口）。
+   * 失败/为空 → feed=[]，wxml 整块不渲染（宁可少一块，也不留空框）。
+   */
+  async loadFeed(): Promise<void> {
+    try {
+      const res = await listNotices({ page: 1, pageSize: FEED_LIMIT });
+      const list = (res.list ?? []).slice(0, FEED_LIMIT).map<FeedVM>(toFeedVM);
+      this.setData({ feed: list });
+    } catch {
+      this.setData({ feed: [] });
+    }
   },
 
   /* ============================ 轮播控制 ============================ */
@@ -223,6 +245,27 @@ Page({
         /* 用户取消，静默 */
       },
     });
+  },
+
+  /* ============================ 首屏补全模块（v1.0.2） ============================ */
+
+  /** AI 助手入口卡 → AI 办事助手（不带预设问题，让用户自由输入） */
+  onAiEntryTap(): void {
+    track('btn_click', { page: 'index', target: 'ai_entry' });
+    wx.navigateTo({ url: '/pages/assistant/index', fail: () => toast('页面暂时打不开，请稍后再试') });
+  },
+
+  /** 动态条点击 → 通知列表按该条类型筛选（紧急/公告/活动） */
+  onFeedTap(e: WechatMiniprogram.TouchEvent): void {
+    const type = String((e.currentTarget.dataset as { type?: string }).type ?? '');
+    track('btn_click', { page: 'index', target: 'feed_item', type });
+    goNoticeList(type === 'activity' || type === 'notice' || type === 'urgent' ? { type } : {});
+  },
+
+  /** 「全部 ›」→ 通知列表全量 */
+  onMoreNotices(): void {
+    track('btn_click', { page: 'index', target: 'feed_more' });
+    goNoticeList({});
   },
 
   /* ============================ 紧急求助 ============================ */

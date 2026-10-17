@@ -288,6 +288,13 @@
   margin-top: var(--space-4);
 }
 
+.section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
 .section__title {
   font-size: var(--font-title);
   font-weight: 800;
@@ -295,15 +302,41 @@
   margin-bottom: var(--space-3);
 }
 
+/* 带右侧「全部 ›」时必须去掉自身下边距，否则标题与卡片之间空一大截 */
+.section__title--inline {
+  margin-bottom: 0;
+}
+
+.section__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: var(--font-cap);
+  color: var(--text-3);
+  padding: var(--space-1) 0 var(--space-1) var(--space-2);
+}
+
+.section__more-arrow {
+  font-size: var(--font-sub);
+  line-height: 1;
+}
+
+/* v1.0.2 / CR-019 · 栅格改为百分比等分
+ * 旧实现：.fn { width: calc((750rpx - 64rpx - 24rpx) / 2) } = 331rpx，
+ * 两列需 331×2+24(gap) = 686rpx，而内容区可用宽也正好 686rpx —— 余量为 0。
+ * 任何 1rpx 舍入、边框/滚动条占位都会把第 2 张卡挤到下一行 → 变成 1 列 4 行，
+ * 右侧整片空白（v1.0.2 用户截图即此形态）。改为 50% - 半间距后与设备宽度无关。
+ */
 .grid {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  justify-content: space-between;
 }
 
 .fn {
-  width: calc((750rpx - 64rpx - 24rpx) / 2); /* 331rpx */
-  height: 320rpx;
+  width: calc(50% - 12rpx); /* 半间距 = gap/2 = 24rpx/2 */
+  min-height: 260rpx; /* 旧实现写死 320rpx，内容仅约 230rpx → 卡内大片竖向空白 */
+  margin-bottom: var(--space-3);
   background: var(--card);
   border-radius: var(--radius-l);
   box-shadow: var(--shadow-card);
@@ -313,6 +346,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: center; /* 内容纵向居中，不再顶部堆一堆、底部空一片 */
   align-items: center;
   text-align: center;
 }
@@ -365,6 +399,145 @@
 .fn--warm .fn__deco {
   background: var(--accent-warm-light);
   color: var(--accent-warm);
+}
+
+/* ================= v1.0.2 / CR-019：AI 助手入口卡 ================= */
+.ai-entry {
+  margin-top: 0; /* 宫格最后一行已有 24rpx margin-bottom，这里不再叠加 */
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-l);
+  background: var(--brand-light);
+  border: 2rpx solid rgba(30, 130, 82, 0.14);
+}
+
+.ai-entry--hover {
+  background: #DCF0E6;
+  transform: scale(0.99);
+}
+
+.ai-entry__icon {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: var(--radius-m);
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  flex: none;
+}
+
+.ai-entry__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-entry__title {
+  font-size: var(--font-card);
+  font-weight: 700;
+  color: var(--brand-press);
+}
+
+.ai-entry__sub {
+  margin-top: 4rpx;
+  font-size: var(--font-cap);
+  color: var(--brand);
+  opacity: 0.88;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ai-entry__go {
+  height: 56rpx;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--brand);
+  color: var(--card);
+  font-size: var(--font-cap);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+/* ================= v1.0.2 / CR-019：社区动态 ================= */
+.feed {
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: 0 var(--space-4);
+}
+
+.feed__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+}
+
+.feed__item + .feed__item {
+  border-top: 2rpx solid var(--line);
+}
+
+.feed__item--hover {
+  background: #FBF8F4;
+}
+
+.feed__tag {
+  flex: none;
+  margin-top: 4rpx;
+  height: 40rpx;
+  padding: 0 12rpx;
+  border-radius: var(--radius-s);
+  font-size: 22rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.feed__tag--activity {
+  background: var(--brand-light);
+  color: var(--brand);
+}
+
+.feed__tag--urgent {
+  background: var(--urgent-bg);
+  color: var(--urgent);
+}
+
+.feed__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.feed__title {
+  font-size: var(--font-body);
+  font-weight: 600;
+  color: var(--text-1);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.feed__meta {
+  margin-top: 6rpx;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+.feed__loc {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* ================= 紧急求助半屏弹层 ================= */
@@ -482,7 +655,8 @@
 
 .care-mode .fn {
   width: 100%;
-  height: 360rpx;
+  min-height: 0; /* 关怀模式由内容撑高，避免固定高度造成卡内空白 */
+  margin-bottom: var(--space-3);
 }
 
 .care-mode .fn__icon {
@@ -491,6 +665,31 @@
 
 .care-mode .fn__sub {
   font-size: var(--font-sub);
+}
+
+/* v1.0.2：新模块在关怀模式下同样放大 */
+.care-mode .ai-entry {
+  padding: var(--space-4);
+}
+
+.care-mode .ai-entry__icon {
+  width: 104rpx;
+  height: 104rpx;
+  font-size: 52rpx;
+}
+
+.care-mode .ai-entry__go {
+  height: 72rpx;
+  font-size: var(--font-sub);
+}
+
+.care-mode .feed__item {
+  padding: var(--space-4) 0;
+}
+
+.care-mode .feed__tag {
+  height: 48rpx;
+  font-size: var(--font-cap);
 }
 
 .care-mode .sheet__row {
