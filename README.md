@@ -8,6 +8,44 @@
 >
 > 代码版本：**v1.0.1**（2026-10-18 全仓代码版本归一，`package.json` / 云函数 / 注释 / 本文件四者一致）
 
+---
+
+## 零、项目现状（先看这里）
+
+> 这个仓库放了三样东西：**可运行的小程序代码**、**设计原型**、**设计文档**。代码与原型**版本分开计**，不要混看。
+
+| 产物 | 版本 | 位置 | 怎么看 |
+|---|---|---|---|
+| 小程序代码 | **v1.0.1**（git tag） | `miniprogram/` + `cloudfunctions/` | 微信开发者工具导入仓库根目录 |
+| 设计原型 | **v1.3.2** | `docs/03-preview/demo.html` | 浏览器直接打开，或看[在线预览](https://rzdx-lyh.github.io/community-convenience-miniprogram/) |
+| 设计文档 | — | `docs/` 共 38 篇 | [docs 目录](https://github.com/rzdx-lyh/community-convenience-miniprogram/tree/main/docs) |
+
+### 已经做完的
+
+- **9 个页面**：首页、办事大厅、社区圈子、我的、报修新建 / 详情 / 列表、通知列表、AI 助手、社区电话簿
+- **8 个云函数**：`auth` `circle` `notice` `phonebook` `qa` `service` `user` `workorder`（调用形态 B：`name:'<资源>'` + `data.action`）
+- **178 条自动化测试**（13 个测试文件），含版本号守卫与 AI 安全护栏用例
+
+### 还没做的（下个版本补）
+
+- **服务分类页与统一表单页**：原型已有 4 类 / 8 板块 / 38 项的完整设计，代码尚未落地，首页宫格目前仍直接指向既有页面
+- **真机联调**：`USE_MOCK` 仍为 `true`（CR-017 要求演示前置 `false`），云函数未上传、集合与索引未建
+- **原型领先部分**：智慧配餐、个人中心、开局登录目前只在原型里
+
+### 跑起来
+
+```bash
+npm ci
+npm run verify     # 类型检查 + lint + 178 条测试，全绿才算过
+npm run mock       # 可选：本地 mock 服务
+```
+
+微信开发者工具：导入**仓库根目录**（不是 `miniprogram/`），AppID `wx6af52092db32a671`，云环境 ID 见 `miniprogram/config/env.ts`。
+
+> ⚠️ 本文件第二节起原本是「多角色 Skill 协作包」的说明书。那套 skill 仍在 `skill/` 目录，属于**过程产物**；上面这张表才是**作品本体**。
+
+---
+
 ## 一、文件清单
 
 ### A. 核心交付物（skill 包）

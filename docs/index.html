@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>社区便民 · 猎奇便民服务｜项目在线预览</title>
+<meta name="description" content="社区便民微信小程序：设计原型在线预览 + 代码仓库入口">
+<style>
+  :root{
+    --blue:#1F5FD6; --blue-d:#153F9B; --blue-l:#EAF1FE;
+    --teal:#0E7C6B; --gold:#A86A05; --red:#C9302C;
+    --t1:#12203A; --t2:#4A5A73; --t3:#8593A8;
+    --bg:#F3F5F9; --card:#fff; --line:#E6EBF2;
+    --sh:0 2px 8px rgba(16,32,64,.06);
+    --sh-lg:0 10px 32px rgba(16,32,64,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--t1);line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px 64px}
+
+  /* 头部 */
+  header{
+    background:linear-gradient(160deg,#3B7DEE 0%,#1F5FD6 52%,#153F9B 100%);
+    color:#fff;padding:52px 0 64px;margin-bottom:-32px;
+  }
+  header .wrap{padding-bottom:0}
+  .logo{
+    width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.18);
+    border:1.5px solid rgba(255,255,255,.5);display:flex;align-items:center;
+    justify-content:center;font-size:24px;font-weight:800;margin-bottom:16px;
+    box-shadow:0 8px 24px rgba(8,26,64,.28);
+  }
+  h1{font-size:26px;font-weight:800;letter-spacing:.5px}
+  .sub{font-size:14px;opacity:.88;margin-top:8px}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .badge{
+    height:24px;padding:0 10px;border-radius:99px;background:rgba(255,255,255,.18);
+    font-size:11.5px;font-weight:600;display:inline-flex;align-items:center;gap:5px;
+  }
+  .badge.on{background:#fff;color:var(--blue)}
+
+  /* 主卡 */
+  .hero{
+    background:var(--card);border-radius:16px;padding:26px;box-shadow:var(--sh-lg);
+    position:relative;z-index:2;
+  }
+  .hero h2{font-size:17px;font-weight:800;margin-bottom:6px}
+  .hero p{font-size:13px;color:var(--t2);margin-bottom:18px}
+  .cta{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:48px;padding:0 26px;border-radius:10px;background:var(--blue);color:#fff;
+    font-size:15px;font-weight:700;text-decoration:none;
+    box-shadow:0 6px 18px rgba(31,95,214,.3);transition:transform .1s,box-shadow .1s;
+  }
+  .cta:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(31,95,214,.36)}
+  .cta:active{transform:scale(.985)}
+  .cta.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue);box-shadow:none;margin-left:10px}
+  .meta{font-size:11.5px;color:var(--t3);margin-top:14px}
+
+  /* 区块 */
+  section{margin-top:26px}
+  .st{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;margin-bottom:12px}
+  .st::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--red)}
+
+  .grid{display:grid;gap:10px}
+  .card{
+    background:var(--card);border-radius:12px;padding:16px 18px;box-shadow:var(--sh);
+    border:1px solid var(--line);
+  }
+  .card h3{font-size:13.5px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+  .card p{font-size:12px;color:var(--t2);line-height:1.6}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none}
+
+  table{width:100%;border-collapse:collapse;background:var(--card);
+    border-radius:12px;overflow:hidden;box-shadow:var(--sh);font-size:12.5px}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:#F8FAFD;font-weight:700;color:var(--t2);font-size:11.5px}
+  tr:last-child td{border-bottom:0}
+  td.num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--blue)}
+
+  .links{display:flex;flex-wrap:wrap;gap:8px}
+  .links a{
+    font-size:12px;color:var(--t2);text-decoration:none;background:#fff;
+    border:1px solid var(--line);border-radius:8px;padding:7px 12px;
+  }
+  .links a:hover{border-color:var(--blue);color:var(--blue)}
+
+  footer{
+    margin-top:36px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:11px;color:var(--t3);line-height:1.8;
+  }
+  code{background:#EEF2F8;padding:1px 5px;border-radius:4px;font-size:11.5px}
+
+  @media (max-width:520px){
+    h1{font-size:21px}
+    .cta{width:100%}
+    .cta.ghost{margin:10px 0 0}
+    th:nth-child(3),td:nth-child(3){display:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="logo">猎</div>
+    <h1>社区便民 · 猎奇便民服务</h1>
+    <div class="sub">报修、缴费、挂号、助餐、圈子，一个入口办完</div>
+    <div class="badges">
+      <span class="badge on">设计原型 v1.3.2</span>
+      <span class="badge">代码 v1.0.1</span>
+      <span class="badge">微信小程序</span>
+      <span class="badge">数创铸魂·码承文脉 参赛作品</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h2>设计原型在线预览</h2>
+    <p>单文件可交互原型，含 7 种页面原型骨架、83 枚矢量图标、智慧配餐、个人中心与开局登录。
+       点进去可以真的点：改昵称会联动圈子作者名，配餐可以换菜锁定。</p>
+    <a class="cta" href="03-preview/demo.html">打开可点击原型 →</a>
+    <a class="cta ghost" href="https://github.com/rzdx-lyh/community-convenience-miniprogram">代码仓库</a>
+    <div class="meta">建议用桌面浏览器打开；原型按 375px 手机宽度设计，右侧有色板与规格说明。</div>
+  </div>
+
+  <section>
+    <div class="st">现在有什么</div>
+    <table>
+      <thead><tr><th>部分</th><th>规模</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>小程序代码</td><td class="num">9 页</td><td>首页 / 办事大厅 / 圈子 / 我的 / 报修三页 / 通知 / AI 助手 / 电话簿</td></tr>
+        <tr><td>云函数</td><td class="num">8 个</td><td>auth · circle · notice · phonebook · qa · service · user · workorder</td></tr>
+        <tr><td>自动化测试</td><td class="num">178 条</td><td>13 个测试文件，<code>npm run verify</code> = 类型检查 + lint + 测试</td></tr>
+        <tr><td>设计文档</td><td class="num">38 篇</td><td>PRD、架构、契约、备案路线、答辩速查、原型体系等</td></tr>
+        <tr><td>交互原型</td><td class="num">7 种骨架</td><td>向导 / 票据 / 数据 / 卡片流 / 设备 / 组合 / 授权</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="st">原型里值得点的地方</div>
+    <div class="grid">
+      <div class="card"><h3><span class="dot" style="background:#1F5FD6"></span>开局登录</h3>
+        <p>未勾协议点登录会被拦下（勾选框抖动变红）；登录填的昵称会同步到圈子作者名与我的页。</p></div>
+      <div class="card"><h3><span class="dot" style="background:#0E7C6B"></span>智慧配餐</h3>
+        <p>选目标 + 人数 + 忌口 → 生成三餐；勾「海鲜」后午餐就没有鱼虾；可换菜、可锁定；食材可一键转生鲜预订。</p></div>
+      <div class="card"><h3><span class="dot" style="background:#A86A05"></span>我的</h3>
+        <p>点头像或昵称可改名字、选头像底色、写签名；家庭成员可增删；通知开关与字号（特大=关怀模式）。</p></div>
+      <div class="card"><h3><span class="dot" style="background:#4B45B8"></span>圈子</h3>
+        <p>4 种动态形态各自专属卡片：求助带采纳回答、闲置带价格、活动带报名进度、路况带施工状态。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="st">更多</div>
+    <div class="links">
+      <a href="03-preview/demo.html">可点击原型 v1.3.2</a>
+      <a href="https://github.com/rzdx-lyh/community-convenience-miniprogram">GitHub 仓库</a>
+      <a href="https://github.com/rzdx-lyh/community-convenience-miniprogram/blob/main/CHANGELOG.md">更新日志</a>
+      <a href="https://github.com/rzdx-lyh/community-convenience-miniprogram/tree/main/docs">文档目录</a>
+      <a href="https://github.com/rzdx-lyh/community-convenience-miniprogram/tree/v1.0.1">v1.0.1 代码快照</a>
+    </div>
+  </section>
+
+  <footer>
+    代码版本 <b>v1.0.1</b>（git tag）　·　设计原型 <b>v1.3.2</b>（独立版本轨）<br>
+    原型为设计评审用，数据全部为演示数据，不连接真实后端；正式小程序以微信开发者工具中的代码为准。<br>
+    猎奇小分队　·　2026-10-18
+  </footer>
+
+</div>
+</body>
+</html>
