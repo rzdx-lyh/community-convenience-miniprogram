@@ -1,4 +1,4 @@
-/** v1.0.2 / CR-019：办事大厅视图模型（入口卡 / 检索行 / 服务检索） */
+/** v1.0.1 / CR-019：办事大厅视图模型（入口卡 / 检索行 / 服务检索） */
 import { describe, expect, it } from 'vitest';
 import { LOCAL_SERVICE_CATEGORIES } from '../miniprogram/config/service-grid';
 import {

@@ -97,7 +97,7 @@
       </view>
     </view>
 
-    <!-- v1.0.2 / CR-019：AI 助手入口卡（首屏纵向补全 · 第 1 块） -->
+    <!-- v1.0.1 / CR-019：AI 助手入口卡（首屏纵向补全 · 第 1 块） -->
     <view class="ai-entry" hover-class="ai-entry--hover" bindtap="onAiEntryTap">
       <view class="ai-entry__icon">🤖</view>
       <view class="ai-entry__body">
@@ -107,7 +107,7 @@
       <view class="ai-entry__go">去问问</view>
     </view>
 
-    <!-- v1.0.2 / CR-019：社区动态 3 条（首屏纵向补全 · 第 2 块；为空整块隐藏） -->
+    <!-- v1.0.1 / CR-019：社区动态 3 条（首屏纵向补全 · 第 2 块；为空整块隐藏） -->
     <view wx:if="{{feed.length > 0}}" class="section">
       <view class="section__head">
         <view class="section__title section__title--inline">社区动态</view>

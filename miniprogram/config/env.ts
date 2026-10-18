@@ -66,6 +66,15 @@ export function shouldShowMockBanner(useMock: boolean, demoMode: boolean): boole
   return useMock === true && demoMode === false;
 }
 
+/**
+ * 应用版本（唯一真源，v1.0.1）。
+ *
+ * 与 `package.json`、`cloudfunctions` 下各包的 `package.json`、`README.md` 三处保持一致；
+ * `tests/version.test.ts` 会断言四者相等，并在源码里扫出任何非 v1.0.1 的版本字样。
+ * 改版本只改这里 + 那三处清单，不要在注释里散落硬编码。
+ */
+export const APP_VERSION = 'v1.0.1';
+
 /** storage 键名集中管理，避免各处硬编码字符串 */
 export const STORAGE_KEYS = {
   ELDER_MODE: 'elderMode',
