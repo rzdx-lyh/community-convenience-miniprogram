@@ -1,12 +1,17 @@
 # .workbuddy 下只保留「有长期价值」的东西：
-#   memory/          项目记忆（需要跨会话、跨机器）
+#   memory/          项目记忆（跨会话、跨机器）
 #   _t*.mjs          jsdom 断言套件（回归测试，要能复跑）
 # 其余都是临时产物，一律不入库：
 #   _bak*.html       改文件前的临时备份
 #   _chk.js          抽出来做语法检查的脚本副本
 #   _*.py            一次性迁移/补丁脚本
-#   _protection_backup.json  分支保护配置快照
+#   _*.log           CLI/编译输出日志
+#   upload-info.json 上传结果
+#   preview-*.png    预览二维码
 _bak*
 _chk.js
 _*.py
+_*.log
 _protection_backup.json
+upload-info.json
+preview-*.png
