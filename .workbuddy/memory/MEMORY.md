@@ -18,7 +18,11 @@
   - 兜底（直连不可用时）：API 绕行脚本 `C:\Users\Administrator\Desktop\code\ai web\.wb_push\push_github.py`（全量后序建树 + 增量 `base_tree` + 重试）。
   - 账号 rzdx-lyh；令牌在 Windows 凭据管理器（`git credential fill` 取 `gho_`）；git user：rzdx-lyh / lyh687154@gmail.com。
 - ⚠️ **本地历史与远程历史不相关**：本地是 46 条真实开发历史；远程 main 是"快照式"（API 推的大提交 + 几个提交）。协作前建议先统一（见 `docs/11-协作与分支操作指南.md`）。
-- **版本号规范（用户定义）**：`MAJOR.MINOR.PATCH` = 正式完全上传次数 / 开发功能完全次数 / 提交次数。当前 **v0.0.1**。
+- **版本号规范（用户定义）**：`MAJOR.MINOR.PATCH` = 正式完全上传次数 / 开发功能完全次数 / 提交次数。
+- **两条独立版本轨（2026-10-18 定）**：
+  - **代码轨**：当前 **v1.0.1**（git 附注标签 `v1.0.1`，2026-10-18 归一）。版本唯一真源 = `miniprogram/config/env.ts` 的 `APP_VERSION`；`package.json` / `package-lock.json` 根包 / 8 个云函数包 / `README.md` / `CHANGELOG.md` 全部对齐；由 `tests/version.test.ts`（6 条）守护，源码里出现别的版本号即测试失败。
+  - **设计原型轨**：`docs/03-preview/demo.html` 当前 **v1.3.2**，与代码轨分开计数（原型领先代码是事实，不要压成一个号）。
+  - 代码注释里的历史变更用 `CR-0xx` 编号溯源，不靠版本号；归一后统一写作 `v1.0.1 / CR-019`。
 
 ## 项目约定
 - 前端源码是 **.ts**；磁盘**不留 page/app 级 .js**（DevTools 空 `Page({})` 模板会顶替真实页面 → 白屏/宫格不显示）。
