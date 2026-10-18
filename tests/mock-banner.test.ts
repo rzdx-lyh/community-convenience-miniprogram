@@ -53,16 +53,24 @@ describe('shouldShowMockBanner · 真值表（正向 + 负向对照）', () => {
   });
 });
 
-describe('ENV 默认态护栏（防止有人顺手改开关）', () => {
-  it('USE_MOCK 必须为 true（lead 明令：本轮不得改这个值）', () => {
-    expect(ENV.USE_MOCK).toBe(true);
-  });
-
-  it('DEMO_MODE 默认必须为 false（默认显示标识，演示当天才置 true）', () => {
+describe('ENV 默认态护栏（开关与标识逻辑必须一致）', () => {
+  /**
+   * 通道是**阶段性决策**，不是常量：
+   *   CR-020 期 → 全程 mock（USE_MOCK=true）
+   *   上云后按 CR-017-a → 必须 false
+   * 所以这里不再断言"必须等于某个值"（那会在每次切通道时误报），
+   * 改为断言"开关取值与标识显隐严格对应"——
+   * 既能挡住"改了开关忘了改标识逻辑"，也不会妨碍正常切换。
+   */
+  it('DEMO_MODE 默认必须为 false（标识只在开发期显示）', () => {
     expect(ENV.DEMO_MODE).toBe(false);
   });
 
-  it('默认组合下标识应当显示（与真值表一致，防止两个开关被同时改坏）', () => {
-    expect(shouldShowMockBanner(ENV.USE_MOCK, ENV.DEMO_MODE)).toBe(true);
+  it('标识显隐与当前开关严格对应（只差 USE_MOCK，结果相反）', () => {
+    expect(shouldShowMockBanner(ENV.USE_MOCK, ENV.DEMO_MODE)).toBe(ENV.USE_MOCK === true);
+  });
+
+  it('通道开关必须是明确布尔值（不允许 undefined / 字符串）', () => {
+    expect(typeof ENV.USE_MOCK).toBe('boolean');
   });
 });

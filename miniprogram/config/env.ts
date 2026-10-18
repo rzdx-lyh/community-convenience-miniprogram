@@ -35,7 +35,7 @@ export interface EnvConfig {
 }
 
 export const ENV: EnvConfig = {
-  USE_MOCK: true, // TODO(FE-10): 联调通过后置 false
+  USE_MOCK: false, // CR-022 后置 false：已上云（8 云函数已部署 + 集合已建 + 种子已导）
   // CR-017-c：默认 false（开发/自测时显示「演示数据模式」标识，演示当天置 true 隐藏）
   DEMO_MODE: false,
   CLOUD_ENV_ID: 'cloud1-d5g1xuxxf9eb5b758', // 用户提供（2026-10-14）

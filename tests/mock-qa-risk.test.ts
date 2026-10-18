@@ -23,6 +23,7 @@
  *   契约一致性结论必须在 `USE_MOCK=false` 的真机通道重跑取得。
  */
 import { beforeAll, describe, expect, it } from 'vitest';
+import { ENV } from '../miniprogram/config/env';
 import type { RiskRule } from '../miniprogram/mock/risk-rules';
 
 type RiskRulesModule = typeof import('../miniprogram/mock/risk-rules');
@@ -42,6 +43,14 @@ const CASES: Array<[string, 'medical' | 'legal' | 'emergency']> = [
   ['着火了怎么办', 'emergency'],
   ['电梯困人了', 'emergency'],
 ];
+
+/**
+ * ⚠ 本文件验证的是 **mock 通道**的行为，和项目当前走哪条通道无关。
+ * 上云后 ENV.USE_MOCK 为 false，若不加这一行，call() 会走到 wx.cloud
+ * 在 vitest 环境里没有 wx 对象 → 5 秒超时后失败（看起来像"安全话术坏了"，
+ * 其实是通道用错了）。这里显式打回 mock，保证本文件永远验证它该验证的东西。
+ */
+ENV.USE_MOCK = true;
 
 beforeAll(async () => {
   const g = globalThis as unknown as Record<string, unknown>;
@@ -201,8 +210,7 @@ describe('mockHandlers[qa:ask] · CR-012 短路出参', () => {
 
 describe('全链路 · utils/request.ts call("qa:ask") 在 USE_MOCK 下也命中安全话术', () => {
   it('走 call() 与直接调 handler 结果一致（证明演示现场真的能出话术）', async () => {
-    const { ENV } = await import('../miniprogram/config/env');
-    expect(ENV.USE_MOCK).toBe(true); // 前置条件：当前仍是 mock 通道
+    // 通道已在上方显式锁定为 mock（ENV.USE_MOCK = true），这里只调 MOCK_DELAY
     const request: RequestModule = await import('../miniprogram/utils/request');
     const res = await request.call<QaAskResult>('qa:ask', { question: '胸痛怎么办' });
     expect(res._riskLevel).toBe('medical');
