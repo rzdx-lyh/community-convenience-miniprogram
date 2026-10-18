@@ -1,0 +1,119 @@
+<!-- 办事指南（CR-026）· 分类 + 搜索 → 事项卡 → 详情弹层（材料/窗口/时限/退回原因） -->
+<view class="page">
+  <!-- 搜索 -->
+  <view class="search">
+    <view class="search__box">
+      <view class="ic ic-m ic-search"></view>
+      <input
+        class="search__input"
+        value="{{keyword}}"
+        placeholder="搜事项：居住证、高龄补贴、医保…"
+        placeholder-class="search__ph"
+        confirm-type="search"
+        bindinput="onSearchInput"
+      />
+      <view wx:if="{{keyword}}" class="search__clear" catchtap="onClearKeyword">✕</view>
+    </view>
+  </view>
+
+  <!-- 分类 chip -->
+  <scroll-view class="cats" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view
+      wx:for="{{cats}}"
+      wx:key="*this"
+      class="cat {{activeCat === item ? 'cat--on' : ''}}"
+      data-v="{{item}}"
+      bindtap="onPickCat"
+    >{{item}}</view>
+  </scroll-view>
+
+  <!-- 事项列表 -->
+  <view class="list">
+    <view
+      wx:for="{{list}}"
+      wx:key="key"
+      class="card"
+      hover-class="card--hover"
+      data-k="{{item.key}}"
+      bindtap="onOpenDetail"
+    >
+      <view class="card__hd">
+        <text class="card__n">{{item.name}}</text>
+        <text class="card__c">{{item.cat}}</text>
+      </view>
+      <view class="card__d">{{item.desc}}</view>
+      <view class="card__ft">
+        <text class="card__m">{{item.limit}}</text>
+        <text class="card__m">{{item.trips}}</text>
+      </view>
+    </view>
+  </view>
+
+  <empty-state
+    wx:if="{{list.length === 0}}"
+    type="search"
+    text="没有找到相关事项"
+    subText="换个关键词，或切换到「全部」分类"
+  />
+
+  <view class="foot">以上为社区公示的办事口径，<text class="foot__b">具体以窗口现场办理为准</text>。</view>
+
+  <!-- CR-024：页面级 AI 入口（上下文 = 办事指南） -->
+  <ai-bar page="guide" />
+
+  <!-- 详情弹层 -->
+  <view wx:if="{{detail}}" class="mask" bindtap="onCloseDetail">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet__hd">
+        <text class="sheet__t">{{detail.name}}</text>
+        <text class="sheet__x" bindtap="onCloseDetail">✕</text>
+      </view>
+      <view class="sheet__d">{{detail.desc}}</view>
+
+      <view class="sheet__sec">
+        <view class="sheet__lb">所需材料</view>
+        <view wx:for="{{detail.materials}}" wx:key="*this" class="sheet__li">
+          <text class="sheet__dot">·</text><text>{{item}}</text>
+        </view>
+      </view>
+
+      <view class="sheet__sec">
+        <view class="sheet__kv"><text class="sheet__k">办理窗口</text><text class="sheet__v">{{detail.window}}</text></view>
+        <view class="sheet__kv"><text class="sheet__k">办理时限</text><text class="sheet__v">{{detail.limit}}</text></view>
+        <view class="sheet__kv"><text class="sheet__k">需要跑几趟</text><text class="sheet__v">{{detail.trips}}</text></view>
+      </view>
+
+      <view class="sheet__sec sheet__sec--warn">
+        <view class="sheet__lb">常见退回原因（少跑一趟的关键）</view>
+        <view wx:for="{{detail.pitfalls}}" wx:key="*this" class="sheet__li">
+          <text class="sheet__dot">!</text><text>{{item}}</text>
+        </view>
+      </view>
+
+      <view class="sheet__btn sheet__btn--main" bindtap="onOrder">申请代办</view>
+      <view class="sheet__btn" bindtap="onCloseDetail">关闭</view>
+    </view>
+  </view>
+
+  <!-- 代办申请弹层 -->
+  <view wx:if="{{showOrder}}" class="mask" bindtap="onCloseOrder">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet__hd">申请代办 · {{detail.name}}</view>
+      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
+      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{orderRoom}}" bindinput="onInputRoom" />
+      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
+      <input class="inp" placeholder="方便工作人员联系你" maxlength="20" value="{{orderContact}}" bindinput="onInputContact" />
+      <view class="sheet__lb">期望时间</view>
+      <view class="chips">
+        <view wx:for="{{times}}" wx:key="*this" class="chip {{orderTime === item ? 'chip--on' : ''}}" data-v="{{item}}" bindtap="onPickTime">{{item}}</view>
+      </view>
+      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
+      <textarea class="ta" placeholder="例如：工作日白天家里没人，可约晚上" maxlength="120" value="{{orderNote}}" bindinput="onInputNote" />
+      <view class="sheet__tip">代办只做材料代收代交，不代收任何费用；证件类需本人到场的无法代办。</view>
+      <view class="sheet__ft">
+        <view class="sheet__btn" bindtap="onCloseOrder">取消</view>
+        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmitOrder">{{submitting ? '提交中…' : '提交申请'}}</view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "办事指南",
+  "navigationBarBackgroundColor": "#F3F5F9",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "ai-bar": "../../../components/ai-bar/index",
+    "empty-state": "../../../components/empty-state/index"
+  }
+}

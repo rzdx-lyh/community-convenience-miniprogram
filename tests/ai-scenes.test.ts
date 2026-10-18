@@ -101,12 +101,15 @@ describe('HUB_SCENES', () => {
 });
 
 describe('PAGE_AI', () => {
-  it('7 个真实页面全部有配置（页面级 AI 入口的覆盖清单）', () => {
+  it('13 个真实页面全部有配置（页面级 AI 入口的覆盖清单）', () => {
     const pages = Object.keys(PAGE_AI);
-    expect(pages.length).toBe(7);
-    ['hall', 'repair-create', 'repair-list', 'repair-detail', 'notice', 'phonebook', 'circle'].forEach(
-      (key) => expect(pages).toContain(key),
-    );
+    expect(pages.length).toBe(13);
+    [
+      // v1.0.1 既有
+      'hall', 'repair-create', 'repair-list', 'repair-detail', 'notice', 'phonebook', 'circle',
+      // CR-026 新增的 6 个服务页
+      'meal', 'guide', 'bill', 'record', 'tool', 'express',
+    ].forEach((key) => expect(pages).toContain(key));
   });
 
   it('每个页面都有服务名与至少 3 条预置问题', () => {

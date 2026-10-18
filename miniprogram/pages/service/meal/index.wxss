@@ -1,0 +1,447 @@
+/* 智慧配餐（CR-026）· 全部取 Design Token v1.5 */
+.page {
+  min-height: 100vh;
+  padding-bottom: 220rpx;
+  background: var(--bg);
+}
+
+/* ① 目标选择 */
+.hd {
+  padding: var(--space-4);
+  background: var(--brand-gradient);
+}
+.hd__t {
+  font-size: var(--font-card);
+  font-weight: 700;
+  color: #fff;
+}
+.goals {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.goal {
+  flex: 1;
+  padding: var(--space-2) 0;
+  border-radius: var(--radius-m);
+  background: rgba(255, 255, 255, 0.16);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rpx;
+}
+.goal--on {
+  background: #fff;
+}
+.goal__n {
+  font-size: var(--font-cap);
+  font-weight: 700;
+  color: #fff;
+}
+.goal__k {
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.75);
+}
+.goal--on .goal__n {
+  color: var(--brand);
+}
+.goal--on .goal__k {
+  color: var(--text-3);
+}
+.hd__d {
+  margin-top: var(--space-2);
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ② 能量汇总 */
+.sum {
+  margin: calc(-1 * var(--space-4)) var(--space-4) 0;
+  position: relative;
+  padding: var(--space-4);
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+}
+.sum__top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.sum__num {
+  font-size: 56rpx;
+  font-weight: 800;
+  color: var(--text-1);
+}
+.sum__u {
+  margin-left: 8rpx;
+  font-size: var(--font-cap);
+  font-weight: 400;
+  color: var(--text-3);
+}
+.sum__pct {
+  font-size: var(--font-title);
+  font-weight: 800;
+  color: var(--green);
+}
+.sum__sub {
+  margin-top: var(--space-1);
+  font-size: var(--font-cap);
+  color: var(--text-2);
+}
+.bars {
+  margin-top: var(--space-3);
+}
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+.bar__n {
+  width: 60rpx;
+  font-size: var(--font-cap);
+  color: var(--text-2);
+}
+.bar__t {
+  flex: 1;
+  height: 14rpx;
+  border-radius: var(--radius-full);
+  background: var(--line);
+  overflow: hidden;
+}
+.bar__f {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+.bar__v {
+  width: 120rpx;
+  text-align: right;
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* ③ 7 天 */
+.week {
+  margin-top: var(--space-3);
+  padding: 0 var(--space-4);
+  white-space: nowrap;
+}
+.wk {
+  display: inline-block;
+  width: 104rpx;
+  padding: var(--space-2) 0;
+  margin-right: var(--space-2);
+  border-radius: var(--radius-m);
+  background: var(--card);
+  text-align: center;
+  font-size: var(--font-cap);
+  color: var(--text-2);
+}
+.wk--on {
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ④ 忌口 / 份数 */
+.ctl {
+  margin: var(--space-3) var(--space-4) 0;
+  padding: var(--space-3);
+  background: var(--card);
+  border-radius: var(--radius-l);
+}
+.ctl__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.ctl__row + .ctl__row {
+  margin-top: var(--space-2);
+}
+.ctl__lb {
+  width: 60rpx;
+  font-size: var(--font-cap);
+  color: var(--text-2);
+  flex: none;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  flex: 1;
+}
+.chip {
+  padding: 6rpx var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  font-size: var(--font-cap);
+  color: var(--text-2);
+}
+.chip--on {
+  background: var(--brand-light);
+  color: var(--brand);
+  font-weight: 700;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.step__b {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text-1);
+  font-size: var(--font-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.step__n {
+  font-size: var(--font-card);
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+/* ⑤ 三餐卡 */
+.dish {
+  margin: var(--space-3) var(--space-4) 0;
+  padding: var(--space-3);
+  background: var(--card);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+}
+.dish__hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dish__tag {
+  padding: 4rpx var(--space-2);
+  border-radius: var(--radius-s);
+  color: #fff;
+  font-size: var(--font-cap);
+  font-weight: 700;
+}
+.dish__kc {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+.dish__bd {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+.dish__em {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: var(--radius-m);
+  background: var(--bg);
+  font-size: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.dish__info {
+  flex: 1;
+  min-width: 0;
+}
+.dish__nm {
+  font-size: var(--font-body);
+  font-weight: 700;
+  color: var(--text-1);
+}
+.dish__nu {
+  margin-top: 4rpx;
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+.dish__tags {
+  margin-top: var(--space-1);
+  display: flex;
+  gap: 6rpx;
+}
+.dish__tg {
+  padding: 2rpx 10rpx;
+  border-radius: var(--radius-s);
+  background: var(--brand-light);
+  color: var(--brand);
+  font-size: 20rpx;
+}
+.dish__ac {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 2rpx solid var(--line);
+}
+.dish__btn {
+  flex: 1;
+  height: 60rpx;
+  border-radius: var(--radius-m);
+  background: var(--bg);
+  color: var(--text-2);
+  font-size: var(--font-cap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 底部说明与操作条 */
+.foot {
+  margin: var(--space-4) var(--space-4) 0;
+  font-size: 20rpx;
+  color: var(--text-3);
+  line-height: 1.7;
+  text-align: center;
+}
+.foot--last {
+  margin-top: 0;
+}
+.foot__b {
+  color: var(--warning);
+  font-weight: 700;
+}
+.fbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-2) var(--space-4) calc(var(--space-2) + env(safe-area-inset-bottom));
+  background: var(--card);
+  border-top: 2rpx solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  z-index: var(--z-sticky);
+}
+.fbar__s {
+  flex: 1;
+  font-size: var(--font-cap);
+  color: var(--text-2);
+}
+.fbar__b {
+  color: var(--text-1);
+  font-weight: 700;
+}
+.fbar__btn {
+  flex: none;
+  padding: 0 var(--space-5);
+  height: 80rpx;
+  border-radius: var(--radius-full);
+  background: var(--brand);
+  color: #fff;
+  font-size: var(--font-sub);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+/* 弹层（与 service/category 同一范式） */
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--mask);
+  z-index: var(--z-mask);
+}
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 80vh;
+  padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+  background: var(--card);
+  border-radius: var(--radius-l) var(--radius-l) 0 0;
+  z-index: var(--z-modal);
+  overflow-y: auto;
+}
+.sheet__hd {
+  font-size: var(--font-card);
+  font-weight: 700;
+  color: var(--text-1);
+}
+.sheet__sub {
+  margin-top: 4rpx;
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+.sheet__list {
+  margin-top: var(--space-3);
+}
+.sheet__row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-bottom: 2rpx solid var(--line);
+  font-size: var(--font-sub);
+  color: var(--text-1);
+}
+.sheet__x {
+  color: var(--text-3);
+  font-size: var(--font-cap);
+}
+.sheet__lb {
+  margin-top: var(--space-3);
+  font-size: var(--font-sub);
+  color: var(--text-2);
+}
+.req {
+  color: var(--error);
+}
+.opt {
+  color: var(--text-3);
+}
+.inp,
+.ta {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg);
+  border-radius: var(--radius-m);
+  font-size: var(--font-sub);
+  color: var(--text-1);
+}
+.ta {
+  height: 140rpx;
+}
+.sheet__tip {
+  margin-top: var(--space-2);
+  font-size: var(--font-cap);
+  color: var(--text-3);
+  line-height: 1.6;
+}
+.sheet__btn {
+  margin-top: var(--space-3);
+  height: 84rpx;
+  border-radius: var(--radius-m);
+  background: var(--bg);
+  color: var(--text-2);
+  font-size: var(--font-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sheet__btn--main {
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+}
+.sheet__ft {
+  display: flex;
+  gap: var(--space-2);
+}
+.sheet__ft .sheet__btn {
+  flex: 1;
+}
+.is-dis {
+  opacity: 0.6;
+}

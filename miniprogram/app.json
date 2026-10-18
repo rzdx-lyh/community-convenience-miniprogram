@@ -9,7 +9,9 @@
     "pages/notice/list/index",
     "pages/assistant/index",
     "pages/phonebook/index",
-    "pages/service/category/index"
+    "pages/service/category/index",
+    "pages/service/meal/index",
+    "pages/service/guide/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#F3F5F9",
