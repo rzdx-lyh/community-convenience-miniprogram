@@ -1,0 +1,197 @@
+#!/usr/bin/env node
+/**
+ * 上云预检（cloud preflight）
+ *
+ * 用途：把"现在能不能把 USE_MOCK 置 false"变成一条可执行判定，而不是凭记忆。
+ * 依据：contracts/api-contract.md 附 C（CR-017 / CR-020 修订）
+ *   - 已上云路径：联调冒烟通过后，USE_MOCK 必须为 false
+ *   - 未上云路径：USE_MOCK 保持 true，且界面不得自曝
+ *
+ * 本脚本只做**静态检查**，不连微信云（云侧连通性必须在开发者工具里实测）。
+ * 用法：node scripts/cloud-preflight.mjs
+ * 退出码：0 = 无阻断项；1 = 有 ✗ 阻断项
+ */
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+
+const ROOT = process.cwd();
+let fails = 0;
+let warns = 0;
+
+const line = (mark, text, detail = '') => {
+  if (mark === '✗') fails += 1;
+  if (mark === '⚠') warns += 1;
+  console.log(`  ${mark} ${text}${detail ? `  ${detail}` : ''}`);
+};
+const ok = (t, d) => line('✓', t, d);
+const bad = (t, d) => line('✗', t, d);
+const warn = (t, d) => line('⚠', t, d);
+const section = (t) => console.log(`\n${t}`);
+
+const read = (p) => readFileSync(join(ROOT, p), 'utf8');
+const readJson = (p) => JSON.parse(read(p));
+
+/* ---------- 1. 工程结构 ---------- */
+section('一、工程结构');
+const project = readJson('project.config.json');
+const cfRoot = String(project.cloudfunctionRoot ?? '');
+const mpRoot = String(project.miniprogramRoot ?? '');
+
+if (cfRoot && existsSync(join(ROOT, cfRoot))) ok('cloudfunctionRoot 指向真实目录', cfRoot);
+else bad('cloudfunctionRoot 不存在', `cloudfunctionRoot=${cfRoot || '(空)'}`);
+
+if (mpRoot && existsSync(join(ROOT, mpRoot))) ok('miniprogramRoot 指向真实目录', mpRoot);
+else bad('miniprogramRoot 不存在', `miniprogramRoot=${mpRoot || '(空)'}`);
+
+if (project.appid && project.appid.startsWith('wx')) ok('AppID 已填写', project.appid);
+else bad('AppID 缺失或格式不对');
+
+/* ---------- 2. 云函数包完整性 ---------- */
+section('二、云函数包完整性');
+const cfDirs = readdirSync(join(ROOT, cfRoot)).filter((n) => {
+  const p = join(ROOT, cfRoot, n);
+  return statSync(p).isDirectory() && existsSync(join(p, 'package.json'));
+});
+ok('云函数包数量', `${cfDirs.length} 个：${cfDirs.join(' / ')}`);
+
+const pinned = [];
+cfDirs.forEach((name) => {
+  const pkg = readJson(join(cfRoot, name, 'package.json'));
+  const main = String(pkg.main ?? 'index.js');
+  if (!existsSync(join(ROOT, cfRoot, name, main))) {
+    bad(`${name}：main 入口缺失`, main);
+  }
+  const sdk = (pkg.dependencies ?? {})['wx-server-sdk'];
+  if (!sdk) bad(`${name}：缺 wx-server-sdk 依赖`);
+  else if (sdk === 'latest' || sdk === '*') pinned.push(name);
+});
+
+if (pinned.length === 0) ok('wx-server-sdk 版本已锁定');
+else warn(`wx-server-sdk 写的是 latest（${pinned.length} 个包）`, '不可复现构建，建议锁到具体版本');
+
+/** 从 index.js 抽 switch 分支里的 action 名 */
+const actionsOf = (name) => {
+  const src = read(join(cfRoot, name, 'index.js'));
+  return new Set([...src.matchAll(/case\s+'([a-zA-Z]+)'\s*:/g)].map((m) => m[1]));
+};
+
+/* ---------- 3. 前端动作 ↔ 云函数分支 ---------- */
+section('三、前端调用 ↔ 云函数分支');
+const serviceFiles = readdirSync(join(ROOT, mpRoot, 'services')).filter((f) => f.endsWith('.ts'));
+const called = new Set();
+serviceFiles.forEach((f) => {
+  const src = read(join(mpRoot, 'services', f));
+  [...src.matchAll(/'(?:[a-zA-Z]+):([a-zA-Z]+)'/g)].forEach((m) => {
+    const full = m[0].slice(1, -1);
+    if (/^[a-z]+:[a-zA-Z]+$/.test(full)) called.add(full);
+  });
+});
+ok('前端引用的动作数', `${called.size} 个`);
+
+const missing = [];
+called.forEach((full) => {
+  const [res, action] = full.split(':');
+  const fn = cfDirs.includes(res) ? res : null;
+  if (!fn) {
+    missing.push(`${full}（无同名云函数）`);
+    return;
+  }
+  if (!actionsOf(fn).has(action)) missing.push(`${full}（${fn} 无 case '${action}'）`);
+});
+if (missing.length === 0) ok('每个前端动作都有对应云函数分支');
+else missing.forEach((m) => bad('动作缺实现', m));
+
+/* ---------- 4. 集合 ↔ db-schema ---------- */
+section('四、数据库集合 ↔ db-schema');
+const schemaSrc = read('contracts/db-schema.md');
+const declared = new Set(
+  [...schemaSrc.matchAll(/^##\s+([a-z_]+)/gm)].map((m) => m[1]).filter((n) => n !== 'seed'),
+);
+const used = new Set();
+const walkJs = (dir) => {
+  readdirSync(join(ROOT, dir)).forEach((n) => {
+    const rel = join(dir, n);
+    if (statSync(join(ROOT, rel)).isDirectory()) {
+      if (n !== 'node_modules') walkJs(rel);
+      return;
+    }
+    if (!n.endsWith('.js')) return;
+    [...read(rel).matchAll(/collection\('([a-z_]+)'\)/g)].forEach((m) => used.add(m[1]));
+  });
+};
+walkJs(cfRoot);
+
+ok('db-schema 声明集合', `${declared.size} 个：${[...declared].sort().join(' / ')}`);
+ok('代码实际使用集合', `${used.size} 个`);
+
+const undeclared = [...used].filter((c) => !declared.has(c));
+if (undeclared.length === 0) ok('代码用到的集合都在 db-schema 里');
+else bad('代码使用了 db-schema 未声明的集合', undeclared.join(' / '));
+
+const unused = [...declared].filter((c) => !used.has(c));
+if (unused.length > 0) warn('db-schema 声明了但代码没用的集合', unused.join(' / '));
+
+/* ---------- 5. 页面完整性 ---------- */
+section('五、页面完整性');
+const appJson = readJson(join(mpRoot, 'app.json'));
+const brokenPages = [];
+appJson.pages.forEach((p) => {
+  ['.ts', '.wxml', '.json'].forEach((ext) => {
+    if (!existsSync(join(ROOT, mpRoot, `${p}${ext}`))) brokenPages.push(`${p}${ext}`);
+  });
+});
+if (brokenPages.length === 0) ok('app.json 的页面文件齐全', `${appJson.pages.length} 个页面`);
+else bad('页面文件缺失', brokenPages.join(' / '));
+
+/* ---------- 6. 通道开关判定 ---------- */
+section('六、通道开关（依据 CR-017-a）');
+const envSrc = read(join(mpRoot, 'config/env.ts'));
+const mockMatch = envSrc.match(/USE_MOCK:\s*(true|false)/);
+const useMock = mockMatch ? mockMatch[1] === 'true' : null;
+
+if (useMock === null) {
+  bad('未能从 config/env.ts 解析出 USE_MOCK');
+} else if (useMock) {
+  ok('USE_MOCK = true（未上云路径，符合 CR-017-a）');
+  console.log('     └ 该路径要求：界面不得出现「演示数据 / 未连接云端」等自曝提示');
+  console.log('     └ 切换前必须先完成 docs/24 清单的 ①②③，不能直接改这一行');
+} else {
+  ok('USE_MOCK = false（已上云路径）');
+  console.log('     └ 该路径要求：联调冒烟 + 真机冒烟（含「胸痛怎么办」→ 出现 120）已通过');
+}
+
+/* ---------- 7. 云函数环境变量 ---------- */
+section('七、云函数环境变量清单（需在云开发控制台逐个配置）');
+const envVars = new Set();
+const walkEnv = (dir) => {
+  readdirSync(join(ROOT, dir)).forEach((n) => {
+    const rel = join(dir, n);
+    if (statSync(join(ROOT, rel)).isDirectory()) {
+      if (n !== 'node_modules') walkEnv(rel);
+      return;
+    }
+    if (!n.endsWith('.js')) return;
+    [...read(rel).matchAll(/process\.env\.([A-Z0-9_]+)/g)].forEach((m) => envVars.add(m[1]));
+  });
+};
+walkEnv(cfRoot);
+[...envVars].sort().forEach((v) => {
+  const hint =
+    v === 'DEEPSEEK_API_KEY'
+      ? '（不配则 AI 走 kb 降级，属设计内行为）'
+      : v === 'PHONE_AES_KEY'
+        ? '（不配则号码加密相关功能不可用）'
+        : v === 'TCB_ENV'
+          ? '（云开发自动注入，通常无需手工配置）'
+          : '';
+  console.log(`     · ${v} ${hint}`);
+});
+
+/* ---------- 汇总 ---------- */
+console.log(`\n${'─'.repeat(56)}`);
+console.log(`预检结果：阻断项 ${fails} 个，提醒 ${warns} 个`);
+if (fails === 0) {
+  console.log('静态检查通过。注意：**云侧连通性无法在此验证**，必须在开发者工具里实测。');
+  console.log('下一步见 docs/24-上云联调切换清单.md');
+}
+process.exit(fails === 0 ? 0 : 1);

@@ -5,6 +5,6 @@
   "description": "社区便民 · qa 资源云函数（actions: ask / history / clear / feedback / suggest；契约见 contracts/api-contract.md）",
   "main": "index.js",
   "dependencies": {
-    "wx-server-sdk": "latest"
+    "wx-server-sdk": "4.0.2"
   }
 }

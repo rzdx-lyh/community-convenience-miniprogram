@@ -5,6 +5,6 @@
   "description": "社区便民 · user 资源云函数（actions: updateProfile；v1.2 支持 accountId；契约见 contracts/api-contract.md）",
   "main": "index.js",
   "dependencies": {
-    "wx-server-sdk": "latest"
+    "wx-server-sdk": "4.0.2"
   }
 }

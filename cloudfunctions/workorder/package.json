@@ -5,6 +5,6 @@
   "description": "社区便民 · workorder 资源云函数（actions: create / list / detail / cancel / handle；契约见 contracts/api-contract.md）",
   "main": "index.js",
   "dependencies": {
-    "wx-server-sdk": "latest"
+    "wx-server-sdk": "4.0.2"
   }
 }

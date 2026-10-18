@@ -14,7 +14,8 @@
     "verify": "npm run typecheck && npm run lint && npm run test",
     "mock": "node scripts/mock-server.mjs",
     "mock:smoke": "node scripts/selftest.mjs",
-    "build:cf": "node scripts/build-cf.mjs"
+    "build:cf": "node scripts/build-cf.mjs",
+    "preflight": "node scripts/cloud-preflight.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
