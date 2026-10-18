@@ -2,6 +2,6 @@
   "navigationBarTitleText": "办事大厅",
   "enablePullDownRefresh": true,
   "usingComponents": {
-    "empty-state": "/components/empty-state/index"
+    "empty-state": "../../../components/empty-state/index"
   }
 }

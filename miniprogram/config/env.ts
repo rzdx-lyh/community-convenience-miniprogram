@@ -80,6 +80,12 @@ export const STORAGE_KEYS = {
   ELDER_MODE: 'elderMode',
   AGREED_PRIVACY: 'agreedPrivacy',
   PROFILE: 'profile',
+  /**
+   * 通道标记：记录 profile 是在哪条通道下写入的（mock / cloud）。
+   * 切通道后旧 profile 必须作废——mock 时期的 accountId/openid 在云端不存在，
+   * 拿它去请求会让 requireUser 全部 401（表现：公告加载失败、各页空态）。
+   */
+  PROFILE_CHANNEL: 'profileChannel',
   QA_SESSION_ID: 'qaSessionId',
   /** 契约附 A.3：circle 为 Tab 页不支持 query，用全局态传递筛选 */
   PENDING_CIRCLE_FILTER: 'pendingCircleFilter',

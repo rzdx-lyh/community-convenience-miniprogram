@@ -69,8 +69,14 @@ Page({
       elderMode: store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false),
       contacts: LOCAL_EMERGENCY_CONTACTS,
     });
-    // 首屏三个数据源并发（契约建议 Promise.all，避免串行拖慢首屏）
-    void Promise.all([this.loadProfile(), this.loadUrgent(), this.loadServices(), this.loadFeed()]);
+    // ⚠ 先把「静默登录」跑完，再并发拉数据。
+    // 云端 requireUser 会校验用户记录存在；若与登录并发，notice:urgentLatest 可能
+    // 先到并拿到 401，首页显示「公告加载失败 / 请检查网络后重试」——
+    // 看起来像网络问题，实际是时序问题。多花一次登录往返（≈300ms）换确定性，值得。
+    void (async () => {
+      await this.loadProfile();
+      await Promise.all([this.loadUrgent(), this.loadServices(), this.loadFeed()]);
+    })();
   },
 
   onShow() {
