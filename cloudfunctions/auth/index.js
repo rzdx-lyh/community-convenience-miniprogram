@@ -5,9 +5,9 @@
  * 契约：contracts/api-contract.md §auth:login（v1.2：出参 profile 必含 accountId）
  * 首次登录自动建档（role 默认 resident，accountId 服务端生成；老用户懒迁移补值）
  */
-const { ok, fail, CODES, handler } = require('../shared/response');
-const { getOpenId, ensureUser, toProfile } = require('../shared/auth');
-const { updateProfile } = require('../shared/profile');
+const { ok, fail, CODES, handler } = require('./shared/response');
+const { getOpenId, ensureUser, toProfile } = require('./shared/auth');
+const { updateProfile } = require('./shared/profile');
 
 async function login() {
   const openid = getOpenId();

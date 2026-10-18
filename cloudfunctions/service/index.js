@@ -7,10 +7,10 @@
  * 降级铁律（BE-11 / 风险 R-D）：任何异常都必须返回 { code:0, data:{ list:[] } }，
  * 绝不能返回 500 —— 让前端回退本地常量 config/service-grid.ts，保证 Demo 不白屏。
  */
-const { ok, fail, CODES, handler } = require('../shared/response');
-const { db } = require('../shared/db');
-const { getOpenId, requireUser } = require('../shared/auth');
-const { isBlank } = require('../shared/time');
+const { ok, fail, CODES, handler } = require('./shared/response');
+const { db } = require('./shared/db');
+const { getOpenId, requireUser } = require('./shared/auth');
+const { isBlank } = require('./shared/time');
 
 const VALID_TARGET_TYPES = ['page', 'notice', 'circle', 'assistant', 'phone', 'toast'];
 

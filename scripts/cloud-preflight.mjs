@@ -105,6 +105,13 @@ if (!existsSync(sharedDir)) {
   });
   if (stale.length === 0) ok('各函数目录的 shared 副本与真源一致');
   else bad('shared 副本缺失或过期（上传后云端 require 会拿到旧代码或报错）', `${stale.join(' / ')} → 先跑 npm run build:cf`);
+
+  /* ⚠ 云端包结构 = 函数目录自包含，shared/ 在函数包**内部**。
+     若源码写成 '../shared/...'，本地能跑但上传后 MODULE_NOT_FOUND → 所有云调用 fail
+     （前端统一表现为「网络异常」）。这是 2026-10-19 线上事故的根因，必须死守。 */
+  const wrongPath = cfDirs.filter((n) => read(join(cfRoot, n, 'index.js')).includes("'../shared/"));
+  if (wrongPath.length === 0) ok('云函数 require 路径与云端包结构一致（./shared/...）');
+  else bad('云函数里出现 ../shared/ 引用，上传后必崩（云端 shared 在函数包内部）', wrongPath.join(' / '));
 }
 
 /* ---------- 3. 前端动作 ↔ 云函数分支 ---------- */

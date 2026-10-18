@@ -5,10 +5,10 @@
  * 契约：contracts/api-contract.md §phonebook:list（category 可选，按 sort 升序，不分页）
  * 电话为公开便民数据，明文存储；个人隐私手机号才走 AES（见 shared/crypto.js）
  */
-const { ok, fail, CODES, handler } = require('../shared/response');
-const { db } = require('../shared/db');
-const { getOpenId } = require('../shared/auth');
-const { isBlank } = require('../shared/time');
+const { ok, fail, CODES, handler } = require('./shared/response');
+const { db } = require('./shared/db');
+const { getOpenId } = require('./shared/auth');
+const { isBlank } = require('./shared/time');
 
 const CATEGORIES = ['property', 'government', 'medical', 'life', 'emergency'];
 

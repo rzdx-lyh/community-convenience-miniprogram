@@ -6,14 +6,14 @@
  * 状态机：pending→assigned→processing→done；closed/canceled 为终态，非法流转返回 400
  * 数据隔离：居民仅见本人工单（越权 403），物业/管理员见全部
  */
-const { ok, fail, CODES, handler } = require('../shared/response');
-const { db } = require('../shared/db');
-const { getOpenId, requireUser, requireStaff } = require('../shared/auth');
-const { isoNow, paginate } = require('../shared/time');
-const { checkText } = require('../shared/security');
-const { chat, buildSummaryPrompt } = require('../shared/ai');
-const { notifyWorkOrderDone } = require('../shared/subscribe');
-const { overLimit, RULE } = require('../shared/ratelimit');
+const { ok, fail, CODES, handler } = require('./shared/response');
+const { db } = require('./shared/db');
+const { getOpenId, requireUser, requireStaff } = require('./shared/auth');
+const { isoNow, paginate } = require('./shared/time');
+const { checkText } = require('./shared/security');
+const { chat, buildSummaryPrompt } = require('./shared/ai');
+const { notifyWorkOrderDone } = require('./shared/subscribe');
+const { overLimit, RULE } = require('./shared/ratelimit');
 
 const CATEGORIES = ['water', 'electric', 'door', 'public', 'other'];
 const FLOW = {

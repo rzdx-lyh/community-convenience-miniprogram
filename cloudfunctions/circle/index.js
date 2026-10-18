@@ -7,10 +7,10 @@
  * 隐私：authorOpenid 只入库不下发，出参一律剔除。
  * 排序：topFlag 降序 → publishAt 降序（list 与 detail 共用同一规则）。
  */
-const { ok, fail, CODES, handler, omit } = require('../shared/response');
-const { db } = require('../shared/db');
-const { getOpenId, requireUser } = require('../shared/auth');
-const { paginate, isBlank } = require('../shared/time');
+const { ok, fail, CODES, handler, omit } = require('./shared/response');
+const { db } = require('./shared/db');
+const { getOpenId, requireUser } = require('./shared/auth');
+const { paginate, isBlank } = require('./shared/time');
 
 const TYPES = ['road', 'notice', 'activity'];
 const PRIVATE_FIELDS = ['authorOpenid'];

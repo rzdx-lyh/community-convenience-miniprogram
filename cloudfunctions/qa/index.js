@@ -7,14 +7,14 @@
  * 调用链：输入护栏 → 知识库检索 → 大模型（8s 超时）→ 输出护栏 → 落会话 → 返回
  * 无 DEEPSEEK_API_KEY 时全链路降级：知识库命中回原文，未命中回兜底话术 + 便民电话
  */
-const { ok, fail, CODES, handler } = require('../shared/response');
-const { db } = require('../shared/db');
-const { getOpenId, requireUser } = require('../shared/auth');
-const { isoNow, paginate } = require('../shared/time');
-const { chat, buildRagPrompt } = require('../shared/ai');
-const { searchKB, SUGGEST_QUESTIONS, FALLBACK_TEXT, hotlineLines } = require('../shared/kb/kb');
-const { overLimit, RULE } = require('../shared/ratelimit');
-const { detectRisk } = require('../shared/safety');
+const { ok, fail, CODES, handler } = require('./shared/response');
+const { db } = require('./shared/db');
+const { getOpenId, requireUser } = require('./shared/auth');
+const { isoNow, paginate } = require('./shared/time');
+const { chat, buildRagPrompt } = require('./shared/ai');
+const { searchKB, SUGGEST_QUESTIONS, FALLBACK_TEXT, hotlineLines } = require('./shared/kb/kb');
+const { overLimit, RULE } = require('./shared/ratelimit');
+const { detectRisk } = require('./shared/safety');
 
 const DISCLAIMER = 'AI 生成仅供参考';
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 会话 2 小时失效

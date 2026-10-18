@@ -7,10 +7,10 @@
  * 兼容铁律：type=notice/activity 的行为与 v1.1 完全一致（仅新增枚举值与可选入参）；
  * 新字段 level/startAt/endAt/summary 全部可空，老数据无需迁移。
  */
-const { ok, fail, CODES, handler } = require('../shared/response');
-const { db } = require('../shared/db');
-const { getOpenId, requireUser } = require('../shared/auth');
-const { isoNow, isActiveNow, isExpired, paginate, isBlank } = require('../shared/time');
+const { ok, fail, CODES, handler } = require('./shared/response');
+const { db } = require('./shared/db');
+const { getOpenId, requireUser } = require('./shared/auth');
+const { isoNow, isActiveNow, isExpired, paginate, isBlank } = require('./shared/time');
 
 const TYPES = ['notice', 'activity', 'urgent'];
 const LEVEL_WEIGHT = { critical: 3, high: 2, normal: 1 };

@@ -1,11 +1,17 @@
 /**
  * 部署打包：node scripts/build-cf.mjs [--clean]
  *
- * 微信云开发上传云函数时每个函数目录必须自包含，因此把 cloudfunctions/shared/ 复制进各资源目录，
- * 本地开发时资源目录内用 require('../shared/...') 直接引用，无需先跑本脚本。
+ * 微信云开发上传云函数时**每个函数目录必须自包含**（云端包里只有该函数目录下的文件），
+ * 因此把 cloudfunctions/shared/ 复制进各资源目录，源码里一律 require('./shared/...')。
+ *
+ * ⚠ 血泪教训（2026-10-19）：源码曾经写 require('../shared/...')，本地指向 cloudfunctions/shared/ 没问题，
+ *   但上传后 shared/ 在函数包**内部**，'../shared' 指到包外面 → 云端 MODULE_NOT_FOUND → 所有云调用 fail，
+ *   前端统一表现为「网络异常，请检查网络后重试」。**云端与本地的包结构不同，路径必须以云端为准。**
+ *
  *   --clean：打包前先删除各资源目录下已存在的 shared/（避免残留旧文件）
  *
  * 注意：不要提交打包产物（各资源目录下的 shared/ 副本），.gitignore 已忽略。
+ * 部署前**必须**先跑本脚本，否则函数里没有 shared/ 会直接崩。
  */
 import { copyFileSync, mkdirSync, rmSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
