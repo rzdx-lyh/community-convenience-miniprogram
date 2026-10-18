@@ -89,4 +89,12 @@ export const STORAGE_KEYS = {
   QA_SESSION_ID: 'qaSessionId',
   /** 契约附 A.3：circle 为 Tab 页不支持 query，用全局态传递筛选 */
   PENDING_CIRCLE_FILTER: 'pendingCircleFilter',
+  /** CR-026：缴费账单户号（本地存储，不上传云端） */
+  BILL_ACCOUNTS: 'ccfBillAccounts',
+  /** CR-026：健康档案自测记录（本地存储，不上传云端） */
+  HEALTH_RECORDS: 'ccfHealthRecords',
+  /** CR-026：共享设备借用台账（本地存储，登记状态非设备状态） */
+  TOOL_BORROWS: 'ccfToolBorrows',
+  /** CR-026：快递代取代寄申请记录（本地存储） */
+  EXPRESS_ORDERS: 'ccfExpressOrders',
 } as const;

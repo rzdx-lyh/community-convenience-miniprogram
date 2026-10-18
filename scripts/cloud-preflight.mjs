@@ -112,6 +112,15 @@ if (!existsSync(sharedDir)) {
   const wrongPath = cfDirs.filter((n) => read(join(cfRoot, n, 'index.js')).includes("'../shared/"));
   if (wrongPath.length === 0) ok('云函数 require 路径与云端包结构一致（./shared/...）');
   else bad('云函数里出现 ../shared/ 引用，上传后必崩（云端 shared 在函数包内部）', wrongPath.join(' / '));
+
+  /* ⚠ 云函数超时：CLI 部署**不会**应用 config.json 的 timeout，云端默认 3s。
+     wx-server-sdk 冷启动常要 2-4s → 首次调用必超时 → 前端统一弹「网络异常」。
+     只能在云开发控制台逐函数改（本脚本无法代劳），故这里只做提醒。 */
+  warn(
+    '云函数超时需手工确认：云端默认 3s，wx-server-sdk 冷启动常 2-4s',
+    '云开发控制台 → 云函数 → 逐个「配置」→ 超时时间改为 20s（8 个函数都要改）',
+  );
+  ok('前端已加冷启动超时静默重试（utils/request.ts）', '仅重试超时，不重试「函数不存在 / 依赖缺失」');
 }
 
 /* ---------- 3. 前端动作 ↔ 云函数分支 ---------- */

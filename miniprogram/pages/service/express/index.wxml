@@ -1,0 +1,106 @@
+<!-- 快递代取代寄（CR-026）· 我的申请 → 点位 → 收费 → 提交 -->
+<view class="page">
+  <!-- 两个主操作 -->
+  <view class="top">
+    <view class="top__t">快递代取代寄</view>
+    <view class="top__s">驿站代收 · 上门送件 · 冷链暂存</view>
+    <view class="top__acts">
+      <view class="top__btn" data-k="pickup" bindtap="onApply">帮我代取</view>
+      <view class="top__btn top__btn--ghost" data-k="send" bindtap="onApply">帮我代寄</view>
+    </view>
+  </view>
+
+  <!-- 我的申请 -->
+  <view class="sec">
+    <view class="sec__hd">
+      <text class="sec__t">我的申请</text>
+      <text class="sec__s">共 {{orders.length}} 条</text>
+    </view>
+
+    <view wx:if="{{orders.length === 0}}" class="empty">
+      <view class="empty__t">还没有代取代寄申请</view>
+      <view class="empty__s">点上方按钮提交，驿站处理进度会在这里显示</view>
+    </view>
+
+    <view wx:for="{{orders}}" wx:key="id" class="od">
+      <view class="od__l">
+        <view class="od__n">{{item.kindText}} · {{item.company}}</view>
+        <view class="od__d">{{item.code}} · {{item.sizeText}} · {{item.room}}</view>
+        <view class="od__t">{{item.timeText}}</view>
+      </view>
+      <view class="od__r">
+        <view class="od__s">{{item.statusText}}</view>
+        <view class="od__c" data-id="{{item.id}}" bindtap="onCancel">撤销</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 点位 -->
+  <view class="sec">
+    <view class="sec__hd">
+      <text class="sec__t">驿站点位</text>
+      <text class="sec__s">大件请到驿站取</text>
+    </view>
+    <view wx:for="{{spots}}" wx:key="name" class="spot">
+      <view class="spot__n">{{item.name}}</view>
+      <view class="spot__a">{{item.addr}}</view>
+      <view class="spot__h">{{item.hours}} · {{item.note}}</view>
+    </view>
+  </view>
+
+  <!-- 收费 -->
+  <view class="sec">
+    <view class="sec__hd">
+      <text class="sec__t">收费标准</text>
+      <text class="sec__s">现场结算</text>
+    </view>
+    <view wx:for="{{rules}}" wx:key="label" class="rule">
+      <text class="rule__l">{{item.label}}</text>
+      <text class="rule__v">{{item.value}}</text>
+    </view>
+  </view>
+
+  <view class="foot">
+    本页<text class="foot__b">不代收货款、不做在线支付</text>，费用在驿站取件时现场结算；
+    取件码是你的个人凭证，请勿发给他人。
+  </view>
+
+  <!-- CR-024：页面级 AI 入口（上下文 = 快递代取） -->
+  <ai-bar page="express" />
+
+  <!-- 申请弹层 -->
+  <view wx:if="{{showForm}}" class="mask" bindtap="onCloseForm">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet__hd">{{kindName}}</view>
+      <view class="sheet__tip">提交后驿站工作人员处理，费用现场结算；本页不代收货款。</view>
+
+      <view class="sheet__lb">快递公司 <text class="req">必选</text></view>
+      <picker mode="selector" range="{{companies}}" value="{{companyIndex}}" bindchange="onCompanyChange">
+        <view class="pk">{{company}} ▾</view>
+      </picker>
+
+      <view class="sheet__lb">{{kind === 'pickup' ? '取件码' : '寄件单号'}} <text class="req">必填</text></view>
+      <input class="inp" placeholder="{{kind === 'pickup' ? '例：8-3-1024' : '寄件后填快递单号'}}" maxlength="30" value="{{code}}" bindinput="onInputCode" />
+
+      <view class="sheet__lb">件型 <text class="req">必选</text></view>
+      <picker mode="selector" range="{{sizeNames}}" value="{{sizeIndex}}" bindchange="onSizeChange">
+        <view class="pk">{{sizeNames[sizeIndex]}} ▾</view>
+      </picker>
+      <view class="sheet__tip">{{sizeHint}}</view>
+
+      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
+      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{room}}" bindinput="onInputRoom" />
+
+      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
+      <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{contact}}" bindinput="onInputContact" />
+
+      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
+      <textarea class="ta" placeholder="例如：晚上 7 点后在家，可直接送上门" maxlength="120" value="{{note}}" bindinput="onInputNote" />
+
+      <view class="sheet__ft">
+        <view class="sheet__btn" bindtap="onCloseForm">取消</view>
+        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmit">{{submitting ? '提交中…' : '提交申请'}}</view>
+      </view>
+    </view>
+  </view>
+</view>

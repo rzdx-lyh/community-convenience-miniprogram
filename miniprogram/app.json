@@ -11,7 +11,11 @@
     "pages/phonebook/index",
     "pages/service/category/index",
     "pages/service/meal/index",
-    "pages/service/guide/index"
+    "pages/service/guide/index",
+    "pages/service/bill/index",
+    "pages/service/record/index",
+    "pages/service/tool/index",
+    "pages/service/express/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#F3F5F9",

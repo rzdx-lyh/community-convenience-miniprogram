@@ -106,8 +106,9 @@ describe('服务数据 · 路由不出死链', () => {
   });
 
   it('预约类服务带 book 参数，且指向本分类页（页内弹层）', () => {
+    // CR-026：家庭医生签约从分类页弹层迁到健康档案页的签约弹层，故由 10 降为 9
     const books = flat.filter((i) => String((i.targetParams ?? {}).book ?? '') !== '');
-    expect(books.length).toBeGreaterThanOrEqual(10);
+    expect(books.length).toBeGreaterThanOrEqual(9);
     books.forEach((item) => {
       expect(item.targetPath).toBe('/pages/service/category/index');
       expect(registered).toContain('/pages/service/category/index');
