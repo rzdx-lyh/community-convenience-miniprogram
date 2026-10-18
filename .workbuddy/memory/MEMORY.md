@@ -7,7 +7,10 @@
 
 ## 环境事实（勿重复问）
 - 小程序 AppID `wx6af52092db32a671`（昵称"风残烛火心碎"，2026-10-15 改名审核中："猎奇便民服务"）。
-- 云开发环境 ID `cloud1-d5g1xuxxf9eb5b758`；`miniprogram/config/env.ts` 的 `USE_MOCK=true`（mock 演示通道）。
+- 云开发环境 ID `cloud1-d5g1xuxxf9eb5b758`；`USE_MOCK` 已切 **false（真云通道）**（2026-10-19）。
+- ⚠️ **云函数超时必须手工改 20s**：CLI `cloud functions deploy` **不应用** `config.json` 的 `timeout`，
+  CLI 也没有该参数 → 只能云开发控制台逐个改 8 个函数。默认 3s + `wx-server-sdk` 冷启动 2-4s
+  = 「隔一会儿点就报网络异常，马上再点又好了」。教程见 `docs/26-云函数超时必须改20秒.md`。
 - 微信开发者工具 CLI：`D:\app\微信\开发小程序\微信web开发者工具\cli.bat`（2.02.2608040）。
 - 团队名：**猎奇小分队**。
 
@@ -30,9 +33,10 @@
 - ⚠️ **沙箱内 git 直连会被代理挡**：`git ls-remote` 报 `CONNECT tunnel failed, response 502`；但 **`api.github.com` 用 Python urllib（关校验）可通**。查远程状态优先走 API：`/branches`、`/tags`、`/commits?sha=<branch>`。注意 `/tags` 返回的是 `commit.sha`，**没有顶层 `sha` 字段**。
 - **版本号规范（用户定义）**：`MAJOR.MINOR.PATCH` = 正式完全上传次数 / 开发功能完全次数 / 提交次数。
 - **两条独立版本轨（2026-10-18 定）**：
-  - **代码轨**：当前 **v1.0.1**（git 附注标签 `v1.0.1`，2026-10-18 归一）。版本唯一真源 = `miniprogram/config/env.ts` 的 `APP_VERSION`；`package.json` / `package-lock.json` 根包 / 8 个云函数包 / `README.md` / `CHANGELOG.md` 全部对齐；由 `tests/version.test.ts`（6 条）守护，源码里出现别的版本号即测试失败。
+  - **代码轨**：当前 **v1.1.0**（git 附注标签 `v1.1.0`，2026-10-19 升版并推送；上一版 `v1.0.1`）。版本唯一真源 = `miniprogram/config/env.ts` 的 `APP_VERSION`；`package.json` / `package-lock.json` 根包 / 8 个云函数包 / `README.md` / `CHANGELOG.md` 全部对齐；由 `tests/version.test.ts`（6 条）守护，源码里出现别的版本号即测试失败。
+    - 升版清单：改 `env.ts` → `package.json` → `package-lock.json`（根包两处）→ 8 云函数包 → 源码注释（约 15 文件，`v1.0.1` → 新版本，**保留 CR 编号**）→ README → `tests/version.test.ts` 的 `EXPECTED`/`EXPECTED_SEMVER`/标题。
   - **设计原型轨**：`docs/03-preview/demo.html` 当前 **v1.3.2**，与代码轨分开计数（原型领先代码是事实，不要压成一个号）。
-  - 代码注释里的历史变更用 `CR-0xx` 编号溯源，不靠版本号；归一后统一写作 `v1.0.1 / CR-019`。
+  - 代码注释里的历史变更用 `CR-0xx` 编号溯源；归一后统一写作 `v1.1.0 / CR-019` 这种「当前版本 + 原始 CR」形式。
 
 ## ⚠️ 同名旧副本（容易混淆）
 - `C:/Users/Administrator/Desktop/code/ai web/社区便民小程序-be` 是**早期快照**（只有 6 个页面，无 circle/service），
@@ -46,3 +50,10 @@
 - 备案类目：官方备案"服务内容"表**无"社区服务"**；个人主体可选「工具」，单位主体可「生活服务-社区服务」。
 - 电话簿 11 条中 `020-8888xxxx` 段为**占位号需替换**；**110/119/120 是真号严禁替换**。
 - 密钥只进云函数环境变量，源码零明文；`keys/`、`project.private.config.json` 已 gitignore。
+- **云函数打包**：每个函数目录**自包含**，`scripts/build-cf.mjs` 把 `cloudfunctions/shared/` 拷进各函数目录
+  → 源码里 require 必须写 `./shared/...`，写 `../shared/...` 本地能跑、上传后 `MODULE_NOT_FOUND`
+  （曾致线上全部云调用失败，前端统一弹「网络异常」）。`cloud-preflight.mjs` 已死守。
+- **自定义组件用全局 `.ic-*` 图标**：组件 json 必须加 `"styleIsolation": "apply-shared"`，
+  否则 isolated 隔离导致图标全空白（`ai-bar` 踩过）。
+- **WXML 不支持 `<br>`**（被解析为未闭合标签 → 编译失败）。
+- **编译校验只有 `cli preview` 可信**（`cli upload` 失败也返回 √）。已做负向对照验证其真实性。
