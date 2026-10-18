@@ -75,6 +75,37 @@ const actionsOf = (name) => {
   return new Set([...src.matchAll(/case\s+'([a-zA-Z]+)'\s*:/g)].map((m) => m[1]));
 };
 
+/* ---------- 2.5 shared 副本新鲜度 ---------- */
+section('二·五、shared 副本新鲜度');
+const sharedDir = join(ROOT, cfRoot, 'shared');
+const fingerprint = (dir) => {
+  const out = [];
+  const walk = (d, prefix = '') => {
+    readdirSync(d).forEach((n) => {
+      const p = join(d, n);
+      if (statSync(p).isDirectory()) walk(p, `${prefix}${n}/`);
+      else if (n.endsWith('.js') || n.endsWith('.json')) {
+        out.push(`${prefix}${n}:${readFileSync(p, 'utf8').length}`);
+      }
+    });
+  };
+  walk(dir);
+  return out.sort().join('|');
+};
+
+if (!existsSync(sharedDir)) {
+  warn('cloudfunctions/shared 不存在');
+} else {
+  const src = fingerprint(sharedDir);
+  const stale = cfDirs.filter((n) => {
+    const copy = join(ROOT, cfRoot, n, 'shared');
+    if (!existsSync(copy)) return true;
+    return fingerprint(copy) !== src;
+  });
+  if (stale.length === 0) ok('各函数目录的 shared 副本与真源一致');
+  else bad('shared 副本缺失或过期（上传后云端 require 会拿到旧代码或报错）', `${stale.join(' / ')} → 先跑 npm run build:cf`);
+}
+
 /* ---------- 3. 前端动作 ↔ 云函数分支 ---------- */
 section('三、前端调用 ↔ 云函数分支');
 const serviceFiles = readdirSync(join(ROOT, mpRoot, 'services')).filter((f) => f.endsWith('.ts'));
