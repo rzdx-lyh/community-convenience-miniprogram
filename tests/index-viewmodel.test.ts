@@ -35,6 +35,7 @@ describe('toGridVM', () => {
       subLine2: '生鲜零售',
       iconText: '🏥',
       theme: 'green',
+      count: 13,
       decoText: '＋',
     });
   });

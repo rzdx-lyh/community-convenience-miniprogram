@@ -53,6 +53,14 @@ Page({
 
     grid: [] as GridVM[],
 
+    /** 头部 4 个快捷入口（原型首页 qk 行） */
+    quick: [
+      { i: '🔧', t: '报修', k: 'repair' },
+      { i: '💡', t: '缴费', k: 'pay' },
+      { i: '🏥', t: '挂号', k: 'reg' },
+      { i: '🍚', t: '助餐', k: 'meal' },
+    ],
+
     /** v1.0.1 / CR-019：首屏补全 —— 社区动态 3 条（空则整块隐藏） */
     feed: [] as FeedVM[],
 
@@ -266,6 +274,40 @@ Page({
   /* ============================ 首屏补全模块（v1.0.1） ============================ */
 
   /** AI 助手入口卡 → AI 办事助手（不带预设问题，让用户自由输入） */
+  /** 头部搜索框：直接进办事大厅搜（大厅才有完整检索能力） */
+  onSearchTap(): void {
+    wx.switchTab({ url: '/pages/repair/list/index' });
+  },
+
+  /** 分类区「全部 ›」 */
+  onHallMore(): void {
+    wx.switchTab({ url: '/pages/repair/list/index' });
+  },
+
+  /** 头部头像 → 我的 */
+  onProfileTap(): void {
+    wx.switchTab({ url: '/pages/profile/index' });
+  },
+
+  /** 头部 4 个快捷入口：直接落到各自最合适的既有页面，不做中转页 */
+  onQuickTap(e: WechatMiniprogram.TouchEvent): void {
+    const k = String((e.currentTarget.dataset as { k?: string }).k ?? '');
+    track('btn_click', { target: 'home_quick', kind: k });
+    if (k === 'repair') {
+      wx.navigateTo({ url: '/pages/repair/create/index' });
+      return;
+    }
+    if (k === 'pay') {
+      wx.navigateTo({ url: '/pages/service/category/index?cat=support' });
+      return;
+    }
+    if (k === 'reg') {
+      wx.navigateTo({ url: '/pages/phonebook/index?category=medical' });
+      return;
+    }
+    wx.navigateTo({ url: '/pages/notice/list/index?type=activity&tag=%E5%8A%A9%E9%A4%90' });
+  },
+
   onAiEntryTap(): void {
     track('btn_click', { page: 'index', target: 'ai_entry' });
     wx.navigateTo({ url: '/pages/assistant/index', fail: () => toast('页面暂时打不开，请稍后再试') });

@@ -1,41 +1,46 @@
 /* ============================================================
  * app.wxss · 全局样式与 Design Token
- * 来源：docs/03-design-tokens.md v1.1（清新绿版，UI 设计师 2026-10-13）
+ * 来源：设计原型（政务蓝版，与 docs/03-preview/demo.html 取值一致）
  * 硬规则：组件/页面样式一律 var(--token)，禁止硬编码色值与字号。
+ *
+ * ⚠ 从「清新绿 v1.1」升级而来：只改本文件的 token 即可整体换肤，
+ *   页面层不应出现色值——若发现页面里写死了颜色，应改用 token。
  * ============================================================ */
 
-/* ===== 正式 Design Token v1.1（清新绿 · CHANGELOG #3） ===== */
+/* ===== Design Token v1.5（政务蓝 · 对齐设计原型） ===== */
 page {
-  /* 品牌色 */
-  --brand: #1E8252;
-  --brand-mid: #2FA36B;
-  --brand-press: #166A42;
-  --brand-light: #E6F5EE;
-  --brand-gradient: linear-gradient(170deg, #3BB27E 0%, #2FA36B 45%, #1E8252 100%);
-  --accent-warm: #E0862F;
-  --accent-warm-light: #FDF3E7;
-  /* 辅助色（青砖绿·岭南点缀） */
-  --green: #3E6E5F;
-  --green-light: #E7F0ED;
-  /* 中性色 */
-  --bg: #FAF6F1;
+  /* 品牌色（政务蓝：主色 / 亮色 / 按下色 / 浅底 / 渐变） */
+  --brand: #1F5FD6;
+  --brand-mid: #3B7DEE;
+  --brand-press: #153F9B;
+  --brand-light: #EAF1FE;
+  --brand-gradient: linear-gradient(160deg, #3B7DEE 0%, #1F5FD6 52%, #153F9B 100%);
+  /* 辅助色（金：缴费类；青：健康/设备类；靛：圈子/工具类） */
+  --accent-warm: #A86A05;
+  --accent-warm-light: #FDF3E1;
+  --green: #0E7C6B;
+  --green-light: #E6F5F2;
+  --indigo: #4B45B8;
+  --indigo-light: #EDECFB;
+  /* 中性色（冷灰，替代原暖米色） */
+  --bg: #F3F5F9;
   --card: #FFFFFF;
-  --text-1: #2B2B2B;
-  --text-2: #6B6B6B;
-  --text-3: #9B9B9B;
-  --line: #EEEAE3;
-  --mask: rgba(0, 0, 0, 0.6);
+  --text-1: #12203A;
+  --text-2: #4A5A73;
+  --text-3: #8593A8;
+  --line: #E6EBF2;
+  --mask: rgba(10, 15, 25, 0.45);
   /* 功能色 */
-  --success: #3E8E5A;
-  --warning: #D98E32;
-  --info: #3A7CA5;
-  --processing: #7A5BB8;
-  --error: #C0392B;
-  --disabled: #9B9B9B;
-  /* 紧急模块（变更 C1） */
-  --urgent: #C0392B;
+  --success: #0E7C6B;
+  --warning: #A86A05;
+  --info: #1F5FD6;
+  --processing: #7A5AF8;
+  --error: #C9302C;
+  --disabled: #A3ADBB;
+  /* 紧急模块 */
+  --urgent: #C9302C;
   --urgent-press: #A32E22;
-  --urgent-bg: #FDF0EC;
+  --urgent-bg: #FDECEA;
   --urgent-line: #E0532F;
   /* 字号阶梯（常规） */
   --font-hero: 48rpx;

@@ -12,15 +12,15 @@
     "pages/service/category/index"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#FAF6F1",
+    "navigationBarBackgroundColor": "#F3F5F9",
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "社区便民",
-    "backgroundColor": "#FAF6F1",
+    "backgroundColor": "#F3F5F9",
     "backgroundTextStyle": "dark"
   },
   "tabBar": {
-    "color": "#9B9B9B",
-    "selectedColor": "#1E8252",
+    "color": "#8593A8",
+    "selectedColor": "#1F5FD6",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
     "list": [

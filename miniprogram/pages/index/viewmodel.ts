@@ -30,6 +30,8 @@ export interface GridVM {
   iconText: string;
   theme: string;
   decoText: string;
+  /** 该分类下的服务项数（原型首页分类卡右上角「13 项」） */
+  count: number;
 }
 
 /**
@@ -52,6 +54,7 @@ export function toGridVM(category: ServiceCategory): GridVM {
     iconText: GRID_ICON_TEXT[category.key] ?? '🏠',
     theme: category.iconTheme,
     decoText: '＋',
+    count: (category.items ?? []).length,
   };
 }
 

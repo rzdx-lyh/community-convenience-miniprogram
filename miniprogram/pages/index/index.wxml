@@ -11,30 +11,39 @@
       <view class="header__capsule" style="width: {{capsuleWidth}}px"></view>
     </view>
 
-    <!-- 定位行：📍 当前社区（位于胶囊/灵动岛下方） -->
-    <view class="header__nav">
-      <text class="header__pin">📍</text>
-      <text class="header__loc">当前社区：{{communityName}}</text>
+    <!-- 品牌行：logo + 服务名 + 定位 + 紧急求助 + 头像 -->
+    <view class="brand">
+      <view class="brand__logo">猎</view>
+      <view class="brand__info">
+        <view class="brand__name">猎奇便民服务</view>
+        <view class="brand__loc">📍 {{communityName}}</view>
+      </view>
+      <view class="brand__urgent" hover-class="brand__urgent--hover" bindtap="onUrgentTap">
+        <text class="brand__urgent-ico">⚡</text>
+        <text>紧急</text>
+      </view>
+      <view class="brand__avatar" bindtap="onProfileTap">{{avatarText}}</view>
     </view>
 
-    <!-- 用户信息行：头像 + 昵称 + 社区账号 -->
-    <view class="header__user">
-      <view class="header__avatar">{{avatarText}}</view>
-      <view class="header__info">
-        <view class="header__nick">{{nickName}}</view>
-        <view class="header__account">🔖 社区账号 {{accountId}}</view>
-      </view>
+    <!-- 搜索框（点击进办事大厅，完整检索在那里） -->
+    <view class="search" hover-class="search--hover" bindtap="onSearchTap">
+      <text class="search__ico">🔍</text>
+      <text class="search__ph">搜服务：保洁、助餐、雨伞、租…</text>
+      <text class="search__go">搜索</text>
     </view>
 
-    <!-- 紧急援助行：左侧红色徽标 + 右侧白底 pill -->
-    <view class="header__aid">
-      <view class="header__aid-left">
-        <view class="header__badge">⚡</view>
-        <text class="header__aid-text">紧急援助</text>
-      </view>
-      <view class="header__aid-btn" hover-class="header__aid-btn--hover" bindtap="onUrgentTap">
-        <text class="header__aid-btn-icon">⚡</text>
-        <text class="header__aid-btn-text">紧急求助</text>
+    <!-- 4 个快捷入口 -->
+    <view class="qk">
+      <view
+        wx:for="{{quick}}"
+        wx:key="k"
+        class="qk__i"
+        hover-class="qk__i--hover"
+        data-k="{{item.k}}"
+        bindtap="onQuickTap"
+      >
+        <text class="qk__ico">{{item.i}}</text>
+        <text class="qk__tx">{{item.t}}</text>
       </view>
     </view>
   </view>
@@ -72,27 +81,30 @@
       </view>
     </view>
 
-    <!-- 核心功能 2×2 宫格 -->
+    <!-- 服务分类（4 张竖卡：名称 + 板块 + 项数），对齐原型首页「服务分类」区 -->
     <view class="section">
-      <view class="section__title">核心功能</view>
-      <!-- 关怀模式 1 列重排走 .care-mode .grid / .care-mode .fn 祖先选择器，
-           这里不再挂 grid--care（该类从未在 wxss 定义，留着会误导后来维护的人） -->
-      <view class="grid">
+      <view class="section__head">
+        <view class="section__title section__title--inline">服务分类</view>
+        <view class="section__more" catchtap="onHallMore">
+          <text>全部</text>
+          <text class="section__more-arrow">›</text>
+        </view>
+      </view>
+      <view class="zq">
         <view
           wx:for="{{grid}}"
           wx:key="key"
-          class="fn fn--{{item.theme}}"
-          hover-class="fn--hover"
+          class="zqc"
+          hover-class="zqc--hover"
           data-key="{{item.key}}"
           bindtap="onGridTap"
         >
-          <view class="fn__icon">{{item.iconText}}</view>
-          <view class="fn__name">{{item.title}}</view>
-          <view class="fn__sub">
-            <view class="fn__sub-line">{{item.subLine1}}</view>
-            <view wx:if="{{item.subLine2}}" class="fn__sub-line">{{item.subLine2}}</view>
+          <view class="zqc__top">
+            <text class="zqc__name">{{item.title}}</text>
+            <text class="zqc__cnt">{{item.count}} 项</text>
           </view>
-          <view class="fn__deco">{{item.decoText}}</view>
+          <view class="zqc__sub">{{item.subLine1}} · {{item.subLine2}}</view>
+          <text class="zqc__ar">›</text>
         </view>
       </view>
     </view>
