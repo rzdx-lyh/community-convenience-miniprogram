@@ -278,7 +278,7 @@ current = 'BE-11';
   const TYPES = ['page', 'notice', 'circle', 'assistant', 'phone', 'toast'];
   const items = list.data.list.flatMap((c) => c.items);
   expectTrue('targetType 全在契约枚举内', items.every((i) => TYPES.includes(i.targetType)));
-  expect('8 个子项中 0 个 toast', items.filter((i) => i.targetType === 'toast').length, 0);
+  expect(`全部子项中 0 个 toast（共 ${items.length} 项）`, items.filter((i) => i.targetType === 'toast').length, 0);
   expectTrue('phone 类型号码合法', items.filter((i) => i.targetType === 'phone').every((i) => /^[\d-]{5,20}$/.test(i.targetParams.phone)));
 
   // targetPath 必须存在于 app.json pages
@@ -290,8 +290,22 @@ current = 'BE-11';
   } catch (e) { /* 前端尚未产出，跳过 */ }
   const pageItems = items.filter((i) => i.targetType === 'page');
   if (pageSet) {
-    expectTrue('targetType=page 的 targetPath 均在 app.json pages 内',
-      pageItems.every((i) => pageSet.has(i.targetPath)), pageItems.map((i) => i.targetPath).join(','));
+    // app.json 里写 `pages/x/index`（无前导斜杠），而下发路径必须是 `/pages/x/index`
+    // —— wx.navigateTo 的绝对路径要求前导斜杠，缺了会被当成相对当前页。
+    // 这里统一归一化后再比对，两种写法都能验出来。
+    const norm = (p) => '/' + String(p || '').replace(/^\/+/, '');
+    const allowed = new Set([...pageSet].map(norm));
+    const bad = pageItems.filter((i) => !allowed.has(norm(i.targetPath)));
+    expectTrue(
+      `targetType=page 的 targetPath 均可解析到已注册页面（共 ${pageItems.length} 条）`,
+      bad.length === 0,
+      bad.map((i) => `${i.name} → ${i.targetPath}`).join(', '),
+    );
+    expectTrue(
+      '下发的 targetPath 均带前导斜杠（否则 navigateTo 会当相对路径）',
+      pageItems.every((i) => String(i.targetPath || '').startsWith('/')),
+      pageItems.filter((i) => !String(i.targetPath || '').startsWith('/')).map((i) => i.targetPath).join(', '),
+    );
   } else {
     record('targetType=page 的 targetPath 核对', true, 'app.json 不可读，已人工核对：pages/phonebook/index、pages/repair/create/index');
   }

@@ -7,7 +7,7 @@
  *   绝不写死日期 —— 否则演示当天会显示"已过期"空态，直接丢掉体验分。
  *   10-23 打包前请重跑本脚本。
  */
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -238,67 +238,36 @@ const circle_post = [
 ];
 
 /* -------------------------------------- service_category -------------------------------------- */
-// 契约 §service:list「四类服务承接方案」逐条落地：8 个子项全部可达，0 个 toast
-const service_category = [
-  {
-    _id: 'sc-life', key: 'life', title: '生活基础服务', subtitle: '挂号｜义诊｜疫苗档案',
-    icon: 'icon-func-life-green-72.png', iconTheme: 'green', sort: 1, status: 'online',
-    items: [
-      {
-        key: 'register', name: '挂号', targetType: 'page', sort: 1,
-        targetPath: 'pages/phonebook/index', targetParams: { category: 'medical' },
-      },
-      { key: 'clinic', name: '义诊', targetType: 'notice', sort: 2, targetParams: { type: 'activity' } },
-      {
-        key: 'vaccine', name: '疫苗档案', targetType: 'assistant', sort: 3,
-        targetParams: { presetQuestion: '孩子的疫苗档案怎么查询？' },
-      },
-    ],
-  },
-  {
-    _id: 'sc-elder', key: 'elder', title: '健康养老服务', subtitle: '助餐｜助浴｜上门陪护',
-    icon: 'icon-func-elder-green-72.png', iconTheme: 'green', sort: 2, status: 'online',
-    items: [
-      {
-        key: 'meal', name: '助餐', targetType: 'notice', sort: 1,
-        targetParams: { type: 'activity', tag: '助餐' },
-      },
-      { key: 'bath', name: '助浴', targetType: 'phone', sort: 2, targetParams: { phone: '020-88880000' } },
-      {
-        key: 'care', name: '上门陪护', targetType: 'assistant', sort: 3,
-        targetParams: { presetQuestion: '社区有上门陪护服务吗？' },
-      },
-    ],
-  },
-  {
-    _id: 'sc-support', key: 'support', title: '便民配套服务', subtitle: '水电燃气｜适老化改造',
-    icon: 'icon-func-support-warm-72.png', iconTheme: 'warm', sort: 3, status: 'online',
-    items: [
-      {
-        key: 'utility', name: '水电燃气', targetType: 'page', sort: 1,
-        targetPath: 'pages/repair/create/index', targetParams: { category: 'water' },
-      },
-      {
-        key: 'reform', name: '适老化改造', targetType: 'assistant', sort: 2,
-        targetParams: { presetQuestion: '适老化改造有哪些补贴政策？' },
-      },
-    ],
-  },
-  {
-    _id: 'sc-culture', key: 'culture', title: '文化便民服务', subtitle: '每周义诊｜健康报告',
-    icon: 'icon-func-culture-warm-72.png', iconTheme: 'warm', sort: 4, status: 'online',
-    items: [
-      {
-        key: 'weekly-clinic', name: '每周义诊', targetType: 'notice', sort: 1,
-        targetParams: { type: 'activity', tag: '义诊' },
-      },
-      {
-        key: 'health-report', name: '健康报告', targetType: 'assistant', sort: 2,
-        targetParams: { presetQuestion: '社区免费体检报告怎么领取？' },
-      },
-    ],
-  },
-].map((c) => ({ ...c, createdAt: nowIso, updatedAt: nowIso }));
+/**
+ * 分类真源 = `miniprogram/config/service-grid.ts`（前端兜底常量）。
+ *
+ * 为什么不再手写一份：种子曾经自己写死 4 类 / 10 子项，而前端已扩到 38 项 ——
+ * 库里是 10 项、代码是 38 项，真机上分类页只会显示 10 项，且没有任何板块分组。
+ * 这种"三份副本漂移"只有上云才会暴露，本地 mock 永远看不出来。
+ *
+ * 做法：用 TypeScript 编译器把 .ts 转成 CommonJS 再求值，取 LOCAL_SERVICE_CATEGORIES。
+ */
+function loadServiceCatalog() {
+  const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const file = path.join(ROOT, 'miniprogram/config/service-grid.ts');
+  const ts = require('typescript');
+  const js = ts.transpileModule(readFileSync(file, 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2019 },
+  }).outputText;
+  const mod = { exports: {} };
+  new Function('module', 'exports', 'require', js)(mod, mod.exports, require);
+  const cats = mod.exports.LOCAL_SERVICE_CATEGORIES;
+  if (!Array.isArray(cats) || cats.length === 0) {
+    throw new Error('无法从 miniprogram/config/service-grid.ts 解析出分类');
+  }
+  return cats;
+}
+
+const service_category = loadServiceCatalog().map((c) => ({
+  ...c,
+  createdAt: nowIso,
+  updatedAt: nowIso,
+}));
 
 const data = { users, workorders, notices, phonebook, circle_post, service_category };
 writeFileSync(OUT, JSON.stringify(data, null, 2));

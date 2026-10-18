@@ -16,19 +16,45 @@ const VALID_TARGET_TYPES = ['page', 'notice', 'circle', 'assistant', 'phone', 't
 
 /** 只输出契约 ServiceCategory / ServiceItem 定义的字段，避免把内部字段带给前端 */
 function normalizeCategory(c) {
-  const items = (Array.isArray(c.items) ? c.items : [])
-    .slice()
-    .sort((a, b) => (a.sort || 0) - (b.sort || 0))
-    .map((it) => ({
-      key: it.key,
-      name: it.name,
-      targetType: it.targetType,
-      targetPath: it.targetPath,
-      targetParams: it.targetParams,
-      tip: it.tip,
-      sort: it.sort,
-    }))
-    .filter((it) => VALID_TARGET_TYPES.includes(it.targetType));
+  const normItem = (it) => ({
+    key: it.key,
+    name: it.name,
+    // v1.0.1 / CR-022：desc 是分类页每行的小字说明（「60 元/小时起」），
+    // 早期实现漏了它，真机上 38 项全部只有名字、无从判断选哪个。
+    desc: it.desc,
+    badge: it.badge,
+    targetType: it.targetType,
+    targetPath: it.targetPath,
+    targetParams: it.targetParams,
+    tip: it.tip,
+    sort: it.sort,
+  });
+
+  const normList = (list) =>
+    (Array.isArray(list) ? list : [])
+      .slice()
+      .sort((a, b) => (a.sort || 0) - (b.sort || 0))
+      .map(normItem)
+      .filter((it) => VALID_TARGET_TYPES.includes(it.targetType));
+
+  const items = normList(c.items);
+
+  // v1.0.1 / CR-022：groups 是 8 个板块的分组结构，分类页靠它渲染板块标题与说明。
+  // 不透传的话，前端 toGroupsVM 会退化成"一个分类一个板块"，38 项挤成一坨。
+  const groups = Array.isArray(c.groups)
+    ? c.groups
+        .slice()
+        .sort((a, b) => (a.sort || 0) - (b.sort || 0))
+        .map((g) => ({
+          key: g.key,
+          name: g.name,
+          note: g.note,
+          render: g.render || 'grid',
+          sort: g.sort,
+          items: normList(g.items),
+        }))
+    : undefined;
+
   return {
     _id: c._id,
     key: c.key,
@@ -39,6 +65,7 @@ function normalizeCategory(c) {
     sort: c.sort,
     status: c.status,
     items,
+    groups,
   };
 }
 

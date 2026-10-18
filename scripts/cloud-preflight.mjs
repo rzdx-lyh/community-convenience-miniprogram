@@ -13,6 +13,7 @@
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { createRequire } from 'node:module';
 
 const ROOT = process.cwd();
 let fails = 0;
@@ -161,6 +162,40 @@ else bad('代码使用了 db-schema 未声明的集合', undeclared.join(' / '))
 
 const unused = [...declared].filter((c) => !used.has(c));
 if (unused.length > 0) warn('db-schema 声明了但代码没用的集合', unused.join(' / '));
+
+/* ---------- 4.5 种子分类 ↔ 前端分类 ---------- */
+section('四·五、种子数据的分类是否过期');
+/* 用 TS 编译器转译读取前端常量：不依赖 Node 是否支持直接 import .ts */
+const nodeRequire = createRequire(import.meta.url);
+function loadFrontCatalog() {
+  const ts = nodeRequire('typescript');
+  const src = readFileSync(join(ROOT, 'miniprogram/config/service-grid.ts'), 'utf8');
+  const js = ts.transpileModule(src, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2019 },
+  }).outputText;
+  const mod = { exports: {} };
+  new Function('module', 'exports', 'require', js)(mod, mod.exports, nodeRequire);
+  return mod.exports.LOCAL_SERVICE_CATEGORIES ?? [];
+}
+
+const seedPath = join(ROOT, 'scripts/seed-data.json');
+if (!existsSync(seedPath)) {
+  warn('scripts/seed-data.json 不存在', '先跑 node scripts/seed.mjs');
+} else {
+  const seed = JSON.parse(readFileSync(seedPath, 'utf8'));
+  const seedCats = Array.isArray(seed.service_category) ? seed.service_category : [];
+  const seedItems = seedCats.reduce((n, c) => n + ((c.items ?? []).length), 0);
+  const seedGroups = seedCats.reduce((n, c) => n + ((c.groups ?? []).length), 0);
+  const codeItems = loadFrontCatalog().reduce((n, c) => n + ((c.items ?? []).length), 0);
+  if (seedItems === codeItems) {
+    ok('种子分类与代码一致', `${seedCats.length} 类 / ${seedGroups} 板块 / ${seedItems} 项`);
+  } else {
+    bad(
+      '种子分类与代码不一致（导入云端后前端会少项）',
+      `种子 ${seedItems} 项 vs 代码 ${codeItems} 项 → 重跑 node scripts/seed.mjs`,
+    );
+  }
+}
 
 /* ---------- 5. 页面完整性 ---------- */
 section('五、页面完整性');
