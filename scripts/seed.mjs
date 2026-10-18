@@ -279,17 +279,24 @@ writeFileSync(OUT, JSON.stringify(data, null, 2));
  * 之前只有 seed-data.json（{集合名: 记录数组} 的大对象），照那篇文章去导会直接报格式错误。
  */
 const SEED_DIR = path.join(path.dirname(OUT), 'seed');
+const IMPORT_DIR = path.join(SEED_DIR, 'import');
 mkdirSync(SEED_DIR, { recursive: true });
+mkdirSync(IMPORT_DIR, { recursive: true });
 const written = [];
 Object.keys(data).forEach((name) => {
   const rows = data[name];
-  // ① .json：记录数组，便于程序读取/人工查看
-  writeFileSync(path.join(SEED_DIR, `${name}.json`), JSON.stringify(rows, null, 2));
-  // ② .jsonl：每行一个 JSON 对象 —— **云开发控制台导入只认这个格式**
-  //    实测报错：导入 JSON 数组会提示「导入数据格式不正确，请检查是否为JSON Lines格式」
+  // JSON Lines 内容：每行一个完整 JSON 对象，控件按内容解析
   const jsonl = rows.map((r) => JSON.stringify(r)).join('\n') + '\n';
+
+  // ① scripts/seed/import/<集合>.json ← **控制台导入用这个**
+  //    内容和 .jsonl 完全一样，只是后缀用 .json —— 控制台的文件选择框常按后缀过滤，
+  //    .jsonl 有时根本选不中，用 .json 后缀可以直接选。
+  writeFileSync(path.join(IMPORT_DIR, `${name}.json`), jsonl);
+
+  // ② scripts/seed/<集合>.jsonl ← 同内容，后缀语义正确，便于区分
   writeFileSync(path.join(SEED_DIR, `${name}.jsonl`), jsonl);
-  written.push(`${name}.jsonl（${rows.length} 行）`);
+
+  written.push(`${name}.json（${rows.length} 行）`);
 });
 
 /* -------------------------------------- 生成结果自检提示 -------------------------------------- */
@@ -310,5 +317,5 @@ console.log('     ⛔ 严禁替换 3 条：110 / 119 / 120 —— 国家公开�
 console.log('        换掉会导致居民照安全话术拨错号，属安全事故，不是体验问题。');
 console.log('     改号唯一路径：改 shared/hotline.js → 重跑本脚本 → 重新导入 → 通知前端同步 mock → 跑 selftest。');
 console.log('     ⛔ 禁止在云控制台手工编辑 phonebook 号码（hotline.js 是唯一真源）。');
-console.log('  📁 已生成可直接导入的分集合文件 scripts/seed/*.jsonl（控制台导入用 .jsonl）：');
+console.log('  📁 控制台导入请选 scripts/seed/import/*.json（JSON Lines 内容，后缀 .json 便于选中）：');
 console.log('     ' + written.join('、'));
