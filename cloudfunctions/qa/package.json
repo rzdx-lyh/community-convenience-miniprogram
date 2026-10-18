@@ -1,6 +1,6 @@
 {
   "name": "ccf-qa",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "description": "社区便民 · qa 资源云函数（actions: ask / history / clear / feedback / suggest；契约见 contracts/api-contract.md）",
   "main": "index.js",

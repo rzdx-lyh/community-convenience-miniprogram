@@ -14,7 +14,7 @@
       </view>
     </view>
 
-    <!-- 我的报修入口（Tab 页，switchTab；v1.0.1 起该 Tab 名为「办事大厅」） -->
+    <!-- 我的报修入口（Tab 页，switchTab；v1.1.0 起该 Tab 名为「办事大厅」） -->
     <view class="card">
       <view class="row" bindtap="onGoOrders">
         <view class="row__label">
