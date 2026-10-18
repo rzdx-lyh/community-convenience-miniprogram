@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "我要报修"
+  "navigationBarTitleText": "我要报修",
+  "usingComponents": {
+    "ai-bar": "../../../components/ai-bar/index"
+  }
 }

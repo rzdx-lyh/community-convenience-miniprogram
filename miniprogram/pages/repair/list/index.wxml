@@ -21,6 +21,30 @@
     </view>
   </view>
 
+  <!-- ①-a CR-024：AI 助手集群（8 场景；搜索态隐藏，避免与搜索结果抢视觉） -->
+  <view wx:if="{{!keyword}}" class="aig">
+    <view class="aig__hd">
+      <text class="aig__t">AI 助手 · 按场景直接问</text>
+      <text class="aig__s">点卡片进，带好常用问题</text>
+    </view>
+    <view class="aig__grid">
+      <view
+        wx:for="{{scenes}}"
+        wx:key="key"
+        class="aigc"
+        hover-class="aigc--hover"
+        data-key="{{item.key}}"
+        bindtap="onSceneTap"
+      >
+        <view class="aigc__h">
+          <view class="aigc__k" style="background:{{item.color}}">{{item.icon}}</view>
+          <text class="aigc__n">{{item.name}}</text>
+        </view>
+        <text class="aigc__d">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
   <!-- ①-b 搜索结果（关键词非空时替代入口区，避免页面跳动叠加） -->
   <view wx:if="{{keyword}}" class="match">
     <view wx:if="{{matchList.length > 0}}" class="match__list">
@@ -118,4 +142,7 @@
   <view class="fab" bindtap="onCreate">
     <text class="fab-text">+ 我要报修</text>
   </view>
+
+  <!-- CR-024：AI 集群共用的问答面板（bare = 不渲染横条，只保留弹层） -->
+  <ai-bar id="aiHub" bare="{{true}}" />
 </view>

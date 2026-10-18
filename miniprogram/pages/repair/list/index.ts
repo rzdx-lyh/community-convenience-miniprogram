@@ -8,8 +8,13 @@
  * - service:list → 四类服务（失败回退 config/service-grid.ts 本地常量，0 白屏）
  * - workorder:list → 报修记录（**行为零回归**：分页/筛选/下拉刷新/代际去重全部沿用 FE-4 实现）
  *
+ * CR-024：搜索框下方新增「AI 助手集群」8 张场景卡（办事指南 / 报修进度 / 健康咨询 /
+ *   配餐营养 / 费用户号 / 找地点 / 邻里互助 / 应急求助），点击直接用该场景的预置问题唤起问答面板。
+ *   面板复用 components/ai-bar 的 bare 模式（只弹层、不画横条），避免同一套问答逻辑写两遍。
+ *
  * 红线：本页是 Tab 页，`switchTab` 不支持 query —— 搜索态只存在页面内，不通过 URL 传递。
  */
+import { findScene, HUB_SCENES, type AiScene } from '../../../config/ai-scenes';
 import { ENV, STORAGE_KEYS } from '../../../config/env';
 import { listServices } from '../../../services/service';
 import { listWorkOrders } from '../../../services/workorder';
@@ -73,6 +78,11 @@ let hallRows: HallRow[] = [];
 /** 分类原始数据（供「整卡热区 → ActionSheet 选子项」使用） */
 let categories: ServiceCategory[] = [];
 
+/** ai-bar 裸面板句柄（只弹层、不画横条），供 AI 集群卡唤起 */
+interface AiBarHandle {
+  openWith(input: { title?: string; presets?: string[] }): void;
+}
+
 const pager = createPager<WorkOrder>(async (page, pageSize) => {
   const res = await listWorkOrders({
     status: (currentStatus || undefined) as WorkOrder['status'] | undefined,
@@ -89,6 +99,9 @@ Page({
     /** 搜索关键词与命中结果 */
     keyword: '',
     matchList: [] as HallRowVM[],
+
+    /** CR-024：AI 助手集群 8 场景 */
+    scenes: HUB_SCENES as AiScene[],
 
     tabs: ORDER_TABS,
     activeStatus: '',
@@ -157,6 +170,25 @@ Page({
         /* 用户取消，静默 */
       },
     });
+  },
+
+  /* ==================== CR-024：AI 助手集群 ==================== */
+
+  /**
+   * 场景卡点击 → 用该场景的 3 条预置问题唤起问答面板。
+   * 走 ai-bar 的 openWith：标题=场景名，预置问题=场景话术，回答链路与页面横条完全一致。
+   */
+  onSceneTap(e: WechatMiniprogram.TouchEvent): void {
+    const key = String((e.currentTarget.dataset as { key?: string }).key ?? '');
+    const scene = findScene(key);
+    if (!scene) return;
+    const hub = this.selectComponent('#aiHub') as unknown as AiBarHandle | null;
+    if (!hub || typeof hub.openWith !== 'function') {
+      // 组件没挂上就退回完整助手页，保证入口永远可用
+      wx.navigateTo({ url: '/pages/assistant/index' });
+      return;
+    }
+    hub.openWith({ title: scene.name, presets: scene.questions });
   },
 
   /* ============================ 搜索 ============================ */

@@ -1,0 +1,80 @@
+<!--
+  ai-bar · 页面级 AI 询问横条（FE-15 · CR-024）
+  结构：横条（点击展开）→ 底部弹层（上下文 / 预置问题 / 对话 / 输入 / 转人工）
+-->
+<view wx:if="{{!bare}}" class="aibar {{up ? 'aibar--up' : ''}}">
+  <view class="aibar__in" bindtap="onOpen">
+    <text class="aibar__spark">✦</text>
+    <text class="aibar__tx">问 AI：<text class="aibar__b">{{title}}</text> 怎么办？</text>
+    <text class="aibar__go">›</text>
+  </view>
+</view>
+
+<!-- AI 面板 -->
+<view wx:if="{{open}}" class="ap__mask" bindtap="onClose" catchtouchmove="noop">
+  <view class="ap" catchtap="noop">
+    <view class="ap__hd">
+      <text class="ap__spark">✦</text>
+      <text class="ap__title">AI 助手 · {{title}}</text>
+      <text class="ap__x" bindtap="onClose">✕</text>
+    </view>
+
+    <view class="ap__ctx">
+      <text class="ap__pin">◎</text>
+      <text class="ap__ctx-tx">来自：{{title}}</text>
+    </view>
+
+    <!-- 预置问题（点击即问） -->
+    <view wx:if="{{presets.length > 0}}" class="ap__qs">
+      <view
+        wx:for="{{presets}}"
+        wx:key="*this"
+        class="apq"
+        data-q="{{item}}"
+        bindtap="onPresetTap"
+      >
+        <text class="apq__i">💬</text>
+        <text class="apq__t">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- 对话区 -->
+    <scroll-view wx:if="{{log.length > 0}}" class="ap__log" scroll-y scroll-into-view="{{lastId}}" scroll-with-animation>
+      <block wx:for="{{log}}" wx:key="id">
+        <view wx:if="{{item.role === 'me'}}" class="apm apm--u" id="{{item.id}}">
+          <text>{{item.text}}</text>
+        </view>
+        <view wx:else class="apm apm--a {{item.pending ? 'apm--pend' : ''}}" id="{{item.id}}">
+          <text wx:if="{{item.pending}}">正在查社区资料…</text>
+          <block wx:else>
+            <text class="apm__t">{{item.text}}</text>
+            <view wx:if="{{item.cites.length > 0}}" class="apm__cite">
+              <text>来源：{{item.cites[0]}}</text>
+            </view>
+          </block>
+        </view>
+      </block>
+    </scroll-view>
+
+    <!-- 输入 -->
+    <view class="ap__in">
+      <input
+        class="ap__input"
+        value="{{input}}"
+        placeholder="换个问法，或直接说你的情况…"
+        maxlength="60"
+        confirm-type="send"
+        bindinput="onInput"
+        bindconfirm="onConfirm"
+      />
+      <view class="ap__send" bindtap="onSend"><text>发送</text></view>
+    </view>
+
+    <view class="ap__foot">
+      <text class="ap__tip">回答由社区办事口径生成，具体以窗口办理为准</text>
+      <text class="ap__human" bindtap="onCallHuman">转人工 ›</text>
+    </view>
+
+    <view class="ap__more" bindtap="onGoAssistant"><text>展开完整对话 ›</text></view>
+  </view>
+</view>

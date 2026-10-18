@@ -1,0 +1,239 @@
+/* ai-bar · 页面级 AI 询问横条（FE-15 · CR-024）
+   全部走设计令牌，禁止硬编码色值。 */
+
+/* ===== 横条 ===== */
+.aibar {
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+.aibar--up {
+  padding-top: var(--space-3);
+}
+
+.aibar__in {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+  height: 80rpx;
+  background: linear-gradient(120deg, var(--brand-light) 0%, #F3F0FE 100%);
+  border: 2rpx solid rgba(31, 95, 214, 0.16);
+  border-radius: var(--radius-m);
+}
+
+.aibar__spark {
+  font-size: var(--font-sub);
+  color: var(--brand);
+  flex: none;
+}
+
+.aibar__tx {
+  flex: 1;
+  font-size: var(--font-sub);
+  color: var(--text-2);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.aibar__b {
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+.aibar__go {
+  flex: none;
+  font-size: var(--font-card);
+  color: var(--text-3);
+}
+
+/* ===== 弹层 ===== */
+.ap__mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--mask);
+  z-index: var(--z-mask);
+  display: flex;
+  align-items: flex-end;
+}
+
+.ap {
+  width: 100%;
+  max-height: 84vh;
+  background: var(--card);
+  border-radius: var(--radius-l) var(--radius-l) 0 0;
+  padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-modal);
+}
+
+.ap__hd {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.ap__spark {
+  color: var(--brand);
+  font-size: var(--font-sub);
+}
+
+.ap__title {
+  flex: 1;
+  font-size: var(--font-card);
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.ap__x {
+  font-size: var(--font-sub);
+  color: var(--text-3);
+  padding: 0 var(--space-1);
+}
+
+.ap__ctx {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  margin-top: var(--space-1);
+  padding: 6rpx var(--space-2);
+  background: var(--bg);
+  border-radius: var(--radius-s);
+}
+
+.ap__pin {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+.ap__ctx-tx {
+  font-size: var(--font-cap);
+  color: var(--text-2);
+}
+
+/* 预置问题 */
+.ap__qs {
+  margin-top: var(--space-3);
+}
+
+.apq {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-1);
+  background: var(--bg);
+  border-radius: var(--radius-m);
+}
+
+.apq__i {
+  font-size: var(--font-cap);
+}
+
+.apq__t {
+  font-size: var(--font-sub);
+  color: var(--text-1);
+}
+
+/* 对话区 */
+.ap__log {
+  margin-top: var(--space-2);
+  max-height: 44vh;
+}
+
+.apm {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-m);
+  margin-bottom: var(--space-2);
+  font-size: var(--font-sub);
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.apm--u {
+  background: var(--brand-light);
+  color: var(--text-1);
+  align-self: flex-end;
+}
+
+.apm--a {
+  background: var(--bg);
+  color: var(--text-2);
+}
+
+.apm--pend {
+  color: var(--text-3);
+}
+
+.apm__t {
+  display: block;
+}
+
+.apm__cite {
+  margin-top: var(--space-1);
+  padding-top: var(--space-1);
+  border-top: 2rpx solid var(--line);
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+/* 输入 */
+.ap__in {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.ap__input {
+  flex: 1;
+  height: 76rpx;
+  padding: 0 var(--space-3);
+  background: var(--bg);
+  border-radius: var(--radius-full);
+  font-size: var(--font-sub);
+  color: var(--text-1);
+}
+
+.ap__send {
+  flex: none;
+  padding: 0 var(--space-4);
+  height: 76rpx;
+  line-height: 76rpx;
+  background: var(--brand);
+  color: var(--card);
+  border-radius: var(--radius-full);
+  font-size: var(--font-sub);
+  font-weight: 700;
+}
+
+/* 底部 */
+.ap__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-2);
+}
+
+.ap__tip {
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}
+
+.ap__human {
+  font-size: var(--font-cap);
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.ap__more {
+  margin-top: var(--space-2);
+  text-align: center;
+  font-size: var(--font-cap);
+  color: var(--text-3);
+}

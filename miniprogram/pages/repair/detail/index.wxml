@@ -63,6 +63,9 @@
       <text class="ai-footer">* {{aiFooter}}，具体以物业回复为准</text>
     </view>
 
+    <!-- CR-024：页面级 AI 入口（上下文 = 当前工单标题） -->
+    <ai-bar page="repair-detail" context="{{vm.title}}" />
+
     <!-- 物业处理（无值整块不渲染） -->
     <view wx:if="{{vm.hasHandle}}" class="panel">
       <text class="panel-title">物业处理</text>

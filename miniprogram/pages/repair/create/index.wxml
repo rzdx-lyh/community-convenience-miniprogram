@@ -39,6 +39,9 @@
     <text class="counter">{{description.length}}/200</text>
   </view>
 
+  <!-- CR-024：页面级 AI 入口（上下文 = 报修登记） -->
+  <ai-bar page="repair-create" />
+
   <!-- 照片（选填） -->
   <view class="block">
     <text class="block-title">现场照片（选填，最多 {{maxImages}} 张）</text>

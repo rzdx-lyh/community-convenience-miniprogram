@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "报修详情"
+  "navigationBarTitleText": "报修详情",
+  "usingComponents": {
+    "ai-bar": "../../../components/ai-bar/index"
+  }
 }

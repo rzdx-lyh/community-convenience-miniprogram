@@ -15,7 +15,9 @@ export type TrackEvent =
   | 'api_call'
   | 'api_fail'
   | 'workorder_create'
-  | 'service_book';
+  | 'service_book'
+  /** CR-024：页面级 AI 入口问答（source: local / cloud / fallback） */
+  | 'ai_answer';
 
 export function track(event: TrackEvent, params: Record<string, unknown> = {}): void {
   const record = { event, params, ts: Date.now() };

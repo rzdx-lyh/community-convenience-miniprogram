@@ -11,6 +11,9 @@
     >{{item.label}}</view>
   </view>
 
+  <!-- CR-024：页面级 AI 入口（上下文 = 邻里互助） -->
+  <ai-bar page="circle" />
+
   <!-- 列表 -->
   <block wx:if="{{list.length > 0}}">
     <view

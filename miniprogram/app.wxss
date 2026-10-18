@@ -65,7 +65,7 @@ page {
   /* 阴影 */
   --shadow-card: 0 4rpx 16rpx rgba(43, 43, 43, 0.06);
   --shadow-urgent: 0 4rpx 16rpx rgba(192, 57, 43, 0.18);
-  --shadow-float: 0 8rpx 24rpx rgba(30, 130, 82, 0.25);
+  --shadow-float: 0 8rpx 24rpx rgba(31, 95, 214, 0.28);
   --shadow-modal: 0 16rpx 48rpx rgba(0, 0, 0, 0.12);
   /* 层级 */
   --z-content: 0;

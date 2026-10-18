@@ -13,6 +13,9 @@
     </view>
   </scroll-view>
 
+  <!-- CR-024：页面级 AI 入口（上下文 = 当前分类名） -->
+  <ai-bar page="hall" context="{{title}}" up="{{true}}" />
+
   <!-- 页头 -->
   <view class="hd">
     <view class="hd-t">{{title}}</view>

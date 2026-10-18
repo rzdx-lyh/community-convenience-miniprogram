@@ -22,6 +22,9 @@
     <text wx:if="{{keyword}}" class="search-clear" bindtap="onClearKeyword">×</text>
   </view>
 
+  <!-- CR-024：页面级 AI 入口（上下文 = 便民电话；本页「转人工」降级为提示） -->
+  <ai-bar page="phonebook" />
+
   <view wx:if="{{loading}}" class="loading">
     <text class="loading-text">加载中…</text>
   </view>
