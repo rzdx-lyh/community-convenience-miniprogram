@@ -282,9 +282,14 @@ const SEED_DIR = path.join(path.dirname(OUT), 'seed');
 mkdirSync(SEED_DIR, { recursive: true });
 const written = [];
 Object.keys(data).forEach((name) => {
-  const file = path.join(SEED_DIR, `${name}.json`);
-  writeFileSync(file, JSON.stringify(data[name], null, 2));
-  written.push(`${name}.json（${data[name].length} 条）`);
+  const rows = data[name];
+  // ① .json：记录数组，便于程序读取/人工查看
+  writeFileSync(path.join(SEED_DIR, `${name}.json`), JSON.stringify(rows, null, 2));
+  // ② .jsonl：每行一个 JSON 对象 —— **云开发控制台导入只认这个格式**
+  //    实测报错：导入 JSON 数组会提示「导入数据格式不正确，请检查是否为JSON Lines格式」
+  const jsonl = rows.map((r) => JSON.stringify(r)).join('\n') + '\n';
+  writeFileSync(path.join(SEED_DIR, `${name}.jsonl`), jsonl);
+  written.push(`${name}.jsonl（${rows.length} 行）`);
 });
 
 /* -------------------------------------- 生成结果自检提示 -------------------------------------- */
@@ -305,5 +310,5 @@ console.log('     ⛔ 严禁替换 3 条：110 / 119 / 120 —— 国家公开�
 console.log('        换掉会导致居民照安全话术拨错号，属安全事故，不是体验问题。');
 console.log('     改号唯一路径：改 shared/hotline.js → 重跑本脚本 → 重新导入 → 通知前端同步 mock → 跑 selftest。');
 console.log('     ⛔ 禁止在云控制台手工编辑 phonebook 号码（hotline.js 是唯一真源）。');
-console.log('  📁 已生成可直接导入的分集合文件 scripts/seed/*.json：');
+console.log('  📁 已生成可直接导入的分集合文件 scripts/seed/*.jsonl（控制台导入用 .jsonl）：');
 console.log('     ' + written.join('、'));
