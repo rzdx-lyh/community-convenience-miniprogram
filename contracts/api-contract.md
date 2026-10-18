@@ -239,6 +239,10 @@
 
 ## service：四类服务分类导航（v1.2 新增 · 聚合）
 > **范围裁定：不新增任何页面。** 首页 2×2 四类服务宫格的分类与子项由本接口下发，子项通过 `targetType` 路由到**现有页面**或**现有能力**；「新建 4 个承接页」方案工期 +2.5~3 天，本轮禁止。
+>
+> ⚠ **CR-022 局部修订（2026-10-18）**：子项扩到 38 项后 ActionSheet 不可用，经登记允许**新增 1 个**承接页
+> `pages/service/category/index`（分类浏览 + 页内预约弹层），预约提交复用 `workorder:create`。
+> 原「4 个承接页」方案仍为禁止。详见 `contracts/契约变更记录.md` CR-022。
 
 ### service:list
 - 入参：`{ key?: string }`（`key` 缺省返回全部上线分类）
@@ -586,7 +590,8 @@ interface QaSession {
   "pages/repair/detail/index",    // 报修详情
   "pages/notice/list/index",      // 通知/活动列表
   "pages/assistant/index",        // AI 助手（已移出 TabBar，保留路由）
-  "pages/phonebook/index"         // 便民电话簿
+  "pages/phonebook/index",        // 便民电话簿
+  "pages/service/category/index"  // 服务分类承接页（CR-022 新增，38 项）
 ]
 ```
 

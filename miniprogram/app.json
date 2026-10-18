@@ -8,7 +8,8 @@
     "pages/repair/detail/index",
     "pages/notice/list/index",
     "pages/assistant/index",
-    "pages/phonebook/index"
+    "pages/phonebook/index",
+    "pages/service/category/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FAF6F1",

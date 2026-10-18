@@ -5,6 +5,31 @@
 > 设计原型 `docs/03-preview/demo.html` 与 `docs/` 下的设计文档走**独立版本轨**，不在本文件记录。
 > 版本号唯一真源：`miniprogram/config/env.ts` 的 `APP_VERSION`，由 `tests/version.test.ts` 守护。
 
+## 未发布（Unreleased）
+
+> 这些改动发生在 v1.0.1 打标之后，**尚未升版**。等本批功能落齐后统一升 `v1.1.0`。
+
+### 新增
+
+- **服务分类页** `pages/service/category/index`（CR-022）：4 类 Tab + 8 板块分组 + 38 项服务；
+  预约类服务在页内弹出表单，提交走 `workorder:create`（零新增云函数动作）
+- **服务数据扩容**：`config/service-grid.ts` 由 4 类 / 10 项扩到 **4 类 / 8 板块 / 38 项**，
+  新增 `groups` 结构，`items` 由 `withFlattenedItems()` 派生（物理上不可能不同步）
+- **搜索同义词表**：`SEARCH_ALIASES` 由 26 条扩到 100+ 条，覆盖 38 项的口语说法；
+  修正「漏水」由映射到缴费改为映射到管道疏通 / 家电维修
+
+### 变更
+
+- **首页宫格点击**：`wx.showActionSheet` → `navigateTo` 服务分类页（ActionSheet 保留为失败兜底）
+- **契约**：`api-contract.md` 附 A.2 页面数 9 → 10；§service:list 范围裁定按 CR-022 局部修订
+
+### 测试
+
+- 新增 `tests/service-category.test.ts`（23 条），含「所有 `targetPath` 必须在 `app.json` 注册」交叉校验
+- `npm run verify`：typecheck + lint + **201 条 / 14 文件** 全绿
+
+---
+
 ## v1.0.1 — 2026-10-18 · 代码基线
 
 **版本归一**：源码注释、`package.json` / `package-lock.json`、8 个云函数包、`README.md` 四处版本号统一为 `v1.0.1`；

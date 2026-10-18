@@ -222,7 +222,10 @@ Page({
     goCircleRoad();
   },
 
-  /** 宫格点击：用 ActionSheet 展开该分类的全部子项，8 个子项全部可达 */
+  /**
+   * 宫格点击：进「服务分类页」（FE-14 / CR-022）。
+   * 原来用 ActionSheet 展开子项——8 项尚可，扩到 38 项后一屏放不下、也没有说明文字。
+   */
   onGridTap(e: WechatMiniprogram.TouchEvent): void {
     const key = String((e.currentTarget.dataset as { key?: string }).key ?? '');
     const category = categories.find((c) => c.key === key);
@@ -230,19 +233,26 @@ Page({
       toast('该服务暂未开通');
       return;
     }
-    const items = category.items ?? [];
-    if (items.length === 0) {
-      toast('该服务暂未开通');
-      return;
-    }
-    wx.showActionSheet({
-      itemList: items.map((i) => i.name),
-      success: (res) => {
-        const item = items[res.tapIndex];
-        if (item) navigateByTarget(item);
-      },
+    track('btn_click', { target: 'grid_to_category', kind: key });
+    wx.navigateTo({
+      url: `/pages/service/category/index?cat=${key}`,
       fail: () => {
-        /* 用户取消，静默 */
+        // 兜底：分类页打不开时回退到原 ActionSheet，保证子项仍可达
+        const items = category.items ?? [];
+        if (items.length === 0) {
+          toast('该服务暂未开通');
+          return;
+        }
+        wx.showActionSheet({
+          itemList: items.map((i) => i.name),
+          success: (res) => {
+            const item = items[res.tapIndex];
+            if (item) navigateByTarget(item);
+          },
+          fail: () => {
+            /* 用户取消，静默 */
+          },
+        });
       },
     });
   },

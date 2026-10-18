@@ -14,7 +14,8 @@ export type TrackEvent =
   | 'btn_click'
   | 'api_call'
   | 'api_fail'
-  | 'workorder_create';
+  | 'workorder_create'
+  | 'service_book';
 
 export function track(event: TrackEvent, params: Record<string, unknown> = {}): void {
   const record = { event, params, ts: Date.now() };

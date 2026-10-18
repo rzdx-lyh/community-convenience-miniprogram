@@ -31,8 +31,8 @@ describe('toGridVM', () => {
     expect(vm).toEqual({
       key: 'life',
       title: '生活基础服务',
-      subLine1: '挂号｜义诊',
-      subLine2: '疫苗档案',
+      subLine1: '家政服务｜缴费代办',
+      subLine2: '生鲜零售',
       iconText: '🏥',
       theme: 'green',
       decoText: '＋',

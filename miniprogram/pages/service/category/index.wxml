@@ -1,0 +1,113 @@
+<!-- 服务分类页（FE-14 · CR-022）4 类 Tab + 8 板块分组 + 预约弹层 -->
+<view class="page">
+  <!-- 分类 Tab -->
+  <scroll-view class="cats" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view
+      wx:for="{{cats}}"
+      wx:key="key"
+      class="cat {{active === item.key ? 'on' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onTapCat"
+    >
+      {{item.title}}
+    </view>
+  </scroll-view>
+
+  <!-- 页头 -->
+  <view class="hd">
+    <view class="hd-t">{{title}}</view>
+    <view class="hd-s">{{sub}} · 共 {{count}} 项服务</view>
+  </view>
+
+  <!-- 板块分组 -->
+  <view class="grp" wx:for="{{groups}}" wx:key="key" wx:for-item="group">
+    <view class="gh">
+      <text class="gh-n">{{group.name}}</text>
+      <text class="gh-note" wx:if="{{group.note}}">{{group.note}}</text>
+    </view>
+    <view class="g2">
+      <view
+        class="gi"
+        wx:for="{{group.items}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onTapItem"
+      >
+        <view class="gi-ic">{{item.iconText}}</view>
+        <view class="gi-b">
+          <view class="gi-n">{{item.name}}</view>
+          <view class="gi-d" wx:if="{{item.desc}}">{{item.desc}}</view>
+        </view>
+        <view class="gi-ar">›</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="foot">
+    没找到？办事大厅可以按关键词搜，或直接问 AI 助手。
+  </view>
+</view>
+
+<!-- 预约弹层 -->
+<view class="mask" wx:if="{{sheet.show}}" bindtap="onCloseSheet"></view>
+<view class="sheet {{sheet.show ? 'show' : ''}}" catchtap="noop">
+  <view class="sh-hd">
+    <text class="sh-t">预约 · {{sheet.svc}}</text>
+    <text class="sh-x" bindtap="onCloseSheet">关闭</text>
+  </view>
+
+  <block wx:if="{{sheet.opts.length > 0}}">
+    <view class="sh-lb">服务选项</view>
+    <view class="chips">
+      <view
+        wx:for="{{sheet.opts}}"
+        wx:key="*this"
+        class="chip {{sheet.opt === item ? 'on' : ''}}"
+        data-v="{{item}}"
+        bindtap="onPickOpt"
+      >
+        {{item}}
+      </view>
+    </view>
+  </block>
+
+  <view class="sh-lb">楼栋房号 <text class="req">必填</text></view>
+  <input
+    class="inp"
+    placeholder="例：3 号楼 2 单元 502"
+    maxlength="24"
+    value="{{sheet.room}}"
+    bindinput="onInputRoom"
+  />
+
+  <view class="sh-lb">期望时间 <text class="req">必填</text></view>
+  <view class="chips">
+    <view
+      wx:for="{{times}}"
+      wx:key="*this"
+      class="chip {{sheet.time === item ? 'on' : ''}}"
+      data-v="{{item}}"
+      bindtap="onPickTime"
+    >
+      {{item}}
+    </view>
+  </view>
+
+  <view class="sh-lb">备注 <text class="opt">选填</text></view>
+  <textarea
+    class="ta"
+    placeholder="有什么特殊情况可以先说，例如家里有老人、需要带梯子"
+    maxlength="120"
+    value="{{sheet.note}}"
+    bindinput="onInputNote"
+  />
+
+  <view class="sh-tip">提交后由社区工作人员电话确认，费用现场结算，本页不收款。</view>
+
+  <view class="sh-ft">
+    <view class="btn ghost" bindtap="onCloseSheet">取消</view>
+    <view class="btn main {{submitting ? 'dis' : ''}}" bindtap="onSubmit">
+      {{submitting ? '提交中…' : '提交预约'}}
+    </view>
+  </view>
+</view>

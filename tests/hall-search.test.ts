@@ -13,20 +13,14 @@ const rows = buildHallRows(LOCAL_SERVICE_CATEGORIES);
 const namesOf = (keyword: string): string[] => searchHallRows(rows, keyword).map((r) => r.name);
 
 describe('buildHallRows · 四类服务扁平化', () => {
-  it('10 个子项全部进入检索行，且带分类归属', () => {
-    expect(rows.map((r) => r.name)).toEqual([
-      '挂号',
-      '义诊',
-      '疫苗档案',
-      '助餐',
-      '助浴',
-      '上门陪护',
-      '水电燃气',
-      '适老化改造',
-      '每周义诊',
-      '健康报告',
-    ]);
-    expect(rows[0]).toMatchObject({ name: '挂号', categoryTitle: '生活基础服务' });
+  it('38 个子项全部进入检索行，且带分类归属', () => {
+    expect(rows).toHaveLength(38);
+    expect(rows[0]).toMatchObject({ name: '保洁', categoryTitle: '生活基础服务' });
+    // 分类归属不能串：四个分类各自的首项应落在对应标题下
+    expect(rows.filter((r) => r.categoryTitle === '生活基础服务')).toHaveLength(13);
+    expect(rows.filter((r) => r.categoryTitle === '健康养老服务')).toHaveLength(13);
+    expect(rows.filter((r) => r.categoryTitle === '便民配套服务')).toHaveLength(6);
+    expect(rows.filter((r) => r.categoryTitle === '文化便民服务')).toHaveLength(6);
   });
 
   it('key 全局唯一（用于 setData 的 wx:key 与点击回查）', () => {
@@ -42,12 +36,13 @@ describe('buildHallRows · 四类服务扁平化', () => {
 
 describe('searchHallRows · 本地服务检索', () => {
   it('完全同名优先命中', () => {
-    expect(namesOf('挂号')[0]).toBe('挂号');
+    expect(namesOf('保洁')[0]).toBe('保洁');
   });
 
   it('口语词经别名命中目标服务（搜索 = 药品 / 漏水 / 体检）', () => {
-    expect(namesOf('药品')).toContain('挂号');
-    expect(namesOf('漏水')).toContain('水电燃气');
+    expect(namesOf('药品')).toContain('社区门诊挂号');
+    // 漏水属于管道问题，应命中维修类而不是缴费类（v1.0.1 起修正了这条语义）
+    expect(namesOf('漏水')).toContain('管道疏通');
     expect(namesOf('体检')).toContain('健康报告');
   });
 
@@ -65,7 +60,7 @@ describe('searchHallRows · 本地服务检索', () => {
 
   it('结果条数受 limit 约束，默认 6', () => {
     // 四个分类名都含「服务」→ 全命中，可见 limit 真的在裁剪
-    expect(searchHallRows(rows, '服务', 99)).toHaveLength(10);
+    expect(searchHallRows(rows, '服务', 99)).toHaveLength(38);
     expect(searchHallRows(rows, '服务')).toHaveLength(HALL_MATCH_LIMIT);
   });
 
@@ -84,7 +79,7 @@ describe('toHallCatVM', () => {
     expect(toHallCatVM(LOCAL_SERVICE_CATEGORIES[0])).toEqual({
       key: 'life',
       title: '生活基础服务',
-      sub: '挂号｜义诊｜疫苗档案',
+      sub: '家政服务｜缴费代办｜生鲜零售',
       iconText: '🏥',
     });
   });
