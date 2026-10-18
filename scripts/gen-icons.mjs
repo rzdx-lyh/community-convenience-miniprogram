@@ -59,12 +59,16 @@ function extractSymbols(html) {
 }
 
 /** 组装一张独立 SVG：外层 g 统一给描边样式，内联 currentColor 替换成目标色 */
-function buildSvg(inner, color) {
+function buildSvg(inner, color, size = SIZE) {
   const body = inner.replace(/currentColor/g, color);
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 24 24">`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24">`
     + `<g fill="none" stroke="${color}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">`
     + `${body}</g></svg>`;
 }
+
+/** TabBar 用：图标略粗一点，81px 缩小到 24px 视觉尺寸后仍看得清 */
+const buildSvgSize = (inner, color, size) =>
+  buildSvg(inner, color, size).replace('stroke-width="1.9"', 'stroke-width="2.1"');
 
 /**
  * sharp 装在受管 workspace（不进本仓库依赖，避免污染 package.json），
@@ -90,9 +94,24 @@ if (symbols.length === 0) {
   process.exit(1);
 }
 
+/**
+ * TabBar 图标：小程序 tabBar 的 iconPath 只认**本地图片文件**，用不了 WXSS 类，
+ * 所以同一批矢量图标还要额外导出成 PNG 文件（4 个 Tab × 选中/未选中两态）。
+ * 尺寸 81×81：官方建议，非 81 会被缩放导致图标糊。
+ */
+const TABBAR = resolve(ROOT, 'miniprogram/assets/tabbar');
+const TABBAR_ICONS = [
+  { tab: 'home', icon: 'home' },
+  { tab: 'hall', icon: 'grid' },
+  { tab: 'circle', icon: 'users' },
+  { tab: 'profile', icon: 'user' },
+];
+const TABBAR_SIZE = 81;
+
 const rules = [];
 let bytes = 0;
 let whiteCount = 0;
+let tabBytes = 0;
 
 async function render(name, inner, color) {
   const svg = Buffer.from(buildSvg(inner, color));
@@ -110,6 +129,25 @@ for (const { name, inner } of symbols) {
   if (WHITE_ICONS.has(name)) {
     whiteCount += 1;
     rules.push(`.icw.ic-${name}{background-image:url("data:image/png;base64,${await render(name, inner, '#FFFFFF')}")}`);
+  }
+}
+
+/* ---- TabBar 图标文件（同一批 symbol，导出为 PNG 文件供 app.json 引用） ---- */
+mkdirSync(TABBAR, { recursive: true });
+for (const { tab, icon } of TABBAR_ICONS) {
+  const symbol = symbols.find((s) => s.name === icon);
+  if (!symbol) {
+    console.error(`× 原型里没有 ic-${icon}，TabBar 图标生成中止`);
+    process.exit(1);
+  }
+  for (const [state, color] of [['', '#8593A8'], ['-on', '#1F5FD6']]) {
+    const svg = Buffer.from(buildSvgSize(symbol.inner, color, TABBAR_SIZE));
+    const png = await sharp(svg, { density: 384 })
+      .toColourspace('b-w')
+      .png({ compressionLevel: 9 })
+      .toBuffer();
+    tabBytes += png.length;
+    writeFileSync(resolve(TABBAR, `${tab}${state}.png`), png);
   }
 }
 
@@ -144,3 +182,6 @@ writeFileSync(OUT, wxss, 'utf8');
 console.log(`√ 生成 ${symbols.length} 枚深色图标 + ${whiteCount} 枚白色图标 = ${rules.length} 条规则`);
 console.log(`  PNG 合计 ${(bytes / 1024).toFixed(1)} KB → WXSS ${(wxss.length / 1024).toFixed(1)} KB`);
 console.log(`  输出：${OUT}`);
+console.log(`√ TabBar 图标 ${TABBAR_ICONS.length} 个 × 2 态 = ${TABBAR_ICONS.length * 2} 张，`
+  + `合计 ${(tabBytes / 1024).toFixed(1)} KB`);
+console.log(`  输出：${TABBAR}`);

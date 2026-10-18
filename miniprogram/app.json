@@ -26,19 +26,27 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "首页"
+        "text": "首页",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home-on.png"
       },
       {
         "pagePath": "pages/repair/list/index",
-        "text": "办事大厅"
+        "text": "办事大厅",
+        "iconPath": "assets/tabbar/hall.png",
+        "selectedIconPath": "assets/tabbar/hall-on.png"
       },
       {
         "pagePath": "pages/circle/index",
-        "text": "社区圈子"
+        "text": "社区圈子",
+        "iconPath": "assets/tabbar/circle.png",
+        "selectedIconPath": "assets/tabbar/circle-on.png"
       },
       {
         "pagePath": "pages/profile/index",
-        "text": "我的"
+        "text": "我的",
+        "iconPath": "assets/tabbar/profile.png",
+        "selectedIconPath": "assets/tabbar/profile-on.png"
       }
     ]
   },

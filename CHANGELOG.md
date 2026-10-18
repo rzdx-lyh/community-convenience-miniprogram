@@ -17,16 +17,31 @@
   新增 `groups` 结构，`items` 由 `withFlattenedItems()` 派生（物理上不可能不同步）
 - **搜索同义词表**：`SEARCH_ALIASES` 由 26 条扩到 100+ 条，覆盖 38 项的口语说法；
   修正「漏水」由映射到缴费改为映射到管道疏通 / 家电维修
+- **页面级 AI 询问入口**（CR-024）：新增 `components/ai-bar`，接入 7 个页面；
+  回答链路＝本地问答库（45 条，离线可用）→ `qa:ask` 云函数 → 兜底转人工
+- **办事大厅 AI 集群**（CR-024）：搜索框下方 8 张场景卡（办事指南 / 报修进度 / 健康咨询 /
+  配餐营养 / 费用户号 / 找地点 / 邻里互助 / 应急求助），复用同一套问答面板
+- **AI 场景配置**（CR-024）：`config/ai-scenes.ts` 收敛 8 场景 + 7 页面入口 + 45 条问答库
+- **矢量图标系统**（CR-025）：`scripts/gen-icons.mjs` 把原型 83 枚 SVG symbol 转成
+  `styles/icons.wxss`（83 深色 + 23 反白）+ `assets/tabbar/*.png`（4 Tab × 2 态），替换 emoji 占位
 
 ### 变更
 
 - **首页宫格点击**：`wx.showActionSheet` → `navigateTo` 服务分类页（ActionSheet 保留为失败兜底）
 - **契约**：`api-contract.md` 附 A.2 页面数 9 → 10；§service:list 范围裁定按 CR-022 局部修订
+- **Design Token 换肤**（CR-023）：清新绿 v1.1 → **政务蓝 v1.5**（`--brand` `#1E8252` → `#1F5FD6`），
+  新增 `--brand-mid/-press/-light/-brand-gradient`；中性色由暖米改冷灰；旧绿零残留
+- **首页结构改版**（CR-023）：品牌行（logo/定位/紧急/头像）+ 搜索条 + 4 快捷入口 +
+  纵向分类卡（含「N 项」）+ AI 入口 + 社区动态
+- **TabBar**（CR-025）：由纯文字改为文字 + 图标（选中态政务蓝、未选中态冷灰）
 
 ### 测试
 
 - 新增 `tests/service-category.test.ts`（23 条），含「所有 `targetPath` 必须在 `app.json` 注册」交叉校验
 - `npm run verify`：typecheck + lint + **201 条 / 14 文件** 全绿
+- 新增 `tests/ai-scenes.test.ts`（15 条），关键断言「所有预置问题本地库必命中」→ 断网也能演示
+- 新增 `tests/icons.test.ts`（8 条）：图标引用有效性 + 反白版子集关系 + 包体积 <700KB 守卫
+- `npm run verify`：typecheck + lint + **224 条 / 16 文件** 全绿；`cli preview` 编译通过（包 805KB / 上限 2MB）
 
 ---
 
