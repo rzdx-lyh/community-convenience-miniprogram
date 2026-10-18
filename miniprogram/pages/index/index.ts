@@ -53,12 +53,12 @@ Page({
 
     grid: [] as GridVM[],
 
-    /** 头部 4 个快捷入口（原型首页 qk 行） */
+    /** 头部 4 个快捷入口（原型首页 qk 行）；i = 图标系统里的图标名（见 styles/icons.wxss） */
     quick: [
-      { i: '🔧', t: '报修', k: 'repair' },
-      { i: '💡', t: '缴费', k: 'pay' },
-      { i: '🏥', t: '挂号', k: 'reg' },
-      { i: '🍚', t: '助餐', k: 'meal' },
+      { i: 'wrench', t: '报修', k: 'repair' },
+      { i: 'bulb', t: '缴费', k: 'pay' },
+      { i: 'hospital', t: '挂号', k: 'reg' },
+      { i: 'bowl', t: '助餐', k: 'meal' },
     ],
 
     /** v1.0.1 / CR-019：首屏补全 —— 社区动态 3 条（空则整块隐藏） */

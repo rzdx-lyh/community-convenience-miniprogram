@@ -7,7 +7,7 @@
   <!-- ① 搜索 -->
   <view class="search">
     <view class="search__box">
-      <text class="search__icon">🔍</text>
+      <view class="ic ic-m ic-search"></view>
       <input
         class="search__input"
         value="{{keyword}}"
@@ -37,7 +37,9 @@
         bindtap="onSceneTap"
       >
         <view class="aigc__h">
-          <view class="aigc__k" style="background:{{item.color}}">{{item.icon}}</view>
+          <view class="aigc__k" style="background:{{item.color}}">
+            <view class="ic ic-m icw ic-{{item.icon}}"></view>
+          </view>
           <text class="aigc__n">{{item.name}}</text>
         </view>
         <text class="aigc__d">{{item.desc}}</text>
@@ -66,7 +68,10 @@
     </view>
     <view wx:else class="match__empty">
       <view class="match__empty-text">没找到「{{keyword}}」相关服务</view>
-      <view class="match__ai" hover-class="match__ai--hover" bindtap="onAskAi">🤖 问问 AI 助手</view>
+      <view class="match__ai" hover-class="match__ai--hover" bindtap="onAskAi">
+        <view class="ic ic-m ic-robot"></view>
+        <text>问问 AI 助手</text>
+      </view>
     </view>
   </view>
 

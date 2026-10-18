@@ -219,12 +219,12 @@
   text-overflow: ellipsis;
 }
 
-/* 右侧浅绿装饰区（PNG 素材就位前用渐变占位，尺寸 128×88rpx） */
+/* 右侧浅蓝装饰区（PNG 素材就位前用渐变占位，尺寸 128×88rpx；政务蓝 v1.5） */
 .notice__deco {
   width: 128rpx;
   height: 88rpx;
   border-radius: var(--radius-m);
-  background: linear-gradient(135deg, #DFF2E8, #C8E8D8);
+  background: linear-gradient(135deg, #EAF1FE, #D6E4FD);
   flex: none;
   position: relative;
   overflow: hidden;
@@ -410,11 +410,11 @@
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-l);
   background: var(--brand-light);
-  border: 2rpx solid rgba(30, 130, 82, 0.14);
+  border: 2rpx solid rgba(31, 95, 214, 0.14);
 }
 
 .ai-entry--hover {
-  background: #DCF0E6;
+  background: #DCE7FB;
   transform: scale(0.99);
 }
 
@@ -535,6 +535,9 @@
 }
 
 .feed__loc {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -736,6 +739,9 @@
   margin-top: 4rpx;
   font-size: 22rpx;
   color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
 }
 .brand__urgent {
   height: 56rpx;

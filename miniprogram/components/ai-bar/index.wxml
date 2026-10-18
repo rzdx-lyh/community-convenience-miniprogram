@@ -4,7 +4,7 @@
 -->
 <view wx:if="{{!bare}}" class="aibar {{up ? 'aibar--up' : ''}}">
   <view class="aibar__in" bindtap="onOpen">
-    <text class="aibar__spark">✦</text>
+    <view class="ic ic-s ic-sparkles"></view>
     <text class="aibar__tx">问 AI：<text class="aibar__b">{{title}}</text> 怎么办？</text>
     <text class="aibar__go">›</text>
   </view>
@@ -14,13 +14,13 @@
 <view wx:if="{{open}}" class="ap__mask" bindtap="onClose" catchtouchmove="noop">
   <view class="ap" catchtap="noop">
     <view class="ap__hd">
-      <text class="ap__spark">✦</text>
+      <view class="ic ic-s ic-sparkles"></view>
       <text class="ap__title">AI 助手 · {{title}}</text>
       <text class="ap__x" bindtap="onClose">✕</text>
     </view>
 
     <view class="ap__ctx">
-      <text class="ap__pin">◎</text>
+      <view class="ic ic-s ic-pin"></view>
       <text class="ap__ctx-tx">来自：{{title}}</text>
     </view>
 
@@ -33,7 +33,7 @@
         data-q="{{item}}"
         bindtap="onPresetTap"
       >
-        <text class="apq__i">💬</text>
+        <view class="ic ic-s ic-chat"></view>
         <text class="apq__t">{{item}}</text>
       </view>
     </view>

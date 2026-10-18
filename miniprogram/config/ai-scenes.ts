@@ -20,7 +20,7 @@ export interface AiScene {
   name: string;
   /** 一句话说明（卡片副标题） */
   desc: string;
-  /** 图标字形（本项目暂无矢量图标库，先用单字/emoji 占位，图标系统迁移后统一替换） */
+  /** 图标名（对应 styles/icons.wxss 的 .ic-<name>；白底彩色块用 .icw 反白） */
   icon: string;
   /** 主色（卡片图标底色，走设计令牌语义色） */
   color: string;
@@ -34,7 +34,7 @@ export const HUB_SCENES: AiScene[] = [
     key: 'guide',
     name: '办事指南',
     desc: '材料、流程、要跑几趟',
-    icon: '办',
+    icon: 'file',
     color: '#1F5FD6',
     questions: ['办居住证要带什么？', '高龄补贴怎么申请？', '办完多久能拿到？'],
   },
@@ -42,7 +42,7 @@ export const HUB_SCENES: AiScene[] = [
     key: 'repair',
     name: '报修与进度',
     desc: '派单到哪了、多久上门',
-    icon: '修',
+    icon: 'wrench',
     color: '#C9302C',
     questions: ['我的报修派单了吗？', '师傅大概几点到？', '修完不满意怎么办？'],
   },
@@ -50,7 +50,7 @@ export const HUB_SCENES: AiScene[] = [
     key: 'health',
     name: '健康咨询',
     desc: '指标怎么看、疫苗与义诊',
-    icon: '医',
+    icon: 'stetho',
     color: '#0E7C6B',
     questions: ['血压 145/92 要紧吗？', '本周有义诊吗？', '疫苗怎么预约？'],
   },
@@ -58,7 +58,7 @@ export const HUB_SCENES: AiScene[] = [
     key: 'meal',
     name: '配餐与营养',
     desc: '今天吃什么、忌口能不能吃',
-    icon: '餐',
+    icon: 'bowl',
     color: '#0B6146',
     questions: ['控糖的一天怎么吃？', '尿酸高能吃豆腐吗？', '老人牙口不好怎么配？'],
   },
@@ -66,7 +66,7 @@ export const HUB_SCENES: AiScene[] = [
     key: 'bill',
     name: '费用与户号',
     desc: '水电气怎么算、怎么绑户号',
-    icon: '费',
+    icon: 'bulb',
     color: '#A86A05',
     questions: ['这个月水费为什么涨了？', '户号在哪查？', '欠费多久会停？'],
   },
@@ -74,7 +74,7 @@ export const HUB_SCENES: AiScene[] = [
     key: 'place',
     name: '找地点',
     desc: '雨伞、充电宝、快递点在哪',
-    icon: '位',
+    icon: 'pin',
     color: '#4B45B8',
     questions: ['最近的共享雨伞在哪？', '快递柜在几号楼？', '充电宝哪里能还？'],
   },
@@ -82,7 +82,7 @@ export const HUB_SCENES: AiScene[] = [
     key: 'circle',
     name: '邻里互助',
     desc: '发帖、借东西、处理纠纷',
-    icon: '邻',
+    icon: 'users',
     color: '#0E8F9E',
     questions: ['闲置怎么发比较快出手？', '楼上噪音怎么沟通？', '拼单怎么发起？'],
   },
@@ -90,7 +90,7 @@ export const HUB_SCENES: AiScene[] = [
     key: 'sos',
     name: '应急求助',
     desc: '停水漏水、急病、独居老人',
-    icon: '急',
+    icon: 'warn',
     color: '#C9302C',
     questions: ['家里漏水先找谁？', '突然停水怎么办？', '独居老人有事怎么求助？'],
   },

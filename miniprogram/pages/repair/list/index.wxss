@@ -134,6 +134,7 @@
 
 .match__ai {
   margin: var(--space-3) auto 0;
+  gap: var(--space-1);
   height: 72rpx;
   padding: 0 var(--space-4);
   border-radius: var(--radius-full);
@@ -146,7 +147,7 @@
 }
 
 .match__ai--hover {
-  background: #DCF0E6;
+  background: #DCE7FB;
 }
 
 /* ================= ② 四类服务入口 ================= */

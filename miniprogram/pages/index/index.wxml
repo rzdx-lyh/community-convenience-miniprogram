@@ -4,7 +4,7 @@
     不得把内容放进独立 overflow:auto 容器，否则通知卡顶部会被裁切。
 -->
 <view class="page {{elderMode ? 'care-mode' : ''}}">
-  <!-- ========== 区域 1：绿色渐变头部（填满顶部，含状态栏） ========== -->
+  <!-- ========== 区域 1：政务蓝渐变头部（填满顶部，含状态栏） ========== -->
   <view class="header" style="padding-top: {{statusBarHeight}}px">
     <!-- 胶囊占位行：独占一行避让微信胶囊/灵动岛，社区定位放在它的下面 -->
     <view class="header__capsule-row">
@@ -16,10 +16,10 @@
       <view class="brand__logo">猎</view>
       <view class="brand__info">
         <view class="brand__name">猎奇便民服务</view>
-        <view class="brand__loc">📍 {{communityName}}</view>
+        <view class="brand__loc"><view class="ic ic-s icw ic-pin"></view>{{communityName}}</view>
       </view>
       <view class="brand__urgent" hover-class="brand__urgent--hover" bindtap="onUrgentTap">
-        <text class="brand__urgent-ico">⚡</text>
+        <view class="ic ic-s ic-bolt"></view>
         <text>紧急</text>
       </view>
       <view class="brand__avatar" bindtap="onProfileTap">{{avatarText}}</view>
@@ -27,7 +27,7 @@
 
     <!-- 搜索框（点击进办事大厅，完整检索在那里） -->
     <view class="search" hover-class="search--hover" bindtap="onSearchTap">
-      <text class="search__ico">🔍</text>
+      <view class="ic ic-m ic-search"></view>
       <text class="search__ph">搜服务：保洁、助餐、雨伞、租…</text>
       <text class="search__go">搜索</text>
     </view>
@@ -42,7 +42,7 @@
         data-k="{{item.k}}"
         bindtap="onQuickTap"
       >
-        <text class="qk__ico">{{item.i}}</text>
+        <view class="qk__ico ic ic-l icw ic-{{item.i}}"></view>
         <text class="qk__tx">{{item.t}}</text>
       </view>
     </view>
@@ -54,9 +54,9 @@
     <view class="notice" bindtap="onNoticeTap">
       <view class="notice__main">
         <view class="notice__icon">
-          <block wx:if="{{urgentState === 'empty'}}">✓</block>
-          <block wx:elif="{{urgentState === 'error'}}">⚠</block>
-          <block wx:else>📄</block>
+          <view wx:if="{{urgentState === 'empty'}}" class="ic ic-l ic-check-c"></view>
+          <view wx:elif="{{urgentState === 'error'}}" class="ic ic-l ic-warn"></view>
+          <view wx:else class="ic ic-l ic-file"></view>
         </view>
         <view class="notice__text">
           <view class="notice__title">{{urgentTitle}}</view>
@@ -71,11 +71,11 @@
       <!-- 快捷 pill -->
       <view class="pills">
         <view class="pill" catchtap="onNoticePillTap">
-          <text class="pill__icon">📢</text>
+          <view class="ic ic-m ic-megaphone"></view>
           <text class="pill__text">本周公告</text>
         </view>
         <view class="pill" catchtap="onRoadPillTap">
-          <text class="pill__icon">🚧</text>
+          <view class="ic ic-m ic-cone"></view>
           <text class="pill__text">最近路况</text>
         </view>
       </view>
@@ -111,7 +111,7 @@
 
     <!-- v1.0.1 / CR-019：AI 助手入口卡（首屏纵向补全 · 第 1 块） -->
     <view class="ai-entry" hover-class="ai-entry--hover" bindtap="onAiEntryTap">
-      <view class="ai-entry__icon">🤖</view>
+      <view class="ai-entry__icon ic ic-l ic-robot"></view>
       <view class="ai-entry__body">
         <view class="ai-entry__title">AI 办事助手</view>
         <view class="ai-entry__sub">办事流程、报修缴费，一句话问清楚</view>
@@ -142,7 +142,10 @@
             <view class="feed__title">{{item.title}}</view>
             <view class="feed__meta">
               <text>{{item.meta}}</text>
-              <text wx:if="{{item.location}}" class="feed__loc">📍 {{item.location}}</text>
+              <view wx:if="{{item.location}}" class="feed__loc">
+                <view class="ic ic-s ic-pin"></view>
+                <text>{{item.location}}</text>
+              </view>
             </view>
           </view>
         </view>

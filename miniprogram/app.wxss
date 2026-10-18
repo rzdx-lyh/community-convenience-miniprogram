@@ -1,3 +1,7 @@
+/* 矢量图标系统（CR-025 · 生成物，见 scripts/gen-icons.mjs）
+   必须在最顶部：@import 只允许出现在文件开头 */
+@import "./styles/icons.wxss";
+
 /* ============================================================
  * app.wxss · 全局样式与 Design Token
  * 来源：设计原型（政务蓝版，与 docs/03-preview/demo.html 取值一致）
