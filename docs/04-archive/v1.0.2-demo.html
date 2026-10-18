@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>社区便民小程序 · v1.0.2 可点击原型</title>
+<style>
+:root{
+  --brand:#1E8252;--brand-mid:#2FA36B;--brand-press:#166A42;--brand-light:#E6F5EE;
+  --bg:#FAF6F1;--card:#fff;--text-1:#2B2B2B;--text-2:#6B6B6B;--text-3:#9B9B9B;--line:#EEEAE3;
+  --urgent:#C0392B;--urgent-bg:#FDF0EC;--warm:#E0862F;--warm-light:#FDF3E7;
+  --green:#3E6E5F;--green-light:#E7F0ED;
+  --shadow:0 2px 8px rgba(43,43,43,.06);
+  --fs-hero:19px;--fs-title:17px;--fs-card:14px;--fs-body:13px;--fs-sub:12px;--fs-cap:11px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;padding:26px 20px 40px;background:#EFEDE8;color:var(--text-1);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.top{max-width:1180px;margin:0 auto 18px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-size:19px;margin:0 0 4px;font-weight:800}
+.sub{font-size:12px;color:#7a7a7a;line-height:1.6;margin:0}
+.switches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{
+  display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:99px;
+  border:1px solid #DAD5CC;background:#fff;font-size:12px;color:#444;cursor:pointer;user-select:none;
+  transition:.15s;
+}
+.sw:hover{border-color:#bdb6aa}
+.sw.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.sw i{font-style:normal;font-size:13px;line-height:1}
+.stage{max-width:1180px;margin:0 auto;display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+/* ================= 手机外框 ================= */
+.phone{
+  width:375px;height:760px;background:var(--bg);border-radius:28px;overflow:hidden;position:relative;
+  box-shadow:0 18px 44px rgba(0,0,0,.18);border:1px solid rgba(0,0,0,.07);flex:none;
+}
+.phone.care{--fs-hero:22px;--fs-title:20px;--fs-card:17px;--fs-body:16px;--fs-sub:15px;--fs-cap:13px}
+.screen{position:absolute;inset:0;overflow:hidden}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;background:var(--bg);padding-bottom:58px;-webkit-overflow-scrolling:touch}
+.page.noTab{padding-bottom:0}
+/* AI 助手：整页不滚动，只滚消息区，输入框固定在底部 */
+.page.ai-layout{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}
+.page.ai-layout .chat{flex:1;min-height:0;overflow-y:auto}
+.page::-webkit-scrollbar{width:0}
+/* 状态栏 */
+.status{height:26px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:10px;font-weight:600;flex:none}
+.status.dark{background:#FAF6F1;color:#2B2B2B}
+.status.light{background:transparent;color:#fff}
+.status .r{display:flex;gap:5px;align-items:center;opacity:.9}
+/* 导航栏 */
+.navbar{height:38px;background:#FAF6F1;display:flex;align-items:center;justify-content:center;position:relative;font-size:var(--fs-card);font-weight:700;flex:none}
+.navbar .back{position:absolute;left:12px;top:0;height:38px;display:flex;align-items:center;font-size:16px;color:#333;cursor:pointer;padding:0 6px}
+.capsule{position:absolute;right:10px;top:8px;height:21px;width:60px;border:1px solid rgba(0,0,0,.10);border-radius:20px;display:flex;align-items:center;justify-content:space-around;font-size:9px;color:#555;background:rgba(255,255,255,.75)}
+.capsule.on-green{border-color:rgba(255,255,255,.55);color:#fff;background:rgba(255,255,255,.16)}
+/* 底部 TabBar */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:52px;background:#fff;border-top:1px solid #eee;display:flex;z-index:30}
+.tabbar[hidden]{display:none}
+.tabbar .t{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;color:#9B9B9B;cursor:pointer}
+.tabbar .t i{font-style:normal;font-size:15px;line-height:1;opacity:.5}
+.tabbar .t.on{color:var(--brand);font-weight:700}
+.tabbar .t.on i{opacity:1}
+/* ================= 首页 ================= */
+.header{background:linear-gradient(170deg,#3BB27E 0%,#2FA36B 45%,#1E8252 100%);padding:0 16px 48px;color:#fff}
+.h-cap{height:34px}
+.h-loc{height:44px;display:flex;align-items:center;gap:4px;font-size:var(--fs-card);font-weight:700}
+.h-user{display:flex;align-items:center;gap:8px;padding:4px 0 12px}
+.h-avatar{width:48px;height:48px;border-radius:50%;border:2px solid #fff;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:var(--fs-title);font-weight:600;flex:none}
+.h-nick{font-size:var(--fs-card);font-weight:700}
+.h-acc{font-size:var(--fs-cap);color:rgba(255,255,255,.7);margin-top:2px}
+.h-aid{height:48px;display:flex;align-items:center;justify-content:space-between}
+.h-aid-l{display:flex;align-items:center;gap:8px;font-size:var(--fs-card);font-weight:700}
+.h-badge{width:26px;height:26px;border-radius:8px;background:var(--urgent);display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 8px rgba(192,57,43,.18);flex:none}
+.h-btn{height:36px;padding:0 16px;border-radius:99px;background:#fff;color:var(--urgent);font-size:var(--fs-sub);font-weight:700;display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(192,57,43,.18);cursor:pointer}
+.content{padding:0 16px 20px}
+.notice{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:16px;margin-top:-36px;position:relative;z-index:2}
+.notice-main{display:flex;align-items:center;gap:12px;cursor:pointer}
+.notice-icon{width:44px;height:44px;border-radius:10px;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.notice-title{font-size:var(--fs-card);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notice-sub{font-size:var(--fs-cap);color:var(--text-2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notice-deco{width:64px;height:44px;border-radius:8px;background:linear-gradient(135deg,#DFF2E8,#C8E8D8);flex:none;position:relative;overflow:hidden}
+.notice-deco::after{content:'';position:absolute;left:12px;bottom:0;width:18px;height:26px;background:rgba(255,255,255,.75);border-radius:3px 3px 0 0;box-shadow:22px 6px 0 -4px rgba(255,255,255,.6)}
+.notice-line{height:1px;background:var(--line);margin:12px 0}
+.pills{display:flex;gap:8px}
+.pill{height:26px;padding:0 11px;border-radius:99px;background:var(--brand-light);color:var(--brand);font-size:var(--fs-cap);font-weight:600;display:flex;align-items:center;gap:4px;cursor:pointer}
+.section{margin-top:16px}
+.section-title{font-size:var(--fs-title);font-weight:800;margin-bottom:10px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.section-head .section-title{margin:0}
+.more{font-size:var(--fs-cap);color:var(--text-3);cursor:pointer;padding:4px 0 4px 8px}
+.grid{display:flex;flex-wrap:wrap;justify-content:space-between}
+.fn{width:calc(50% - 6px);min-height:130px;margin-bottom:12px;background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;cursor:pointer;transition:transform .12s}
+.fn:active{transform:scale(.98)}
+.fn-icon{font-size:34px;line-height:1}
+.fn-name{font-size:var(--fs-card);font-weight:700;margin-top:6px}
+.fn-sub{font-size:var(--fs-cap);color:var(--text-2);line-height:1.7;margin-top:3px}
+.fn-deco{position:absolute;right:8px;bottom:8px;width:22px;height:22px;border-radius:8px;background:var(--brand-light);color:var(--brand);font-size:11px;display:flex;align-items:center;justify-content:center;opacity:.85}
+.fn.warm .fn-deco{background:var(--warm-light);color:var(--warm)}
+.phone.care .grid{display:block}
+.phone.care .fn{width:100%;min-height:0;margin-bottom:12px}
+.ai-entry{margin-top:0;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:var(--brand-light);border:1px solid rgba(30,130,82,.14);cursor:pointer}
+.ai-entry:active{background:#DCF0E6}
+.ai-entry-icon{width:42px;height:42px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none}
+.ai-entry-title{font-size:var(--fs-card);font-weight:700;color:var(--brand-press)}
+.ai-entry-sub{font-size:var(--fs-cap);color:var(--brand);opacity:.9;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-entry-go{height:28px;padding:0 12px;border-radius:99px;background:var(--brand);color:#fff;font-size:var(--fs-cap);font-weight:600;display:flex;align-items:center;flex:none;margin-left:auto}
+.feed{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:0 16px}
+.feed-item{display:flex;align-items:flex-start;gap:8px;padding:12px 0;cursor:pointer}
+.feed-item + .feed-item{border-top:1px solid var(--line)}
+.feed-tag{flex:none;margin-top:2px;height:20px;padding:0 6px;border-radius:4px;font-size:10px;font-weight:700;display:flex;align-items:center;background:var(--green-light);color:var(--green)}
+.feed-tag.activity{background:var(--brand-light);color:var(--brand)}
+.feed-tag.urgent{background:var(--urgent-bg);color:var(--urgent)}
+.feed-title{font-size:var(--fs-body);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-meta{font-size:var(--fs-cap);color:var(--text-3);margin-top:3px;display:flex;gap:8px}
+/* ================= 办事大厅 ================= */
+.search{padding:12px 16px;background:#fff;border-bottom:1px solid var(--line)}
+.search-box{height:40px;border-radius:99px;background:var(--bg);display:flex;align-items:center;gap:8px;padding:0 12px}
+.search-box input{border:0;background:transparent;outline:none;flex:1;font-size:var(--fs-body);color:var(--text-1);font-family:inherit;min-width:0}
+.search-box input::placeholder{color:var(--text-3)}
+.search-x{width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.06);color:var(--text-2);font-size:10px;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer}
+.cats{display:flex;flex-wrap:wrap;justify-content:space-between;padding:16px 16px 0}
+.cat{width:calc(50% - 4px);min-height:66px;margin-bottom:8px;padding:12px;background:#fff;border-radius:12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:8px;cursor:pointer}
+.cat:active{transform:scale(.99);background:#FBF8F4}
+.phone.care .cat{width:100%}
+.cat-icon{font-size:24px;line-height:1;flex:none}
+.cat-name{font-size:var(--fs-sub);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-sub{font-size:10px;color:var(--text-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.orders{margin-top:16px}
+.orders-head{display:flex;align-items:center;justify-content:space-between;padding:0 16px 8px}
+.orders-title{font-size:var(--fs-title);font-weight:800}
+.orders-count{font-size:var(--fs-cap);color:var(--text-3)}
+.tabs{display:flex;gap:8px;padding:0 16px 8px;flex-wrap:wrap}
+.tab{height:30px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:var(--fs-sub);color:var(--text-2);display:flex;align-items:center;cursor:pointer}
+.tab.on{background:var(--brand-light);border-color:var(--brand);color:var(--brand);font-weight:600}
+.list{padding:0 16px}
+.card{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px;cursor:pointer}
+.card:active{background:#FCFAF7}
+.card-head{display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:var(--fs-card);font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{height:22px;padding:0 9px;border-radius:99px;font-size:10px;font-weight:700;display:flex;align-items:center;flex:none;margin-left:8px}
+.tag.pending{background:#fbf0e0;color:#d98e32}
+.tag.processing{background:#f0ebf8;color:#7a5bb8}
+.tag.done{background:#e7f2ea;color:#3e8e5a}
+.card-sum{font-size:var(--fs-sub);color:var(--text-2);margin-top:8px;line-height:1.45}
+.card-foot{display:flex;justify-content:space-between;margin-top:12px;font-size:var(--fs-cap);color:var(--text-3)}
+.fab{position:absolute;right:16px;bottom:66px;height:44px;padding:0 16px;border-radius:99px;background:linear-gradient(170deg,#3BB27E,#2FA36B 45%,#1E8252);color:#fff;font-size:var(--fs-card);font-weight:700;display:flex;align-items:center;box-shadow:0 4px 12px rgba(30,130,82,.25);cursor:pointer;z-index:25}
+.match{padding:12px 16px 0}
+.match-list{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:0 16px}
+.match-row{display:flex;align-items:center;gap:12px;padding:12px 0;cursor:pointer}
+.match-row + .match-row{border-top:1px solid var(--line)}
+.match-icon{width:36px;height:36px;border-radius:8px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.match-name{font-size:var(--fs-card);font-weight:700}
+.match-cat{font-size:var(--fs-cap);color:var(--text-3);margin-top:2px}
+.match-arrow{font-size:16px;color:var(--text-3);margin-left:auto}
+.match-empty{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:22px 16px;text-align:center}
+.match-empty-text{font-size:var(--fs-sub);color:var(--text-2)}
+.match-ai{margin:12px auto 0;height:36px;padding:0 16px;border-radius:99px;background:var(--brand-light);color:var(--brand);font-size:var(--fs-sub);font-weight:700;display:inline-flex;align-items:center;cursor:pointer}
+/* 智能配图（原型） */
+.illus{margin-top:12px;background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:12px;display:flex;gap:12px;align-items:center}
+.illus-art{width:96px;height:96px;border-radius:10px;background:linear-gradient(135deg,#E6F5EE,#C8E8D8);display:flex;align-items:center;justify-content:center;font-size:44px;flex:none;position:relative;overflow:hidden}
+.illus-art span.badge{position:absolute;left:4px;bottom:4px;background:rgba(0,0,0,.55);color:#fff;font-size:8px;padding:1px 4px;border-radius:3px;letter-spacing:.2px}
+.illus-title{font-size:var(--fs-card);font-weight:700}
+.illus-sub{font-size:var(--fs-cap);color:var(--text-2);margin-top:4px;line-height:1.5}
+/* ================= 通知列表 ================= */
+.nlist{padding:12px 16px}
+.nitem{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:14px;margin-bottom:10px}
+.nitem .row{display:flex;align-items:center;gap:6px}
+.nitem h4{margin:0;font-size:var(--fs-card);font-weight:700;flex:1}
+.nitem p{margin:6px 0 0;font-size:var(--fs-sub);color:var(--text-2);line-height:1.5}
+.nitem .meta{margin-top:8px;font-size:var(--fs-cap);color:var(--text-3);display:flex;justify-content:space-between}
+/* ================= AI 助手 ================= */
+.ai-top{padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.ai-top .dot{width:8px;height:8px;border-radius:50%;background:var(--success,#3E8E5A)}
+.ai-top .txt{font-size:var(--fs-cap);color:var(--text-2);flex:1}
+.ai-top .link{font-size:var(--fs-cap);color:var(--brand);cursor:pointer}
+.chat{padding:12px 16px 16px;display:flex;flex-direction:column;gap:12px}
+.bubble{max-width:86%;padding:10px 12px;border-radius:12px;font-size:var(--fs-body);line-height:1.6;position:relative;word-break:break-word}
+.bubble.ai{background:#fff;box-shadow:var(--shadow);align-self:flex-start;border-top-left-radius:4px}
+.bubble.user{background:var(--brand);color:#fff;align-self:flex-end;border-top-right-radius:4px}
+.bubble .flag{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-bottom:6px}
+.flag.off{background:#FEF3C7;color:#92400E}
+.flag.off.danger{background:var(--urgent-bg);color:var(--urgent)}
+.bubble .src{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:var(--fs-cap);color:var(--text-3);line-height:1.5}
+.typing{align-self:flex-start;background:#fff;box-shadow:var(--shadow);border-radius:12px;border-top-left-radius:4px;padding:10px 14px;display:flex;gap:4px}
+.typing i{width:5px;height:5px;border-radius:50%;background:#c9c4bb;animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}
+.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-2px)}}
+.sugg{padding:0 16px 12px;display:flex;gap:8px;flex-wrap:wrap}
+.chip{height:30px;padding:0 11px;border-radius:99px;background:#fff;border:1px solid var(--line);font-size:var(--fs-cap);color:var(--text-2);display:flex;align-items:center;cursor:pointer}
+.chip:hover{border-color:var(--brand);color:var(--brand)}
+.ai-input{position:absolute;left:0;right:0;bottom:0;padding:10px 16px 14px;background:#fff;border-top:1px solid var(--line);display:flex;gap:8px;align-items:flex-end;z-index:20}
+.page.ai-layout .ai-input{position:relative;left:auto;right:auto;bottom:auto;flex:none}
+.ai-input textarea{flex:1;height:38px;max-height:76px;border:0;outline:none;resize:none;background:var(--bg);border-radius:18px;padding:10px 12px;font-size:var(--fs-body);font-family:inherit;color:var(--text-1);line-height:18px}
+.ai-send{width:60px;height:38px;border-radius:19px;background:var(--brand);color:#fff;font-size:var(--fs-sub);font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;border:0}
+.ai-send:disabled{background:#B9CFC4;cursor:default}
+.foot-note{padding:0 16px 20px;font-size:10px;color:var(--text-3);text-align:center}
+/* ================= 我的 / 圈子 ================= */
+.user-card{margin:12px 16px 0;background:linear-gradient(170deg,#3BB27E,#2FA36B 45%,#1E8252);border-radius:12px;padding:18px;color:#fff;display:flex;align-items:center;gap:12px}
+.user-card .av{width:56px;height:56px;border-radius:50%;border:2px solid #fff;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600}
+.user-card .n{font-size:var(--fs-title);font-weight:700}
+.user-card .r{display:inline-block;margin-top:4px;font-size:10px;background:rgba(255,255,255,.22);padding:2px 8px;border-radius:99px}
+.rows{margin:12px 16px 0;background:#fff;border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.row-i{display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer}
+.row-i + .row-i{border-top:1px solid var(--line)}
+.row-i .l .t{font-size:var(--fs-card);font-weight:700}
+.row-i .l .s{font-size:var(--fs-cap);color:var(--text-3);margin-top:3px}
+.row-i .v{font-size:var(--fs-sub);color:var(--text-3);display:flex;align-items:center;gap:6px}
+.switch{width:42px;height:24px;border-radius:99px;background:#DDD;position:relative;transition:.18s;flex:none}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch.on{background:var(--brand)}
+.switch.on::after{left:20px}
+.post{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:14px;margin-bottom:10px}
+.post .h{display:flex;align-items:center;gap:6px;font-size:var(--fs-cap);color:var(--text-3)}
+.post h4{margin:8px 0 0;font-size:var(--fs-card)}
+.post p{margin:6px 0 0;font-size:var(--fs-sub);color:var(--text-2);line-height:1.5}
+/* ================= 弹层 ================= */
+.mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:40;display:none}
+.mask.show{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:14px 14px 0 0;padding:16px 16px 20px;z-index:41;transform:translateY(100%);transition:transform .22s ease}
+.sheet.show{transform:translateY(0)}
+.sheet h3{margin:0 0 12px;font-size:var(--fs-card);text-align:center}
+.sheet .item{height:48px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:var(--fs-body);cursor:pointer}
+.sheet .item:last-child{border-bottom:0}
+.sheet .item .p{font-size:var(--fs-cap);color:var(--text-3)}
+.sheet .call{height:28px;padding:0 12px;border-radius:99px;background:var(--brand);color:#fff;font-size:var(--fs-cap);font-weight:700;display:flex;align-items:center}
+.sheet .cancel{margin-top:10px;height:44px;border-radius:10px;background:#F4F1EC;display:flex;align-items:center;justify-content:center;font-size:var(--fs-sub);color:var(--text-2);cursor:pointer}
+.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%) translateY(8px);background:rgba(0,0,0,.78);color:#fff;font-size:var(--fs-sub);padding:9px 16px;border-radius:99px;opacity:0;transition:.2s;pointer-events:none;z-index:60;max-width:78%;text-align:center;line-height:1.4}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.offbar{position:absolute;left:0;right:0;top:0;height:26px;background:#FEF3C7;color:#92400E;font-size:10px;display:none;align-items:center;justify-content:center;z-index:70;font-weight:600;letter-spacing:.2px}
+.offbar.show{display:flex}
+/* ================= 侧栏说明 ================= */
+.legend{width:300px;flex:none;font-size:12px;color:#555;line-height:1.75}
+.card-l{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:14px}
+.card-l h3{margin:0 0 8px;font-size:13px;font-weight:800;color:#222;display:flex;align-items:center;gap:6px}
+.badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.2px}
+.badge.real{background:var(--brand-light);color:var(--brand)}
+.badge.mock{background:#FEF3C7;color:#92400E}
+.card-l ul{margin:6px 0 0;padding-left:16px}
+.card-l li{margin:3px 0}
+.card-l p{margin:6px 0 0}
+.kbd{display:inline-block;padding:1px 5px;border-radius:4px;background:#F1EEE8;border:1px solid #E3DED5;font-size:11px;font-family:ui-monospace,Menlo,monospace}
+@media (max-width:820px){.legend{width:100%;max-width:375px}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <h1>社区便民小程序 · v1.0.2 可点击原型</h1>
+    <p class="sub">点手机里的任何卡片、搜索框、底部 Tab 都能走通。带 <span class="badge real">已实现</span> 的模块是真实代码行为；带 <span class="badge mock">原型</span> 的是 EPIC C/D 的交互预演，代码尚未落地。</p>
+  </div>
+  <div class="switches">
+    <div class="sw" id="swCare"><i>🔍</i><span>关怀模式</span></div>
+    <div class="sw" id="swOff"><i>📴</i><span>断网模式</span></div>
+    <div class="sw" id="swReset"><i>↺</i><span>重置</span></div>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="screen" id="screen"></div>
+    <div class="tabbar" id="tabbar"></div>
+    <div class="offbar" id="offbar">已断网 · 离线知识库应答中</div>
+    <div class="mask" id="mask"></div>
+    <div class="sheet" id="sheet"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <aside class="legend">
+    <div class="card-l">
+      <h3>怎么点 <span class="badge real">已实现</span></h3>
+      <ul>
+        <li>首页宫格点任意一张 → 底部 ActionSheet 列出子项（10 个子项全可达）</li>
+        <li>首页「AI 办事助手」卡 → 进 AI 助手</li>
+        <li>社区动态点单条 → 按类型进通知列表</li>
+        <li>Tab 第 2 项「办事大厅」→ 搜索 / 四类入口 / 报修记录</li>
+        <li>搜索框输入 <span class="kbd">药品</span> <span class="kbd">漏水</span> <span class="kbd">体检</span> 看别名命中</li>
+        <li>报修记录切 Tab、点卡片看详情</li>
+      </ul>
+    </div>
+    <div class="card-l">
+      <h3>原型预演 <span class="badge mock">未落地</span></h3>
+      <p><b>AI 智能配图</b>：办事大厅搜索「药品」时出现的配图卡。真实版走「本地图库优先 + 云端开关」，此处用 emoji 占位。</p>
+      <p><b>离线知识库</b>：点右上「断网模式」，AI 助手改为端侧知识库回答并打「离线答案」标签；未命中给电话兜底，不装懂。</p>
+      <p>演示要点：断网后<b>搜索、四类入口、报修记录、离线问答全部照常</b>，因为它不依赖网络。</p>
+    </div>
+    <div class="card-l">
+      <h3>两个诚实声明</h3>
+      <p>1. 「AI 智能配图」不是每次都重新生成，命中即出图，所以断网也有图 —— 答辩时别说成「实时文生图」。</p>
+      <p>2. 「离线 AI」= 端侧知识库（40 条）检索，不是端侧大模型；未命中的问题会明确说没查到并给电话。</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+/* ============================================================
+ * 数据（与 miniprogram/config/service-grid.ts 保持一致）
+ * ============================================================ */
+const CATS = [
+  { key:'life', title:'生活基础服务', sub:'挂号｜义诊｜疫苗档案', icon:'🏥', items:[
+    { name:'挂号', type:'phone', phone:'020-88885555', tip:'社区卫生服务站：南门东侧 200 米，8:00-20:00，65 岁以上免挂号费' },
+    { name:'义诊', type:'notice', tip:'本周六 9:00-11:30 社区广场免费义诊' },
+    { name:'疫苗档案', type:'ask', q:'孩子的疫苗档案怎么查询？' },
+  ]},
+  { key:'elder', title:'健康养老服务', sub:'助餐｜助浴｜上门陪护', icon:'🧓', items:[
+    { name:'助餐', type:'notice', tip:'长者饭堂助餐登记：60 岁以上，周一至周五午餐' },
+    { name:'助浴', type:'phone', phone:'020-88880000', tip:'助浴服务需提前一天预约' },
+    { name:'上门陪护', type:'ask', q:'社区有上门陪护服务吗？' },
+  ]},
+  { key:'support', title:'便民配套服务', sub:'水电燃气｜适老化改造', icon:'🔧', items:[
+    { name:'水电燃气', type:'repair', tip:'进入报修：选择类别（水/电/燃气）后提交' },
+    { name:'适老化改造', type:'ask', q:'适老化改造有哪些补贴政策？' },
+  ]},
+  { key:'culture', title:'文化便民服务', sub:'每周义诊｜健康报告', icon:'🏮', items:[
+    { name:'每周义诊', type:'notice', tip:'每周六社区广场，无需报名' },
+    { name:'健康报告', type:'ask', q:'社区免费体检报告怎么领取？' },
+  ]},
+];
+
+/* 口语别名（与 pages/repair/list/viewmodel.ts 的 SEARCH_ALIASES 同源） */
+const ALIASES = {
+  药:['挂号'], 药品:['挂号'], 看病:['挂号'], 医院:['挂号'], 发热:['挂号'],
+  水费:['水电燃气'], 电费:['水电燃气'], 燃气费:['水电燃气'], 交费:['水电燃气'],
+  漏水:['水电燃气'], 维修:['水电燃气'], 报修:['水电燃气'], 修理:['水电燃气'],
+  吃饭:['助餐'], 午饭:['助餐'], 洗澡:['助浴'], 陪护:['上门陪护'],
+  养老:['上门陪护','助餐','适老化改造'], 补贴:['适老化改造'],
+  体检:['健康报告','每周义诊'], 报告:['健康报告'], 疫苗:['疫苗档案'],
+  义诊:['每周义诊','义诊'], 活动:['每周义诊','义诊','助餐'],
+};
+
+/* 智能配图映射（原型：emoji 占位，真实版为本地图库/云端生成） */
+const ILLUS = {
+  药品:'💊', 药:'💊', 挂号:'🏥', 看病:'🏥', 医院:'🏥',
+  漏水:'🔧', 维修:'🔧', 水电:'💡', 燃气:'🔥', 停水:'🚰', 缴费:'💳',
+  助餐:'🍚', 吃饭:'🍚', 助浴:'🛁', 陪护:'🤝', 养老:'🧓',
+  体检:'🩺', 报告:'📋', 疫苗:'💉', 义诊:'🩺', 活动:'🎉', 改造:'🏠', 电梯:'🛗',
+};
+
+const NOTICES = [
+  { id:'n1', type:'urgent', title:'3 号楼停水提醒（附储水建议）', body:'明天 09:00-17:00 停水，家有老人的建议今晚先接两桶水，物业办公室也可取水。', meta:'紧急 · 5 小时前', loc:'3 号楼' },
+  { id:'n2', type:'notice', title:'2 号门道路施工，建议绕行东门', body:'2 号门今早开始道路检修，预计持续两天，早高峰建议走东门，步行 3 分钟但不堵。', meta:'公告 · 6 小时前', loc:'2 号门' },
+  { id:'n3', type:'activity', title:'本周公益活动：爱心义诊进社区', body:'本周六 9:00-11:30 在社区广场开展免费义诊，需测血糖的请空腹前往，现场有健康档案登记。', meta:'活动 · 1 天前', loc:'社区广场' },
+  { id:'n4', type:'notice', title:'垃圾分类投放时间调整公告', body:'厨余垃圾调整为 7:00-9:00 与 18:00-20:00，其他垃圾时间不变，请按新时段投放。', meta:'公告 · 3 天前', loc:'' },
+  { id:'n5', type:'activity', title:'长者饭堂助餐服务开始登记', body:'60 岁以上居民可登记助餐服务，周一至周五供应午餐，行动不便可申请送餐上门。', meta:'活动 · 4 天前', loc:'社区服务中心' },
+];
+
+const ORDERS = [
+  { id:'w1', title:'厨房水管漏水', status:'processing', statusText:'处理中', cat:'水电', sum:'厨房水管接口漏水，需上门检修并更换密封件。', time:'10-16 15:22', note:'维修师傅已上门，等待更换密封件（预计今天内完成）。' },
+  { id:'w2', title:'楼道灯不亮', status:'done', statusText:'已完成', cat:'公共设施', sum:'公共区域照明故障，需更换灯泡。', time:'10-12 15:22', note:'已更换 3 楼走廊灯管，回访确认正常。' },
+  { id:'w3', title:'卫生间地漏返味', status:'pending', statusText:'待受理', cat:'水电', sum:'地漏存水弯干涸或堵塞导致返味，需疏通并检查存水弯。', time:'10-17 13:22', note:'已提交，物业将在 30 分钟内响应。' },
+];
+
+/* 端侧知识库（原型：取 12 条代表，真实版为 40 条） */
+const KB = [
+  { k:['报修','漏水','维修','坏了'], a:'先在「办事大厅」点「+ 我要报修」提交工单并拍照，物业 30 分钟内响应、24 小时内处理完毕。紧急漏水请先关闭入户总阀，再拨打物业 24 小时值班电话 020-88888888。' },
+  { k:['物业电话','物业','服务中心'], a:'物业服务中心 24 小时值班电话 020-88888888，办公时间 8:30-18:00，地址：1 号楼 1 层物业前台。报修、投诉、门禁卡补办都可以走这里。' },
+  { k:['水费','电费','燃气费','缴费','交费'], a:'水费 020-88884444、电费 020-88883333、燃气 020-88882222。缴费可在微信「生活缴费」完成；欠费停水停电请先致电对应热线确认，恢复一般需 2 小时。' },
+  { k:['燃气','煤气味','漏气'], a:'闻到燃气异味：立即开窗、关闭阀门、不要开关电器，到室外拨打燃气热线 020-88882222。社区每年组织一次入户安全检查，会通过通知发布楼栋安排。' },
+  { k:['挂号','看病','门诊','卫生服务站'], a:'社区卫生服务站电话 020-88885555，位于南门东侧 200 米，周一至周日 8:00-20:00。可现场取号或电话预约，65 岁以上凭身份证免挂号费，行动不便可申请上门出诊。' },
+  { k:['居住证','办证','暂住'], a:'居住证办理需本人带身份证、租赁合同到社区党群服务中心 2 号窗口，工作日 9:00-17:00，一般 5 个工作日出证。' },
+  { k:['助餐','吃饭','饭堂','长者饭堂'], a:'长者饭堂助餐：60 岁以上居民可登记，周一至周五供应午餐，两荤一素，行动不便可申请送餐上门，登记到社区服务中心 1 号窗口。' },
+  { k:['适老化','改造','补贴'], a:'适老化改造面向 60 岁以上常住居民，含防滑地面、扶手、坐便器改造等，可申请补贴；需先登记评估，具体额度以当年政策为准。' },
+  { k:['垃圾','分类','投放'], a:'厨余垃圾投放时间为 7:00-9:00 与 18:00-20:00，其他垃圾时间不变，投放点在各楼栋一层。' },
+  { k:['电梯','维保','被困'], a:'电梯每半月维保一次，计划停梯会提前发通知。被困请按轿厢内紧急按钮并拨打物业 020-88888888，不要强行扒门。' },
+  { k:['疫苗','档案','接种'], a:'儿童疫苗档案可在社区卫生服务站查询（020-88885555），带接种证和户口本；线上档案正在接入，暂需现场或电话查询。' },
+  { k:['体检','报告','义诊'], a:'社区每年组织一次免费体检，报告在卫生服务站领取；每周六上午社区广场有义诊，无需报名。' },
+];
+
+const SAFETY = {
+  medical: { k:['胸痛','晕倒','昏迷','抽搐','大出血','呼吸困难','吃错药','中毒'],
+    a:'这属于医疗紧急情况，请立即拨打 120，不要等待线上回答。若在社区内，同时联系物业 020-88888888 协助开门引导救护车。（社区无法提供专业医疗意见）' },
+  legal: { k:['起诉','打官司','律师','法律','赔偿','仲裁'],
+    a:'涉及法律纠纷社区无法给出专业意见，建议先咨询 12348 公共法律服务热线，或到街道司法所申请免费法律咨询。' },
+};
+
+const SUGGEST = ['家里水管漏水怎么报修？','物业电话是多少？','怎么办居住证？','社区有助餐服务吗？','适老化改造有补贴吗？'];
+
+/* ============================================================
+ * 状态与工具
+ * ============================================================ */
+const state = {
+  page:'home', backTo:'home', care:false, offline:false,
+  tab:'', keyword:'', match:[], illus:null,
+  chat:[], typing:false, chatInited:false,
+  noticeFilter:'', detail:null,
+};
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let toastTimer = 0;
+function toast(msg){
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1900);
+}
+
+function vibrate(){ if (navigator.vibrate) navigator.vibrate(8); }
+
+/* ============================================================
+ * 页面渲染
+ * ============================================================ */
+function render(){
+  const screen = $('#screen');
+  const phone = $('#phone');
+  phone.classList.toggle('care', state.care);
+  $('#offbar').classList.toggle('show', state.offline);
+  $('#swCare').classList.toggle('on', state.care);
+  $('#swOff').classList.toggle('on', state.offline);
+
+  const tabPages = ['home','hall','circle','profile'];
+  const showTab = tabPages.indexOf(state.page) >= 0;
+  const tabbar = $('#tabbar');
+  tabbar.hidden = !showTab;
+  if (showTab) {
+    tabbar.innerHTML = [
+      ['home','⌂','首页'],['hall','▤','办事大厅'],['circle','◍','社区圈子'],['profile','◔','我的']
+    ].map(([k,i,t]) => `<div class="t ${state.page===k?'on':''}" data-tab="${k}"><i>${i}</i>${t}</div>`).join('');
+  }
+
+  const map = { home: renderHome, hall: renderHall, circle: renderCircle, profile: renderProfile,
+                assistant: renderAssistant, notices: renderNotices };
+  screen.innerHTML = (map[state.page] || renderHome)();
+  afterRender();
+}
+
+function afterRender(){
+  if (state.page === 'assistant') {
+    const box = $('#chatScroll');
+    if (box) box.scrollTop = box.scrollHeight;
+  }
+  if (state.page === 'hall') {
+    const inp = $('#searchInput');
+    if (inp && state.keyword && inp.value !== state.keyword) inp.value = state.keyword;
+  }
+}
+
+/* ---------- 首页 ---------- */
+function renderHome(){
+  const n = NOTICES.find(x => x.type === 'urgent') || NOTICES[0];
+  return `
+  <div class="page">
+    <div class="header">
+      <div class="status light"><span>15:22</span><div class="r"><span>●●●</span><span>▮</span></div></div>
+      <div class="h-cap"><div class="capsule on-green"><span>···</span><span>◉</span></div></div>
+      <div class="h-loc">📍 当前社区：阳光社区</div>
+      <div class="h-user">
+        <div class="h-avatar">阿</div>
+        <div><div class="h-nick">阿明的小院</div><div class="h-acc">🔖 社区账号 rzdx</div></div>
+      </div>
+      <div class="h-aid">
+        <div class="h-aid-l"><div class="h-badge">⚡</div>紧急援助</div>
+        <div class="h-btn" data-act="emergency">⚡ 紧急求助</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="notice">
+        <div class="notice-main" data-act="notices" data-filter="${n.type}">
+          <div class="notice-icon" id="noticeIcon">${n.type==='urgent'?'📄':n.type==='activity'?'🎉':'📢'}</div>
+          <div style="flex:1;min-width:0">
+            <div class="notice-title" id="noticeTitle">${esc(n.title)}</div>
+            <div class="notice-sub" id="noticeSub">${esc(n.meta)}${n.loc?' · '+esc(n.loc):''}</div>
+          </div>
+          <div class="notice-deco"></div>
+        </div>
+        <div class="notice-line"></div>
+        <div class="pills">
+          <div class="pill" data-act="notices" data-filter="">📢 本周公告</div>
+          <div class="pill" data-act="circle">🚧 最近路况</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">核心功能</div>
+        <div class="grid">
+          ${CATS.map(c => `
+            <div class="fn ${c.key==='support'||c.key==='culture'?'warm':''}" data-act="cat" data-key="${c.key}">
+              <div class="fn-icon">${c.icon}</div>
+              <div class="fn-name">${esc(c.title)}</div>
+              <div class="fn-sub">${esc(c.sub.split('｜').slice(0,2).join('｜'))}${c.sub.split('｜').length>2?'<br>'+esc(c.sub.split('｜').slice(2).join('｜')):''}</div>
+              <div class="fn-deco">＋</div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="ai-entry" data-act="assistant">
+        <div class="ai-entry-icon">🤖</div>
+        <div style="min-width:0">
+          <div class="ai-entry-title">AI 办事助手</div>
+          <div class="ai-entry-sub">办事流程、报修缴费，一句话问清楚</div>
+        </div>
+        <div class="ai-entry-go">去问问</div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">社区动态</div>
+          <div class="more" data-act="notices" data-filter="">全部 ›</div>
+        </div>
+        <div class="feed">
+          ${NOTICES.slice(0,3).map(x => `
+            <div class="feed-item" data-act="notices" data-filter="${x.type}">
+              <div class="feed-tag ${x.type}">${x.type==='urgent'?'紧急':x.type==='activity'?'活动':'公告'}</div>
+              <div style="min-width:0">
+                <div class="feed-title">${esc(x.title)}</div>
+                <div class="feed-meta"><span>${esc(x.meta)}</span>${x.loc?`<span>📍 ${esc(x.loc)}</span>`:''}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- 办事大厅 ---------- */
+function hallResultHtml(){
+  const kw = state.keyword.trim();
+  if (kw) {
+    const list = state.match.length ? `
+      <div class="match-list">
+        ${state.match.map(r => `
+          <div class="match-row" data-act="service" data-cat="${r.catKey}" data-name="${esc(r.name)}">
+            <div class="match-icon">${r.icon}</div>
+            <div style="min-width:0"><div class="match-name">${esc(r.name)}</div><div class="match-cat">${esc(r.catTitle)}</div></div>
+            <div class="match-arrow">›</div>
+          </div>`).join('')}
+      </div>` : `
+      <div class="match-empty">
+        <div class="match-empty-text">没找到「${esc(kw)}」相关服务</div>
+        <div class="match-ai" data-act="ask-what" data-q="${esc(kw)}">🤖 问问 AI 助手</div>
+      </div>`;
+    const illus = state.illus ? `
+      <div class="illus">
+        <div class="illus-art">${state.illus.emoji}<span class="badge">AI 配图</span></div>
+        <div>
+          <div class="illus-title">AI 智能配图 · ${esc(state.illus.word)}</div>
+          <div class="illus-sub">按关键词命中图库，秒出、断网也有图。<br>真实版为本地图库优先 + 云端生成开关（默认关）。</div>
+        </div>
+      </div>` : '';
+    return `<div class="match">${list}${illus}</div>`;
+  }
+  return `<div class="cats">
+    ${CATS.map(c => `
+      <div class="cat" data-act="cat" data-key="${c.key}">
+        <span class="cat-icon">${c.icon}</span>
+        <div style="min-width:0"><div class="cat-name">${esc(c.title)}</div><div class="cat-sub">${esc(c.sub)}</div></div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderHall(){
+  const orders = ORDERS.filter(o => !state.tab || o.status === state.tab);
+
+  return `
+  <div class="page">
+    <div class="status dark"><span>15:22</span><div class="r"><span>●●●</span><span>▮</span></div></div>
+    <div class="navbar">办事大厅<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="search">
+      <div class="search-box">
+        <span style="font-size:13px">🔍</span>
+        <input id="searchInput" placeholder="搜服务：药品、挂号、报修、燃气…" value="${esc(state.keyword)}" autocomplete="off">
+        <div class="search-x" id="searchClear" data-act="clear-kw" style="${state.keyword ? '' : 'display:none'}">✕</div>
+      </div>
+    </div>
+    <div id="hallResult">${hallResultHtml()}</div>
+    <div class="orders">
+      <div class="orders-head">
+        <div class="orders-title">我的报修记录</div>
+        <div class="orders-count" id="ordersCount">${orders.length} 条</div>
+      </div>
+      <div class="tabs">
+        ${[['','全部'],['pending','待受理'],['processing','处理中'],['done','已完成']].map(([v,t]) =>
+          `<div class="tab ${state.tab===v?'on':''}" data-act="tab" data-v="${v}">${t}</div>`).join('')}
+      </div>
+      <div class="list" id="ordersList">${ordersListHtml(orders)}</div>
+    </div>
+    <div class="fab" data-act="create">+ 我要报修</div>
+  </div>`;
+}
+
+function ordersListHtml(orders){
+  if (!orders.length) {
+    return `<div style="padding:40px 0;text-align:center;color:#9B9B9B;font-size:12px">该状态下暂无记录</div>`;
+  }
+  return orders.map(o => `
+    <div class="card" data-act="order" data-id="${o.id}">
+      <div class="card-head"><div class="card-title">${esc(o.title)}</div><div class="tag ${o.status}">${o.statusText}</div></div>
+      <div class="card-sum">${esc(o.sum)}</div>
+      <div class="card-foot"><span>${esc(o.cat)}</span><span>${esc(o.time)}</span></div>
+    </div>`).join('');
+}
+
+/* ---------- 通知列表 ---------- */
+function renderNotices(){
+  const list = NOTICES.filter(n => !state.noticeFilter || n.type === state.noticeFilter);
+  const label = { urgent:'紧急通知', notice:'社区公告', activity:'社区活动' }[state.noticeFilter] || '全部通知';
+  return `
+  <div class="page noTab">
+    <div class="status dark"><span>15:22</span><div class="r"><span>●●●</span><span>▮</span></div></div>
+    <div class="navbar"><div class="back" data-act="back">‹</div>${label}<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="nlist">
+      ${list.map(n => `
+        <div class="nitem">
+          <div class="row">
+            <div class="feed-tag ${n.type}">${n.type==='urgent'?'紧急':n.type==='activity'?'活动':'公告'}</div>
+            <h4>${esc(n.title)}</h4>
+          </div>
+          <p>${esc(n.body)}</p>
+          <div class="meta"><span>${esc(n.meta)}</span><span>${n.loc ? '📍 '+esc(n.loc) : ''}</span></div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ---------- AI 助手 ---------- */
+function renderAssistant(){
+  if (!state.chatInited) {
+    state.chat = [{
+      role:'ai',
+      text:'我是社区办事助手。可以问我：怎么办居住证、漏水怎么报修、助餐怎么登记、物业电话是多少。断网时我也能回答社区知识库里的问题。',
+      offline:false,
+    }];
+    state.chatInited = true;
+  }
+  const bubbles = state.chat.map(m => m.role === 'user'
+    ? `<div class="bubble user">${esc(m.text)}</div>`
+    : `<div class="bubble ai">${m.flag ? `<span class="flag ${m.offline?'off':''} ${m.safety?'danger':''}">${m.flag}</span><br>` : ''}${esc(m.text).replace(/\n/g,'<br>')}${m.src?`<div class="src">${esc(m.src)}</div>`:''}</div>`).join('');
+
+  return `
+  <div class="page noTab ai-layout">
+    <div class="status dark"><span>15:22</span><div class="r"><span>●●●</span><span>▮</span></div></div>
+    <div class="navbar"><div class="back" data-act="back">‹</div>AI 办事助手<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="ai-top">
+      <div class="dot" style="background:${state.offline?'#D98E32':'#3E8E5A'}"></div>
+      <div class="txt">${state.offline ? '当前无网络 · 使用端侧知识库（12 条演示）' : '在线 · 云端问答 + 知识库检索'}</div>
+      <div class="link" data-act="clear">清空</div>
+    </div>
+    <div class="chat" id="chatScroll">
+      ${bubbles}
+      ${state.typing ? '<div class="typing"><i></i><i></i><i></i></div>' : ''}
+    </div>
+    <div class="sugg">
+      ${SUGGEST.map(q => `<div class="chip" data-act="ask" data-q="${esc(q)}">${esc(q)}</div>`).join('')}
+    </div>
+    <div class="foot-note">AI 生成仅供参考 · 高风险问题请拨 110 / 119 / 120</div>
+    <div class="ai-input">
+      <textarea id="chatInput" placeholder="输入你想问的问题…"></textarea>
+      <button class="ai-send" data-act="send">发送</button>
+    </div>
+  </div>`;
+}
+
+/* ---------- 圈子 ---------- */
+function renderCircle(){
+  const posts = [
+    { t:'2 号门道路施工，建议绕行东门', b:'2 号门今早开始道路检修，预计持续两天，早高峰建议走东门。', who:'物业服务 · 5 小时前', official:true },
+    { t:'谁家丢了一只橘猫？在凉亭附近', b:'晚上在凉亭看到一只很亲人的橘猫，戴着蓝色项圈，主人看到请联系门卫室。', who:'7 栋小李 · 5 天前', official:false },
+    { t:'西门口人行道路面破损已修复', b:'上回反馈的西门口路面破损问题已经修好，晚上散步不用绕了，给物业点赞。', who:'业主服务 · 1 天前', official:true },
+  ];
+  return `
+  <div class="page">
+    <div class="status dark"><span>15:22</span><div class="r"><span>●●●</span><span>▮</span></div></div>
+    <div class="navbar">社区圈子<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="nlist">
+      <div class="tabs" style="padding:0 0 10px">
+        <div class="tab on">全部</div><div class="tab">路况</div><div class="tab">公告</div><div class="tab">活动</div>
+      </div>
+      ${posts.map(p => `
+        <div class="post">
+          <div class="h">${p.official?'<span class="feed-tag activity">官方</span>':''}<span>${esc(p.who)}</span></div>
+          <h4>${esc(p.t)}</h4><p>${esc(p.b)}</p>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ---------- 我的 ---------- */
+function renderProfile(){
+  return `
+  <div class="page">
+    <div class="status dark"><span>15:22</span><div class="r"><span>●●●</span><span>▮</span></div></div>
+    <div class="navbar">我的<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="user-card">
+      <div class="av">阿</div>
+      <div><div class="n">阿明的小院</div><div class="r">居民</div></div>
+    </div>
+    <div class="rows">
+      <div class="row-i" data-act="go-hall">
+        <div class="l"><div class="t">我的报修记录</div><div class="s">提交报修、查看处理进度</div></div>
+        <div class="v">›</div>
+      </div>
+      <div class="row-i" data-act="toast" data-msg="社区账号：rzdx（4-20 位小写字母开头）">
+        <div class="l"><div class="t">社区账号</div><div class="s">4-20 位小写字母开头，可含数字和下划线</div></div>
+        <div class="v">rzdx ›</div>
+      </div>
+      <div class="row-i" data-act="care">
+        <div class="l"><div class="t">关怀模式</div><div class="s">放大全站字号，便于阅读</div></div>
+        <div class="v"><div class="switch ${state.care?'on':''}"></div></div>
+      </div>
+      <div class="row-i" data-act="toast" data-msg="隐私政策：仅收集必要信息，工单图片仅用于维修">
+        <div class="l"><div class="t">隐私政策</div></div><div class="v">›</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+ * 弹层
+ * ============================================================ */
+function openSheet(html){
+  $('#sheet').innerHTML = html;
+  $('#mask').classList.add('show');
+  $('#sheet').classList.add('show');
+}
+function closeSheet(){
+  $('#mask').classList.remove('show');
+  $('#sheet').classList.remove('show');
+}
+
+function openCatSheet(key){
+  const c = CATS.find(x => x.key === key);
+  if (!c) return;
+  openSheet(`
+    <h3>${esc(c.title)}</h3>
+    ${c.items.map(it => `<div class="item" data-act="service" data-cat="${key}" data-name="${esc(it.name)}">
+      <span>${esc(it.name)}</span><span class="p">›</span></div>`).join('')}
+    <div class="cancel" data-act="close-sheet">取消</div>
+  `);
+}
+
+function openEmergency(){
+  const list = [
+    { n:'匪警', p:'110' }, { n:'火警', p:'119' }, { n:'急救', p:'120' },
+    { n:'物业服务中心（24h）', p:'020-88888888' }, { n:'社区居委会', p:'020-88886666' },
+  ];
+  openSheet(`
+    <h3>紧急求助</h3>
+    ${list.map(x => `<div class="item" data-act="call" data-p="${x.p}">
+      <span>${esc(x.n)}<span class="p" style="margin-left:8px">${esc(x.p)}</span></span>
+      <span class="call">拨号</span></div>`).join('')}
+    <div class="cancel" data-act="close-sheet">取消</div>
+    <div style="margin-top:10px;font-size:11px;color:#9B9B9B;text-align:center">110 / 119 / 120 为真实号码，请勿随意拨打</div>
+  `);
+}
+
+function openOrder(id){
+  const o = ORDERS.find(x => x.id === id);
+  if (!o) return;
+  openSheet(`
+    <h3>${esc(o.title)}</h3>
+    <div style="font-size:12px;color:#6B6B6B;line-height:1.7">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>状态</span><span class="tag ${o.status}" style="margin:0">${o.statusText}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>类别</span><span>${esc(o.cat)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>提交时间</span><span>${esc(o.time)}</span></div>
+      <div style="background:#FAF6F1;border-radius:8px;padding:10px;line-height:1.6">${esc(o.sum)}</div>
+      <div style="margin-top:10px;background:#E6F5EE;border-radius:8px;padding:10px;line-height:1.6;color:#1E8252">处理进度：${esc(o.note)}</div>
+    </div>
+    <div class="cancel" data-act="close-sheet">知道了</div>
+  `);
+}
+
+/* ============================================================
+ * 搜索与问答逻辑（与 viewmodel 同算法的原型实现）
+ * ============================================================ */
+function buildRows(){
+  const rows = [];
+  CATS.forEach(c => c.items.forEach(it => rows.push({
+    key: c.key + ':' + it.name, name: it.name, catKey: c.key, catTitle: c.title, icon: c.icon, item: it,
+  })));
+  return rows;
+}
+const ROWS = buildRows();
+
+function resolveAliases(q){
+  const out = [];
+  Object.keys(ALIASES).forEach(k => { if (q.includes(k) || k.includes(q)) out.push(...ALIASES[k]); });
+  return out;
+}
+
+function searchRows(kw){
+  const q = String(kw || '').trim();
+  if (!q) return [];
+  const alias = resolveAliases(q);
+  return ROWS.map(r => {
+    let s = 0;
+    if (r.name === q) s += 10;
+    else if (r.name.includes(q) || q.includes(r.name)) s += 6;
+    if (alias.includes(r.name)) s += 5;
+    if (r.catTitle.includes(q) || q.includes(r.catTitle)) s += 3;
+    return { r, s };
+  }).filter(x => x.s > 0).sort((a,b) => b.s - a.s).slice(0,6).map(x => x.r);
+}
+
+function findIllus(kw){
+  const q = String(kw || '').trim();
+  if (!q) return null;
+  const keys = Object.keys(ILLUS).filter(k => q.includes(k) || k.includes(q));
+  if (!keys.length) return null;
+  const word = keys.sort((a,b) => b.length - a.length)[0];
+  return { word, emoji: ILLUS[word] };
+}
+
+function applyKeyword(v){
+  state.keyword = String(v || '').slice(0, 30);
+  state.match = searchRows(state.keyword);
+  state.illus = findIllus(state.keyword);
+  const box = $('#hallResult');
+  if (box) box.innerHTML = hallResultHtml();
+  const clear = $('#searchClear');
+  if (clear) clear.style.display = state.keyword ? '' : 'none';
+}
+
+/* 端侧知识库检索 */
+function kbAnswer(q){
+  for (const key of Object.keys(SAFETY)) {
+    const rule = SAFETY[key];
+    if (rule.k.some(k => q.includes(k))) {
+      return { text: rule.a, safety: true, src: '安全提示 · 未调用大模型' };
+    }
+  }
+  const hit = KB.find(item => item.k.some(k => q.includes(k)));
+  if (hit) {
+    return { text: hit.a, src: state.offline ? '来源：端侧知识库（离线）' : '来源：社区知识库' };
+  }
+  return {
+    text: '这个问题我没查到。你可以：\n1）拨打物业服务中心 020-88888888\n2）在「办事大厅」提交报修\n3）到社区党群服务中心现场咨询',
+    src: '未命中知识库 · 已给出兜底渠道',
+    miss: true,
+  };
+}
+
+function ask(q){
+  const text = String(q || '').trim();
+  if (!text || state.typing) return;
+  state.chat.push({ role:'user', text });
+  state.typing = true;
+  render();
+
+  setTimeout(() => {
+    const res = kbAnswer(text);
+    state.typing = false;
+    state.chat.push({
+      role:'ai', text: res.text,
+      flag: res.safety ? '安全提示' : (state.offline ? '离线答案' : ''),
+      offline: state.offline,
+      safety: res.safety,
+      src: res.src,
+    });
+    render();
+  }, state.offline ? 180 : 520);
+}
+
+/* ============================================================
+ * 事件委托
+ * ============================================================ */
+$('#phone').addEventListener('click', (e) => {
+  // 底部 TabBar
+  const tabEl = e.target.closest('[data-tab]');
+  if (tabEl) {
+    vibrate();
+    state.page = tabEl.dataset.tab;
+    state.backTo = 'home';
+    render();
+    return;
+  }
+
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const act = el.dataset.act;
+  vibrate();
+
+  switch (act) {
+    case 'cat': openCatSheet(el.dataset.key); break;
+    case 'service': {
+      const cat = CATS.find(c => c.key === el.dataset.cat);
+      const it = cat && cat.items.find(i => i.name === el.dataset.name);
+      closeSheet();
+      if (!it) return;
+      if (it.type === 'phone') {
+        wxCall(it.phone, it.tip);
+      } else if (it.type === 'ask') {
+        state.backTo = state.page;
+        state.page = 'assistant';
+        render();
+        ask(it.q);
+      } else if (it.type === 'repair') {
+        state.keyword = ''; state.match = []; state.illus = null; state.tab = '';
+        state.page = 'hall';
+        render();
+        toast('已到报修记录区，点右下「+ 我要报修」提交');
+      } else {
+        state.backTo = state.page;
+        state.page = 'notices'; state.noticeFilter = '';
+        render();
+        toast(it.tip);
+      }
+      break;
+    }
+    case 'emergency': openEmergency(); break;
+    case 'call': closeSheet(); toast('演示不实际拨号：' + el.dataset.p); break;
+    case 'close-sheet': closeSheet(); break;
+    case 'assistant': state.backTo = state.page; state.page = 'assistant'; render(); break;
+    case 'notices': state.backTo = state.page; state.page = 'notices'; state.noticeFilter = el.dataset.filter || ''; render(); break;
+    case 'notice-detail': { const n = NOTICES.find(x => x.id === el.dataset.id); toast(n ? n.title : ''); break; }
+    case 'circle': state.page = 'circle'; render(); break;
+    case 'back': state.page = state.backTo || 'home'; render(); break;
+    case 'tab': {
+      state.tab = el.dataset.v;
+      const orders = ORDERS.filter(o => !state.tab || o.status === state.tab);
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.v === state.tab));
+      const list = $('#ordersList'); if (list) list.innerHTML = ordersListHtml(orders);
+      const cnt = $('#ordersCount'); if (cnt) cnt.textContent = orders.length + ' 条';
+      break;
+    }
+    case 'order': openOrder(el.dataset.id); break;
+    case 'create': toast('真实版：跳「我要报修」表单页（选类别、拍照、提交）'); break;
+    case 'clear-kw': {
+      const inp = $('#searchInput'); if (inp) inp.value = '';
+      applyKeyword(''); break;
+    }
+    case 'ask-what': {
+      const q = el.dataset.q;
+      state.backTo = 'hall';
+      state.page = 'assistant'; render(); ask(q); break;
+    }
+    case 'ask': ask(el.dataset.q); break;
+    case 'send': {
+      const ta = $('#chatInput');
+      if (ta && ta.value.trim()) { const v = ta.value; ta.value = ''; ask(v); }
+      break;
+    }
+    case 'clear': state.chat = []; state.chatInited = false; render(); toast('已清空对话'); break;
+    case 'go-hall': state.page = 'hall'; render(); break;
+    case 'care': state.care = !state.care; render(); break;
+    case 'toast': toast(el.dataset.msg || ''); break;
+  }
+});
+
+function wxCall(phone, tip){
+  openSheet(`
+    <h3>拨打电话</h3>
+    <div style="text-align:center;padding:10px 0 16px">
+      <div style="font-size:22px;font-weight:800;letter-spacing:.5px">${esc(phone)}</div>
+      <div style="font-size:12px;color:#6B6B6B;margin-top:8px;line-height:1.6">${esc(tip || '')}</div>
+    </div>
+    <div class="cancel" data-act="call" data-p="${esc(phone)}">拨打（演示不实际呼出）</div>
+    <div class="cancel" data-act="close-sheet" style="margin-top:8px">取消</div>
+  `);
+}
+
+// 搜索输入（不重绘整页，只重绘内容区）
+document.addEventListener('input', (e) => {
+  if (e.target && e.target.id === 'searchInput') applyKeyword(e.target.value);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.target && e.target.id === 'searchInput' && e.key === 'Enter') {
+    e.preventDefault();
+    if (state.match.length === 1) {
+      const r = state.match[0];
+      const cat = CATS.find(c => c.key === r.catKey);
+      const it = cat.items.find(i => i.name === r.name);
+      if (it && it.type === 'phone') wxCall(it.phone, it.tip);
+      else if (it && it.type === 'ask') { state.backTo = 'hall'; state.page='assistant'; render(); ask(it.q); }
+      else toast(it ? it.tip : '');
+    } else if (!state.match.length) {
+      state.backTo = 'hall'; state.page = 'assistant'; render(); ask(state.keyword);
+    }
+  }
+  if (e.target && e.target.id === 'chatInput' && e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    const v = e.target.value; e.target.value = ''; ask(v);
+  }
+});
+
+$('#mask').addEventListener('click', closeSheet);
+
+/* 顶部开关 */
+$('#swCare').addEventListener('click', () => { state.care = !state.care; render(); });
+$('#swOff').addEventListener('click', () => {
+  state.offline = !state.offline;
+  render();
+  toast(state.offline ? '已切到断网模式：试试问 AI' : '网络已恢复');
+});
+$('#swReset').addEventListener('click', () => {
+  Object.assign(state, {
+    page:'home', backTo:'home', tab:'', keyword:'', match:[], illus:null,
+    chat:[], typing:false, chatInited:false, noticeFilter:'', care:false, offline:false,
+  });
+  closeSheet();
+  render();
+  toast('已重置');
+});
+
+render();
+</script>
+</body>
+</html>

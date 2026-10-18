@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>社区便民 · v1.0.5 政务版原型</title>
+<style>
+:root{
+  --blue:#1F5FD6;--blue-d:#153F9B;--blue-l:#EAF1FE;
+  --red:#C9302C;--red-l:#FDECEB;
+  --gold:#A86A05;--gold-l:#FDF3E1;
+  --teal:#0E7C6B;--teal-l:#E6F5F2;
+  --indigo:#4B45B8;--indigo-l:#EDECFB;
+  --bg:#F3F5F9;--card:#fff;--line:#E7EBF2;
+  --t1:#14181F;--t2:#5A6472;--t3:#98A2B3;
+  --sh:0 1px 3px rgba(20,24,31,.06);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;padding:22px 18px 40px;background:#E9ECF2;color:var(--t1);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+.top{max-width:1080px;margin:0 auto 14px;display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+h1{font-size:18px;margin:0 0 5px;font-weight:800}
+.sub{font-size:12px;color:#66707E;line-height:1.65;margin:0}
+.sub b{color:var(--blue)}
+.sws{display:flex;gap:7px}
+.sw{height:30px;padding:0 11px;border-radius:99px;border:1px solid #D3D8E2;background:#fff;font-size:11.5px;color:#444;display:flex;align-items:center;cursor:pointer;user-select:none}
+.sw.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.stage{max-width:1080px;margin:0 auto;display:flex;gap:22px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.phone{width:375px;height:780px;background:var(--bg);border-radius:26px;overflow:hidden;position:relative;
+  box-shadow:0 16px 40px rgba(0,0,0,.16);border:1px solid rgba(0,0,0,.06);flex:none}
+.phone.care{--t1:#000}
+.screen{position:absolute;inset:0;overflow:hidden}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;background:var(--bg);padding-bottom:54px}
+.page.noTab{padding-bottom:0}
+.page::-webkit-scrollbar{width:0}
+.sbar{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:9.5px;font-weight:600}
+.sbar.dark{background:#fff;color:var(--t1)}
+.sbar.light{color:#fff}
+/* tabbar */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:50px;background:#fff;border-top:1px solid var(--line);display:flex;z-index:30}
+.tabbar[hidden]{display:none}
+.tabbar .t{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:9.5px;color:var(--t3);cursor:pointer}
+.tabbar .t i{font-style:normal;font-size:15px;line-height:1;opacity:.55}
+.tabbar .t.on{color:var(--blue);font-weight:800}
+.tabbar .t.on i{opacity:1}
+/* header */
+.hd{background:linear-gradient(160deg,#3B7DEE 0%,#1F5FD6 52%,#153F9B 100%);color:#fff;padding:0 14px 48px}
+.hd .r1{display:flex;align-items:center;gap:8px;padding:8px 0 10px}
+.hd .lg{width:25px;height:25px;border-radius:7px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:12px}
+.hd .nm{font-size:14.5px;font-weight:800;letter-spacing:.4px}
+.hd .loc{margin-left:auto;font-size:9.5px;opacity:.88;display:flex;align-items:center;gap:2px}
+.sbox{margin-top:6px;height:36px;border-radius:18px;background:rgba(255,255,255,.96);display:flex;align-items:center;gap:7px;padding:0 12px}
+.sbox input{flex:1;min-width:0;border:0;outline:none;background:transparent;font-size:12.5px;font-family:inherit;color:var(--t1)}
+.sbox .go{font-size:11px;font-weight:800;color:var(--blue);cursor:pointer}
+.qk{display:flex;gap:7px;margin-top:10px}
+.qk div{flex:1;height:42px;border-radius:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;gap:4px;font-size:10px;cursor:pointer}
+.qk div b{font-size:13px}
+.body{margin-top:-36px;position:relative;z-index:2}
+/* section */
+.sec{margin-top:12px}
+.st{display:flex;align-items:center;gap:7px;padding:0 14px 8px}
+.st::before{content:'';width:3px;height:13px;border-radius:2px;background:var(--red);flex:none}
+.st b{font-size:14px;font-weight:800;flex:1}
+.st em{font-style:normal;font-size:9.5px;color:var(--t3)}
+.st .more{font-size:11px;color:var(--t3);cursor:pointer;padding:3px 0 3px 6px}
+.card{background:var(--card);margin:0 12px;border-radius:10px;box-shadow:var(--sh);overflow:hidden}
+/* 4 列宫格 */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);padding:7px 2px}
+.gi{padding:7px 1px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border-radius:8px;position:relative}
+.gi:active{background:#F3F6FC}
+.ic{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px}
+.gi .n{font-size:10.5px;font-weight:600;line-height:1.2;text-align:center;color:var(--t1)}
+.gi .d{font-size:8.5px;color:var(--t3);line-height:1.15;text-align:center}
+.gi .bdg{position:absolute;top:2px;right:3px;font-size:8px;background:var(--red);color:#fff;padding:0 3px;border-radius:3px;line-height:1.55}
+/* 专区卡 */
+.zq{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px}
+.zqc{border-radius:11px;padding:11px 12px;color:#fff;position:relative;overflow:hidden;cursor:pointer;min-height:74px}
+.zqc:active{filter:brightness(.94)}
+.zqc b{font-size:13.5px;font-weight:800;display:block;letter-spacing:.2px}
+.zqc p{margin:3px 0 0;font-size:9.5px;opacity:.85;line-height:1.35;padding-right:14px}
+.zqc .ar{position:absolute;right:8px;bottom:5px;font-size:19px;opacity:.28}
+.zqc .cnt{position:absolute;left:12px;bottom:9px;font-size:8.5px;background:rgba(255,255,255,.24);padding:1px 6px;border-radius:99px}
+.zq .zqc:nth-child(1){background:linear-gradient(135deg,#2E74E8,#1B54C0)}
+.zq .zqc:nth-child(2){background:linear-gradient(135deg,#12A08A,#0B6E5F)}
+.zq .zqc:nth-child(3){background:linear-gradient(135deg,#D99636,#A86A05)}
+.zq .zqc:nth-child(4){background:linear-gradient(135deg,#6C63D8,#4B45B8)}
+/* 一级 tab */
+.tb{display:flex;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:6}
+.tb .t{flex:1;height:41px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--t2);position:relative;cursor:pointer}
+.tb .t.on{color:var(--blue);font-weight:800}
+.tb .t.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2.5px;border-radius:2px;background:var(--blue)}
+/* 板块 */
+.grp{margin:10px 12px 0;background:#fff;border-radius:10px;box-shadow:var(--sh);overflow:hidden}
+.gh{padding:11px 12px 0}
+.gh b{font-size:12.5px;font-weight:800;display:flex;align-items:center;gap:6px}
+.gh b::before{content:'';width:2.5px;height:11px;border-radius:2px;background:var(--blue);flex:none}
+.gh p{margin:4px 0 0;font-size:9.5px;color:var(--t3);line-height:1.4}
+/* 通用 */
+.nav{height:43px;background:#fff;display:flex;align-items:center;justify-content:center;position:relative;font-size:14px;font-weight:700;border-bottom:1px solid var(--line);flex:none}
+.nav .bk{position:absolute;left:4px;top:0;height:43px;display:flex;align-items:center;padding:0 10px;font-size:20px;cursor:pointer;font-weight:400}
+.nav .rt{position:absolute;right:12px;top:0;height:43px;display:flex;align-items:center;font-size:11px;color:var(--blue);cursor:pointer;font-weight:600}
+.tip{margin:10px 12px 0;font-size:9.5px;line-height:1.6;color:#8A5A00;background:var(--gold-l);border-radius:8px;padding:8px 10px}
+.tip.blue{background:var(--blue-l);color:#16407F}
+.blk{background:#fff;margin:10px 12px 0;border-radius:10px;box-shadow:var(--sh);padding:13px}
+.lbl{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;margin:14px 0 8px}
+.lbl em{font-style:normal;font-size:9.5px;font-weight:400;color:var(--t3)}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{height:32px;padding:0 11px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:11.5px;color:var(--t2);display:flex;align-items:center;cursor:pointer}
+.chip.on{border-color:var(--blue);background:var(--blue-l);color:var(--blue);font-weight:700}
+.inp{width:100%;height:40px;border:1px solid var(--line);border-radius:8px;padding:0 11px;font-size:12.5px;font-family:inherit;outline:none;background:#fff}
+.ta{width:100%;min-height:60px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12.5px;font-family:inherit;outline:none;resize:none;line-height:1.5}
+.inp:focus,.ta:focus{border-color:var(--blue)}
+.btn{width:100%;height:44px;border:0;border-radius:9px;background:var(--blue);color:#fff;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer}
+.btn:disabled{background:#B9C6DD;color:#fff}
+.btn.ghost{background:#fff;color:var(--t2);border:1px solid var(--line);font-weight:600}
+.footbar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:9px 12px;display:flex;gap:9px;align-items:center}
+.row{display:flex;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid #F1F4F9;cursor:pointer}
+.row:last-child{border-bottom:0}
+.row .k{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.row .m{flex:1;min-width:0}
+.row .m b{font-size:12.5px;font-weight:700;display:block}
+.row .m span{font-size:9.5px;color:var(--t3);display:block;margin-top:2px}
+.row .v{font-size:11px;color:var(--t2);flex:none}
+.row .ar{color:var(--t3);font-size:14px;flex:none}
+.tag{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--blue-l);color:var(--blue);font-weight:700}
+.tag.ok{background:var(--teal-l);color:var(--teal)}
+.tag.warn{background:var(--gold-l);color:var(--gold)}
+.tag.red{background:var(--red-l);color:var(--red)}
+/* 回执 */
+.rcpt{background:#fff;margin:14px 12px 0;border-radius:12px;box-shadow:var(--sh);padding:20px 16px;text-align:center}
+.rcpt .ok{width:44px;height:44px;border-radius:50%;background:var(--blue-l);color:var(--blue);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.rcpt h4{margin:10px 0 0;font-size:14px}
+.rcpt .no{margin-top:7px;font-size:19px;font-weight:800;color:var(--blue);letter-spacing:.6px}
+.rcpt p{margin:7px 0 0;font-size:10px;color:var(--t3);line-height:1.55}
+.tl{padding:4px 0 0}
+.tl-i{display:flex;gap:10px;position:relative;padding-bottom:15px}
+.tl-i::before{content:'';position:absolute;left:8px;top:19px;bottom:0;width:1.5px;background:var(--line)}
+.tl-i:last-child::before{display:none}
+.tl-d{width:17px;height:17px;border-radius:50%;border:2px solid #CBD3E0;background:#fff;flex:none;z-index:1;box-sizing:border-box}
+.tl-i.done .tl-d{border-color:var(--teal);background:var(--teal)}
+.tl-i.now .tl-d{border-color:var(--gold);background:var(--gold)}
+.tl-b{flex:1;min-width:0}
+.tl-t{font-size:12px;font-weight:700}
+.tl-s{font-size:9.5px;color:var(--t3);margin-top:2px;line-height:1.5}
+.tl-i.todo .tl-t{color:var(--t3);font-weight:600}
+/* 账单 */
+.bill{margin:10px 12px 0;background:#fff;border-radius:11px;box-shadow:var(--sh);padding:13px}
+.bill .bh{display:flex;align-items:center;gap:8px}
+.bill .bi{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.bill .bn{font-size:12.5px;font-weight:800}
+.bill .bs{font-size:9.5px;color:var(--t3);margin-top:2px}
+.bill .bp{margin-left:auto;text-align:right}
+.bill .bp b{font-size:16px;font-weight:800;color:var(--red);font-family:ui-monospace,Menlo,monospace}
+.bill .bp span{display:block;font-size:9px;color:var(--t3);margin-top:1px}
+.bill .bf{display:flex;gap:8px;margin-top:11px}
+.bill .bf .b{flex:1;height:34px;border-radius:8px;border:1px solid var(--blue);color:var(--blue);font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff}
+.bill .bf .b.solid{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* 生鲜 */
+.sk{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px 0}
+.skc{background:#fff;border-radius:10px;box-shadow:var(--sh);overflow:hidden;cursor:pointer;position:relative}
+.skc .im{height:78px;display:flex;align-items:center;justify-content:center;font-size:34px;background:linear-gradient(135deg,#EEF6F2,#DDEFE4)}
+.skc .ib{padding:8px 9px 9px}
+.skc .nm{font-size:12px;font-weight:700}
+.skc .ds{font-size:8.5px;color:var(--t3);margin-top:1px}
+.skc .pr{display:flex;align-items:baseline;gap:3px;margin-top:5px}
+.skc .pr b{font-size:14px;font-weight:800;color:var(--red);font-family:ui-monospace,Menlo,monospace}
+.skc .pr i{font-style:normal;font-size:9px;color:var(--t3)}
+.skc .add{position:absolute;right:7px;bottom:7px;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1}
+.skc .qty{position:absolute;right:7px;bottom:7px;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--blue)}
+.skc .qty i{font-style:normal;width:19px;height:19px;border-radius:50%;border:1px solid var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;cursor:pointer}
+.hot{position:absolute;left:0;top:0;background:var(--red);color:#fff;font-size:8px;padding:1px 6px;border-bottom-right-radius:7px}
+/* 设备 */
+.tool{margin:10px 12px 0;background:#fff;border-radius:11px;box-shadow:var(--sh);padding:12px}
+.tool .th{display:flex;align-items:center;gap:9px}
+.tool .ti{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.tool .tn{font-size:12.5px;font-weight:800}
+.tool .ts{font-size:9.5px;color:var(--t3);margin-top:2px}
+.tool .tf{display:flex;gap:8px;margin-top:10px}
+.tool .tf .b{flex:1;height:33px;border-radius:8px;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tool .tf .b.p{background:var(--blue);color:#fff}
+.tool .tf .b.g{background:#F2F5FA;color:var(--t2)}
+.map{margin:10px 12px 0;height:88px;border-radius:10px;position:relative;overflow:hidden;border:1px solid var(--line);
+  background:repeating-linear-gradient(0deg,#E6EEF9 0 1px,transparent 1px 20px),repeating-linear-gradient(90deg,#E6EEF9 0 1px,transparent 1px 20px),#F7FAFF}
+.map .pin{position:absolute;font-size:12px;transform:translate(-50%,-50%)}
+.map .lg{position:absolute;left:7px;bottom:5px;font-size:8px;color:var(--t3)}
+/* 房源 */
+.hs{margin:10px 12px 0;background:#fff;border-radius:11px;box-shadow:var(--sh);display:flex;gap:10px;padding:10px;cursor:pointer}
+.hs .im{width:82px;height:66px;border-radius:8px;background:linear-gradient(135deg,#DCE8F8,#C6D9F2);display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
+.hs .ib{flex:1;min-width:0}
+.hs .ti{font-size:12.5px;font-weight:800}
+.hs .ds{font-size:9.5px;color:var(--t3);margin-top:2px}
+.hs .pr{font-size:14px;font-weight:800;color:var(--red);margin-top:5px;font-family:ui-monospace,Menlo,monospace}
+.hs .pr i{font-style:normal;font-size:9px;color:var(--t3);font-weight:400}
+/* 通知 / 档案 */
+.nt{margin:10px 12px 0;background:#fff;border-radius:10px;box-shadow:var(--sh);padding:12px}
+.nt .h{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.nt .tt{font-size:12.5px;font-weight:800;line-height:1.4}
+.nt .bd{font-size:10.5px;color:var(--t2);line-height:1.6;margin-top:5px}
+.nt .mt{font-size:9px;color:var(--t3);margin-top:7px;display:flex;gap:8px}
+.mcard{margin:10px 12px 0;border-radius:12px;padding:15px;color:#fff;background:linear-gradient(135deg,#12A08A,#0B6E5F);box-shadow:0 4px 14px rgba(14,124,107,.22)}
+.mcard b{font-size:13px;font-weight:800}
+.mcard .n{font-size:20px;font-weight:800;margin-top:10px;font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px}
+.mcard .r{display:flex;gap:14px;margin-top:9px;font-size:9.5px;opacity:.9}
+.meas{display:flex;gap:8px;padding:10px 12px 0}
+.meas div{flex:1;background:#fff;border-radius:9px;box-shadow:var(--sh);padding:10px;text-align:center}
+.meas b{display:block;font-size:15px;font-weight:800;color:var(--teal);font-family:ui-monospace,Menlo,monospace}
+.meas span{font-size:9px;color:var(--t3)}
+/* 弹层 */
+.mask{position:absolute;inset:0;background:rgba(10,15,25,.45);z-index:40;display:none}
+.mask.show{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:14px 14px 0 0;padding:15px 15px 18px;z-index:41;transform:translateY(100%);transition:transform .2s}
+.sheet.show{transform:translateY(0)}
+.sheet h3{margin:0 0 10px;font-size:13px;text-align:center;font-weight:800}
+.sheet .it{height:44px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:12.5px;cursor:pointer}
+.sheet .it:last-of-type{border-bottom:0}
+.sheet .cl{margin-top:9px;height:40px;border-radius:9px;background:#F2F5FA;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:var(--t2);cursor:pointer}
+.sheet .cl.p{background:var(--blue);color:#fff;font-weight:800}
+.toast{position:absolute;left:50%;bottom:78px;transform:translateX(-50%) translateY(6px);background:rgba(16,22,32,.86);color:#fff;
+  font-size:11.5px;padding:9px 14px;border-radius:99px;opacity:0;transition:.2s;pointer-events:none;z-index:60;max-width:82%;text-align:center;line-height:1.4}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{padding:30px 12px;text-align:center;color:var(--t3);font-size:11.5px}
+/* 侧栏 */
+.lg{width:290px;flex:none;font-size:12px;color:#4A5462;line-height:1.75}
+.lc{background:#fff;border-radius:11px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:11px}
+.lc h3{margin:0 0 7px;font-size:12.5px;font-weight:800;display:flex;align-items:center;gap:6px}
+.lc ul{margin:5px 0 0;padding-left:15px}
+.lc li{margin:4px 0}
+.lc p{margin:5px 0 0}
+.bd{font-size:8.5px;font-weight:700;padding:2px 5px;border-radius:3px;background:var(--blue-l);color:var(--blue)}
+.bd.warn{background:var(--gold-l);color:var(--gold)}
+.kb{display:inline-block;padding:0 4px;border-radius:3px;background:#F1F4F9;border:1px solid #E1E6EF;font-size:11px;font-family:ui-monospace,Menlo,monospace}
+@media(max-width:820px){.lg{width:100%;max-width:375px}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <h1>社区便民 · v1.0.5「政务版」原型</h1>
+    <p class="sub">按粤省事的做法重做：<b>红竖条分区 + 4 列密集宫格 + 白色卡片</b>，办事页一屏平铺全部服务（不再点二级才看得到），
+    每类服务有<b>自己的页面</b>——缴费看账单、生鲜有商品、设备有借用状态、租售有房源、挂号选时段。</p>
+  </div>
+  <div class="sws">
+    <div class="sw" id="swCare">关怀模式</div>
+    <div class="sw" id="swReset">↺ 重置</div>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="screen" id="screen"></div>
+    <div class="tabbar" id="tabbar"></div>
+    <div class="mask" id="mask"></div>
+    <div class="sheet" id="sheet"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <aside class="lg">
+    <div class="lc">
+      <h3>这一版改了什么 <span class="bd">对比 v1.0.4</span></h3>
+      <ul>
+        <li><b>视觉</b>：绿白圆角 → 政务蓝 + 红竖条分区 + 4 列密集宫格</li>
+        <li><b>结构</b>：办事页把 4 个分类做成一级 tab，<b>板块全部平铺</b>，12 项一屏扫完</li>
+        <li><b>不再是空壳</b>：每类服务独立流程（见下）</li>
+      </ul>
+    </div>
+    <div class="lc">
+      <h3>7 条独立流程 <span class="bd">重点</span></h3>
+      <ul>
+        <li><b>缴费代办</b>：3 张账单（欠费金额）+ 户号 + 代办进度</li>
+        <li><b>生鲜零售</b>：6 个 SKU + 加减数量 + 底部结算条（只预订不支付）</li>
+        <li><b>便民工具</b>：点位图 + 借用中倒计时 + 归还</li>
+        <li><b>房屋租售</b>：筛选 + 房源卡 + 我要发布</li>
+        <li><b>社区门诊挂号</b>：科室 → 医生 → 时段 → 取号</li>
+        <li><b>健康档案</b>：档案卡 + 4 次测量记录 + 签约医生</li>
+        <li><b>家政/助餐/助浴/改造</b>：<b>各自不同的服务选项</b>，不是同一个表单</li>
+      </ul>
+    </div>
+    <div class="lc">
+      <h3>怎么看全 37 项</h3>
+      <p>底部点<b>「办事」</b>→ 顶部 4 个一级 tab（生活/健康/便民/文化）→ 每个板块一张白卡，4 列宫格铺开，不用再点二级。</p>
+      <p>也可在首页搜索框输 <span class="kb">保姆</span> <span class="kb">雨伞</span> <span class="kb">租</span>。</p>
+    </div>
+    <div class="lc">
+      <h3>边界 <span class="bd warn">已确认</span></h3>
+      <p>只做入口 + 预约登记：生鲜是<b>预订</b>（不支付）、租售是<b>信息登记</b>（不收佣金）、代缴是<b>绑户号看进度</b>（钱在微信生活缴费）。</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+/* ============ 数据 ============ */
+const BLUE='#1F5FD6',TEAL='#0E7C6B',GOLD='#A86A05',INDIGO='#4B45B8';
+const TINT={blue:['#EAF1FE',BLUE],teal:['#E6F5F2',TEAL],gold:['#FDF3E1',GOLD],indigo:['#EDECFB',INDIGO]};
+
+const CATS=[
+ {key:'life',name:'生活基础',full:'生活基础服务',icon:'🏠',theme:'blue',
+  zone:'办事大厅｜生活类',groups:[
+  {key:'house',name:'家政服务',note:'认证师傅 · 明码标价 · 乱收费全额退款',items:[
+    {k:'clean',n:'保洁',i:'🧹',d:'60 元/小时起',flow:'book',opts:['日常保洁','深度保洁','玻璃清洗','开荒保洁']},
+    {k:'repair',n:'家电维修',i:'🔧',d:'空调/冰箱/洗衣机',flow:'book',opts:['空调','冰箱','洗衣机','热水器']},
+    {k:'drain',n:'管道疏通',i:'🚿',d:'马桶/地漏/下水',flow:'book',opts:['马桶','地漏','厨房下水','阳台']},
+    {k:'nanny',n:'保姆钟点工',i:'👵',d:'按次或长期',flow:'book',opts:['钟点工','住家保姆','白班保姆']},
+    {k:'lock',n:'开锁换锁',i:'🔑',d:'需房产证明',flow:'book',opts:['开门','换锁芯','装智能锁']},
+    {k:'ac',n:'空调清洗',i:'❄️',d:'挂机80/柜机150',flow:'book',opts:['挂机','柜机','中央空调']}]},
+  {key:'bill',name:'缴费代办',note:'只绑户号与登记，资金在微信「生活缴费」完成',items:[
+    {k:'utility',n:'水电燃气代缴',i:'💡',d:'查欠费·代缴',flow:'bill'},
+    {k:'express',n:'快递代取代寄',i:'📦',d:'驿站代收·上门取',flow:'express'},
+    {k:'gov',n:'政务事项代办',i:'📄',d:'材料代收代交',flow:'book',opts:['社保医保','居住证','医保报销','其他']}]},
+  {key:'fresh',name:'生鲜零售',note:'30 分钟配送到家 · 满 39 元免配送费',items:[
+    {k:'veg',n:'当日鲜菜',i:'🥦',d:'每日 6:00 到货',flow:'fresh',tab:'veg'},
+    {k:'clear',n:'临期特惠',i:'🍅',d:'低至 5 折',flow:'fresh',tab:'clear'},
+    {k:'group',n:'邻里拼单',i:'🥬',d:'满 20 单成团',flow:'fresh',tab:'group'},
+    {k:'pickup',n:'次日自提',i:'🍊',d:'1 号楼驿站取',flow:'fresh',tab:'pickup'}]}
+ ]},
+ {key:'elder',name:'健康养老',full:'健康养老服务',icon:'🧓',theme:'teal',
+  zone:'健康专区｜可代家人办',banner:'健康一键约 · 家人可代办',
+  groups:[
+  {key:'health',name:'基础健康服务',note:'卫生服务站 · 65 岁以上免挂号费',items:[
+    {k:'reg',n:'社区门诊挂号',i:'🏥',d:'免排队取号',flow:'booking',bdg:'热门'},
+    {k:'clinic',n:'义诊活动',i:'🩺',d:'本周六 9:00',flow:'notice'},
+    {k:'vaccine',n:'疫苗预约',i:'💉',d:'儿童/成人/流感',flow:'book',opts:['儿童常规','成人流感','HPV','带状疱疹']},
+    {k:'record',n:'健康档案',i:'📋',d:'建档·调阅',flow:'record'},
+    {k:'bp',n:'测血压血糖',i:'🩸',d:'周二周四',flow:'book',opts:['现场测量','上门测量']},
+    {k:'report',n:'体检报告代取',i:'📄',d:'代取并解读',flow:'book',opts:['个人','家庭套餐']}]},
+  {key:'elderly',name:'老年专属服务',note:'60 岁以上可申请，行动不便可上门',items:[
+    {k:'chronic',n:'慢性病咨询',i:'💊',d:'高血压/糖尿病',flow:'ask',q:'慢性病患者日常要注意什么？'},
+    {k:'meal',n:'助餐',i:'🍚',d:'可送餐上门',flow:'book',bdg:'可送餐',opts:['午餐','晚餐','送餐上门']},
+    {k:'bath',n:'助浴',i:'🛁',d:'上门助浴',flow:'book',opts:['上门助浴','陪护助浴']},
+    {k:'escort',n:'上门陪护',i:'🤝',d:'白天/夜间',flow:'book',opts:['白天陪护','夜间陪护','24 小时']},
+    {k:'reno',n:'适老化改造',i:'🛠',d:'可申请补贴',flow:'book',bdg:'可补贴',opts:['防滑地面','安全扶手','坐便改造','全屋适老']},
+    {k:'doctor',n:'家庭医生签约',i:'👨‍⚕️',d:'基础/慢病包',flow:'book',opts:['基础包','慢病包','老年包']}]}
+ ]},
+ {key:'support',name:'便民配套',full:'便民配套服务',icon:'🔧',theme:'gold',
+  zone:'便民工具｜物业延伸',groups:[
+  {key:'tools',name:'便民工具',note:'扫码借用 · 异地归还 · 到期提醒',items:[
+    {k:'umbrella',n:'共享雨伞',i:'☂️',d:'24h 内免费',flow:'tool',spots:'1 号楼大厅 · 南门岗亭 · 3 号楼架空层',free:'24 小时内免费，逾期 0.5 元/天'},
+    {k:'toolkit',n:'维修工具',i:'🧰',d:'电钻·梯子·通厕器',flow:'tool',spots:'物业前台 · 2 号楼架空层',free:'免押金，3 天内归还'},
+    {k:'power',n:'共享充电宝',i:'🔋',d:'前 1 小时免费',flow:'tool',spots:'1 号楼大厅 · 社区活动室',free:'前 1 小时免费'}]},
+  {key:'ext',name:'物业延伸',note:'物业与业主共治，社区只做信息登记',items:[
+    {k:'takeout',n:'外卖代收',i:'🛵',d:'存放点·预约上门',flow:'express'},
+    {k:'stray',n:'流浪动物',i:'🐾',d:'养宠·公约·救助',flow:'book',opts:['走失启事','待领养','救助申请']},
+    {k:'lease',n:'房屋租售',i:'🏘',d:'真实房源·业主发布',flow:'lease'}]}
+ ]},
+ {key:'culture',name:'文化便民',full:'文化便民服务',icon:'🏮',theme:'indigo',
+  zone:'社区活动｜免费参加',groups:[
+  {key:'culture',name:'文化便民',note:'社区活动室 · 免费参加',items:[
+    {k:'weekly',n:'每周义诊',i:'🩺',d:'固定排期',flow:'notice'},
+    {k:'hr',n:'健康报告',i:'📊',d:'年度体检汇总',flow:'record'},
+    {k:'neighbor',n:'邻里活动',i:'🎉',d:'本周活动',flow:'notice'},
+    {k:'lib',n:'图书角借阅',i:'📚',d:'借书/还书',flow:'book',opts:['借书','还书','续借']},
+    {k:'class',n:'四点半课堂',i:'✏️',d:'放学后托管',flow:'book',opts:['报名','接送服务']},
+    {k:'phone',n:'长者手机课',i:'📱',d:'基础/进阶',flow:'book',opts:['基础班','进阶班']}]}
+ ]}
+];
+
+const FLAT=[];
+CATS.forEach(c=>c.groups.forEach(g=>g.items.forEach(it=>FLAT.push({...it,cat:c.key,catName:c.full,grp:g.key,grpName:g.name,theme:c.theme}))));
+
+/* 首页「常用服务」8 项：跨四类各取高频，避免变成"家政专场" */
+const COMMON=['保洁','家电维修','水电燃气代缴','助餐','社区门诊挂号','共享雨伞','当日鲜菜','房屋租售']
+  .map(n=>FLAT.find(x=>x.n===n)).filter(Boolean);
+
+const NOTICES=[
+ {t:'3 号楼停水提醒（附储水建议）',b:'明天 09:00-17:00 停水，家有老人的建议今晚先接两桶水，物业办公室也可取水。',m:'紧急 · 5 小时前',type:'red',lb:'紧急'},
+ {t:'2 号门道路施工，建议绕行东门',b:'2 号门今早开始道路检修，预计两天，早高峰建议走东门。',m:'公告 · 6 小时前',type:'',lb:'公告'},
+ {t:'爱心义诊进社区（本周六）',b:'9:00-11:30 社区广场，需测血糖的请空腹，现场可登记健康档案。',m:'活动 · 1 天前',type:'ok',lb:'活动'}
+];
+
+const SKU={
+ veg:[{n:'本地油麦菜',d:'约 400g/份',p:'3.8',u:'份',e:'🥬'},{n:'沙地土豆',d:'约 500g/份',p:'2.6',u:'份',e:'🥔'},
+      {n:'新鲜西红柿',d:'约 500g/份',p:'4.5',u:'份',e:'🍅'},{n:'小油菜',d:'约 300g/把',p:'2.2',u:'把',e:'🥦'},
+      {n:'鲜鸡蛋',d:'10 枚/盒',p:'8.9',u:'盒',e:'🥚'},{n:'本地丝瓜',d:'约 400g/条',p:'3.2',u:'条',e:'🥒'}],
+ clear:[{n:'临期酸奶',d:'保质期剩 3 天',p:'3.9',u:'排',e:'🥛',hot:'5 折'},{n:'临期面包',d:'当日到期',p:'2.5',u:'个',e:'🍞',hot:'清仓'},
+      {n:'临近水果拼盘',d:'当日食用',p:'5.5',u:'盒',e:'🍓',hot:'6 折'},{n:'临期豆制品',d:'保质期剩 2 天',p:'2.8',u:'盒',e:'🍢',hot:'5 折'},
+      {n:'临期牛奶',d:'保质期剩 5 天',p:'9.9',u:'箱',e:'🥛',hot:'7 折'},{n:'熟食折扣',d:'当日现做',p:'6.6',u:'份',e:'🍗',hot:'6 折'}],
+ group:[{n:'邻里拼·土豆',d:'满 20 单成团',p:'1.9',u:'份',e:'🥔',hot:'拼单'},{n:'邻里拼·鸡蛋',d:'满 20 单成团',p:'7.5',u:'盒',e:'🥚',hot:'拼单'},
+      {n:'邻里拼·青菜',d:'满 20 单成团',p:'1.6',u:'份',e:'🥬',hot:'拼单'},{n:'邻里拼·水果',d:'满 20 单成团',p:'12.9',u:'箱',e:'🍎',hot:'拼单'},
+      {n:'邻里拼·米面',d:'满 20 单成团',p:'25.9',u:'袋',e:'🍚',hot:'拼单'},{n:'邻里拼·调料',d:'满 20 单成团',p:'4.9',u:'瓶',e:'🧂',hot:'拼单'}],
+ pickup:[{n:'次日自提·蔬菜包',d:'6 种时令菜',p:'19.9',u:'包',e:'🥗'},{n:'次日自提·水果包',d:'4 种当季果',p:'29.9',u:'包',e:'🍇'},
+      {n:'次日自提·早餐包',d:'包子+豆浆',p:'12.9',u:'份',e:'🥟'},{n:'次日自提·肉蛋包',d:'猪肉+鸡蛋',p:'26.9',u:'包',e:'🍖'},
+      {n:'次日自提·净菜',d:'洗净可直接炒',p:'8.9',u:'份',e:'🥬'},{n:'次日自提·粗粮',d:'玉米红薯',p:'9.9',u:'份',e:'🌽'}]
+};
+
+const BILLS=[
+ {k:'水费',i:'💧',c:'teal',acc:'****3021',amt:'32.40',day:'10-15 出账'},
+ {k:'电费',i:'💡',c:'gold',acc:'****8890',amt:'128.60',day:'10-14 出账'},
+ {k:'燃气费',i:'🔥',c:'blue',acc:'未绑定',amt:'—',day:'需先绑定户号'}
+];
+
+const HOUSES=[
+ {t:'3 号楼 2 室 1 厅',d:'68㎡ · 朝南 · 15 楼 · 已核验',p:'2600',u:'元/月',e:'🏢',ty:'rent'},
+ {t:'7 号楼 1 室 1 厅',d:'42㎡ · 精装 · 6 楼 · 已核验',p:'1800',u:'元/月',e:'🏠',ty:'rent'},
+ {t:'1 号楼 3 室 2 厅',d:'102㎡ · 南北通透 · 业主自挂',p:'3500',u:'元/月',e:'🏘',ty:'rent'},
+ {t:'5 号楼 2 室 2 厅 · 出售',d:'89㎡ · 满五唯一 · 已核验',p:'218',u:'万',e:'🏦',ty:'sell'}
+];
+
+const DEPTS=[
+ {n:'全科门诊',d:'常见病 · 开药 · 转诊',e:'🩺'},
+ {n:'慢病门诊',d:'高血压 · 糖尿病随访',e:'💊'},
+ {n:'儿科门诊',d:'0-14 岁',e:'🧒'},
+ {n:'中医理疗',d:'针灸 · 推拿',e:'🌿'}
+];
+const DOCTORS={
+ '全科门诊':[{n:'李医生',t:'主治医师 · 全科',q:'今日余 8 号'},{n:'王医生',t:'副主任医师',q:'今日余 3 号'}],
+ '慢病门诊':[{n:'张医生',t:'慢病管理 · 10 年',q:'今日余 6 号'}],
+ '儿科门诊':[{n:'陈医生',t:'儿科主治',q:'今日余 4 号'}],
+ '中医理疗':[{n:'刘医生',t:'中医师 · 针灸',q:'今日余 2 号'}]
+};
+const SLOTS=['09:00-10:00','10:00-11:00','11:00-12:00','14:00-15:00','15:00-16:00','16:00-17:00'];
+
+const KB=[
+ {k:['物业','电话'],a:'物业服务中心 24 小时值班电话 020-88888888，办公时间 8:30-18:00，1 号楼 1 层前台。'},
+ {k:['慢病','高血压','糖尿病'],a:'高血压/糖尿病请按时服药、低盐饮食、每周至少测 2 次血压血糖；社区慢病门诊可做随访，建议每 3 个月复诊一次。以上为健康提示，不替代医生诊断。'},
+ {k:['停水','水'],a:'明天 09:00-17:00 停水，建议今晚先储水；家中有老人的可到物业办公室取水。'},
+ {k:['补贴','改造'],a:'适老化改造含防滑地面、扶手、坐便器改造，可申请补贴，需先登记评估（60 岁以上）。'},
+ {k:['缴费','水费','电费'],a:'水费 020-88884444、电费 020-88883333、燃气 020-88882222；缴费在微信「生活缴费」，本小程序只做户号绑定与代办登记。'}
+];
+
+/* ============ 状态 ============ */
+const state={
+ page:'home',backTo:'home',cat:'life',care:false,
+ kw:'',book:null,freshTab:'veg',cart:{},tool:null,
+ leaseTy:'all',booking:null,notice:null,askQ:'',askA:''
+};
+const $=s=>document.querySelector(s), qa=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tmr=0;
+function toast(m){const el=$('#toast');el.textContent=m;el.classList.add('show');clearTimeout(tmr);tmr=setTimeout(()=>el.classList.remove('show'),1800);}
+function vibrate(){if(navigator.vibrate)navigator.vibrate(6);}
+function ic(text,theme,size){
+  const t=TINT[theme]||TINT.blue;
+  const s=size||40;
+  return `<div class="ic" style="width:${s}px;height:${s}px;font-size:${Math.round(s*0.47)}px;background:${t[0]};color:${t[1]}">${text}</div>`;
+}
+function findItem(grp,name){for(const c of CATS)for(const g of c.groups)if(g.name===grp||g.key===grp){const it=g.items.find(x=>x.n===name);if(it)return{c,g,it};}return null;}
+
+/* ============ 渲染壳 ============ */
+function render(){
+  $('#phone').classList.toggle('care',state.care);
+  $('#swCare').classList.toggle('on',state.care);
+  const tabs=['home','hall','notice','profile'];
+  const show=tabs.indexOf(state.page)>=0;
+  const tb=$('#tabbar'); tb.hidden=!show;
+  if(show){
+    tb.innerHTML=[['home','⌂','首页'],['hall','▤','办事'],['notice','✉','消息'],['profile','☺','我的']]
+      .map(([k,i,t])=>`<div class="t ${state.page===k?'on':''}" data-tab="${k}"><i>${i}</i>${t}</div>`).join('');
+  }
+  const map={home:pgHome,hall:pgHall,notice:pgNotice,profile:pgProfile,
+    book:pgBook,bill:pgBill,fresh:pgFresh,tool:pgTool,lease:pgLease,
+    booking:pgBooking,record:pgRecord,express:pgExpress};
+  $('#screen').innerHTML=(map[state.page]||pgHome)();
+}
+
+/* ============ 首页 ============ */
+function pgHome(){
+  const quick=[['🔧','报修','家政服务','家电维修'],['💡','缴费','缴费代办','水电燃气代缴'],
+    ['🏥','挂号','基础健康服务','社区门诊挂号'],['🍚','助餐','老年专属服务','助餐']];
+  return `<div class="page">
+    <div class="hd">
+      <div class="sbar light"><span>08:42</span><span>●●● ▮</span></div>
+      <div class="r1"><div class="lg">猎</div><div class="nm">猎奇便民服务</div>
+        <div class="loc">📍 阳光社区 ›</div></div>
+      <div class="sbox">
+        <span style="font-size:12px;color:#98A2B3">🔍</span>
+        <input id="kw" placeholder="搜服务：保洁、助餐、雨伞、租…" value="${esc(state.kw)}">
+        <span class="go" data-act="search">搜索</span>
+      </div>
+      <div class="qk">${quick.map(([i,t,g,n])=>`<div data-act="item" data-g="${g}" data-n="${n}"><b>${i}</b>${t}</div>`).join('')}</div>
+    </div>
+    <div class="body">
+      <div class="sec">
+        <div class="st"><b>服务分类</b><em>4 类 · 8 板块 · 37 项</em><span class="more" data-tab="hall">全部 ›</span></div>
+        <div class="zq">${CATS.map(c=>`<div class="zqc" data-act="cat" data-k="${c.key}">
+          <b>${c.full}</b><p>${c.groups.map(g=>g.name).join(' · ')}</p>
+          <span class="cnt">${c.groups.reduce((s,g)=>s+g.items.length,0)} 项</span><span class="ar">›</span></div>`).join('')}</div>
+      </div>
+      <div class="sec">
+        <div class="st"><b>常用服务</b><span class="more" data-tab="hall">更多 ›</span></div>
+        <div class="card"><div class="g4">${COMMON.map(it=>giHtml(it,'blue')).join('')}</div></div>
+      </div>
+      <div class="sec">
+        <div class="st"><b>AI 管家提醒</b><em>根据你的工单与社区通知生成</em></div>
+        <div class="card" style="padding:0 12px">
+          <div class="row" data-act="go|book">
+            <div class="k" style="background:#EAF1FE;color:${BLUE}">🔧</div>
+            <div class="m"><b>你的报修已派单</b><span>师傅预计 14:00 上门 · 点看进度</span></div>
+            <div class="ar">›</div></div>
+          <div class="row" data-act="tab|notice">
+            <div class="k" style="background:#FDF3E1;color:${GOLD}">💧</div>
+            <div class="m"><b>明天 09:00 起 3 号楼停水</b><span>建议今晚先储水 · 家有老人优先</span></div>
+            <div class="ar">›</div></div>
+        </div>
+      </div>
+      <div class="sec" style="margin-bottom:8px">
+        <div class="st"><b>社区动态</b><span class="more" data-tab="notice">全部 ›</span></div>
+        <div class="card" style="padding:0 12px">
+          ${NOTICES.map(n=>`<div class="row" data-tab="notice">
+            <div class="k" style="background:#F1F4F9"><span class="tag ${n.type}">${n.lb}</span></div>
+            <div class="m"><b>${esc(n.t)}</b><span>${esc(n.m)}</span></div><div class="ar">›</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function giHtml(it,theme,tag){
+  return `<div class="gi" data-act="item" data-g="${esc(it.grpName||'')}" data-n="${esc(it.n)}">
+    ${it.bdg?`<span class="bdg">${esc(it.bdg)}</span>`:''}
+    ${ic(it.i,it.theme||theme)}
+    <span class="n">${esc(it.n)}</span>
+    <span class="d">${esc(it.d||'')}</span>
+  </div>`;
+}
+
+/* ============ 办事（一屏平铺） ============ */
+function pgHall(){
+  const c=CATS.find(x=>x.key===state.cat)||CATS[0];
+  const kw=state.kw.trim();
+  const hits=kw?FLAT.filter(it=>it.n.includes(kw)||kw.includes(it.n)||it.grpName.includes(kw)||it.catName.includes(kw)).slice(0,12):[];
+  return `<div class="page">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav" style="border-bottom:0">办事大厅</div>
+    <div style="background:#fff;padding:0 12px 10px">
+      <div class="sbox" style="background:#F2F5FA;border:1px solid var(--line)">
+        <span style="font-size:12px;color:#98A2B3">🔍</span>
+        <input id="kw" placeholder="搜服务：保洁、助餐、雨伞、租…" value="${esc(state.kw)}">
+        <span class="go" data-act="search">搜索</span>
+      </div>
+    </div>
+    <div class="tb">${CATS.map(x=>`<div class="t ${x.key===c.key?'on':''}" data-act="cat" data-k="${x.key}">${x.name}</div>`).join('')}</div>
+    ${kw?`<div class="grp"><div class="gh"><b>搜索「${esc(kw)}」</b><p>命中 ${hits.length} 项</p></div>
+      ${hits.length?`<div class="g4">${hits.map(it=>giHtml(it)).join('')}</div>`:`<div class="empty">没找到这项服务，换个词试试</div>`}
+      </div>`:
+      c.groups.map(g=>`<div class="grp"><div class="gh"><b>${esc(g.name)}</b><p>${esc(g.note||'')} · ${g.items.length} 项</p></div>
+        <div class="g4">${g.items.map(it=>giHtml({...it,grpName:g.name},c.theme)).join('')}</div></div>`).join('')}
+    <div style="height:14px"></div>
+  </div>`;
+}
+
+/* ============ 预约登记（每个服务不同选项） ============ */
+function pgBook(){
+  const b=state.book;
+  if(!b) return `<div class="page noTab"><div class="nav"><span class="bk" data-act="back">‹</span>预约</div><div class="empty">请从服务列表进入</div></div>`;
+  if(b.done){
+    return `<div class="page noTab">
+      <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+      <div class="nav"><span class="bk" data-act="back">‹</span>预约已提交</div>
+      <div class="rcpt"><div class="ok">✓</div><h4>${esc(b.svc)}</h4><div class="no">${esc(b.no)}</div>
+        <p>${b.opts.length?'服务类型：'+esc(b.opts.join('、'))+'<br>':''}${esc(b.slot)} · ${esc(b.unit)}${b.room?' '+esc(b.room):''}</p></div>
+      <div class="blk"><div class="tl">
+        ${[['done','已提交',b.svc+' 预约登记'],['now','社区受理中','预计 2 小时内电话确认'],['todo','上门 / 到场','按约定时间提供服务'],['todo','完成并评价','服务结束后邀请评价']]
+          .map(([s,t,d])=>`<div class="tl-i ${s}"><div class="tl-d"></div><div class="tl-b"><div class="tl-t">${esc(t)}</div><div class="tl-s">${esc(d)}</div></div></div>`).join('')}
+      </div></div>
+      <div class="tip">本次只做登记与转派，不含预付费用；师傅上门后按明码标价结算，乱收费可投诉并全额退款。</div>
+      <div style="padding:12px"><button class="btn ghost" data-act="back">返回</button></div>
+    </div>`;
+  }
+  return `<div class="page noTab">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav"><span class="bk" data-act="back">‹</span>${esc(b.svc)}</div>
+    <div class="blk">
+      <div style="font-size:11px;color:var(--t2);line-height:1.6">所属：${esc(b.grpName)} · ${esc(b.catName)}</div>
+    </div>
+    <div style="padding:0 12px">
+      <div class="lbl">服务类型 <em>可多选</em></div>
+      <div class="chips">${b.opts_.map(o=>`<div class="chip ${b.opts.indexOf(o)>=0?'on':''}" data-act="opt" data-v="${esc(o)}">${esc(o)}</div>`).join('')}</div>
+      <div class="lbl">期望时间</div>
+      <div class="chips">${['上午 9-11','下午 14-16','傍晚 16-18','周末全天'].map(s=>`<div class="chip ${b.slot===s?'on':''}" data-act="slot" data-v="${esc(s)}">${esc(s)}</div>`).join('')}</div>
+      <div class="lbl">地址</div>
+      <div class="chips">${['1 号楼','2 号楼','3 号楼','7 号楼'].map(u=>`<div class="chip ${b.unit===u?'on':''}" data-act="unit" data-v="${esc(u)}">${esc(u)}</div>`).join('')}</div>
+      <input class="inp" id="room" placeholder="房号（如 2 单元 302）" value="${esc(b.room)}" style="margin-top:8px">
+      <div class="lbl">备注 <em>选填</em></div>
+      <textarea class="ta" id="note" placeholder="例如：老人在家，请提前打电话">${esc(b.note)}</textarea>
+    </div>
+    <div class="tip">只做预约登记，不收取任何预付费用。</div>
+    <div style="padding:14px 12px 20px">
+      <button class="btn" data-act="book-submit" ${(b.opts_.length&&!b.opts.length)||!b.slot||!b.unit?'disabled':''}>
+        ${(b.opts_.length&&!b.opts.length)?'请先选服务类型':(!b.slot||!b.unit)?'请先选时间和楼栋':'提交预约'}</button>
+    </div>
+  </div>`;
+}
+
+/* ============ 缴费代办 ============ */
+function pgBill(){
+  return `<div class="page noTab">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav"><span class="bk" data-act="back">‹</span>缴费代办<span class="rt" data-act="sheet-help">说明</span></div>
+    <div class="tip blue">本页只做户号绑定与代缴登记，<b>资金在微信「生活缴费」完成</b>，小程序不经手。</div>
+    ${BILLS.map((b,i)=>`<div class="bill">
+      <div class="bh">
+        <div class="bi" style="background:${TINT[b.c][0]};color:${TINT[b.c][1]}">${b.i}</div>
+        <div><div class="bn">${b.k}</div><div class="bs">户号 ${b.acc} · ${b.day}</div></div>
+        <div class="bp"><b>${b.amt==='—'?'—':'¥'+b.amt}</b><span>${b.amt==='—'?'待绑定':'本期应缴'}</span></div>
+      </div>
+      <div class="bf">
+        <div class="b" data-act="bill-detail" data-i="${i}">账单明细</div>
+        <div class="b solid" data-act="bill-pay" data-i="${i}">${b.amt==='—'?'绑定户号':'去代缴'}</div>
+      </div>
+    </div>`).join('')}
+    <div class="blk" style="margin-top:12px">
+      <div style="font-size:12.5px;font-weight:800;margin-bottom:8px">代办进度</div>
+      <div class="tl">
+        <div class="tl-i done"><div class="tl-d"></div><div class="tl-b"><div class="tl-t">代缴登记已提交</div><div class="tl-s">水费 · 10-17 09:12</div></div></div>
+        <div class="tl-i now"><div class="tl-d"></div><div class="tl-b"><div class="tl-t">社区代缴中</div><div class="tl-s">预计今天 15:00 前完成，完成后推送凭证</div></div></div>
+        <div class="tl-i todo"><div class="tl-d"></div><div class="tl-b"><div class="tl-t">完成</div><div class="tl-s">可在我的 → 代办记录下载电子凭证</div></div></div>
+      </div>
+    </div>
+    <div class="blk" style="margin-top:12px;padding:0 12px">
+      <div class="row" data-act="go|express"><div class="k" style="background:#E6F5F2;color:${TEAL}">📦</div>
+        <div class="m"><b>快递代取代寄</b><span>驿站开放 8:00-21:00 · 今日在库 12 件</span></div><div class="ar">›</div></div>
+      <div class="row" data-act="sheet-block"><div class="k" style="background:#FDF3E1;color:${GOLD}">📄</div>
+        <div class="m"><b>政务事项代办</b><span>社保医保 · 居住证 · 医保报销</span></div><div class="ar">›</div></div>
+    </div>
+    <div style="height:16px"></div>
+  </div>`;
+}
+
+/* ============ 生鲜零售 ============ */
+function pgFresh(){
+  const tab=state.freshTab, list=SKU[tab]||SKU.veg;
+  const cart=state.cart;
+  const cnt=Object.keys(cart).reduce((s,k)=>s+cart[k],0);
+  let total=0; Object.keys(cart).forEach(k=>{const [t,i]=k.split('#');total+=Number((SKU[t]||[])[Number(i)].p)*cart[k];});
+  return `<div class="page noTab" style="padding-bottom:64px">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav"><span class="bk" data-act="back">‹</span>生鲜零售</div>
+    <div class="tip blue">🛵 30 分钟配送到家 · 满 39 元免配送费 · <b>只做预订，不在此支付</b></div>
+    <div class="tb" style="margin-top:10px;border-top:1px solid var(--line)">${[['veg','当日鲜菜'],['clear','临期特惠'],['group','邻里拼单'],['pickup','次日自提']]
+      .map(([k,t])=>`<div class="t ${tab===k?'on':''}" data-act="ftab" data-v="${k}">${t}</div>`).join('')}</div>
+    <div class="sk">${list.map((s,i)=>`<div class="skc">
+      ${s.hot?`<span class="hot">${s.hot}</span>`:''}
+      <div class="im">${s.e}</div>
+      <div class="ib"><div class="nm">${esc(s.n)}</div><div class="ds">${esc(s.d)}</div>
+        <div class="pr"><b>¥${s.p}</b><i>/${s.u}</i></div></div>
+      ${cart[tab+'#'+i]?`<div class="qty"><i data-act="minus" data-t="${tab}" data-i="${i}">−</i>${cart[tab+'#'+i]}<i data-act="plus" data-t="${tab}" data-i="${i}">+</i></div>`
+        :`<div class="add" data-act="plus" data-t="${tab}" data-i="${i}">+</div>`}
+    </div>`).join('')}</div>
+    <div class="footbar">
+      <div style="flex:1"><div style="font-size:10px;color:var(--t3)">已选 ${cnt} 件</div>
+        <div style="font-size:15px;font-weight:800;color:var(--red);font-family:ui-monospace,Menlo,monospace">¥${total.toFixed(2)}</div></div>
+      <button class="btn" style="width:120px;height:40px" data-act="fresh-submit" ${cnt?'':'disabled'}>提交预订</button>
+    </div>
+  </div>`;
+}
+
+/* ============ 共享设备 ============ */
+function pgTool(){
+  const t=state.tool||{n:'共享雨伞',spots:'1 号楼大厅 · 南门岗亭 · 3 号楼架空层',free:'24 小时内免费，逾期 0.5 元/天'};
+  const borrowing=state.borrowing;
+  return `<div class="page noTab">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav"><span class="bk" data-act="back">‹</span>${esc(t.n)}</div>
+    ${borrowing?`<div class="blk" style="background:linear-gradient(135deg,#12A08A,#0B6E5F);color:#fff;border:0">
+      <div style="font-size:11px;opacity:.85">借用中 · ${esc(borrowing.n)}</div>
+      <div style="font-size:22px;font-weight:800;letter-spacing:1px;margin-top:6px;font-family:ui-monospace,Menlo,monospace">${esc(borrowing.no)}</div>
+      <div style="font-size:10px;opacity:.9;margin-top:8px">剩余 <b>22:15:40</b> · 逾期 0.5 元/天</div>
+      <div style="display:flex;gap:8px;margin-top:11px">
+        <div style="flex:1;height:34px;border-radius:8px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;cursor:pointer" data-act="remind">到期提醒 已开</div>
+        <div style="flex:1;height:34px;border-radius:8px;background:#fff;color:${TEAL};display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;cursor:pointer" data-act="give-back">异地归还</div>
+      </div>
+    </div>`:`<div class="tip blue">扫码借用免押金，可在任意投放点异地归还，到期前一天 18:00 推送提醒。</div>`}
+    <div class="map"><span class="pin" style="left:24%;top:36%">📍</span><span class="pin" style="left:56%;top:26%">📍</span><span class="pin" style="left:76%;top:64%">📍</span><span class="lg">点位分布 · 3 个投放点</span></div>
+    <div class="tool">
+      <div class="th">${ic('☂️','gold',36)}<div><div class="tn">${esc(t.n)}</div><div class="ts">${esc(t.free)}</div></div></div>
+      <div style="font-size:9.5px;color:var(--t3);margin-top:8px">投放点：${esc(t.spots)}</div>
+      ${borrowing?'':`<div class="tf"><div class="b p" data-act="borrow">扫码借用</div><div class="b g" data-act="sheet-spot">查看点位</div></div>`}
+    </div>
+    <div class="blk" style="margin-top:12px">
+      <div style="font-size:12.5px;font-weight:800;margin-bottom:6px">借用须知</div>
+      <div style="font-size:10.5px;color:var(--t2);line-height:1.75">
+        1. 借用需微信授权，免押金；<br>
+        2. ${esc(t.free)}；<br>
+        3. 可在任意投放点归还，归还后请在页面确认；<br>
+        4. 雨伞损坏或丢失按成本价赔偿（20 元/把）。
+      </div>
+    </div>
+    <div style="height:16px"></div>
+  </div>`;
+}
+
+/* ============ 房屋租售 ============ */
+function pgLease(){
+  const list=HOUSES.filter(h=>state.leaseTy==='all'||h.ty===state.leaseTy);
+  return `<div class="page noTab">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav"><span class="bk" data-act="back">‹</span>房屋租售<span class="rt" data-act="sheet-post">我要发布</span></div>
+    <div class="tip">⚠ 社区只提供信息登记，<b>不做中介撮合、不收佣金、不代收租金</b>；房源由业主自行发布。</div>
+    <div style="padding:10px 12px 0;display:flex;gap:7px">
+      ${[['all','全部'],['rent','出租'],['sell','出售']].map(([k,t])=>`<div class="chip ${state.leaseTy===k?'on':''}" data-act="lty" data-v="${k}">${t}</div>`).join('')}
+    </div>
+    ${list.map(h=>`<div class="hs" data-act="house" data-t="${esc(h.t)}">
+      <div class="im">${h.e}</div>
+      <div class="ib"><div class="ti">${esc(h.t)}</div><div class="ds">${esc(h.d)}</div>
+        <div class="pr">¥${h.p}<i> ${h.u}</i></div></div>
+    </div>`).join('')}
+    <div class="blk" style="margin-top:12px;padding:0 12px">
+      <div class="row" data-act="sheet-post"><div class="k" style="background:${TINT.gold[0]};color:${GOLD}">🏠</div>
+        <div class="m"><b>业主发布房源</b><span>上传房产证明 → 填信息 → 社区核验后展示</span></div><div class="ar">›</div></div>
+      <div class="row" data-act="sheet-want"><div class="k" style="background:${TINT.blue[0]};color:${BLUE}">🔍</div>
+        <div class="m"><b>我要求租 / 求售</b><span>登记需求，有匹配房源通知你</span></div><div class="ar">›</div></div>
+    </div>
+    <div style="height:16px"></div>
+  </div>`;
+}
+
+/* ============ 门诊挂号 ============ */
+function pgBooking(){
+  const b=state.booking;
+  if(!b) return pgBackEmpty('挂号');
+  if(b.no){
+    return `<div class="page noTab">
+      <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+      <div class="nav"><span class="bk" data-act="back">‹</span>取号成功</div>
+      <div class="rcpt"><div class="ok">✓</div><h4>${esc(b.dept)} · ${esc(b.doctor)}</h4><div class="no">${esc(b.no)}</div>
+        <p>${esc(b.slot)} · 卫生服务站 1 层<br>前面等待 ${b.prev} 人 · 预计 ${b.prev*6} 分钟</p></div>
+      <div class="tip">到号前 10 分钟会推送提醒；过号需重新取号。65 岁以上免挂号费。</div>
+      <div style="padding:12px"><button class="btn ghost" data-act="booking-reset">重新取号</button></div>
+    </div>`;
+  }
+  return `<div class="page noTab">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav"><span class="bk" data-act="back">‹</span>社区门诊挂号</div>
+    <div style="padding:0 12px">
+      <div class="lbl">1. 选科室</div>
+      <div class="chips">${DEPTS.map(d=>`<div class="chip ${b.dept===d.n?'on':''}" data-act="dept" data-v="${esc(d.n)}">${d.e} ${esc(d.n)}</div>`).join('')}</div>
+      ${b.dept?`<div class="lbl">2. 选医生</div>
+        <div class="blk" style="margin:0;padding:0 12px">${(DOCTORS[b.dept]||[]).map(d=>`<div class="row" data-act="doctor" data-v="${esc(d.n)}">
+          <div class="k" style="background:${TINT.teal[0]};color:${TEAL}">👨‍⚕️</div>
+          <div class="m"><b>${esc(d.n)}</b><span>${esc(d.t)}</span></div>
+          <div class="v" style="color:${b.doctor===d.n?BLUE:'var(--t3)'}">${b.doctor===d.n?'✓ 已选':esc(d.q)}</div></div>`).join('')}</div>`:''}
+      ${b.doctor?`<div class="lbl">3. 选时段</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+          ${SLOTS.map((s,i)=>`<div class="chip ${b.slot===s?'on':''}" style="justify-content:center;${i===1?'opacity:.45':''}" data-act="bslot" data-v="${esc(s)}" data-off="${i===1?'1':''}">${esc(s)}</div>`).join('')}
+        </div>`:''}
+    </div>
+    <div style="padding:14px 12px 20px">
+      <button class="btn" data-act="take" ${(!b.dept||!b.doctor||!b.slot)?'disabled':''}>
+        ${!b.dept?'请先选科室':!b.doctor?'请先选医生':!b.slot?'请先选时段':'确认取号'}</button>
+    </div>
+  </div>`;
+}
+
+/* ============ 健康档案 ============ */
+function pgRecord(){
+  return `<div class="page noTab">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav"><span class="bk" data-act="back">‹</span>健康档案</div>
+    <div class="mcard"><b>家庭健康档案</b>
+      <div class="n">JT** 0917</div>
+      <div class="r"><span>签约医生 李医生</span><span>建档 2023-06</span></div>
+    </div>
+    <div class="st" style="padding:14px 12px 6px"><b style="font-size:12.5px">最近测量</b><em>近 30 天</em></div>
+    <div class="meas">
+      <div><b>128/82</b><span>血压 mmHg</span></div>
+      <div><b>6.1</b><span>血糖 mmol/L</span></div>
+      <div><b>24.3</b><span>BMI</span></div>
+    </div>
+    <div class="blk" style="margin-top:12px;padding:0 12px">
+      <div class="row"><div class="k" style="background:${TINT.teal[0]};color:${TEAL}">🩺</div>
+        <div class="m"><b>2026-10-12 社区义诊</b><span>血压 128/82 · 血糖 6.1</span></div></div>
+      <div class="row"><div class="k" style="background:${TINT.teal[0]};color:${TEAL}">🩺</div>
+        <div class="m"><b>2026-09-08 慢病随访</b><span>血压 132/85 · 遵医嘱调整用药</span></div></div>
+      <div class="row"><div class="k" style="background:${TINT.teal[0]};color:${TEAL}">🩺</div>
+        <div class="m"><b>2026-08-11 免费测量</b><span>血压 130/84 · 血糖 6.4</span></div></div>
+    </div>
+    <div class="blk" style="margin-top:12px;padding:0 12px">
+      <div class="row" data-act="go|book"><div class="k" style="background:${TINT.blue[0]};color:${BLUE}">📅</div>
+        <div class="m"><b>预约下次测量</b><span>周二 / 周四 8:30-11:00</span></div><div class="ar">›</div></div>
+      <div class="row" data-act="ask|我的体检报告怎么看？"><div class="k" style="background:${TINT.indigo[0]};color:${INDIGO}">🤖</div>
+        <div class="m"><b>问 AI：报告怎么看</b><span>体检指标解读（不替代诊断）</span></div><div class="ar">›</div></div>
+    </div>
+    <div class="tip">健康数据由社区卫生服务站录入，仅本人及授权家属可见。</div>
+    <div style="height:16px"></div>
+  </div>`;
+}
+
+/* ============ 快递代收 ============ */
+function pgExpress(){
+  const items=[{n:'顺丰 · 文件袋',c:'取件码 3-2081',t:'今日 09:12 入库'},{n:'中通 · 纸箱',c:'取件码 3-2077',t:'昨日 18:40 入库'}];
+  return `<div class="page noTab">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav"><span class="bk" data-act="back">‹</span>快递 / 外卖代收</div>
+    <div class="blk">
+      <div style="display:flex;align-items:center;gap:9px">${ic('📦','teal',36)}
+        <div><div style="font-size:12.5px;font-weight:800">1 号楼驿站</div>
+        <div style="font-size:9.5px;color:var(--t3);margin-top:2px">开放 8:00-21:00 · 今日在库 12 件</div></div>
+        <span class="tag ok" style="margin-left:auto">开放中</span></div>
+    </div>
+    <div class="st" style="padding:14px 12px 6px"><b style="font-size:12.5px">我的在库</b><em>2 件</em></div>
+    <div class="blk" style="margin-top:0;padding:0 12px">
+      ${items.map(i=>`<div class="row"><div class="k" style="background:${TINT.gold[0]};color:${GOLD}">📬</div>
+        <div class="m"><b>${esc(i.n)}</b><span>${esc(i.t)}</span></div>
+        <div class="v" style="color:${BLUE};font-weight:700">${esc(i.c)}</div></div>`).join('')}
+    </div>
+    <div class="blk" style="margin-top:12px;padding:0 12px">
+      <div class="row" data-act="sheet-spot"><div class="k" style="background:${TINT.blue[0]};color:${BLUE}">🏠</div>
+        <div class="m"><b>设置代收存放点</b><span>门口挂袋 / 门卫室 / 驿站</span></div><div class="ar">›</div></div>
+      <div class="row" data-act="pickup-order"><div class="k" style="background:${TINT.teal[0]};color:${TEAL}">🛵</div>
+        <div class="m"><b>预约上门取件</b><span>今日 18:00 前，快递员上门</span></div><div class="ar">›</div></div>
+      <div class="row" data-act="sheet-block"><div class="k" style="background:${TINT.red||TINT.gold[0]};color:${GOLD}">🔒</div>
+        <div class="m"><b>隐私设置</b><span>手机号保护 · 匿名寄件</span></div><div class="ar">›</div></div>
+    </div>
+    <div style="height:16px"></div>
+  </div>`;
+}
+
+/* ============ 消息 / 我的 ============ */
+function pgNotice(){
+  return `<div class="page">
+    <div class="sbar dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="nav" style="border-bottom:0">消息通知</div>
+    ${NOTICES.map(n=>`<div class="nt"><div class="h"><span class="tag ${n.type}">${n.lb}</span></div>
+      <div class="tt">${esc(n.t)}</div><div class="bd">${esc(n.b)}</div><div class="mt"><span>${esc(n.m)}</span></div></div>`).join('')}
+    <div class="nt"><div class="h"><span class="tag">系统</span></div>
+      <div class="tt">你的报修已派单</div><div class="bd">张师傅预计今天 14:00 上门，如需改期请点工单详情。</div>
+      <div class="mt"><span>工单 · 2 小时前</span></div></div>
+    <div style="height:14px"></div>
+  </div>`;
+}
+function pgProfile(){
+  return `<div class="page">
+    <div class="hd" style="padding-bottom:52px">
+      <div class="sbar light"><span>08:42</span><span>●●● ▮</span></div>
+      <div style="display:flex;align-items:center;gap:11px;padding:10px 0 4px">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.24);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700">阿</div>
+        <div><div style="font-size:16px;font-weight:800">阿明的小院</div>
+        <div style="font-size:10px;opacity:.85;margin-top:3px">居民 · 3 号楼 2 单元</div></div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="card" style="padding:12px">
+        <div style="display:flex">
+          ${[['3','我的预约'],['2','代办中'],['1','借用中']].map(([n,t])=>`<div style="flex:1;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:${BLUE}">${n}</div>
+            <div style="font-size:9.5px;color:var(--t3);margin-top:2px">${t}</div></div>`).join('')}
+        </div>
+      </div>
+      <div class="sec">
+        <div class="card" style="padding:0 12px">
+          <div class="row" data-act="go|book"><div class="k" style="background:${TINT.blue[0]};color:${BLUE}">📋</div>
+            <div class="m"><b>我的预约</b><span>家政 / 助餐 / 助浴 / 改造登记</span></div><div class="v">3 条</div><div class="ar">›</div></div>
+          <div class="row" data-act="go|bill"><div class="k" style="background:${TINT.gold[0]};color:${GOLD}">💡</div>
+            <div class="m"><b>户号绑定</b><span>水 / 电 / 燃气 · 代缴登记</span></div><div class="v">2 / 3</div><div class="ar">›</div></div>
+          <div class="row" data-act="go|record"><div class="k" style="background:${TINT.teal[0]};color:${TEAL}">📋</div>
+            <div class="m"><b>健康档案</b><span>建档 · 测量记录 · 签约医生</span></div><div class="ar">›</div></div>
+          <div class="row" data-act="go|tool"><div class="k" style="background:${TINT.teal[0]};color:${TEAL}">☂️</div>
+            <div class="m"><b>借用中的设备</b><span>共享雨伞 · 剩余 22:15</span></div><div class="v" style="color:${TEAL}">1 件</div><div class="ar">›</div></div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="card" style="padding:0 12px">
+          <div class="row" data-act="care"><div class="m"><b>关怀模式</b><span>放大字号、宫格两列</span></div>
+            <div class="v"><div style="width:40px;height:22px;border-radius:99px;background:${state.care?'#1F5FD6':'#DDE3EC'};position:relative">
+              <div style="position:absolute;top:2px;left:${state.care?'20px':'2px'};width:18px;height:18px;border-radius:50%;background:#fff"></div></div></div></div>
+          <div class="row" data-act="sheet-block"><div class="m"><b>隐私政策</b><span>仅收集必要信息</span></div><div class="ar">›</div></div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:9.5px;color:var(--t3);padding:18px">v1.0.5 政务版原型 · 仅用于设计评审</div>
+    </div>
+  </div>`;
+}
+function pgBackEmpty(t){return `<div class="page noTab"><div class="nav"><span class="bk" data-act="back">‹</span>${t}</div><div class="empty">请从服务列表进入</div></div>`;}
+
+/* ============ 弹层 ============ */
+function openSheet(h){$('#sheet').innerHTML=h;$('#mask').classList.add('show');$('#sheet').classList.add('show');}
+function closeSheet(){$('#mask').classList.remove('show');$('#sheet').classList.remove('show');}
+
+/* ============ 路由 ============ */
+function goCat(k){state.cat=k;state.page='hall';state.kw='';}
+function openItem(grpName,name){
+  const f=findItem(grpName,name);
+  if(!f){toast('该服务暂未开通');return;}
+  const {c,g,it}=f;
+  state.backTo=state.page;
+  if(it.flow==='book'){
+    state.book={svc:it.n,grpName:g.name,catName:c.full,opts:[],opts_:it.opts||[],slot:'',unit:'',room:'',note:'',done:false,no:''};
+    state.page='book';
+  } else if(it.flow==='bill') state.page='bill';
+  else if(it.flow==='fresh'){state.page='fresh';state.freshTab=it.tab||'veg';}
+  else if(it.flow==='tool'){state.page='tool';state.tool={n:it.n,spots:it.spots,free:it.free};}
+  else if(it.flow==='lease') state.page='lease';
+  else if(it.flow==='booking'){state.page='booking';state.booking={dept:'',doctor:'',slot:'',no:'',prev:0};}
+  else if(it.flow==='record') state.page='record';
+  else if(it.flow==='express') state.page='express';
+  else if(it.flow==='notice') state.page='notice';
+  else if(it.flow==='ask'){
+    const hit=(KB.find(k=>k.k.some(x=>it.q.indexOf(x)>=0))||{}).a
+      ||'这个问题我还没学会，可以先在办事大厅找对应服务，或打物业 020-88888888。';
+    openSheet(`<h3>AI 管家</h3>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:6px">你问：${esc(it.q)}</div>
+      <div style="font-size:12px;color:var(--t1);line-height:1.75">${esc(hit)}</div>
+      <div style="margin-top:9px;font-size:9.5px;color:var(--t3);line-height:1.5">AI 仅做健康与办事指引，不替代医生诊断；急症请拨 120。</div>
+      <div class="cl p" data-act="close">我知道了</div>`);
+    return;
+  }
+  render();
+}
+
+/* ============ 事件 ============ */
+$('#phone').addEventListener('click',e=>{
+  const tabEl=e.target.closest('[data-tab]');
+  if(tabEl&&tabEl.classList.contains('t')){vibrate();state.page=tabEl.dataset.tab;render();return;}
+  if(tabEl){state.page=tabEl.dataset.tab;render();return;}
+  const el=e.target.closest('[data-act]');
+  if(!el)return;
+  const a=el.dataset.act; vibrate();
+  /* 组合动作：go|页面 / tab|页面 / item|板块|服务 / ask|问题 */
+  const p=a.split('|');
+  if(p.length>1){
+    if(p[0]==='go'){state.backTo='home';state.page=p[1];render();return;}
+    if(p[0]==='tab'){state.page=p[1];render();return;}
+    if(p[0]==='item'){openItem(p[1],p[2]);return;}
+    if(p[0]==='ask'){
+      openSheet(`<h3>AI 管家</h3>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:6px">你问：${esc(p[1])}</div>
+        <div style="font-size:12px;line-height:1.75">体检报告由社区卫生服务站出具，历年结果可在「健康档案」查看；指标异常建议挂号由医生解读，AI 不替代诊断。</div>
+        <div class="cl p" data-act="close">我知道了</div>`);
+      return;
+    }
+  }
+  if(a==='cat'){goCat(el.dataset.k);render();return;}
+  if(a==='item'){openItem(el.dataset.g,el.dataset.n);return;}
+  if(a==='go'){state.backTo=state.page;state.page=el.dataset.v||'hall';render();return;}
+  if(a==='back'){state.page=state.backTo||'home';render();return;}
+  if(a==='search'){state.page='hall';render();return;}
+  if(a==='care'){state.care=!state.care;render();return;}
+  if(a==='opt'){
+    const b=state.book,v=el.dataset.v;
+    const i=b.opts.indexOf(v); i>=0?b.opts.splice(i,1):b.opts.push(v);
+    grabBook(); render(); return;
+  }
+  if(a==='slot'){grabBook();state.book.slot=el.dataset.v;render();return;}
+  if(a==='unit'){grabBook();state.book.unit=el.dataset.v;render();return;}
+  if(a==='book-submit'){
+    grabBook();
+    const b=state.book;
+    if(!b.slot||!b.unit){toast('请先选时间和楼栋');return;}
+    b.no='SQ'+String(202600000+Math.floor(Math.random()*99999));
+    b.done=true;render();toast('预约已提交');return;
+  }
+  if(a==='ftab'){state.freshTab=el.dataset.v;render();return;}
+  if(a==='plus'||a==='minus'){
+    const k=el.dataset.t+'#'+el.dataset.i;
+    if(a==='plus')state.cart[k]=(state.cart[k]||0)+1;
+    else{state.cart[k]=(state.cart[k]||0)-1;if(state.cart[k]<=0)delete state.cart[k];}
+    render();return;
+  }
+  if(a==='fresh-submit'){
+    const n=Object.keys(state.cart).reduce((s,k)=>s+state.cart[k],0);
+    openSheet(`<h3>预订已提交</h3>
+      <div style="font-size:12px;color:var(--t2);line-height:1.75;text-align:center">共 ${n} 件 · 明早 6:00 到货<br>到货后到 1 号楼驿站取，或由团长配送到家</div>
+      <div style="margin-top:10px;background:var(--gold-l);color:#8A5A00;font-size:10px;line-height:1.65;padding:9px 10px;border-radius:8px">
+        本页只做预订登记，不在小程序内支付；货款到货时当面结算。</div>
+      <div class="cl p" data-act="close">知道了</div>`);
+    return;
+  }
+  if(a==='borrow'){
+    state.borrowing={n:(state.tool||{}).n||'共享雨伞',no:'YS-'+String(300+Math.floor(Math.random()*600))};
+    render();toast('借用成功');return;
+  }
+  if(a==='give-back'){state.borrowing=null;render();toast('已归还，未产生费用');return;}
+  if(a==='remind'){toast('到期提醒已开启（微信服务通知）');return;}
+  if(a==='lty'){state.leaseTy=el.dataset.v;render();return;}
+  if(a==='dept'){state.booking={...state.booking,dept:el.dataset.v,doctor:'',slot:'',no:''};render();return;}
+  if(a==='doctor'){state.booking={...state.booking,doctor:el.dataset.v,slot:'',no:''};render();return;}
+  if(a==='bslot'){
+    if(el.dataset.off==='1'){toast('该时段已约满');return;}
+    state.booking={...state.booking,slot:el.dataset.v};render();return;
+  }
+  if(a==='take'){
+    const b=state.booking;
+    if(!b.dept||!b.doctor||!b.slot){toast('请先选完科室、医生和时间');return;}
+    state.booking={...b,no:'A'+String(20+Math.floor(Math.random()*60)).padStart(3,'0'),prev:2+Math.floor(Math.random()*4)};
+    render();toast('取号成功');return;
+  }
+  if(a==='booking-reset'){state.booking={dept:'',doctor:'',slot:'',no:'',prev:0};render();return;}
+  if(a==='bill-pay'||a==='bill-detail'){
+    const b=BILLS[Number(el.dataset.i)];
+    openSheet(`<h3>${esc(b.k)}</h3>
+      <div class="it"><span>户号</span><span>${esc(b.acc)}</span></div>
+      <div class="it"><span>本期应缴</span><span style="color:#C9302C;font-weight:800">${b.amt==='—'?'待绑定':'¥'+b.amt}</span></div>
+      <div class="it"><span>出账时间</span><span>${esc(b.day)}</span></div>
+      <div style="margin-top:10px;font-size:10px;color:var(--t2);line-height:1.65">
+        ${b.amt==='—'?'绑定户号后可代查欠费、代为登记代缴。':'付款请到微信「生活缴费」完成，本小程序不经手资金；也可登记由社区代为办理。'}</div>
+      <div class="cl p" data-act="${b.amt==='—'?'bind':'order-bill'}" data-k="${esc(b.k)}">${b.amt==='—'?'绑定户号':'登记代办'}</div>
+      <div class="cl" data-act="close">关闭</div>`);
+    return;
+  }
+  if(a==='bind'){closeSheet();toast('绑定户号：输入 8 位户号 → 短信验证');return;}
+  if(a==='order-bill'){closeSheet();toast((el.dataset.k||'')+' 代缴已登记，进度可查');return;}
+  if(a==='sheet-help'){
+    openSheet(`<h3>缴费代办说明</h3><div style="font-size:11px;color:var(--t2);line-height:1.8">
+      1. 本功能只做<b>户号绑定</b>与<b>代缴登记</b>；<br>2. 资金通过微信「生活缴费」支付，小程序不经手；<br>
+      3. 登记后由社区志愿者代为办理，进度可在本页查看；<br>4. 户号属敏感信息，仅本人可见。</div>
+      <div class="cl" data-act="close">知道了</div>`);
+    return;
+  }
+  if(a==='sheet-spot'){
+    openSheet(`<h3>投放点 / 存放点</h3>
+      <div class="it"><span>1 号楼大厅</span><span class="tag ok">可借</span></div>
+      <div class="it"><span>南门岗亭</span><span class="tag ok">可借</span></div>
+      <div class="it"><span>3 号楼架空层</span><span class="tag warn">仅归还</span></div>
+      <div class="cl" data-act="close">关闭</div>`);return;
+  }
+  if(a==='sheet-post'){
+    openSheet(`<h3>业主发布房源</h3>
+      <div class="it"><span>1. 上传房产证明</span><span class="ar">›</span></div>
+      <div class="it"><span>2. 填写面积 / 楼层 / 租金</span><span class="ar">›</span></div>
+      <div class="it"><span>3. 社区核验后展示</span><span class="ar">›</span></div>
+      <div style="margin-top:10px;font-size:10px;color:#8A5A00;background:var(--gold-l);padding:9px 10px;border-radius:8px;line-height:1.6">
+        社区不做中介、不收佣金、不代收租金；请勿发布虚假房源。</div>
+      <div class="cl p" data-act="close">开始发布</div><div class="cl" data-act="close">关闭</div>`);return;
+  }
+  if(a==='sheet-want'){
+    openSheet(`<h3>求租 / 求售登记</h3>
+      <div class="it"><span>意向</span><span>求租 · 2 室以内</span></div>
+      <div class="it"><span>预算</span><span>2000-3000 元/月</span></div>
+      <div class="it"><span>联系方式</span><span>138****6688</span></div>
+      <div class="cl p" data-act="want-ok">提交登记</div><div class="cl" data-act="close">关闭</div>`);return;
+  }
+  if(a==='want-ok'){closeSheet();toast('已提交，有匹配房源会通知你');return;}
+  if(a==='pickup-order'){toast('已预约上门取件，快递员 18:00 前联系你');return;}
+  if(a==='house'){openSheet(`<h3>${esc(el.dataset.t)}</h3>
+      <div style="height:96px;border-radius:10px;background:linear-gradient(135deg,#DCE8F8,#C6D9F2);display:flex;align-items:center;justify-content:center;font-size:38px">🏢</div>
+      <div class="it"><span>核验状态</span><span class="tag ok">已核验</span></div>
+      <div class="it"><span>发布方</span><span>业主本人</span></div>
+      <div style="margin-top:10px;font-size:10px;color:var(--t2);line-height:1.65">看房请联系业主，社区不参与交易、不收取任何费用。</div>
+      <div class="cl p" data-act="call">联系业主</div><div class="cl" data-act="close">关闭</div>`);return;}
+  if(a==='call'){closeSheet();toast('拨打业主电话（演示不拨号）');return;}
+  if(a==='sheet-block'){toast('该功能在下一版开放');return;}
+  if(a==='close'){closeSheet();return;}
+});
+
+document.addEventListener('input',e=>{
+  if(e.target&&e.target.id==='kw'){state.kw=e.target.value;}
+  if(e.target&&e.target.id==='room'&&state.book)state.book.room=e.target.value;
+  if(e.target&&e.target.id==='note'&&state.book)state.book.note=e.target.value;
+});
+document.addEventListener('keydown',e=>{
+  if(e.target&&e.target.id==='kw'&&e.key==='Enter'){e.preventDefault();state.page='hall';render();}
+});
+$('#mask').addEventListener('click',closeSheet);
+$('#swCare').addEventListener('click',()=>{state.care=!state.care;render();});
+$('#swReset').addEventListener('click',()=>{
+  state.page='home';state.cat='life';state.kw='';state.book=null;state.cart={};
+  state.tool=null;state.borrowing=null;state.leaseTy='all';state.booking=null;state.care=false;
+  closeSheet();render();toast('已重置');
+});
+
+/* 重渲染前把输入框内容收回 state，避免点选项后已填内容丢失 */
+function grabBook(){
+  const r=$('#room'),n=$('#note'),k=$('#kw');
+  if(r&&state.book)state.book.room=r.value.trim();
+  if(n&&state.book)state.book.note=n.value.trim();
+  if(k)state.kw=k.value;
+}
+
+render();
+</script>
+</body>
+</html>

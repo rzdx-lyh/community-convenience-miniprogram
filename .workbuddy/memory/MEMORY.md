@@ -17,8 +17,22 @@
   - 根因：本机走本地代理 + Windows schannel 吊销检查失败 → 关校验即通。
   - 兜底（直连不可用时）：API 绕行脚本 `C:\Users\Administrator\Desktop\code\ai web\.wb_push\push_github.py`（全量后序建树 + 增量 `base_tree` + 重试）。
   - 账号 rzdx-lyh；令牌在 Windows 凭据管理器（`git credential fill` 取 `gho_`）；git user：rzdx-lyh / lyh687154@gmail.com。
-- ⚠️ **本地历史与远程历史不相关**：本地是 46 条真实开发历史；远程 main 是"快照式"（API 推的大提交 + 几个提交）。协作前建议先统一（见 `docs/11-协作与分支操作指南.md`）。
-- **版本号规范（用户定义）**：`MAJOR.MINOR.PATCH` = 正式完全上传次数 / 开发功能完全次数 / 提交次数。当前 **v0.0.1**。
+- ✅ **远程 main 与本地同源（2026-10-18 核实，旧结论"不相关"已作废）**：远程 main 现为 `9f08c2b`（2026-10-18），与本地一致。原因是当初用 API 绕行时保持了 commit SHA 一致，所以历史线是接上的。
+- **远程现存 4 个引用（2026-10-18 实测）**：
+  | 引用 | 指向 | 性质 |
+  |---|---|---|
+  | `main` | `cce9343`（10-17） | 主干，与本地同线，本地领先 7 |
+  | `_backup/snapshot-2026-10-16` | `d25f1167`（10-15） | **完整快照分支**，独立历史线；含 `7f2c808 chore(release): v0.0.1 — 代码 + 文档 + skill 完整快照` |
+  | `staging` | `795e3cc9`（10-13） | 早期中间线，已停更 |
+  | 标签 `v0.0.1` | `e90973c`（10-15） | 本地与远程**一致**（注意 `git rev-parse v0.0.1` 返回的是标签对象 `7ed48ce`，要加 `^{commit}` 才是提交） |
+  - 快照分支是当前 main 的**严格子集**：205 文件 vs 243 文件，**没有任何快照独有文件**（`comm -13` 为空），无需从快照恢复内容。
+  - ✅ **`v1.0.1` 已推送（2026-10-18 17:44）**：远程 `main` = `9f08c2b`（与本地完全同步，零领先零落后），标签 `v1.0.1` → `756c794`。
+- ⚠️ **沙箱内 git 直连会被代理挡**：`git ls-remote` 报 `CONNECT tunnel failed, response 502`；但 **`api.github.com` 用 Python urllib（关校验）可通**。查远程状态优先走 API：`/branches`、`/tags`、`/commits?sha=<branch>`。注意 `/tags` 返回的是 `commit.sha`，**没有顶层 `sha` 字段**。
+- **版本号规范（用户定义）**：`MAJOR.MINOR.PATCH` = 正式完全上传次数 / 开发功能完全次数 / 提交次数。
+- **两条独立版本轨（2026-10-18 定）**：
+  - **代码轨**：当前 **v1.0.1**（git 附注标签 `v1.0.1`，2026-10-18 归一）。版本唯一真源 = `miniprogram/config/env.ts` 的 `APP_VERSION`；`package.json` / `package-lock.json` 根包 / 8 个云函数包 / `README.md` / `CHANGELOG.md` 全部对齐；由 `tests/version.test.ts`（6 条）守护，源码里出现别的版本号即测试失败。
+  - **设计原型轨**：`docs/03-preview/demo.html` 当前 **v1.3.2**，与代码轨分开计数（原型领先代码是事实，不要压成一个号）。
+  - 代码注释里的历史变更用 `CR-0xx` 编号溯源，不靠版本号；归一后统一写作 `v1.0.1 / CR-019`。
 
 ## 项目约定
 - 前端源码是 **.ts**；磁盘**不留 page/app 级 .js**（DevTools 空 `Page({})` 模板会顶替真实页面 → 白屏/宫格不显示）。

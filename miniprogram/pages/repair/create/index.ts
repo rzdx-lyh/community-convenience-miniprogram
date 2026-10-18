@@ -136,7 +136,7 @@ Page({
       track('workorder_create', { category, hasImages: images.length > 0 });
       wx.hideLoading();
       wx.showToast({ title: '提交成功', icon: 'success' });
-      // 详情页为二级页，直接回服务订单列表看结果
+      // 详情页为二级页，直接回「办事大厅」的报修记录区看结果
       setTimeout(() => {
         wx.switchTab({ url: '/pages/repair/list/index' });
       }, 800);

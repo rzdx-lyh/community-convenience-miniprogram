@@ -100,7 +100,31 @@ declare interface ServiceItem {
   targetParams?: Record<string, string>;
   /** targetType='toast' 时的提示文案 */
   tip?: string;
+  /** 一行补充说明（v1.0.1：如「2 小时起 · 60 元/小时」），列表卡副标题用 */
+  desc?: string;
+  /** 角标文案（v1.0.1：如「认证师傅」「可补贴」） */
+  badge?: string;
   sort: number;
+}
+
+/**
+ * 服务子板块（v1.0.1 / CR-020）
+ *
+ * 背景：四类服务从 10 个平铺子项扩到 37 个，平铺后 ActionSheet 会滚不到底，
+ * 因此在「分类 → 子项」之间插一层板块：生活基础 = 家政/缴费代办/生鲜零售，
+ * 健康养老 = 基础健康/老年专属，便民配套 = 便民工具/物业延伸。
+ */
+declare interface ServiceGroup {
+  /** 板块 key，如 'housekeeping' */
+  key: string;
+  /** 板块名，如「家政服务」 */
+  name: string;
+  /** 板块补充说明，如「认证师傅 · 明码标价 · 乱收费全额退款」 */
+  note?: string;
+  /** grid=三列图标格（默认）；list=行卡（信息量大的板块用） */
+  render: 'grid' | 'list';
+  sort: number;
+  items: ServiceItem[];
 }
 
 /** 四类服务分类（service_category 集合，v1.2 新增） */
@@ -119,7 +143,10 @@ declare interface ServiceCategory {
   /** 1~4 */
   sort: number;
   status: 'online' | 'offline';
+  /** 全部子项（= groups 扁平化；保留以兼容旧 service:list 出参与 firstItemOf） */
   items: ServiceItem[];
+  /** 子板块（v1.0.1 新增；旧数据缺省时由 groupsOf() 兜底合成单板块） */
+  groups?: ServiceGroup[];
 }
 
 /** 便民电话簿（phonebook 集合） */

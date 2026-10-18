@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v1.0.2 首页修复 / 办事大厅 · 静态还原预览</title>
+<style>
+:root{
+  --brand:#1E8252;--brand-mid:#2FA36B;--brand-press:#166A42;--brand-light:#E6F5EE;
+  --bg:#FAF6F1;--card:#fff;--text-1:#2B2B2B;--text-2:#6B6B6B;--text-3:#9B9B9B;--line:#EEEAE3;
+  --urgent:#C0392B;--urgent-bg:#FDF0EC;--warm:#E0862F;--warm-light:#FDF3E7;
+  --green:#3E6E5F;--green-light:#E7F0ED;
+  --shadow:0 2px 8px rgba(43,43,43,.06);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;padding:32px 24px 56px;background:#F1EFEA;color:var(--text-1);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1{font-size:20px;margin:0 0 6px;font-weight:800}
+.lead{font-size:13px;color:#6B6B6B;margin:0 0 26px;line-height:1.7}
+.lead b{color:var(--brand)}
+.stage{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;justify-content:center}
+.col{width:375px}
+.col__label{font-size:12px;font-weight:700;margin:0 0 4px;color:#333}
+.col__label span{font-weight:500;color:#8a8a8a}
+.col__note{font-size:11px;color:#8a8a8a;margin:0 0 10px;line-height:1.6;min-height:30px}
+.phone{
+  width:375px;height:760px;background:var(--bg);border-radius:26px;overflow:hidden;
+  position:relative;box-shadow:0 16px 40px rgba(0,0,0,.16);border:1px solid rgba(0,0,0,.06);
+  display:flex;flex-direction:column;
+}
+.scroll{flex:1;overflow:hidden;position:relative}
+/* ---------- 通用 ---------- */
+.navbar{
+  height:34px;display:flex;align-items:center;justify-content:center;position:relative;
+  font-size:13px;font-weight:700;color:#2B2B2B;background:#FAF6F1;flex:none;
+}
+.capsule{
+  position:absolute;right:10px;top:7px;height:20px;width:62px;border:1px solid rgba(0,0,0,.10);
+  border-radius:20px;display:flex;align-items:center;justify-content:space-around;font-size:9px;color:#555;background:rgba(255,255,255,.7)
+}
+.tabbar{
+  height:52px;background:#fff;border-top:1px solid #eee;display:flex;flex:none;
+}
+.tabbar div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:9px;color:#9B9B9B}
+.tabbar div i{font-size:14px;font-style:normal;opacity:.55;line-height:1}
+.tabbar .on{color:var(--brand);font-weight:700}
+.tabbar .on i{opacity:1}
+/* ---------- 首页头部 ---------- */
+.header{
+  background:linear-gradient(170deg,#3BB27E 0%,#2FA36B 45%,#1E8252 100%);
+  padding:4px 16px 48px;color:#fff;
+}
+.h-capsule{height:40px;display:flex;align-items:center;justify-content:flex-end}
+.h-capsule span{width:1px;height:1px}
+.h-loc{height:44px;display:flex;align-items:center;gap:4px;font-size:14px;font-weight:700}
+.h-user{display:flex;align-items:center;gap:8px;padding:4px 0 12px}
+.h-avatar{width:48px;height:48px;border-radius:50%;border:2px solid #fff;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;flex:none}
+.h-nick{font-size:14px;font-weight:700}
+.h-acc{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}
+.h-aid{height:48px;display:flex;align-items:center;justify-content:space-between}
+.h-aid-l{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
+.h-badge{width:26px;height:26px;border-radius:8px;background:var(--urgent);display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 8px rgba(192,57,43,.18)}
+.h-btn{height:36px;padding:0 16px;border-radius:99px;background:#fff;color:var(--urgent);font-size:13px;font-weight:700;display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(192,57,43,.18)}
+/* ---------- 内容 ---------- */
+.content{padding:0 16px 24px}
+.notice{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:16px;margin-top:-36px;position:relative;z-index:2}
+.notice-main{display:flex;align-items:center;gap:12px}
+.notice-icon{width:44px;height:44px;border-radius:10px;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.notice-title{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notice-sub{font-size:12px;color:var(--text-2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notice-deco{width:64px;height:44px;border-radius:8px;background:linear-gradient(135deg,#DFF2E8,#C8E8D8);flex:none}
+.notice-line{height:1px;background:var(--line);margin:12px 0}
+.pills{display:flex;gap:8px}
+.pill{height:26px;padding:0 11px;border-radius:99px;background:var(--brand-light);color:var(--brand);font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px}
+.section{margin-top:16px}
+.section-title{font-size:17px;font-weight:800;margin-bottom:10px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.section-head .section-title{margin:0}
+.more{font-size:11px;color:var(--text-3)}
+/* 宫格 —— 修复后：百分比等分 */
+.grid{display:flex;flex-wrap:wrap;justify-content:space-between}
+.fn{
+  width:calc(50% - 6px);min-height:130px;margin-bottom:12px;background:#fff;border-radius:12px;
+  box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;
+}
+.fn-icon{font-size:34px;line-height:1}
+.fn-name{font-size:14px;font-weight:700;margin-top:6px}
+.fn-sub{font-size:11px;color:var(--text-2);line-height:1.7;margin-top:3px}
+.fn-deco{position:absolute;right:8px;bottom:8px;width:22px;height:22px;border-radius:8px;background:var(--brand-light);color:var(--brand);font-size:11px;display:flex;align-items:center;justify-content:center;opacity:.85}
+.fn.warm .fn-deco{background:var(--warm-light);color:var(--warm)}
+/* 修复前：定宽 165.5px + 定高 160px */
+.grid-bug .fn{width:165.5px;height:160px;margin-bottom:12px;justify-content:flex-start}
+/* AI 入口卡 */
+.ai-entry{
+  margin-top:8px;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;
+  background:var(--brand-light);border:1px solid rgba(30,130,82,.14);
+}
+.ai-entry-icon{width:42px;height:42px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none}
+.ai-entry-title{font-size:14px;font-weight:700;color:var(--brand-press)}
+.ai-entry-sub{font-size:11px;color:var(--brand);opacity:.88;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-entry-go{height:28px;padding:0 12px;border-radius:99px;background:var(--brand);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;flex:none;margin-left:auto}
+/* 社区动态 */
+.feed{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:0 16px}
+.feed-item{display:flex;align-items:flex-start;gap:8px;padding:12px 0}
+.feed-item + .feed-item{border-top:1px solid var(--line)}
+.feed-tag{flex:none;margin-top:2px;height:20px;padding:0 6px;border-radius:4px;font-size:10px;font-weight:700;display:flex;align-items:center;background:var(--green-light);color:var(--green)}
+.feed-tag.activity{background:var(--brand-light);color:var(--brand)}
+.feed-tag.urgent{background:var(--urgent-bg);color:var(--urgent)}
+.feed-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-meta{font-size:11px;color:var(--text-3);margin-top:3px;display:flex;gap:8px}
+/* ---------- 办事大厅 ---------- */
+.search{padding:12px 16px;background:#fff;border-bottom:1px solid var(--line)}
+.search-box{height:40px;border-radius:99px;background:var(--bg);display:flex;align-items:center;gap:8px;padding:0 12px}
+.search-box input{border:0;background:transparent;outline:none;flex:1;font-size:13px;color:var(--text-1);font-family:inherit}
+.search-box input::placeholder{color:var(--text-3)}
+.search-x{width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.06);color:var(--text-2);font-size:11px;display:flex;align-items:center;justify-content:center;flex:none}
+.cats{display:flex;flex-wrap:wrap;justify-content:space-between;padding:16px 16px 0}
+.cat{width:calc(50% - 4px);min-height:66px;margin-bottom:8px;padding:12px;background:#fff;border-radius:12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:8px}
+.cat-icon{font-size:24px;line-height:1;flex:none}
+.cat-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-sub{font-size:11px;color:var(--text-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.orders{margin-top:16px}
+.orders-head{display:flex;align-items:center;justify-content:space-between;padding:0 16px 8px}
+.orders-title{font-size:17px;font-weight:800}
+.orders-count{font-size:11px;color:var(--text-3)}
+.tabs{display:flex;gap:8px;padding:0 16px 8px}
+.tab{height:30px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:12px;color:var(--text-2);display:flex;align-items:center}
+.tab.on{background:var(--brand-light);border-color:var(--brand);color:var(--brand);font-weight:600}
+.list{padding:0 16px}
+.card{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.card-head{display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{height:22px;padding:0 9px;border-radius:99px;font-size:11px;font-weight:700;display:flex;align-items:center;flex:none;margin-left:8px}
+.tag.pending{background:#fbf0e0;color:#d98e32}
+.tag.processing{background:#f0ebf8;color:#7a5bb8}
+.tag.done{background:#e7f2ea;color:#3e8e5a}
+.card-sum{font-size:12px;color:var(--text-2);margin-top:8px;line-height:1.45}
+.card-foot{display:flex;justify-content:space-between;margin-top:12px;font-size:11px;color:var(--text-3)}
+.fab{position:absolute;right:16px;bottom:14px;height:44px;padding:0 16px;border-radius:99px;background:linear-gradient(170deg,#3BB27E,#2FA36B 45%,#1E8252);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;box-shadow:0 4px 12px rgba(30,130,82,.25)}
+/* 搜索结果 */
+.match{padding:12px 16px 0}
+.match-list{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:0 16px}
+.match-row{display:flex;align-items:center;gap:12px;padding:12px 0}
+.match-row + .match-row{border-top:1px solid var(--line)}
+.match-icon{width:36px;height:36px;border-radius:8px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.match-name{font-size:14px;font-weight:700}
+.match-cat{font-size:11px;color:var(--text-3);margin-top:2px}
+.match-arrow{font-size:16px;color:var(--text-3);margin-left:auto}
+.badge-flag{display:inline-block;font-size:10px;font-weight:700;color:#B45309;background:#FEF3C7;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+</style>
+</head>
+<body>
+<h1>v1.0.2 · 首页修复 + 办事大厅 · 静态还原预览</h1>
+<p class="lead">
+  <a href="./demo.html" style="display:inline-block;margin-bottom:14px;padding:8px 16px;border-radius:99px;background:#1E8252;color:#fff;font-size:13px;font-weight:700;text-decoration:none">▶ 打开可点击原型（推荐）</a><br>
+  本页是按 <b>750rpx 设计稿 1:1（1rpx = 0.5px @375pt）</b> 还原的静态对照稿，用于视觉确认，不是小程序运行截图。<br>
+  左：修复前的真实形态（定宽 331rpx 掉成 1 列）；中：修复后 2×2 等分 + 首屏补全；右：新的「办事大厅」聚合入口。
+</p>
+
+<div class="stage">
+
+  <!-- ============ 修复前 ============ -->
+  <div class="col">
+    <p class="col__label">修复前 <span>· v1.0.1 现状（截图复现）</span></p>
+    <p class="col__note">卡片宽 331rpx、两列需 686rpx、可用宽也正好 686rpx → 余量为 0，第二张卡被挤下行；卡高写死 320rpx，卡内也空。</p>
+    <div class="phone">
+      <div class="navbar">社区便民<div class="capsule"><span>···</span><span>◉</span></div></div>
+      <div class="scroll">
+        <div class="header">
+          <div class="h-capsule"></div>
+          <div class="h-loc">📍 当前社区：阳光社区</div>
+          <div class="h-user">
+            <div class="h-avatar">阿</div>
+            <div><div class="h-nick">阿明的小院</div><div class="h-acc">🔖 社区账号 rzdx</div></div>
+          </div>
+          <div class="h-aid">
+            <div class="h-aid-l"><div class="h-badge">⚡</div>紧急援助</div>
+            <div class="h-btn">⚡ 紧急求助</div>
+          </div>
+        </div>
+        <div class="content">
+          <div class="notice">
+            <div class="notice-main">
+              <div class="notice-icon">📄</div>
+              <div style="flex:1;min-width:0">
+                <div class="notice-title">停水通知</div>
+                <div class="notice-sub">10-14 09:00-17:00 · 3 号楼 …</div>
+              </div>
+              <div class="notice-deco"></div>
+            </div>
+            <div class="notice-line"></div>
+            <div class="pills"><div class="pill">📢 本周公告</div><div class="pill">🚧 最近路况</div></div>
+          </div>
+          <div class="section">
+            <div class="section-title">核心功能</div>
+            <div class="grid grid-bug">
+              <div class="fn"><div class="fn-icon">🏥</div><div class="fn-name">生活基础服务</div><div class="fn-sub">挂号｜义诊<br>疫苗档案</div><div class="fn-deco">＋</div></div>
+              <div class="fn"><div class="fn-icon">🧓</div><div class="fn-name">健康养老服务</div><div class="fn-sub">助餐｜助浴<br>上门陪护</div><div class="fn-deco">＋</div></div>
+              <div class="fn"><div class="fn-icon">🔧</div><div class="fn-name">便民配套服务</div><div class="fn-sub">水电燃气｜适老化改造</div><div class="fn-deco">＋</div></div>
+              <div class="fn warm"><div class="fn-icon">🏮</div><div class="fn-name">文化便民服务</div><div class="fn-sub">每周义诊｜健康报告</div><div class="fn-deco">＋</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar"><div class="on"><i>⌂</i>首页</div><div><i>▤</i>办事大厅</div><div><i>◍</i>社区圈子</div><div><i>◔</i>我的</div></div>
+    </div>
+  </div>
+
+  <!-- ============ 修复后 ============ -->
+  <div class="col">
+    <p class="col__label">修复后 <span>· v1.0.2 首页</span></p>
+    <p class="col__note">栅格改 <code>calc(50% - 12rpx)</code> 等分（与设备宽度无关）、卡片改最小高度、内容纵向居中；下方补 AI 入口卡 + 社区动态 3 条。</p>
+    <div class="phone">
+      <div class="navbar">社区便民<div class="capsule"><span>···</span><span>◉</span></div></div>
+      <div class="scroll">
+        <div class="header">
+          <div class="h-capsule"></div>
+          <div class="h-loc">📍 当前社区：阳光社区</div>
+          <div class="h-user">
+            <div class="h-avatar">阿</div>
+            <div><div class="h-nick">阿明的小院</div><div class="h-acc">🔖 社区账号 rzdx</div></div>
+          </div>
+          <div class="h-aid">
+            <div class="h-aid-l"><div class="h-badge">⚡</div>紧急援助</div>
+            <div class="h-btn">⚡ 紧急求助</div>
+          </div>
+        </div>
+        <div class="content">
+          <div class="notice">
+            <div class="notice-main">
+              <div class="notice-icon">📄</div>
+              <div style="flex:1;min-width:0">
+                <div class="notice-title">停水通知</div>
+                <div class="notice-sub">10-14 09:00-17:00 · 3 号楼 …</div>
+              </div>
+              <div class="notice-deco"></div>
+            </div>
+            <div class="notice-line"></div>
+            <div class="pills"><div class="pill">📢 本周公告</div><div class="pill">🚧 最近路况</div></div>
+          </div>
+          <div class="section">
+            <div class="section-title">核心功能</div>
+            <div class="grid">
+              <div class="fn"><div class="fn-icon">🏥</div><div class="fn-name">生活基础服务</div><div class="fn-sub">挂号｜义诊<br>疫苗档案</div><div class="fn-deco">＋</div></div>
+              <div class="fn"><div class="fn-icon">🧓</div><div class="fn-name">健康养老服务</div><div class="fn-sub">助餐｜助浴<br>上门陪护</div><div class="fn-deco">＋</div></div>
+              <div class="fn"><div class="fn-icon">🔧</div><div class="fn-name">便民配套服务</div><div class="fn-sub">水电燃气｜适老化改造</div><div class="fn-deco">＋</div></div>
+              <div class="fn warm"><div class="fn-icon">🏮</div><div class="fn-name">文化便民服务</div><div class="fn-sub">每周义诊｜健康报告</div><div class="fn-deco">＋</div></div>
+            </div>
+          </div>
+          <div class="ai-entry">
+            <div class="ai-entry-icon">🤖</div>
+            <div style="min-width:0">
+              <div class="ai-entry-title">AI 办事助手</div>
+              <div class="ai-entry-sub">办事流程、报修缴费，一句话问清楚</div>
+            </div>
+            <div class="ai-entry-go">去问问</div>
+          </div>
+          <div class="section">
+            <div class="section-head">
+              <div class="section-title">社区动态</div>
+              <div class="more">全部 ›</div>
+            </div>
+            <div class="feed">
+              <div class="feed-item">
+                <div class="feed-tag urgent">紧急</div>
+                <div style="min-width:0">
+                  <div class="feed-title">3 号楼停水提醒（附储水建议）</div>
+                  <div class="feed-meta"><span>紧急 · 5 小时前</span><span>📍 3 号楼</span></div>
+                </div>
+              </div>
+              <div class="feed-item">
+                <div class="feed-tag activity">活动</div>
+                <div style="min-width:0">
+                  <div class="feed-title">本周公益活动：爱心义诊进社区</div>
+                  <div class="feed-meta"><span>活动 · 1 天前</span><span>📍 社区广场</span></div>
+                </div>
+              </div>
+              <div class="feed-item">
+                <div class="feed-tag">公告</div>
+                <div style="min-width:0">
+                  <div class="feed-title">垃圾分类投放时间调整</div>
+                  <div class="feed-meta"><span>公告 · 3 天前</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar"><div class="on"><i>⌂</i>首页</div><div><i>▤</i>办事大厅</div><div><i>◍</i>社区圈子</div><div><i>◔</i>我的</div></div>
+    </div>
+  </div>
+
+  <!-- ============ 办事大厅 ============ -->
+  <div class="col">
+    <p class="col__label">新页面 <span>· 办事大厅（Tab 第 2 项）</span></p>
+    <p class="col__note">上方搜索 + 四类服务入口（点开为子项选择），下方才是「我的报修记录」，原筛选/分页/下拉刷新行为零改动。</p>
+    <div class="phone">
+      <div class="navbar">办事大厅<div class="capsule"><span>···</span><span>◉</span></div></div>
+      <div class="scroll">
+        <div class="search">
+          <div class="search-box">
+            <span style="font-size:13px">🔍</span>
+            <span style="flex:1;font-size:13px;color:var(--text-3)">搜服务：药品、挂号、报修、燃气…</span>
+          </div>
+        </div>
+        <div class="cats">
+          <div class="cat"><span class="cat-icon">🏥</span><div style="min-width:0"><div class="cat-name">生活基础服务</div><div class="cat-sub">挂号｜义诊｜疫苗档案</div></div></div>
+          <div class="cat"><span class="cat-icon">🧓</span><div style="min-width:0"><div class="cat-name">健康养老服务</div><div class="cat-sub">助餐｜助浴｜上门陪护</div></div></div>
+          <div class="cat"><span class="cat-icon">🔧</span><div style="min-width:0"><div class="cat-name">便民配套服务</div><div class="cat-sub">水电燃气｜适老化改造</div></div></div>
+          <div class="cat"><span class="cat-icon">🏮</span><div style="min-width:0"><div class="cat-name">文化便民服务</div><div class="cat-sub">每周义诊｜健康报告</div></div></div>
+        </div>
+        <div class="orders">
+          <div class="orders-head"><div class="orders-title">我的报修记录</div><div class="orders-count">3 条</div></div>
+          <div class="tabs"><div class="tab on">全部</div><div class="tab">待受理</div><div class="tab">处理中</div><div class="tab">已完成</div></div>
+          <div class="list">
+            <div class="card">
+              <div class="card-head"><div class="card-title">厨房水管漏水</div><div class="tag processing">处理中</div></div>
+              <div class="card-sum">厨房水管接口漏水，需上门检修并更换密封件。</div>
+              <div class="card-foot"><span>水电</span><span>10-16 15:22</span></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title">楼道灯不亮</div><div class="tag done">已完成</div></div>
+              <div class="card-sum">公共区域照明故障，需更换灯泡。</div>
+              <div class="card-foot"><span>公共设施</span><span>10-12 15:22</span></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title">卫生间地漏返味</div><div class="tag pending">待受理</div></div>
+              <div class="card-sum">地漏存水弯干涸或堵塞导致返味，需疏通并检查存水弯。</div>
+              <div class="card-foot"><span>水电</span><span>10-17 13:22</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="fab">+ 我要报修</div>
+      </div>
+      <div class="tabbar"><div><i>⌂</i>首页</div><div class="on"><i>▤</i>办事大厅</div><div><i>◍</i>社区圈子</div><div><i>◔</i>我的</div></div>
+    </div>
+  </div>
+
+  <!-- ============ 搜索态 ============ -->
+  <div class="col">
+    <p class="col__label">搜索态 <span>· 本地匹配 10 个子项</span></p>
+    <p class="col__note">输入即筛（纯本地、无请求）。搜「药品」经口语别名命中「挂号」；搜不到时给「问 AI 助手」出口，不留死胡同。</p>
+    <div class="phone">
+      <div class="navbar">办事大厅<div class="capsule"><span>···</span><span>◉</span></div></div>
+      <div class="scroll">
+        <div class="search">
+          <div class="search-box">
+            <span style="font-size:13px">🔍</span>
+            <span style="flex:1;font-size:13px;color:var(--text-1)">药品</span>
+            <span class="search-x">✕</span>
+          </div>
+        </div>
+        <div class="match">
+          <div class="match-list">
+            <div class="match-row"><div class="match-icon">🏥</div><div style="min-width:0"><div class="match-name">挂号</div><div class="match-cat">生活基础服务</div></div><div class="match-arrow">›</div></div>
+          </div>
+        </div>
+        <div class="orders">
+          <div class="orders-head"><div class="orders-title">我的报修记录</div><div class="orders-count">3 条</div></div>
+          <div class="tabs"><div class="tab on">全部</div><div class="tab">待受理</div><div class="tab">处理中</div><div class="tab">已完成</div></div>
+          <div class="list">
+            <div class="card">
+              <div class="card-head"><div class="card-title">厨房水管漏水</div><div class="tag processing">处理中</div></div>
+              <div class="card-sum">厨房水管接口漏水，需上门检修并更换密封件。</div>
+              <div class="card-foot"><span>水电</span><span>10-16 15:22</span></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title">楼道灯不亮</div><div class="tag done">已完成</div></div>
+              <div class="card-sum">公共区域照明故障，需更换灯泡。</div>
+              <div class="card-foot"><span>公共设施</span><span>10-12 15:22</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="fab">+ 我要报修</div>
+      </div>
+      <div class="tabbar"><div><i>⌂</i>首页</div><div class="on"><i>▤</i>办事大厅</div><div><i>◍</i>社区圈子</div><div><i>◔</i>我的</div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

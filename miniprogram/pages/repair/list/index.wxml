@@ -1,34 +1,106 @@
-<!-- 服务订单（FE-4 · 原报修列表改名；TabBar 第 2 项） -->
+<!--
+  办事大厅（v1.0.1 / CR-019：原「服务订单」改名并升格为聚合入口；TabBar 第 2 项）
+  结构：搜索 → 四类服务入口 → 我的报修记录
+  红线：本页是 Tab 页，搜索态只存在页面内，不通过 URL 传参。
+-->
 <view class="page {{elderMode ? 'care-mode' : ''}}">
-  <!-- 状态筛选 Tab -->
-  <view class="tabs">
-    <block wx:for="{{tabs}}" wx:key="value">
-      <view class="tab {{item.value === activeStatus ? 'tab-on' : ''}}" data-value="{{item.value}}" bindtap="onTabTap">
-        <text>{{item.label}}</text>
-      </view>
-    </block>
+  <!-- ① 搜索 -->
+  <view class="search">
+    <view class="search__box">
+      <text class="search__icon">🔍</text>
+      <input
+        class="search__input"
+        value="{{keyword}}"
+        placeholder="搜服务：药品、挂号、报修、燃气…"
+        placeholder-class="search__ph"
+        confirm-type="search"
+        bindinput="onKeywordInput"
+        bindconfirm="onSearchConfirm"
+      />
+      <view wx:if="{{keyword}}" class="search__clear" catchtap="onClearKeyword">✕</view>
+    </view>
   </view>
 
-  <!-- 列表 -->
-  <view class="list">
-    <block wx:for="{{list}}" wx:key="_id">
-      <view class="card" data-id="{{item._id}}" bindtap="onCardTap">
-        <view class="card-head">
-          <text class="card-title">{{item.title}}</text>
-          <view class="tag tag-{{item.statusKey}}">
-            <text class="tag-text">{{item.statusLabel}}</text>
+  <!-- ①-b 搜索结果（关键词非空时替代入口区，避免页面跳动叠加） -->
+  <view wx:if="{{keyword}}" class="match">
+    <view wx:if="{{matchList.length > 0}}" class="match__list">
+      <view
+        wx:for="{{matchList}}"
+        wx:key="key"
+        class="match__row"
+        hover-class="match__row--hover"
+        data-key="{{item.key}}"
+        bindtap="onRowTap"
+      >
+        <text class="match__icon">{{item.iconText}}</text>
+        <view class="match__body">
+          <view class="match__name">{{item.name}}</view>
+          <view class="match__cat">{{item.categoryTitle}}</view>
+        </view>
+        <text class="match__arrow">›</text>
+      </view>
+    </view>
+    <view wx:else class="match__empty">
+      <view class="match__empty-text">没找到「{{keyword}}」相关服务</view>
+      <view class="match__ai" hover-class="match__ai--hover" bindtap="onAskAi">🤖 问问 AI 助手</view>
+    </view>
+  </view>
+
+  <!-- ② 四类服务入口（搜索时隐藏） -->
+  <view wx:if="{{!keyword}}" class="cats">
+    <view
+      wx:for="{{categories}}"
+      wx:key="key"
+      class="cat"
+      hover-class="cat--hover"
+      data-key="{{item.key}}"
+      bindtap="onCatTap"
+    >
+      <text class="cat__icon">{{item.iconText}}</text>
+      <view class="cat__body">
+        <view class="cat__name">{{item.title}}</view>
+        <view class="cat__sub">{{item.sub}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ③ 我的报修记录 -->
+  <view class="orders">
+    <view class="orders__head">
+      <view class="orders__title">我的报修记录</view>
+      <view wx:if="{{list.length > 0}}" class="orders__count">{{list.length}} 条</view>
+    </view>
+
+    <!-- 状态筛选 Tab -->
+    <view class="tabs">
+      <block wx:for="{{tabs}}" wx:key="value">
+        <view class="tab {{item.value === activeStatus ? 'tab-on' : ''}}" data-value="{{item.value}}" bindtap="onTabTap">
+          <text>{{item.label}}</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- 列表 -->
+    <view class="list">
+      <block wx:for="{{list}}" wx:key="_id">
+        <view class="card" data-id="{{item._id}}" bindtap="onCardTap">
+          <view class="card-head">
+            <text class="card-title">{{item.title}}</text>
+            <view class="tag tag-{{item.statusKey}}">
+              <text class="tag-text">{{item.statusLabel}}</text>
+            </view>
+          </view>
+          <text class="card-summary">{{item.summary}}</text>
+          <view class="card-foot">
+            <text class="card-cat">{{item.categoryLabel}}</text>
+            <text class="card-time">{{item.timeText}}</text>
           </view>
         </view>
-        <text class="card-summary">{{item.summary}}</text>
-        <view class="card-foot">
-          <text class="card-cat">{{item.categoryLabel}}</text>
-          <text class="card-time">{{item.timeText}}</text>
-        </view>
-      </view>
-    </block>
+      </block>
 
-    <view wx:if="{{loadingMore}}" class="loading">
-      <text class="loading-text">加载中…</text>
+      <view wx:if="{{loadingMore}}" class="loading">
+        <text class="loading-text">加载中…</text>
+      </view>
     </view>
   </view>
 

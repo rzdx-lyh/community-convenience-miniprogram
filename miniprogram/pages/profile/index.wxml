@@ -14,12 +14,12 @@
       </view>
     </view>
 
-    <!-- 我的工单入口（Tab 页，switchTab） -->
+    <!-- 我的报修入口（Tab 页，switchTab；v1.0.1 起该 Tab 名为「办事大厅」） -->
     <view class="card">
       <view class="row" bindtap="onGoOrders">
         <view class="row__label">
-          <view class="row__title">我的服务订单</view>
-          <view class="row__sub">报修进度、处理结果</view>
+          <view class="row__title">我的报修记录</view>
+          <view class="row__sub">提交报修、查看处理进度</view>
         </view>
         <view class="row__arrow">›</view>
       </view>

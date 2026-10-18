@@ -1,6 +1,6 @@
 {
   "name": "ccf-service",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "private": true,
   "description": "社区便民 · service 资源云函数（actions: list；四类服务宫格聚合，不分页；契约见 contracts/api-contract.md）",
   "main": "index.js",
