@@ -26,3 +26,8 @@ scripts/seed/
 .workbuddy/cfcheck*/
 .workbuddy/isocheck/
 .workbuddy/iconcheck/
+
+# 云函数线上包核对 / 图标目检等临时产物
+.workbuddy/cfcheck*/
+.workbuddy/isocheck/
+.workbuddy/iconcheck/
