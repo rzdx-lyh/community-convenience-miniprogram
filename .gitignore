@@ -17,3 +17,7 @@ scripts/selftest-report.json
 # 种子数据产物：由 node scripts/seed.mjs 生成（真源是 seed.mjs 本身），
 # 每次重跑都会因相对时间戳而改变，入库只会制造冲突；需要时重跑脚本即可
 scripts/seed-data.json
+
+# 分集合导入文件：由 node scripts/seed.mjs 生成（真源是 seed.mjs + service-grid.ts），
+# 每次重跑因相对时间戳而改变，入库只会制造冲突
+scripts/seed/

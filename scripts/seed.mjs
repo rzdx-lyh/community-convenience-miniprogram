@@ -7,7 +7,7 @@
  *   绝不写死日期 —— 否则演示当天会显示"已过期"空态，直接丢掉体验分。
  *   10-23 打包前请重跑本脚本。
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -272,6 +272,21 @@ const service_category = loadServiceCatalog().map((c) => ({
 const data = { users, workorders, notices, phonebook, circle_post, service_category };
 writeFileSync(OUT, JSON.stringify(data, null, 2));
 
+/**
+ * 额外产出「一集合一文件」：scripts/seed/<集合名>.json（内容是记录数组）。
+ *
+ * 为什么需要：云开发控制台的「导入」是**按集合逐个导入**，且文件里只能是记录数组。
+ * 之前只有 seed-data.json（{集合名: 记录数组} 的大对象），照那篇文章去导会直接报格式错误。
+ */
+const SEED_DIR = path.join(path.dirname(OUT), 'seed');
+mkdirSync(SEED_DIR, { recursive: true });
+const written = [];
+Object.keys(data).forEach((name) => {
+  const file = path.join(SEED_DIR, `${name}.json`);
+  writeFileSync(file, JSON.stringify(data[name], null, 2));
+  written.push(`${name}.json（${data[name].length} 条）`);
+});
+
 /* -------------------------------------- 生成结果自检提示 -------------------------------------- */
 const urgent = notices.filter((n) => n.type === 'urgent');
 const inEffect = urgent.filter((n) => {
@@ -290,3 +305,5 @@ console.log('     ⛔ 严禁替换 3 条：110 / 119 / 120 —— 国家公开�
 console.log('        换掉会导致居民照安全话术拨错号，属安全事故，不是体验问题。');
 console.log('     改号唯一路径：改 shared/hotline.js → 重跑本脚本 → 重新导入 → 通知前端同步 mock → 跑 selftest。');
 console.log('     ⛔ 禁止在云控制台手工编辑 phonebook 号码（hotline.js 是唯一真源）。');
+console.log('  📁 已生成可直接导入的分集合文件 scripts/seed/*.json：');
+console.log('     ' + written.join('、'));
