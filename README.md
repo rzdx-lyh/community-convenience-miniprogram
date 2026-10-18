@@ -17,7 +17,7 @@
 | 产物 | 版本 | 位置 | 怎么看 |
 |---|---|---|---|
 | 小程序代码 | **v1.0.1**（git tag） | `miniprogram/` + `cloudfunctions/` | 微信开发者工具导入仓库根目录 |
-| 设计原型 | **v1.3.2** | `docs/03-preview/demo.html` | 浏览器直接打开，或看[在线预览](https://rzdx-lyh.github.io/community-convenience-miniprogram/) |
+| 设计原型 | **v1.4.0** | `docs/03-preview/demo.html` | 浏览器直接打开，或看[在线预览](https://rzdx-lyh.github.io/community-convenience-miniprogram/) |
 | 设计文档 | — | `docs/` 共 38 篇 | [docs 目录](https://github.com/rzdx-lyh/community-convenience-miniprogram/tree/main/docs) |
 
 ### 已经做完的
@@ -30,7 +30,7 @@
 
 - **服务分类页与统一表单页**：原型已有 4 类 / 8 板块 / 38 项的完整设计，代码尚未落地，首页宫格目前仍直接指向既有页面
 - **真机联调**：`USE_MOCK` 仍为 `true`（CR-017 要求演示前置 `false`），云函数未上传、集合与索引未建
-- **原型领先部分**：智慧配餐、个人中心、开局登录目前只在原型里
+- **原型领先部分**：智慧配餐、个人中心、开局登录、页面级 AI 入口与 8 场景集群目前只在原型里
 
 ### 跑起来
 
