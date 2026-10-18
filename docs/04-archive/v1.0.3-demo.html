@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>社区便民小程序 · v1.0.3 AI 管家原型</title>
+<style>
+:root{
+  --brand:#1E8252;--brand-mid:#2FA36B;--brand-press:#166A42;--brand-light:#E6F5EE;
+  --bg:#FAF6F1;--card:#fff;--text-1:#2B2B2B;--text-2:#6B6B6B;--text-3:#9B9B9B;--line:#EEEAE3;
+  --urgent:#C0392B;--urgent-bg:#FDF0EC;--warm:#E0862F;--warm-light:#FDF3E7;
+  --green:#3E6E5F;--green-light:#E7F0ED;
+  --ai:#5B54D6;--ai-deep:#4941B8;--ai-light:#EEECFD;--ai-line:rgba(91,84,214,.16);
+  --ai-grad:linear-gradient(135deg,#7B6CF6 0%,#4F7BF0 100%);
+  --shadow:0 2px 8px rgba(43,43,43,.06);
+  --fs-hero:19px;--fs-title:17px;--fs-card:14px;--fs-body:13px;--fs-sub:12px;--fs-cap:11px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;padding:24px 20px 40px;background:#EFEDE8;color:var(--text-1);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+.top{max-width:1200px;margin:0 auto 16px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-size:19px;margin:0 0 4px;font-weight:800}
+.sub{font-size:12px;color:#7a7a7a;line-height:1.65;margin:0}
+.sub b{color:var(--ai)}
+.switches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:99px;border:1px solid #DAD5CC;background:#fff;font-size:12px;color:#444;cursor:pointer;user-select:none}
+.sw.on{background:var(--ai);border-color:var(--ai);color:#fff}
+.stage{max-width:1200px;margin:0 auto;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+/* ============ 手机 ============ */
+.phone{width:375px;height:760px;background:var(--bg);border-radius:28px;overflow:hidden;position:relative;box-shadow:0 18px 44px rgba(0,0,0,.18);border:1px solid rgba(0,0,0,.07);flex:none}
+.phone.care{--fs-hero:22px;--fs-title:20px;--fs-card:17px;--fs-body:16px;--fs-sub:15px;--fs-cap:13px}
+.screen{position:absolute;inset:0;overflow:hidden}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;background:var(--bg);padding-bottom:58px;-webkit-overflow-scrolling:touch}
+.page.noTab{padding-bottom:0}
+.page::-webkit-scrollbar{width:0}
+.status{height:26px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:10px;font-weight:600}
+.status.dark{background:#FAF6F1;color:#2B2B2B}
+.status.light{background:transparent;color:#fff}
+.navbar{height:38px;background:#FAF6F1;display:flex;align-items:center;justify-content:center;position:relative;font-size:var(--fs-card);font-weight:700;flex:none}
+.navbar .back{position:absolute;left:10px;top:0;height:38px;display:flex;align-items:center;font-size:17px;padding:0 8px;cursor:pointer}
+.capsule{position:absolute;right:10px;top:8px;height:21px;width:60px;border:1px solid rgba(0,0,0,.10);border-radius:20px;display:flex;align-items:center;justify-content:space-around;font-size:9px;color:#555;background:rgba(255,255,255,.75)}
+.capsule.on-green{border-color:rgba(255,255,255,.55);color:#fff;background:rgba(255,255,255,.16)}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:52px;background:#fff;border-top:1px solid #eee;display:flex;z-index:30}
+.tabbar[hidden]{display:none}
+.tabbar .t{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;color:#9B9B9B;cursor:pointer;position:relative}
+.tabbar .t i{font-style:normal;font-size:15px;line-height:1;opacity:.5}
+.tabbar .t.on{color:var(--ai);font-weight:700}
+.tabbar .t.on i{opacity:1}
+.tabbar .t.ai.on{color:var(--ai)}
+.tabbar .t.ai i{opacity:1}
+.tabbar .t.ai::before{content:'';position:absolute;left:50%;top:3px;transform:translateX(-50%);width:30px;height:30px;border-radius:50%;background:var(--ai-light)}
+.tabbar .t.ai i{color:var(--ai)}
+.tabbar .t.ai.on::before{background:var(--ai)}
+.tabbar .t.ai.on i{color:#fff}
+/* ============ 首页 ============ */
+.header{background:linear-gradient(170deg,#3BB27E 0%,#2FA36B 45%,#1E8252 100%);padding:0 16px 56px;color:#fff}
+.h-cap{height:32px}
+.h-top{display:flex;align-items:flex-start;justify-content:space-between;padding:6px 0 14px}
+.h-hello{font-size:var(--fs-title);font-weight:800}
+.h-sub{font-size:var(--fs-cap);color:rgba(255,255,255,.78);margin-top:5px}
+.h-av{width:40px;height:40px;border-radius:50%;border:2px solid #fff;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600}
+.content{padding:0 16px 18px}
+/* 一句话输入 */
+.ask{margin-top:-40px;position:relative;z-index:3;background:var(--ai-grad);border-radius:14px;padding:14px;box-shadow:0 8px 20px rgba(91,84,214,.22)}
+.ask-h{display:flex;align-items:center;gap:6px;color:#fff;font-size:var(--fs-cap);opacity:.92}
+.ask-h .spark{font-size:12px}
+.ask-box{margin-top:10px;height:44px;background:rgba(255,255,255,.96);border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 10px}
+.ask-box input{flex:1;min-width:0;border:0;outline:none;background:transparent;font-size:var(--fs-body);font-family:inherit;color:var(--text-1)}
+.ask-box input::placeholder{color:#9B9B9B}
+.ask-mic{width:26px;height:26px;border-radius:50%;background:var(--ai-light);color:var(--ai);display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;cursor:pointer}
+.ask-go{height:28px;padding:0 11px;border-radius:8px;background:var(--ai);color:#fff;font-size:var(--fs-cap);font-weight:700;display:flex;align-items:center;flex:none;cursor:pointer}
+.ask-chips{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.ask-chip{height:24px;padding:0 9px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.34);color:#fff;font-size:10px;display:flex;align-items:center;cursor:pointer}
+/* 主动提醒 */
+.remind{margin-top:12px;background:#fff;border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.remind-h{display:flex;align-items:center;gap:6px;padding:10px 14px 0;font-size:var(--fs-cap);color:var(--text-3)}
+.remind-h .b{background:var(--ai-light);color:var(--ai);font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px}
+.remind-i{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer}
+.remind-i+.remind-i{border-top:1px solid var(--line)}
+.remind-ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+.remind-ic.g{background:var(--brand-light);color:var(--brand)}
+.remind-ic.o{background:var(--warm-light);color:var(--warm)}
+.remind-t{font-size:var(--fs-sub);font-weight:600;line-height:1.35}
+.remind-s{font-size:10px;color:var(--text-3);margin-top:2px}
+.remind-go{margin-left:auto;font-size:15px;color:var(--text-3)}
+/* 通用 section */
+.section{margin-top:16px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.section-title{font-size:var(--fs-title);font-weight:800}
+.more{font-size:var(--fs-cap);color:var(--text-3);cursor:pointer;padding:4px 0 4px 8px}
+/* 8 服务 */
+.svc{display:flex;flex-wrap:wrap;justify-content:space-between;background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:6px 4px}
+.svc-i{width:25%;padding:10px 2px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;border-radius:8px}
+.svc-i:active{background:#FBF8F4}
+.svc-ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;background:var(--brand-light)}
+.svc-n{font-size:10px;color:var(--text-2);text-align:center;line-height:1.2}
+.phone.care .svc-i{width:50%}
+.phone.care .svc-n{font-size:var(--fs-cap)}
+/* 一件事 */
+.one-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.one-scroll::-webkit-scrollbar{display:none}
+.one{flex:none;width:230px;border-radius:12px;padding:14px;color:#fff;position:relative;overflow:hidden;cursor:pointer}
+.one.a{background:linear-gradient(135deg,#2FA36B,#1E8252)}
+.one.b{background:linear-gradient(135deg,#7B6CF6,#4F7BF0)}
+.one.c{background:linear-gradient(135deg,#E0862F,#C9701F)}
+.one h4{margin:0;font-size:var(--fs-card);font-weight:800}
+.one p{margin:6px 0 0;font-size:10px;opacity:.86;line-height:1.5}
+.one .tags{display:flex;gap:4px;margin-top:9px;flex-wrap:wrap}
+.one .tg{font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,.22)}
+.one .ar{position:absolute;right:10px;bottom:8px;font-size:22px;opacity:.35}
+/* 动态 */
+.feed{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:0 14px}
+.feed-i{display:flex;align-items:flex-start;gap:8px;padding:11px 0;cursor:pointer}
+.feed-i+.feed-i{border-top:1px solid var(--line)}
+.ftag{flex:none;margin-top:2px;height:19px;padding:0 6px;border-radius:3px;font-size:9px;font-weight:700;display:flex;align-items:center;background:var(--green-light);color:var(--green)}
+.ftag.activity{background:var(--brand-light);color:var(--brand)}
+.ftag.urgent{background:var(--urgent-bg);color:var(--urgent)}
+.feed-t{font-size:var(--fs-sub);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-m{font-size:10px;color:var(--text-3);margin-top:2px;display:flex;gap:8px}
+/* ============ Agent ============ */
+.page.agent-layout{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}
+.agent-top{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#fff;border-bottom:1px solid var(--line);flex:none}
+.agent-top .av{width:26px;height:26px;border-radius:8px;background:var(--ai-grad);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
+.agent-top .st{flex:1;font-size:10px;color:var(--text-2);line-height:1.35}
+.agent-top .st b{display:block;font-size:var(--fs-cap);color:var(--text-1)}
+.agent-top .clr{font-size:var(--fs-cap);color:var(--ai);cursor:pointer}
+.chat{flex:1;min-height:0;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;font-size:var(--fs-body);line-height:1.6}
+.msg.user{align-self:flex-end;background:var(--ai);color:#fff;padding:9px 12px;border-radius:12px;border-top-right-radius:4px}
+.msg.ai{align-self:flex-start;background:#fff;box-shadow:var(--shadow);padding:11px 12px;border-radius:12px;border-top-left-radius:4px;max-width:92%}
+.msg.ai .lead{font-weight:700;margin-bottom:4px}
+.msg .tool-tag{display:inline-block;margin:6px 4px 0 0;padding:1px 6px;border-radius:4px;background:var(--ai-light);color:var(--ai);font-size:9px;font-family:ui-monospace,Menlo,monospace}
+/* 步骤卡 */
+.steps{margin-top:9px;border-left:2px solid var(--ai-line);padding-left:12px;display:flex;flex-direction:column;gap:2px}
+.step{display:flex;gap:8px;position:relative;padding:5px 0}
+.step .pt{position:absolute;left:-19px;top:9px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--text-3);box-sizing:border-box}
+.step.done .pt{border-color:var(--green);background:var(--green)}
+.step.now .pt{border-color:var(--warm);background:var(--warm);animation:pulse 1.4s infinite}
+.step.todo .pt{border-color:#CFCAC2}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(217,142,50,.35)}50%{box-shadow:0 0 0 5px rgba(217,142,50,0)}}
+.step .bd{min-width:0}
+.step .t{font-size:var(--fs-sub);font-weight:700;color:var(--text-1)}
+.step .d{font-size:10px;color:var(--text-3);margin-top:1px;line-height:1.45}
+.step.todo .t{color:var(--text-3);font-weight:600}
+/* 卡片 */
+.card-in{margin-top:10px;background:#fff;border:1px solid var(--ai-line);border-radius:12px;padding:12px}
+.card-in .ch{font-size:var(--fs-cap);color:var(--ai);font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.card-in .ch .st{font-size:9px;background:var(--ai-light);padding:2px 6px;border-radius:3px}
+.frow{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:var(--fs-sub)}
+.frow:last-of-type{border-bottom:0}
+.frow .k{color:var(--text-2);flex:none}
+.frow .v{text-align:right;font-weight:700;color:var(--text-1)}
+.frow .v small{font-weight:400;color:var(--text-3);font-size:10px;display:block;margin-top:1px}
+.cbtns{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;height:38px;border-radius:9px;border:0;font-family:inherit;font-size:var(--fs-sub);font-weight:700;cursor:pointer}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--text-2)}
+.btn.main{background:var(--brand);color:#fff}
+.btn.ai{background:var(--ai);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+/* chip 组 */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.chip2{height:30px;padding:0 11px;border-radius:99px;border:1px solid var(--ai-line);background:#fff;color:var(--ai);font-size:var(--fs-cap);font-weight:600;display:flex;align-items:center;cursor:pointer}
+.chip2:hover{background:var(--ai-light)}
+/* 回执 */
+.receipt{margin-top:10px;background:#fff;border-radius:12px;padding:14px;box-shadow:var(--shadow);text-align:center}
+.receipt .ok{width:34px;height:34px;border-radius:50%;background:var(--brand-light);color:var(--brand);font-size:17px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.receipt h4{margin:8px 0 0;font-size:var(--fs-card)}
+.receipt .num{margin-top:6px;font-size:var(--fs-title);font-weight:800;letter-spacing:.4px;color:var(--brand)}
+.receipt p{margin:6px 0 0;font-size:10px;color:var(--text-3);line-height:1.5}
+/* 政策结论 */
+.pbar{margin-top:10px;border-radius:9px;padding:10px 12px;font-size:var(--fs-sub);font-weight:700;display:flex;align-items:center;gap:6px}
+.pbar.ok{background:var(--brand-light);color:var(--brand-press)}
+.pbar.no{background:var(--urgent-bg);color:var(--urgent)}
+.plist{margin:9px 0 0;padding-left:0;list-style:none}
+.plist li{display:flex;gap:6px;font-size:var(--fs-cap);color:var(--text-2);padding:5px 0;line-height:1.5}
+.plist li::before{content:'·';color:var(--ai);font-weight:800}
+.ai-input{flex:none;padding:9px 16px 13px;background:#fff;border-top:1px solid var(--line);display:flex;gap:8px;align-items:flex-end}
+.ai-input textarea{flex:1;height:38px;max-height:76px;border:0;outline:none;resize:none;background:var(--bg);border-radius:18px;padding:10px 12px;font-size:var(--fs-body);font-family:inherit;line-height:18px}
+.ai-send{width:58px;height:38px;border-radius:19px;background:var(--ai);color:#fff;font-size:var(--fs-sub);font-weight:700;border:0;cursor:pointer;flex:none}
+.sugg{padding:0 16px 10px;display:flex;gap:6px;flex-wrap:wrap;flex:none}
+.sugg .c{height:28px;padding:0 10px;border-radius:99px;background:#fff;border:1px solid var(--line);font-size:var(--fs-cap);color:var(--text-2);display:flex;align-items:center;cursor:pointer}
+/* ============ 办事 ============ */
+.search{padding:12px 16px;background:#fff;border-bottom:1px solid var(--line)}
+.search-box{height:40px;border-radius:99px;background:var(--bg);display:flex;align-items:center;gap:8px;padding:0 12px}
+.search-box input{border:0;background:transparent;outline:none;flex:1;min-width:0;font-size:var(--fs-body);font-family:inherit}
+.search-x{width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.06);color:var(--text-2);font-size:10px;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer}
+.match{padding:12px 16px 0}
+.match-list{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:0 14px}
+.match-row{display:flex;align-items:center;gap:10px;padding:11px 0;cursor:pointer}
+.match-row+.match-row{border-top:1px solid var(--line)}
+.match-ic{width:34px;height:34px;border-radius:9px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.match-n{font-size:var(--fs-card);font-weight:700}
+.match-c{font-size:10px;color:var(--text-3);margin-top:2px}
+.match-a{margin-left:auto;font-size:15px;color:var(--text-3)}
+.match-empty{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:20px 14px;text-align:center}
+.match-ai{margin:10px auto 0;height:34px;padding:0 14px;border-radius:99px;background:var(--ai-light);color:var(--ai);font-size:var(--fs-sub);font-weight:700;display:inline-flex;align-items:center;cursor:pointer}
+.illus{margin-top:10px;background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:10px;display:flex;gap:10px;align-items:center}
+.illus-a{width:84px;height:84px;border-radius:9px;background:linear-gradient(135deg,#E6F5EE,#C8E8D8);display:flex;align-items:center;justify-content:center;font-size:38px;flex:none;position:relative}
+.illus-a span{position:absolute;left:3px;bottom:3px;background:rgba(0,0,0,.55);color:#fff;font-size:8px;padding:1px 4px;border-radius:3px}
+.illus-t{font-size:var(--fs-card);font-weight:700}
+.illus-s{font-size:10px;color:var(--text-2);margin-top:3px;line-height:1.5}
+.cats{display:flex;flex-wrap:wrap;justify-content:space-between;padding:14px 16px 0}
+.cat{width:calc(50% - 4px);min-height:60px;margin-bottom:8px;padding:11px;background:#fff;border-radius:12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:8px;cursor:pointer}
+.cat:active{background:#FBF8F4}
+.cat-ic{font-size:22px;flex:none}
+.cat-n{font-size:var(--fs-sub);font-weight:700}
+.cat-s{font-size:10px;color:var(--text-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.phone.care .cat{width:100%}
+.orders{margin-top:14px}
+.orders-h{display:flex;align-items:center;justify-content:space-between;padding:0 16px 8px}
+.orders-t{font-size:var(--fs-title);font-weight:800}
+.orders-c{font-size:var(--fs-cap);color:var(--text-3)}
+.tabs{display:flex;gap:8px;padding:0 16px 8px;flex-wrap:wrap}
+.tab{height:30px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:var(--fs-sub);color:var(--text-2);display:flex;align-items:center;cursor:pointer}
+.tab.on{background:var(--brand-light);border-color:var(--brand);color:var(--brand);font-weight:600}
+.list{padding:0 16px}
+.card{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:14px;margin-bottom:10px;cursor:pointer}
+.card-h{display:flex;align-items:center;justify-content:space-between}
+.card-t{font-size:var(--fs-card);font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{height:22px;padding:0 9px;border-radius:99px;font-size:10px;font-weight:700;display:flex;align-items:center;flex:none;margin-left:8px}
+.tag.pending{background:#fbf0e0;color:#d98e32}
+.tag.processing{background:#f0ebf8;color:#7a5bb8}
+.tag.done{background:#e7f2ea;color:#3e8e5a}
+.card-s{font-size:var(--fs-sub);color:var(--text-2);margin-top:7px;line-height:1.45}
+.card-f{display:flex;justify-content:space-between;margin-top:10px;font-size:10px;color:var(--text-3)}
+.fab{position:absolute;right:16px;bottom:66px;height:44px;padding:0 16px;border-radius:99px;background:linear-gradient(170deg,#3BB27E,#2FA36B 45%,#1E8252);color:#fff;font-size:var(--fs-card);font-weight:700;display:flex;align-items:center;box-shadow:0 4px 12px rgba(30,130,82,.25);cursor:pointer;z-index:25}
+/* ============ 证照 / 预约 / 进度 / 预检 ============ */
+.cert{margin:12px 16px 0;border-radius:14px;padding:16px;color:#fff;position:relative;overflow:hidden;cursor:pointer;background:var(--ai-grad);box-shadow:0 6px 18px rgba(91,84,214,.22)}
+.cert:nth-child(2){background:linear-gradient(135deg,#2FA36B,#1E8252);box-shadow:0 6px 18px rgba(30,130,82,.2)}
+.cert:nth-child(3){background:linear-gradient(135deg,#E0862F,#C9701F);box-shadow:0 6px 18px rgba(224,134,47,.2)}
+.cert .ct{font-size:var(--fs-card);font-weight:800}
+.cert .cn{font-size:20px;font-weight:700;letter-spacing:1px;margin-top:14px}
+.cert .cm{font-size:10px;opacity:.82;margin-top:4px;display:flex;gap:10px}
+.cert .cb{position:absolute;right:14px;bottom:12px;height:26px;padding:0 10px;border-radius:99px;background:rgba(255,255,255,.22);font-size:10px;display:flex;align-items:center}
+.cert .water{position:absolute;right:-16px;top:-16px;font-size:74px;opacity:.12}
+.tip{margin:10px 16px 0;font-size:10px;color:var(--text-3);line-height:1.6;background:var(--warm-light);color:#92400E;padding:8px 10px;border-radius:8px}
+.biz{background:#fff;border-radius:12px;box-shadow:var(--shadow);margin:12px 16px 0;padding:0 14px}
+.biz-i{display:flex;align-items:center;gap:10px;padding:14px 0;cursor:pointer}
+.biz-i+.biz-i{border-top:1px solid var(--line)}
+.biz-n{font-size:var(--fs-card);font-weight:700}
+.biz-s{font-size:10px;color:var(--text-3);margin-top:2px}
+.biz-i .ar{margin-left:auto;color:var(--text-3);font-size:15px}
+.sect{padding:14px 16px 0;font-size:var(--fs-sub);font-weight:700;color:var(--text-2)}
+.dates{display:flex;gap:8px;padding:10px 16px 0}
+.dchip{width:76px;height:52px;border-radius:10px;border:1px solid var(--line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.dchip b{font-size:var(--fs-card)}
+.dchip span{font-size:9px;color:var(--text-3);margin-top:1px}
+.dchip.on{border-color:var(--brand);background:var(--brand-light)}
+.dchip.on b{color:var(--brand)}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 16px 0}
+.slot{height:40px;border-radius:9px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:var(--fs-sub);cursor:pointer}
+.slot.on{border-color:var(--brand);background:var(--brand-light);color:var(--brand);font-weight:700}
+.slot.off{color:#C9C4BB;background:#F7F5F2;cursor:not-allowed}
+.queue{margin:14px 16px 0;background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:18px;text-align:center}
+.queue .qn{font-size:44px;font-weight:800;letter-spacing:2px;color:var(--brand);line-height:1}
+.queue .ql{font-size:10px;color:var(--text-3);margin-top:6px}
+.queue .qr{display:flex;justify-content:space-around;margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.queue .qi b{display:block;font-size:var(--fs-title);font-weight:800}
+.queue .qi span{font-size:10px;color:var(--text-3)}
+.tl{padding:10px 16px 0}
+.tl-i{display:flex;gap:12px;position:relative;padding-bottom:18px}
+.tl-i::before{content:'';position:absolute;left:9px;top:22px;bottom:0;width:2px;background:var(--line)}
+.tl-i:last-child::before{display:none}
+.tl-d{width:20px;height:20px;border-radius:50%;border:2px solid #CFCAC2;background:#fff;flex:none;box-sizing:border-box;z-index:1}
+.tl-i.done .tl-d{border-color:var(--green);background:var(--green)}
+.tl-i.now .tl-d{border-color:var(--warm);background:var(--warm);box-shadow:0 0 0 4px rgba(217,142,50,.15)}
+.tl-b{flex:1;min-width:0;padding-top:0}
+.tl-t{font-size:var(--fs-sub);font-weight:700}
+.tl-s{font-size:10px;color:var(--text-3);margin-top:2px;line-height:1.5}
+.tl-time{font-size:9px;color:var(--text-3);margin-top:2px}
+.tl-i.todo .tl-t{color:var(--text-3);font-weight:600}
+.chk{margin:12px 16px 0;background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:0 14px}
+.chk-i{display:flex;align-items:center;gap:10px;padding:13px 0;cursor:pointer}
+.chk-i+.chk-i{border-top:1px solid var(--line)}
+.chk-box{width:22px;height:22px;border-radius:6px;border:2px solid #D8D2C8;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
+.chk-box.on{background:var(--brand);border-color:var(--brand)}
+.chk-t{font-size:var(--fs-sub);font-weight:600}
+.chk-s{font-size:10px;color:var(--text-3);margin-top:2px}
+.resbar{margin:12px 16px 0;border-radius:10px;padding:12px;font-size:var(--fs-sub);font-weight:700;display:flex;align-items:center;gap:8px;background:var(--brand-light);color:var(--brand-press)}
+.resbar.bad{background:var(--warm-light);color:#92400E}
+/* ============ 我的 / 圈子 ============ */
+.user-card{margin:12px 16px 0;background:linear-gradient(170deg,#3BB27E,#2FA36B 45%,#1E8252);border-radius:12px;padding:18px;color:#fff;display:flex;align-items:center;gap:12px}
+.user-card .av{width:54px;height:54px;border-radius:50%;border:2px solid #fff;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:600}
+.user-card .n{font-size:var(--fs-title);font-weight:700}
+.user-card .r{display:inline-block;margin-top:4px;font-size:10px;background:rgba(255,255,255,.22);padding:2px 8px;border-radius:99px}
+.rows{margin:12px 16px 0;background:#fff;border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.row-i{display:flex;align-items:center;justify-content:space-between;padding:15px 14px;cursor:pointer}
+.row-i+.row-i{border-top:1px solid var(--line)}
+.row-i .t{font-size:var(--fs-card);font-weight:700}
+.row-i .s{font-size:10px;color:var(--text-3);margin-top:2px}
+.row-i .v{font-size:var(--fs-sub);color:var(--text-3);display:flex;align-items:center;gap:6px}
+.switch{width:42px;height:24px;border-radius:99px;background:#DDD;position:relative;transition:.18s;flex:none}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch.on{background:var(--brand)}
+.switch.on::after{left:20px}
+.post{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:14px;margin-bottom:10px}
+.post .h{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-3)}
+.post h4{margin:7px 0 0;font-size:var(--fs-card)}
+.post p{margin:5px 0 0;font-size:var(--fs-sub);color:var(--text-2);line-height:1.5}
+/* ============ 弹层 ============ */
+.mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:40;display:none}
+.mask.show{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:14px 14px 0 0;padding:16px 16px 20px;z-index:41;transform:translateY(100%);transition:transform .22s ease}
+.sheet.show{transform:translateY(0)}
+.sheet h3{margin:0 0 10px;font-size:var(--fs-card);text-align:center}
+.sheet .item{height:46px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:var(--fs-body);cursor:pointer}
+.sheet .item:last-child{border-bottom:0}
+.sheet .cancel{margin-top:10px;height:42px;border-radius:10px;background:#F4F1EC;display:flex;align-items:center;justify-content:center;font-size:var(--fs-sub);color:var(--text-2);cursor:pointer}
+.qr{width:150px;height:150px;margin:8px auto;background:repeating-linear-gradient(45deg,#2B2B2B 0 6px,#fff 6px 12px);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;text-shadow:0 1px 3px #000}
+.toast{position:absolute;left:50%;bottom:88px;transform:translateX(-50%) translateY(8px);background:rgba(0,0,0,.78);color:#fff;font-size:var(--fs-sub);padding:9px 15px;border-radius:99px;opacity:0;transition:.2s;pointer-events:none;z-index:60;max-width:80%;text-align:center;line-height:1.4}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.offbar{position:absolute;left:0;right:0;top:0;height:26px;background:#FEF3C7;color:#92400E;font-size:10px;display:none;align-items:center;justify-content:center;z-index:70;font-weight:600}
+.offbar.show{display:flex}
+/* ============ 侧栏 ============ */
+.legend{width:300px;flex:none;font-size:12px;color:#555;line-height:1.75}
+.lc{background:#fff;border-radius:12px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:12px}
+.lc h3{margin:0 0 8px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px}
+.bd{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px}
+.bd.real{background:var(--brand-light);color:var(--brand)}
+.bd.proto{background:var(--ai-light);color:var(--ai)}
+.bd.stop{background:#FEF3C7;color:#92400E}
+.lc ul{margin:6px 0 0;padding-left:16px}
+.lc li{margin:4px 0}
+.lc p{margin:6px 0 0}
+.kbd{display:inline-block;padding:1px 5px;border-radius:4px;background:#F1EEE8;border:1px solid #E3DED5;font-size:11px;font-family:ui-monospace,Menlo,monospace}
+@media (max-width:860px){.legend{width:100%;max-width:375px}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <h1>社区便民小程序 · v1.0.3「AI 管家」可点击原型</h1>
+    <p class="sub">对标政务 App 的<b>办事结构</b>，但把"人找功能"改成<b>"AI 帮你办完"</b>：一句话 → 拆步骤 → 自动填表 → 补一项 → 确认 → 回执 → 进度。<br>
+    <span class="bd real">已实现</span> 沿用已落地代码能力 · <span class="bd proto">原型</span> 交互预演，代码未落地 · <span class="bd stop">仅演示</span> 涉及资质，不可宣称已对接</p>
+  </div>
+  <div class="switches">
+    <div class="sw" id="swCare"><span>🔍 关怀模式</span></div>
+    <div class="sw" id="swOff"><span>📴 断网</span></div>
+    <div class="sw" id="swReset"><span>↺ 重置</span></div>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="screen" id="screen"></div>
+    <div class="tabbar" id="tabbar"></div>
+    <div class="offbar" id="offbar">已断网 · AI 只能答、不能办</div>
+    <div class="mask" id="mask"></div>
+    <div class="sheet" id="sheet"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <aside class="legend">
+    <div class="lc">
+      <h3>三步看懂这版 <span class="bd proto">重点</span></h3>
+      <p><b>1. 首页说一句话</b><br>点紫色输入框，输入或点预设：<span class="kbd">我家厨房水管漏水了</span> → AI 管家自动拆成 4 步。</p>
+      <p><b>2. 只补一项</b><br>AI 只问「哪一栋」，点一下就好；不会让你重填类别、时间。</p>
+      <p><b>3. 确认才提交</b><br>草稿卡可改字段，点【确认提交】才真写；成功给工单号 → 看进度时间轴。</p>
+    </div>
+    <div class="lc">
+      <h3>其他可点的 <span class="bd real">已实现</span></h3>
+      <ul>
+        <li>办事页搜索 <span class="kbd">药品</span> <span class="kbd">漏水</span>（别名 + 配图）</li>
+        <li>报修记录筛选、详情</li>
+        <li>社区动态 → 通知列表</li>
+        <li>关怀模式：字号放大 + 宫格 1 列</li>
+      </ul>
+    </div>
+    <div class="lc">
+      <h3>政务 App 借鉴了什么 <span class="bd proto">原型</span></h3>
+      <ul>
+        <li><b>一件事一次办</b>：新生儿 / 退休 / 租房备案，把 3~5 个事项打包</li>
+        <li><b>预约取号</b>：选业务 → 选时段 → 取号 → 排队进度</li>
+        <li><b>证照包</b>：居住证明 / 疫苗档案 / 健康档案（脱敏 + 亮证）</li>
+        <li><b>办事进度</b>：统一时间轴</li>
+        <li><b>政策计算器</b>：条件问答 → 能不能领 → 材料清单</li>
+      </ul>
+    </div>
+    <div class="lc">
+      <h3>必须说清楚的两句 <span class="bd stop">仅演示</span></h3>
+      <p>1. <b>证照亮证</b>：真实上线需实名与授权，这里是脱敏示意，答辩别说"已对接电子证照"。</p>
+      <p>2. <b>政策结论</b>：AI 只做条件初筛，最终以社区审核为准；页面已带免责文案。</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+/* =====================================================================
+ * 数据
+ * ===================================================================== */
+const SVC = [
+  { n:'社保医保', i:'🏥', c:'g', act:'toast', msg:'医保余额 1,286.40 元 · 参保状态正常（示意）' },
+  { n:'居住证', i:'🪪', c:'g', act:'check', msg:'' },
+  { n:'养老助餐', i:'🍚', c:'g', act:'toast', msg:'助餐登记：60 岁以上，周一至周五午餐' },
+  { n:'生活缴费', i:'💳', c:'o', act:'toast', msg:'缴费需支付资质，本期仅入口占位（PRD P2 已排除）' },
+  { n:'证明开具', i:'📄', c:'g', act:'licences', msg:'' },
+  { n:'预约取号', i:'🎫', c:'g', act:'booking', msg:'' },
+  { n:'政策查询', i:'📢', c:'o', act:'ask', msg:'适老化改造补贴我能领吗' },
+  { n:'报修上门', i:'🔧', c:'o', act:'ask', msg:'我家厨房水管漏水了' },
+];
+
+const ONETHING = [
+  { k:'baby', cls:'a', t:'新生儿一件事', d:'出生证明 · 疫苗建档 · 医保参保 · 助餐登记', tags:['4 个事项','1 张表'] },
+  { k:'retire', cls:'b', t:'退休养老一件事', d:'养老金资格认证 · 助餐申请 · 适老化改造', tags:['3 个事项','免重复填'] },
+  { k:'rent', cls:'c', t:'租房备案一件事', d:'居住登记 · 居住证申领 · 水电过户', tags:['3 个事项','材料预检'] },
+];
+
+const NOTICES = [
+  { id:'n1', type:'urgent', title:'3 号楼停水提醒（附储水建议）', body:'明天 09:00-17:00 停水，家有老人的建议今晚先接两桶水，物业办公室也可取水。', meta:'紧急 · 5 小时前', loc:'3 号楼' },
+  { id:'n2', type:'notice', title:'2 号门道路施工，建议绕行东门', body:'2 号门今早开始道路检修，预计两天，早高峰建议走东门。', meta:'公告 · 6 小时前', loc:'2 号门' },
+  { id:'n3', type:'activity', title:'爱心义诊进社区（本周六）', body:'9:00-11:30 社区广场，需测血糖的请空腹，现场可登记健康档案。', meta:'活动 · 1 天前', loc:'社区广场' },
+  { id:'n4', type:'notice', title:'垃圾分类投放时间调整', body:'厨余垃圾调整为 7:00-9:00 与 18:00-20:00。', meta:'公告 · 3 天前', loc:'' },
+  { id:'n5', type:'activity', title:'长者饭堂助餐服务开始登记', body:'60 岁以上可登记，周一至周五午餐，行动不便可申请送餐。', meta:'活动 · 4 天前', loc:'社区服务中心' },
+];
+
+const ORDERS = [
+  { id:'w1', title:'厨房水管漏水', status:'processing', st:'处理中', cat:'水电', sum:'厨房水管接口漏水，需上门检修并更换密封件。', time:'10-16 15:22' },
+  { id:'w2', title:'楼道灯不亮', status:'done', st:'已完成', cat:'公共设施', sum:'公共区域照明故障，需更换灯泡。', time:'10-12 15:22' },
+  { id:'w3', title:'卫生间地漏返味', status:'pending', st:'待受理', cat:'水电', sum:'地漏存水弯干涸或堵塞导致返味，需疏通。', time:'10-17 13:22' },
+];
+
+const LICENCES = [
+  { t:'居民居住证明', no:'4401 06** **** 3721', sub:'有效期至 2027-03-31', icon:'🪪' },
+  { t:'儿童疫苗档案', no:'接种证 GZ** **** 0882', sub:'已完成 12/12 剂次', icon:'💉' },
+  { t:'家庭健康档案', no:'家庭编号 JT** 0917', sub:'签约医生：李医生', icon:'🩺' },
+];
+
+const BIZ = [
+  { t:'社保医保综合业务', s:'参保查询 · 医保报销 · 关系转移' },
+  { t:'居住证与户籍', s:'居住登记 · 居住证申领 · 续签' },
+  { t:'养老助餐登记', s:'助餐申请 · 送餐上门 · 补贴咨询' },
+];
+
+const ALIASES = {
+  药:['挂号'], 药品:['挂号'], 看病:['挂号'], 医院:['挂号'],
+  水费:['水电燃气'], 电费:['水电燃气'], 燃气费:['水电燃气'], 漏水:['水电燃气'], 维修:['水电燃气'], 报修:['水电燃气'],
+  吃饭:['养老助餐'], 洗澡:['养老助餐'], 陪护:['养老助餐'],
+  养老:['养老助餐'], 补贴:['政策查询'], 体检:['证明开具'], 报告:['证明开具'],
+  疫苗:['证明开具'], 义诊:['养老助餐'], 活动:['养老助餐'],
+};
+const ILLUS = { 药品:'💊', 药:'💊', 挂号:'🏥', 看病:'🏥', 漏水:'🔧', 维修:'🔧', 水费:'💡', 燃气:'🔥', 缴费:'💳', 助餐:'🍚', 补贴:'📢', 疫苗:'💉', 体检:'🩺' };
+
+const KB = [
+  { k:['物业电话','物业','服务中心'], a:'物业服务中心 24 小时值班电话 020-88888888，办公时间 8:30-18:00，地址：1 号楼 1 层前台。' },
+  { k:['水费','电费','燃气费','缴费'], a:'水费 020-88884444、电费 020-88883333、燃气 020-88882222；缴费可在微信「生活缴费」完成。' },
+  { k:['燃气','煤气味','漏气'], a:'闻到燃气味：立即开窗、关阀，不要开关电器，到室外拨打 020-88882222。' },
+  { k:['挂号','门诊','卫生服务站'], a:'卫生服务站 020-88885555，南门东侧 200 米，8:00-20:00；65 岁以上免挂号费。' },
+  { k:['居住证','办证'], a:'居住证：身份证 + 租赁合同，到党群服务中心 2 号窗口，工作日 9:00-17:00，5 个工作日出证。' },
+  { k:['助餐','吃饭','饭堂'], a:'助餐：60 岁以上可登记，周一至周五午餐，两荤一素，行动不便可送餐上门。' },
+  { k:['适老化','改造'], a:'适老化改造含防滑地面、扶手、坐便器改造，可申请补贴，需先登记评估。' },
+  { k:['垃圾','分类'], a:'厨余垃圾 7:00-9:00 与 18:00-20:00，其他垃圾时间不变。' },
+  { k:['电梯','被困'], a:'电梯每半月维保。被困请按轿厢紧急按钮并拨 020-88888888，不要强行扒门。' },
+  { k:['疫苗','接种'], a:'儿童疫苗档案可在卫生服务站查询（020-88885555），带接种证与户口本。' },
+];
+const SAFETY = { k:['胸痛','晕倒','昏迷','抽搐','大出血','呼吸困难','吃错药','中毒'],
+  a:'这是医疗紧急情况，请立即拨打 120，不要等待线上回答。社区内可同时联系物业 020-88888888 协助引导救护车。（社区无法提供专业医疗意见）' };
+
+/* =====================================================================
+ * 状态
+ * ===================================================================== */
+const state = {
+  page:'home', backTo:'home', care:false, offline:false,
+  tab:'', keyword:'', match:[], illus:null,
+  chat:[], chatInited:false, typing:false,
+  agent: { stage:'idle', draft:null, msgs:[], pendingChips:null, policy:null },
+  booking: { biz:'', date:'今天', slot:'', number:'', prev:0, done:false },
+  lic: 0, check: { done:{}, res:false }, track:'w1',
+  noticeFilter:'',
+};
+
+const $ = (s) => document.querySelector(s);
+const qa = (s) => Array.from(document.querySelectorAll(s));
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tm = 0;
+function toast(m){ const el=$('#toast'); el.textContent=m; el.classList.add('show'); clearTimeout(tm); tm=setTimeout(()=>el.classList.remove('show'),1900); }
+function vibrate(){ if(navigator.vibrate) navigator.vibrate(8); }
+
+/* =====================================================================
+ * 渲染骨架
+ * ===================================================================== */
+function render(){
+  $('#phone').classList.toggle('care', state.care);
+  $('#offbar').classList.toggle('show', state.offline);
+  $('#swCare').classList.toggle('on', state.care);
+  $('#swOff').classList.toggle('on', state.offline);
+
+  const tabPages = ['home','hall','agent','circle','profile'];
+  const show = tabPages.indexOf(state.page) >= 0;
+  const tb = $('#tabbar');
+  tb.hidden = !show;
+  if (show) {
+    tb.innerHTML = [['home','⌂','首页',''],['hall','▤','办事',''],['agent','✦','AI 管家','ai'],['circle','◍','圈子',''],['profile','◔','我的','']]
+      .map(([k,i,t,c]) => `<div class="t ${state.page===k?'on':''} ${c}" data-tab="${k}"><i>${i}</i>${t}</div>`).join('');
+  }
+  const map = { home:pgHome, hall:pgHall, agent:pgAgent, circle:pgCircle, profile:pgProfile,
+                notices:pgNotices, licences:pgLicences, booking:pgBooking, track:pgTrack, check:pgCheck };
+  $('#screen').innerHTML = (map[state.page] || pgHome)();
+  if (state.page === 'agent' || state.page === 'booking') scrollBottom();
+}
+
+function scrollBottom(){
+  const box = $('#chatScroll');
+  if (box) box.scrollTop = box.scrollHeight;
+}
+
+/* =====================================================================
+ * 首页
+ * ===================================================================== */
+function pgHome(){
+  return `
+  <div class="page">
+    <div class="header">
+      <div class="status light"><span>08:42</span><span>●●● ▮</span></div>
+      <div class="h-cap"><div class="capsule on-green"><span>···</span><span>◉</span></div></div>
+      <div class="h-top">
+        <div>
+          <div class="h-hello">早上好，阿明</div>
+          <div class="h-sub">📍 阳光社区 · 3 号楼 2 单元</div>
+        </div>
+        <div class="h-av">阿</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="ask" data-act="ask-open">
+        <div class="ask-h"><span class="spark">✦</span> AI 管家 · 说一句话就能办事</div>
+        <div class="ask-box">
+          <input id="homeAsk" placeholder="例如：我家厨房水管漏水了" readonly>
+          <div class="ask-mic" data-act="toast" data-msg="语音输入：真实版用微信同声传译插件（需额外授权）">🎙</div>
+          <div class="ask-go" data-act="ask-open">去办</div>
+        </div>
+        <div class="ask-chips">
+          <div class="ask-chip" data-act="ask" data-q="我家厨房水管漏水了">水管漏水</div>
+          <div class="ask-chip" data-act="ask" data-q="我想预约办事大厅">预约取号</div>
+          <div class="ask-chip" data-act="ask" data-q="适老化改造补贴我能领吗">补贴查询</div>
+        </div>
+      </div>
+
+      <div class="remind">
+        <div class="remind-h"><span class="b">AI 提醒</span><span>根据你的工单和社区通知生成</span></div>
+        <div class="remind-i" data-act="go-track" data-id="w1">
+          <div class="remind-ic g">🔧</div>
+          <div><div class="remind-t">你的报修已派单</div><div class="remind-s">师傅预计 14:00 上门 · 点看进度</div></div>
+          <div class="remind-go">›</div>
+        </div>
+        <div class="remind-i" data-act="notices" data-filter="urgent">
+          <div class="remind-ic o">💧</div>
+          <div><div class="remind-t">明天 09:00 起 3 号楼停水</div><div class="remind-s">建议今晚先储水 · 家中有老人优先</div></div>
+          <div class="remind-go">›</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div class="section-title">常用服务</div><div class="more" data-act="tab-jump" data-tab="hall">全部 ›</div></div>
+        <div class="svc">
+          ${SVC.map(s => `<div class="svc-i" data-act="svc" data-i="${esc(s.n)}">
+            <div class="svc-ic" style="${s.c==='o'?'background:var(--warm-light)':''}">${s.i}</div>
+            <div class="svc-n">${esc(s.n)}</div></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div class="section-title">一件事一次办</div><div class="more" data-act="toast" data-msg="把关联事项打包，一次填表、材料复用">说明 ›</div></div>
+        <div class="one-scroll">
+          ${ONETHING.map(o => `<div class="one ${o.cls}" data-act="onething" data-k="${o.k}">
+            <h4>${esc(o.t)}</h4><p>${esc(o.d)}</p>
+            <div class="tags">${o.tags.map(t=>`<span class="tg">${esc(t)}</span>`).join('')}</div>
+            <div class="ar">›</div></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div class="section-title">社区动态</div><div class="more" data-act="notices" data-filter="">全部 ›</div></div>
+        <div class="feed">
+          ${NOTICES.slice(0,3).map(x => `<div class="feed-i" data-act="notices" data-filter="${x.type}">
+            <div class="ftag ${x.type}">${x.type==='urgent'?'紧急':x.type==='activity'?'活动':'公告'}</div>
+            <div style="min-width:0"><div class="feed-t">${esc(x.title)}</div>
+            <div class="feed-m"><span>${esc(x.meta)}</span>${x.loc?`<span>📍 ${esc(x.loc)}</span>`:''}</div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =====================================================================
+ * AI 管家
+ * ===================================================================== */
+function agentInit(){
+  if (state.agent.msgs.length) return;
+  state.agent.msgs.push({
+    role:'ai',
+    text:'我是社区 AI 管家。除了回答问题，我还能<b>直接帮你办</b>：报修、预约取号、查补贴，都会先给你看草稿再提交。',
+  });
+}
+
+function pgAgent(){
+  agentInit();
+  const msgs = state.agent.msgs.map(renderMsg).join('');
+  return `
+  <div class="page noTab agent-layout">
+    <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="navbar">AI 管家<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="agent-top">
+      <div class="av">✦</div>
+      <div class="st"><b>${state.offline?'离线模式 · 只能答、不能办':'在线 · 能办事、会追问'}</b>${state.offline?'断网后写操作已禁用':'已连接社区服务 · 写操作需你确认'}</div>
+      <div class="clr" data-act="agent-reset">重来</div>
+    </div>
+    <div class="chat" id="chatScroll">${msgs}${state.typing?'<div class="msg ai" style="padding:10px 14px">···</div>':''}</div>
+    ${state.agent.stage==='idle'?`<div class="sugg">
+      <div class="c" data-act="ask" data-q="我家厨房水管漏水了">水管漏水怎么办</div>
+      <div class="c" data-act="ask" data-q="我要预约办事">预约取号</div>
+      <div class="c" data-act="ask" data-q="适老化改造补贴我能领吗">补贴能不能领</div>
+      <div class="c" data-act="ask" data-q="物业电话是多少">物业电话</div>
+    </div>`:''}
+    <div class="ai-input">
+      <textarea id="chatInput" placeholder="说一句话，我来办…"></textarea>
+      <button class="ai-send" data-act="send">发送</button>
+    </div>
+  </div>`;
+}
+
+function renderMsg(m){
+  if (m.role === 'user') return `<div class="msg user">${esc(m.text)}</div>`;
+  if (m.role === 'card') return m.html;
+  const steps = m.steps ? `<div class="steps">
+    ${m.steps.map(s => `<div class="step ${s.s}"><div class="pt"></div><div class="bd">
+      <div class="t">${esc(s.t)}</div>${s.d?`<div class="d">${esc(s.d)}</div>`:''}</div></div>`).join('')}
+  </div>` : '';
+  const tools = m.tools ? m.tools.map(t => `<span class="tool-tag">${esc(t)}</span>`).join('') : '';
+  const chips = (m.chips && !m.answered) ? `<div class="chips">${m.chips.map(c => `<div class="chip2" data-act="agent-chip" data-k="${esc(c.k)}" data-v="${esc(c.v)}">${esc(c.label)}</div>`).join('')}</div>` : '';
+  return `<div class="msg ai">${m.lead?`<div class="lead">${m.lead}</div>`:''}${m.text||''}${steps}${tools}${chips}</div>`;
+}
+
+/* ---------- Agent 编排 ---------- */
+function agentPush(m){ state.agent.msgs.push(m); render(); scrollBottom(); }
+
+function agentThink(ms, fn){ state.typing = true; render(); setTimeout(() => { state.typing = false; fn(); }, ms); }
+
+function detectIntent(t){
+  if (SAFETY.k.some(k => t.includes(k))) return 'safety';
+  if (/(漏水|灯|门|堵|坏|修|维修|报修|水压|跳闸)/.test(t)) return 'repair';
+  if (/(预约|取号|排队|办事大厅|窗口)/.test(t)) return 'booking';
+  if (/(补贴|能不能领|政策|条件|多少钱|资格)/.test(t)) return 'policy';
+  if (/(缴费|交费|水费|电费|物业费)/.test(t)) return 'pay';
+  return 'kb';
+}
+
+function agentAsk(text){
+  const t = String(text || '').trim();
+  if (!t || state.typing) return;
+  agentPush({ role:'user', text:t });
+  const intent = detectIntent(t);
+
+  if (intent === 'safety') {
+    agentThink(500, () => agentPush({ role:'ai', lead:'⚠ 先处理紧急情况', text:esc(SAFETY.a), tools:['safety.guard'] }));
+    return;
+  }
+  if (intent === 'pay') {
+    agentThink(500, () => agentPush({ role:'ai', lead:'缴费入口本期未开通', text:'生活缴费需要支付资质，这一版只保留入口占位。<br>可以先帮你查缴费热线，或者把账单问题转给物业。', chips:[{k:'kb',v:'水费电话',label:'查缴费热线'},{k:'reset',v:'',label:'换个问题'}] }));
+    return;
+  }
+  if (intent === 'repair') { agentRepair(t); return; }
+  if (intent === 'booking') {
+    agentThink(600, () => agentPush({ role:'ai', lead:'帮你预约社区事务大厅', text:'已进入预约，选业务和时段即可取号（不用填表）。',
+      steps:[{s:'done',t:'识别需求',d:'办事预约 · 置信度 94%'},{s:'done',t:'准备数据',d:'你的社区账号已带入'}],
+      tools:['hall.business.list'] }));
+    setTimeout(() => { state.backTo='agent'; state.page='booking'; render(); }, 900);
+    return;
+  }
+  if (intent === 'policy') { agentPolicyStart(); return; }
+
+  // 知识库兜底
+  agentThink(600, () => {
+    const hit = KB.find(k => k.k.some(kk => t.includes(kk)));
+    agentPush({ role:'ai', lead:'查到了', text: hit ? esc(hit.a) : '这个问题知识库里没有。你可以问我报修、预约、补贴，或直接打物业 020-88888888。',
+      tools:['kb.search'], chips: hit ? [{k:'reset',v:'',label:'还能办什么'}] : [{k:'reset',v:'',label:'换个问题'}] });
+  });
+}
+
+function agentRepair(t){
+  // 从原句抽取（不要求用户重填）
+  const loc = /厨房/.test(t) ? '厨房' : /卫生间|厕所|浴室/.test(t) ? '卫生间' : /阳台/.test(t) ? '阳台' : '待确认';
+  const cat = /水|漏|堵/.test(t) ? '水电' : /灯|电|跳闸/.test(t) ? '电路' : /门|锁/.test(t) ? '门禁' : '其他';
+  const time = /现在|马上/.test(t) ? '尽快上门' : /下午/.test(t) ? '今天 14:00-18:00' : '今天 14:00-18:00';
+  state.agent.draft = { cat, loc, time, unit:'', desc: t };
+
+  agentThink(700, () => {
+    agentPush({
+      role:'ai', lead:'明白了，这是报修，不是咨询',
+      text:'我先替你填好能推断的部分，只差一项：',
+      steps:[
+        { s:'done', t:'① 识别需求', d:'报修工单 · 置信度 92%（不是问答）' },
+        { s:'done', t:'② 抽取信息', d:`类别 ${cat} · 位置 ${loc} · 期望 ${time}` },
+        { s:'now', t:'③ 补全信息', d:'还差：哪一栋（只问这一个）' },
+        { s:'todo', t:'④ 生成工单', d:'待你确认后才提交' },
+      ],
+      tools:['intent.classify','workorder.draft'],
+      chips:[{k:'unit',v:'1 号楼',label:'1 号楼'},{k:'unit',v:'2 号楼',label:'2 号楼'},{k:'unit',v:'3 号楼',label:'3 号楼'},{k:'unit',v:'7 号楼',label:'7 号楼'}],
+    });
+  });
+}
+
+function agentConfirm(){
+  const d = state.agent.draft;
+  agentPush({
+    role:'card',
+    html:`<div class="msg ai" style="padding:0;background:transparent;box-shadow:none;max-width:100%">
+      <div class="card-in">
+        <div class="ch"><span>工单草稿 · 待确认</span><span class="st">未提交</span></div>
+        <div class="frow"><span class="k">类别</span><span class="v">${esc(d.cat)} · ${esc(d.loc)}漏水<small>可点改</small></span></div>
+        <div class="frow"><span class="k">位置</span><span class="v">${esc(d.unit)} · ${esc(d.loc)}</span></div>
+        <div class="frow"><span class="k">期望上门</span><span class="v">${esc(d.time)}</span></div>
+        <div class="frow"><span class="k">描述</span><span class="v" style="max-width:60%">${esc(d.desc)}</span></div>
+        <div class="cbtns">
+          <button class="btn ghost" data-act="agent-edit">再改改</button>
+          <button class="btn main" data-act="agent-submit">确认提交</button>
+        </div>
+      </div></div>`,
+  });
+  state.agent.stage = 'confirm';
+  render(); scrollBottom();
+}
+
+function agentSubmit(){
+  if (state.offline) { toast('已断网，无法提交工单'); return; }
+  const d = state.agent.draft;
+  agentPush({ role:'user', text:'确认提交' });
+  state.typing = true; render();
+  setTimeout(() => {
+    state.typing = false;
+    const no = 'W20261018-0037';
+    const newId = 'w' + Date.now();
+    agentPush({ role:'card', html:`<div class="receipt">
+      <div class="ok">✓</div><h4>已提交给物业服务中心</h4>
+      <div class="num">${no}</div>
+      <p>${esc(d.cat)} · ${esc(d.unit)} ${esc(d.loc)}<br>预计 30 分钟内响应，${esc(d.time)} 上门</p>
+      <div class="cbtns"><button class="btn ghost" data-act="go-track" data-id="${newId}">看进度</button><button class="btn ai" data-act="agent-reset">再办一件</button></div>
+    </div>` });
+    // 同步到报修记录（新 id，避免覆盖既有工单）
+    ORDERS.unshift({ id:newId, title:`${d.unit} ${d.loc}漏水`, status:'pending', st:'待受理', cat:d.cat, sum:d.desc, time:'10-18 08:42' });
+    state.agent.stage = 'submitted';
+    state.track = newId;
+    render(); scrollBottom();
+  }, 800);
+}
+
+function agentPolicyStart(){
+  state.agent.policy = { age:'', hukou:'', done:'' };
+  agentThink(600, () => agentPush({
+    role:'ai', lead:'先帮你判断能不能领',
+    text:'适老化改造补贴看三个条件，我一次问一个（点一下就行）：<br><b>1/3 家中老人年龄？</b>',
+    steps:[{s:'done',t:'识别需求',d:'政策初筛 · 适老化改造补贴'},{s:'now',t:'条件核对',d:'3 个条件，已完成 0 个'}],
+    tools:['policy.rules'],
+    chips:[{k:'age',v:'60',label:'60 岁以上'},{k:'age',v:'70',label:'70 岁以上'},{k:'age',v:'none',label:'没有 60 岁以上'}],
+  }));
+}
+
+function agentPolicyStep(k, v){
+  const p = state.agent.policy;
+  if (k === 'age') {
+    p.age = v;
+    if (v === 'none') return agentPolicyResult();
+    agentPush({ role:'user', text: v === '70' ? '70 岁以上' : '60 岁以上' });
+    agentThink(500, () => agentPush({ role:'ai', lead:'2/3 户籍情况？', text:'补贴按社区常住登记发放，需要确认一下：',
+      chips:[{k:'hukou',v:'yes',label:'本社区常住'},{k:'hukou',v:'no',label:'非本社区'}],
+      steps:[{s:'done',t:'条件核对',d:'已完成 1/3'},{s:'now',t:'条件核对',d:'常住登记'}] }));
+  } else if (k === 'hukou') {
+    p.hukou = v;
+    agentPush({ role:'user', text: v==='yes'?'本社区常住':'非本社区' });
+    agentThink(500, () => agentPush({ role:'ai', lead:'3/3 是否已改造过？', text:'同一户原则上不重复补贴：',
+      chips:[{k:'done',v:'no',label:'没改造过'},{k:'done',v:'yes',label:'已经改过'}],
+      steps:[{s:'done',t:'条件核对',d:'已完成 2/3'},{s:'now',t:'条件核对',d:'历史改造记录'}] }));
+  } else if (k === 'done') {
+    p.done = v;
+    agentPush({ role:'user', text: v==='no'?'没改造过':'已经改过' });
+    agentPolicyResult();
+  }
+}
+
+function agentPolicyResult(){
+  const p = state.agent.policy;
+  const ok = p.age !== 'none' && p.hukou === 'yes' && p.done === 'no';
+  agentThink(600, () => {
+    agentPush({ role:'card', html:`<div class="msg ai" style="padding:0;background:transparent;box-shadow:none;max-width:100%">
+      <div class="card-in">
+        <div class="ch"><span>初筛结论</span><span class="st">仅供参考</span></div>
+        <div class="pbar ${ok?'ok':'no'}">${ok?'✅ 初步符合条件':'⚠ 暂不符合 / 需人工确认'}</div>
+        <ul class="plist">
+          ${ok?`<li>可申请：防滑地面、扶手、坐便器改造，最高补贴 3000 元（以当年政策为准）</li>
+          <li>需带：身份证、户口本、房屋产权或租赁证明</li>
+          <li>流程：登记评估 → 施工 → 验收 → 补贴发放</li>`
+          :`<li>建议到社区服务中心 1 号窗口做人工评估，部分情况可用其他救助渠道</li>
+          <li>常见卡点：非本社区常住、同户已享受过改造补贴</li>`}
+        </ul>
+        <div class="cbtns">
+          <button class="btn ghost" data-act="toast" data-msg="材料清单：身份证 / 户口本 / 房产或租赁证明">看材料清单</button>
+          <button class="btn main" data-act="toast" data-msg="真实版：跳「适老化改造申请」表单，材料自动带入">去申请</button>
+        </div>
+        <div style="margin-top:8px;font-size:9px;color:#9B9B9B;text-align:center">AI 初筛不构成审批结论，最终以社区审核为准</div>
+      </div></div>` });
+    state.agent.stage = 'idle';
+    render(); scrollBottom();
+  });
+}
+
+/* =====================================================================
+ * 办事
+ * ===================================================================== */
+function hallResult(){
+  const kw = state.keyword.trim();
+  if (!kw) {
+    return `<div class="cats">${SVC.map(s => `<div class="cat" data-act="svc" data-i="${esc(s.n)}">
+      <span class="cat-ic">${s.i}</span><div style="min-width:0"><div class="cat-n">${esc(s.n)}</div>
+      <div class="cat-s">${esc(s.act==='licences'?'证照与证明':s.act==='booking'?'现场取号排队':s.act==='ask'?'AI 直接办':'常见事项')}</div></div>
+    </div>`).join('')}</div>`;
+  }
+  const rows = searchRows(kw);
+  const list = rows.length ? `<div class="match-list">${rows.map(r=>`<div class="match-row" data-act="svc" data-i="${esc(r.name)}">
+      <div class="match-ic">${r.i}</div><div style="min-width:0"><div class="match-n">${esc(r.name)}</div>
+      <div class="match-c">${esc(r.cat)}</div></div><div class="match-a">›</div></div>`).join('')}</div>`
+    : `<div class="match-empty"><div style="font-size:12px;color:#6B6B6B">没找到「${esc(kw)}」</div>
+       <div class="match-ai" data-act="ask" data-q="${esc(kw)}">✦ 让 AI 管家帮你办</div></div>`;
+  const illus = state.illus ? `<div class="illus"><div class="illus-a">${state.illus.e}<span>AI 配图</span></div>
+    <div><div class="illus-t">AI 智能配图 · ${esc(state.illus.w)}</div>
+    <div class="illus-s">命中图库秒出，断网也有图。<br>真实版：本地图库优先 + 云端生成开关（默认关）。</div></div></div>` : '';
+  return `<div class="match">${list}${illus}</div>`;
+}
+function pgHall(){
+  const orders = ORDERS.filter(o => !state.tab || o.status === state.tab);
+  return `
+  <div class="page">
+    <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="navbar">办事<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="search"><div class="search-box">
+      <span style="font-size:13px">🔍</span>
+      <input id="searchInput" placeholder="搜服务：居住证、助餐、补贴…" value="${esc(state.keyword)}" autocomplete="off">
+      <div class="search-x" id="searchClear" data-act="clear-kw" style="${state.keyword?'':'display:none'}">✕</div>
+    </div></div>
+    <div id="hallResult">${hallResult()}</div>
+    <div class="section" style="padding:0 16px">
+      <div class="section-head"><div class="section-title" style="font-size:var(--fs-card)">一件事一次办</div>
+        <div class="more" data-act="toast" data-msg="一次填表，材料在事项间复用">说明 ›</div></div>
+      <div class="one-scroll">${ONETHING.map(o=>`<div class="one ${o.cls}" data-act="onething" data-k="${o.k}">
+        <h4>${esc(o.t)}</h4><p>${esc(o.d)}</p><div class="tags">${o.tags.map(t=>`<span class="tg">${esc(t)}</span>`).join('')}</div><div class="ar">›</div></div>`).join('')}</div>
+    </div>
+    <div class="orders">
+      <div class="orders-h"><div class="orders-t">我的报修记录</div><div class="orders-c" id="ordersCount">${orders.length} 条</div></div>
+      <div class="tabs">${[['','全部'],['pending','待受理'],['processing','处理中'],['done','已完成']].map(([v,t])=>
+        `<div class="tab ${state.tab===v?'on':''}" data-act="tab" data-v="${v}">${t}</div>`).join('')}</div>
+      <div class="list" id="ordersList">${ordersHtml(orders)}</div>
+    </div>
+    <div class="fab" data-act="ask" data-q="我家厨房水管漏水了">+ 我要报修</div>
+  </div>`;
+}
+function ordersHtml(orders){
+  if (!orders.length) return `<div style="padding:36px 0;text-align:center;color:#9B9B9B;font-size:12px">该状态下暂无记录</div>`;
+  return orders.map(o=>`<div class="card" data-act="order" data-id="${o.id}">
+    <div class="card-h"><div class="card-t">${esc(o.title)}</div><div class="tag ${o.status}">${o.st}</div></div>
+    <div class="card-s">${esc(o.sum)}</div>
+    <div class="card-f"><span>${esc(o.cat)}</span><span>${esc(o.time)}</span></div></div>`).join('');
+}
+
+/* =====================================================================
+ * 其他页
+ * ===================================================================== */
+function pgNotices(){
+  const list = NOTICES.filter(n => !state.noticeFilter || n.type === state.noticeFilter);
+  const label = { urgent:'紧急通知', notice:'社区公告', activity:'社区活动' }[state.noticeFilter] || '全部通知';
+  return `<div class="page noTab">
+    <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="navbar"><div class="back" data-act="back">‹</div>${label}<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div style="padding:12px 16px">
+      ${list.map(n=>`<div class="card" style="cursor:default">
+        <div class="card-h"><div class="ftag ${n.type}" style="margin:0">${n.type==='urgent'?'紧急':n.type==='activity'?'活动':'公告'}</div></div>
+        <div style="font-size:var(--fs-card);font-weight:700;margin-top:7px">${esc(n.title)}</div>
+        <div class="card-s">${esc(n.body)}</div>
+        <div class="card-f"><span>${esc(n.meta)}</span><span>${n.loc?'📍 '+esc(n.loc):''}</span></div>
+      </div>`).join('')}
+    </div></div>`;
+}
+
+function pgLicences(){
+  return `<div class="page noTab">
+    <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="navbar"><div class="back" data-act="back">‹</div>我的证照包<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="tip">⚠ 仅演示：证照为脱敏示意，真实亮证需实名与授权，未对接任何政务系统。</div>
+    ${LICENCES.map((c,i)=>`<div class="cert" data-act="cert" data-i="${i}">
+      <div class="water">${c.icon}</div>
+      <div class="ct">${esc(c.t)}</div>
+      <div class="cn">${esc(c.no)}</div>
+      <div class="cm"><span>${esc(c.sub)}</span></div>
+      <div class="cb">亮证 ›</div>
+    </div>`).join('')}
+    <div style="padding:14px 16px;font-size:10px;color:#9B9B9B;line-height:1.7">
+      证照数据来自社区登记与卫生服务站，展示一律脱敏（尾号 4 位）。<br>如需纸质版，可在办事大厅「证明开具」预约打印。
+    </div>
+  </div>`;
+}
+
+function pgBooking(){
+  const b = state.booking;
+  const slots = ['09:00-10:00','10:00-11:00','11:00-12:00','14:00-15:00','15:00-16:00','16:00-17:00'];
+  if (b.done) {
+    return `<div class="page noTab">
+      <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+      <div class="navbar"><div class="back" data-act="back">‹</div>取号成功<div class="capsule"><span>···</span><span>◉</span></div></div>
+      <div class="queue">
+        <div style="font-size:11px;color:#9B9B9B">您的排队号</div>
+        <div class="qn">${esc(b.number)}</div>
+        <div class="ql">${esc(b.biz)} · ${esc(b.date)} ${esc(b.slot)}</div>
+        <div class="qr">
+          <div class="qi"><b>${b.prev}</b><span>前面等待</span></div>
+          <div class="qi"><b>${b.prev * 6}</b><span>预计分钟</span></div>
+          <div class="qi"><b>3</b><span>窗口</span></div>
+        </div>
+      </div>
+      <div class="tip">到号前 10 分钟会通过小程序消息提醒；过号需重新取号。演示数据，未真实排队。</div>
+      <div style="padding:14px 16px"><button class="btn ghost" style="width:100%;height:44px" data-act="booking-reset">重新取号</button></div>
+    </div>`;
+  }
+  return `<div class="page noTab">
+    <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="navbar"><div class="back" data-act="back">‹</div>预约取号<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="sect">1. 选业务</div>
+    <div class="biz">${BIZ.map((x,i)=>`<div class="biz-i" data-act="biz" data-i="${i}">
+      <div><div class="biz-n" style="${b.biz===x.t?'color:var(--brand)':''}">${esc(x.t)}</div><div class="biz-s">${esc(x.s)}</div></div>
+      <div class="ar">${b.biz===x.t?'✓':'›'}</div></div>`).join('')}</div>
+    <div class="sect">2. 选日期</div>
+    <div class="dates">${['今天','明天','后天'].map(d=>`<div class="dchip ${b.date===d?'on':''}" data-act="date" data-v="${d}">
+      <b>${d}</b><span>${d==='今天'?'10-18':d==='明天'?'10-19':'10-20'}</span></div>`).join('')}</div>
+    <div class="sect">3. 选时段</div>
+    <div class="slots">${slots.map((s,i)=>`<div class="slot ${b.slot===s?'on':''} ${i===2?'off':''}" data-act="slot" data-v="${s}" data-off="${i===2?'1':''}">${s}</div>`).join('')}</div>
+    <div style="padding:16px">
+      <button class="btn main" style="width:100%;height:44px" data-act="take" ${(!b.biz||!b.slot)?'disabled':''}>确认取号</button>
+      <div style="margin-top:8px;font-size:10px;color:#9B9B9B;text-align:center">演示数据 · 真实版需并发控制与实名</div>
+    </div>
+  </div>`;
+}
+
+function pgTrack(){
+  const o = ORDERS.find(x=>x.id===state.track) || ORDERS[0];
+  const nodes = [
+    { s:'done', t:'已提交', d:'你提交了报修，AI 已自动分类为水电', time:'10-16 15:22' },
+    { s:'done', t:'物业已受理', d:'工单派给维修组 · 张师傅', time:'10-16 15:31' },
+    { s:'now', t:'师傅上门中', d:'预计 14:00 到达，可点电话联系', time:'今天 13:40' },
+    { s:'todo', t:'处理完成', d:'完成后会推送消息并邀请评价', time:'' },
+    { s:'todo', t:'已关闭', d:'5 天内可反馈问题', time:'' },
+  ];
+  return `<div class="page noTab">
+    <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="navbar"><div class="back" data-act="back">‹</div>办事进度<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div style="padding:12px 16px 0">
+      <div class="card" style="cursor:default;margin-bottom:0">
+        <div class="card-h"><div class="card-t">${esc(o.title)}</div><div class="tag ${o.status}">${o.st}</div></div>
+        <div class="card-s">${esc(o.sum)}</div>
+        <div class="card-f"><span>${esc(o.cat)}</span><span>${esc(o.time)}</span></div>
+      </div>
+    </div>
+    <div class="tl">${nodes.map(n=>`<div class="tl-i ${n.s}"><div class="tl-d"></div>
+      <div class="tl-b"><div class="tl-t">${esc(n.t)}</div><div class="tl-s">${esc(n.d)}</div>
+      ${n.time?`<div class="tl-time">${esc(n.time)}</div>`:''}</div></div>`).join('')}</div>
+    <div style="padding:0 16px 16px">
+      <button class="btn ghost" style="width:100%;height:42px" data-act="toast" data-msg="电话：020-88888888（物业服务中心）">联系物业</button>
+    </div>
+  </div>`;
+}
+
+function pgCheck(){
+  const items = [
+    { t:'身份证', s:'本人原件，正反面拍照' },
+    { t:'租赁合同', s:'需在有效期内，含房东签字' },
+    { t:'居住登记凭证', s:'在社区登记满 6 个月' },
+    { t:'近期照片', s:'1 寸白底，电子版即可' },
+  ];
+  const done = state.check.done;
+  const cnt = items.filter((_,i)=>done[i]).length;
+  return `<div class="page noTab">
+    <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="navbar"><div class="back" data-act="back">‹</div>材料预检<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div style="padding:12px 16px 0;font-size:11px;color:#6B6B6B;line-height:1.6">
+      事项：<b>居住证申领</b> · 勾选你手上已有的材料，缺什么一目了然，不用到了窗口才发现。
+    </div>
+    <div class="chk">${items.map((it,i)=>`<div class="chk-i" data-act="chk" data-i="${i}">
+      <div class="chk-box ${done[i]?'on':''}">${done[i]?'✓':''}</div>
+      <div style="min-width:0"><div class="chk-t">${esc(it.t)}</div><div class="chk-s">${esc(it.s)}</div></div>
+    </div>`).join('')}</div>
+    <div class="resbar ${cnt===items.length?'':'bad'}">${cnt===items.length?'✅ 材料齐全，可以直接预约办理':'⚠ 还差 '+(items.length-cnt)+' 项材料'}</div>
+    <div style="padding:14px 16px">
+      <button class="btn main" style="width:100%;height:44px" data-act="${cnt===items.length?'booking':'toast'}" ${cnt===items.length?'':'data-msg="先补齐材料再来，避免白跑"'}">${cnt===items.length?'预约办理':'看看缺什么'}</button>
+    </div>
+  </div>`;
+}
+
+function pgProfile(){
+  return `<div class="page">
+    <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="navbar">我的<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div class="user-card"><div class="av">阿</div><div><div class="n">阿明的小院</div><div class="r">居民 · 3 号楼 2 单元</div></div></div>
+    <div class="rows">
+      <div class="row-i" data-act="licences"><div><div class="t">我的证照包</div><div class="s">居住证明 · 疫苗档案 · 健康档案</div></div><div class="v">3 张 ›</div></div>
+      <div class="row-i" data-act="go-track"><div><div class="t">我的办事</div><div class="s">报修、预约、申请统一进度</div></div><div class="v">1 件进行中 ›</div></div>
+      <div class="row-i" data-act="booking"><div><div class="t">我的预约</div><div class="s">取号记录与叫号提醒</div></div><div class="v">›</div></div>
+      <div class="row-i" data-act="care"><div><div class="t">关怀模式</div><div class="s">放大字号、宫格单列</div></div><div class="v"><div class="switch ${state.care?'on':''}"></div></div></div>
+      <div class="row-i" data-act="toast" data-msg="隐私政策：仅收集必要信息，工单图片仅用于维修"><div><div class="t">隐私政策</div></div><div class="v">›</div></div>
+    </div>
+    <div style="padding:16px;font-size:10px;color:#9B9B9B;text-align:center">v1.0.3 原型 · 仅用于设计评审</div>
+  </div>`;
+}
+
+function pgCircle(){
+  const posts = [
+    { t:'2 号门道路施工，建议绕行东门', b:'预计持续两天，早高峰建议走东门。', who:'物业服务 · 5 小时前', off:true },
+    { t:'谁家丢了一只橘猫？在凉亭附近', b:'戴着蓝色项圈，很亲人，主人看到请联系门卫室。', who:'7 栋小李 · 5 天前', off:false },
+    { t:'西门口路面已修好，给物业点赞', b:'晚上散步不用绕了，反馈到修好只用了三天。', who:'业主服务 · 1 天前', off:true },
+  ];
+  return `<div class="page">
+    <div class="status dark"><span>08:42</span><span>●●● ▮</span></div>
+    <div class="navbar">社区圈子<div class="capsule"><span>···</span><span>◉</span></div></div>
+    <div style="padding:12px 16px">
+      <div class="tabs" style="padding:0 0 10px"><div class="tab on">全部</div><div class="tab">路况</div><div class="tab">公告</div><div class="tab">活动</div></div>
+      ${posts.map(p=>`<div class="post"><div class="h">${p.off?'<span class="ftag activity">官方</span>':''}<span>${esc(p.who)}</span></div>
+        <h4>${esc(p.t)}</h4><p>${esc(p.b)}</p></div>`).join('')}
+    </div></div>`;
+}
+
+/* =====================================================================
+ * 搜索（本地，同源别名）
+ * ===================================================================== */
+function searchRows(kw){
+  const q = kw.trim();
+  if (!q) return [];
+  const alias = [];
+  Object.keys(ALIASES).forEach(k=>{ if(q.includes(k)||k.includes(q)) alias.push(...ALIASES[k]); });
+  return SVC.map(s=>({ s, sc: (s.n===q?10:0) + (s.n.includes(q)||q.includes(s.n)?6:0) + (alias.includes(s.n)?5:0) }))
+    .filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc).slice(0,6)
+    .map(x=>({ name:x.s.n, cat:'社区服务', i:x.s.i }));
+}
+function findIllus(kw){
+  const q = kw.trim(); if(!q) return null;
+  const ks = Object.keys(ILLUS).filter(k=>q.includes(k)||k.includes(q));
+  if(!ks.length) return null;
+  const w = ks.sort((a,b)=>b.length-a.length)[0];
+  return { w, e: ILLUS[w] };
+}
+function applyKeyword(v){
+  state.keyword = String(v||'').slice(0,30);
+  state.match = searchRows(state.keyword);
+  state.illus = findIllus(state.keyword);
+  const box = $('#hallResult'); if(box) box.innerHTML = hallResult();
+  const c = $('#searchClear'); if(c) c.style.display = state.keyword ? '' : 'none';
+}
+
+/* =====================================================================
+ * 弹层
+ * ===================================================================== */
+function openSheet(html){ $('#sheet').innerHTML=html; $('#mask').classList.add('show'); $('#sheet').classList.add('show'); }
+function closeSheet(){ $('#mask').classList.remove('show'); $('#sheet').classList.remove('show'); }
+function openCert(i){
+  const c = LICENCES[i]; state.lic = i;
+  openSheet(`<h3>${esc(c.t)}</h3>
+    <div class="qr">QR 占位</div>
+    <div style="text-align:center;font-size:12px;font-weight:700">${esc(c.no)}</div>
+    <div style="text-align:center;font-size:10px;color:#9B9B9B;margin-top:6px">${esc(c.sub)}</div>
+    <div style="margin-top:10px;background:#FEF3C7;color:#92400E;font-size:10px;line-height:1.6;padding:8px 10px;border-radius:8px">
+      ⚠ 演示用二维码占位，不含任何真实信息；真实亮证需实名授权。
+    </div>
+    <div class="cancel" data-act="close-sheet">关闭</div>`);
+}
+function openOrder(id){
+  const o = ORDERS.find(x=>x.id===id); if(!o) return;
+  openSheet(`<h3>${esc(o.title)}</h3>
+    <div style="font-size:12px;color:#6B6B6B;line-height:1.7">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>状态</span><span class="tag ${o.status}" style="margin:0">${o.st}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>类别</span><span>${esc(o.cat)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>提交时间</span><span>${esc(o.time)}</span></div>
+      <div style="background:#FAF6F1;border-radius:8px;padding:10px;line-height:1.6">${esc(o.sum)}</div>
+    </div>
+    <div class="cancel" data-act="go-track" data-id="${o.id}">查看进度</div>
+    <div class="cancel" data-act="close-sheet" style="margin-top:8px">关闭</div>`);
+}
+
+/* =====================================================================
+ * 事件
+ * ===================================================================== */
+$('#phone').addEventListener('click', (e) => {
+  const tabEl = e.target.closest('[data-tab]');
+  if (tabEl) { vibrate(); state.page = tabEl.dataset.tab; state.backTo='home'; render(); return; }
+
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const act = el.dataset.act; vibrate();
+
+  switch (act) {
+    case 'ask-open': state.backTo = state.page; state.page='agent'; render(); setTimeout(()=>{ const i=$('#chatInput'); if(i) i.focus(); }, 50); break;
+    case 'ask': {
+      const q = el.dataset.q || '';
+      state.backTo = state.page; state.page='agent'; render();
+      if (q) agentAsk(q);
+      break;
+    }
+    case 'send': {
+      const ta = $('#chatInput');
+      if (ta && ta.value.trim()) { const v = ta.value; ta.value=''; agentAsk(v); }
+      break;
+    }
+    case 'agent-chip': {
+      const k = el.dataset.k, v = el.dataset.v;
+      // 选中后隐藏上一组候选，避免重复点选/误点上一问
+      const prev = [...state.agent.msgs].reverse().find(x => x.chips && !x.answered);
+      if (prev) prev.answered = true;
+      if (k === 'unit') {
+        state.agent.draft.unit = v;
+        agentPush({ role:'user', text:v });
+        agentThink(500, () => { agentConfirm(); });
+      } else if (k === 'reset') {
+        state.agent.stage='idle'; agentPush({ role:'ai', text:'好，你还可以让我帮你：<b>报修</b>、<b>预约取号</b>、<b>查补贴</b>。' });
+      } else if (k === 'kb') {
+        agentPush({ role:'user', text: v });
+        agentThink(500, () => agentPush({ role:'ai', lead:'查到', text:'水费 020-88884444、电费 020-88883333、燃气 020-88882222。', tools:['kb.search'] }));
+      } else {
+        agentPolicyStep(k, v);
+      }
+      break;
+    }
+    case 'agent-edit': closeSheet(); toast('真实版：字段行可点开编辑，改完再确认'); break;
+    case 'agent-submit': agentSubmit(); break;
+    case 'agent-reset': {
+      state.agent = { stage:'idle', draft:null, msgs:[], pendingChips:null, policy:null };
+      render(); toast('已重新开始'); break;
+    }
+    case 'svc': {
+      const s = SVC.find(x=>x.n===el.dataset.i);
+      if (!s) { toast('该服务暂未开通'); break; }
+      if (s.act === 'ask') { state.backTo=state.page; state.page='agent'; render(); agentAsk(s.msg); }
+      else if (s.act === 'booking') { state.backTo=state.page; state.page='booking'; render(); }
+      else if (s.act === 'licences') { state.backTo=state.page; state.page='licences'; render(); }
+      else if (s.act === 'check') { state.backTo=state.page; state.page='check'; render(); }
+      else toast(s.msg || '演示入口');
+      break;
+    }
+    case 'onething': {
+      const o = ONETHING.find(x=>x.k===el.dataset.k);
+      if (!o) break;
+      openSheet(`<h3>${esc(o.t)}</h3>
+        <div style="font-size:11px;color:#6B6B6B;line-height:1.7;padding:0 2px 6px">${esc(o.d)}</div>
+        <div class="item"><span>一次填表</span><span style="font-size:10px;color:#9B9B9B">共性信息只填一次</span></div>
+        <div class="item"><span>材料复用</span><span style="font-size:10px;color:#9B9B9B">一次上传，多事项共享</span></div>
+        <div class="item"><span>并联办理</span><span style="font-size:10px;color:#9B9B9B">多部门同步流转</span></div>
+        <div class="cancel" data-act="ask" data-q="我要办${esc(o.t)}">让 AI 管家带我办</div>
+        <div class="cancel" data-act="close-sheet" style="margin-top:8px">关闭</div>`);
+      break;
+    }
+    case 'tab': {
+      state.tab = el.dataset.v;
+      const orders = ORDERS.filter(o=>!state.tab||o.status===state.tab);
+      qa('.tab').forEach(t=>t.classList.toggle('on', t.dataset.v===state.tab));
+      const l = $('#ordersList'); if(l) l.innerHTML = ordersHtml(orders);
+      const c = $('#ordersCount'); if(c) c.textContent = orders.length+' 条';
+      break;
+    }
+    case 'order': openOrder(el.dataset.id); break;
+    case 'cert': openCert(Number(el.dataset.i)); break;
+    case 'close-sheet': closeSheet(); break;
+    case 'go-track': closeSheet(); state.track = el.dataset.id || 'w1'; state.backTo = state.page; state.page='track'; render(); break;
+    case 'licences': state.backTo=state.page; state.page='licences'; render(); break;
+    case 'booking': state.backTo=state.page; state.page='booking'; state.booking.done=false; render(); break;
+    case 'check': state.backTo=state.page; state.page='check'; render(); break;
+    case 'back': state.page = state.backTo || 'home'; render(); break;
+    case 'notices': state.backTo=state.page; state.page='notices'; state.noticeFilter=el.dataset.filter||''; render(); break;
+    case 'biz': state.booking.biz = BIZ[Number(el.dataset.i)].t; render(); break;
+    case 'date': state.booking.date = el.dataset.v; render(); break;
+    case 'slot':
+      if (el.dataset.off === '1') { toast('该时段已约满，请换一个'); break; }
+      state.booking.slot = el.dataset.v; render(); break;
+    case 'take': {
+      const b = state.booking;
+      if (!b.biz || !b.slot) { toast('请先选业务和时段'); break; }
+      b.number = 'A' + String(20 + Math.floor(Math.random()*60)).padStart(3,'0');
+      b.prev = 2 + Math.floor(Math.random()*4);
+      b.done = true; render(); toast('取号成功'); break;
+    }
+    case 'booking-reset': state.booking = { biz:'', date:'今天', slot:'', number:'', prev:0, done:false }; render(); break;
+    case 'chk': { const i = Number(el.dataset.i); state.check.done[i] = !state.check.done[i]; render(); break; }
+    case 'tab-jump': state.page = el.dataset.tab; render(); break;
+    case 'care': state.care = !state.care; render(); break;
+    case 'toast': toast(el.dataset.msg || ''); break;
+  }
+});
+
+/* 输入：搜索（局部更新，不失焦） */
+document.addEventListener('input', (e) => { if (e.target && e.target.id === 'searchInput') applyKeyword(e.target.value); });
+
+document.addEventListener('keydown', (e) => {
+  if (e.target && e.target.id === 'chatInput' && e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault(); const v = e.target.value; e.target.value=''; agentAsk(v);
+  }
+  if (e.target && e.target.id === 'searchInput' && e.key === 'Enter') { e.preventDefault(); applyKeyword(e.target.value); }
+});
+
+$('#mask').addEventListener('click', closeSheet);
+
+/* 顶部开关 */
+$('#swCare').addEventListener('click', () => { state.care = !state.care; render(); });
+$('#swOff').addEventListener('click', () => {
+  state.offline = !state.offline; render();
+  toast(state.offline ? '已断网：AI 只能答，写操作已禁用' : '网络已恢复');
+});
+$('#swReset').addEventListener('click', () => {
+  state.page='home'; state.backTo='home'; state.tab=''; state.keyword=''; state.match=[]; state.illus=null;
+  state.chat=[]; state.chatInited=false; state.typing=false; state.care=false; state.offline=false;
+  state.agent={ stage:'idle', draft:null, msgs:[], pendingChips:null, policy:null };
+  state.booking={ biz:'', date:'今天', slot:'', number:'', prev:0, done:false };
+  state.check={ done:{}, res:false }; state.noticeFilter=''; closeSheet(); render(); toast('已重置');
+});
+
+render();
+</script>
+</body>
+</html>

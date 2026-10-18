@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v1.0.4 功能总览 · 四大服务扩展</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:28px 18px 64px;background:#F2F0EB;color:#2B2B2B;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto}
+h1{font-size:21px;margin:0 0 6px;font-weight:800}
+.lead{font-size:13px;color:#6B6B6B;line-height:1.7;margin:0}
+.lead b{color:#1E8252}
+.stat{display:flex;gap:10px;margin:18px 0 6px;flex-wrap:wrap}
+.stat div{background:#fff;border-radius:12px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.05);flex:1;min-width:120px}
+.stat b{display:block;font-size:24px;color:#1E8252;line-height:1.1}
+.stat span{font-size:11px;color:#9B9B9B}
+.enter{display:flex;gap:10px;align-items:center;background:linear-gradient(135deg,#7B6CF6,#4F7BF0);color:#fff;border-radius:14px;padding:16px 18px;margin:16px 0 22px;text-decoration:none;box-shadow:0 8px 20px rgba(91,84,214,.22)}
+.enter b{font-size:15px}
+.enter p{margin:4px 0 0;font-size:11px;opacity:.86;line-height:1.5}
+.enter .go{margin-left:auto;background:#fff;color:#5B54D6;font-size:12px;font-weight:800;padding:8px 14px;border-radius:99px;flex:none}
+.cat{background:#fff;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);border-top:4px solid #1E8252}
+.cat.warm{border-top-color:#E0862F}
+.cat-h{display:flex;gap:12px;align-items:center}
+.ci{width:42px;height:42px;border-radius:13px;background:#E6F5EE;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none}
+.cat.warm .ci{background:#FDF3E7}
+.cat-h h2{margin:0;font-size:17px;font-weight:800}
+.cat-h p{margin:3px 0 0;font-size:11px;color:#9B9B9B}
+.grp{margin-top:14px;border:1px solid #EEEAE3;border-radius:12px;overflow:hidden}
+.grp-h{display:flex;align-items:baseline;gap:8px;padding:10px 12px;background:#FAF8F4;font-size:13px;font-weight:800}
+.grp-h em{font-style:normal;font-size:10px;font-weight:400;color:#9B9B9B;flex:1}
+.grp-h i{font-style:normal;font-size:10px;color:#1E8252;background:#E6F5EE;padding:2px 7px;border-radius:99px;flex:none}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 12px;border-top:1px solid #F3F0EA;font-size:12px;vertical-align:top}
+td.n{width:36px;color:#C9C4BB;font-variant-numeric:tabular-nums;font-size:11px}
+td.nm{width:34%}
+td.nm b{font-weight:700}
+.bdg{font-style:normal;font-size:9px;color:#E0862F;background:#FDF3E7;padding:1px 5px;border-radius:3px;margin-left:6px;white-space:nowrap}
+td.ds{color:#6B6B6B;width:36%}
+td.ac{color:#5B54D6;white-space:nowrap;font-size:11px}
+.note{margin-top:6px;background:#FEF3C7;color:#92400E;font-size:11px;line-height:1.7;padding:12px 14px;border-radius:10px}
+.foot{margin-top:22px;font-size:11px;color:#9B9B9B;line-height:1.8}
+@media(max-width:560px){td.ds{display:none}.cat{padding:14px}}
+</style></head>
+<body><div class="wrap">
+<h1>v1.0.4 功能总览 · 四大服务扩展</h1>
+<p class="lead">来源：<b>桌面/小程序.docx</b>（4 张参考设计图 + 4 条批注）。把四类服务从 10 个子项扩到 <b>37 个服务项</b>，中间加一层「子板块」，解决平铺后滚不到底的问题。</p>
+<div class="stat">
+  <div><b>4</b><span>服务分类</span></div>
+  <div><b>8</b><span>子板块</span></div>
+  <div><b>37</b><span>服务项</span></div>
+  <div><b>1</b><span>通用预约登记页</span></div>
+</div>
+<a class="enter" href="./demo.html">
+  <div><b>▶ 打开可点击原型</b><p>首屏就能看到「服务分类」4 张卡，点进去有子板块切换</p></div>
+  <span class="go">去体验</span>
+</a>
+<section class="cat ">
+    <div class="cat-h"><span class="ci">🏠</span><div><h2>生活基础服务</h2><p>家政服务 · 缴费代办 · 生鲜零售</p></div></div>
+    <div class="grp">
+      <div class="grp-h"><span>家政服务</span><em>认证师傅 · 明码标价 · 乱收费全额退款</em><i>6 项</i></div>
+      <table><tbody><tr>
+        <td class="n">01</td>
+        <td class="nm"><b>🧹 保洁</b><i class="bdg">认证师傅</i></td>
+        <td class="ds">2 小时起 · 60 元/小时</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">02</td>
+        <td class="nm"><b>🔧 家电维修</b><i class="bdg">平均响应</i></td>
+        <td class="ds">空调 · 冰箱 · 洗衣机</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">03</td>
+        <td class="nm"><b>🚿 管道疏通</b><i class="bdg">明码标价</i></td>
+        <td class="ds">马桶 · 地漏 · 下水</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">04</td>
+        <td class="nm"><b>👵 保姆/钟点工</b></td>
+        <td class="ds">按次或长期</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">05</td>
+        <td class="nm"><b>🔑 开锁换锁</b></td>
+        <td class="ds">需出示房产证明</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">06</td>
+        <td class="nm"><b>❄️ 空调清洗</b></td>
+        <td class="ds">挂机 80 元 / 柜机 150 元</td>
+        <td class="ac">预约登记</td>
+      </tr></tbody></table>
+    </div><div class="grp">
+      <div class="grp-h"><span>缴费代办</span><em>只绑户号与登记，资金在微信「生活缴费」完成</em><i>3 项</i></div>
+      <table><tbody><tr>
+        <td class="n">07</td>
+        <td class="nm"><b>💡 水电燃气代缴</b></td>
+        <td class="ds">户号绑定后可代查欠费</td>
+        <td class="ac">户号绑定与进度</td>
+      </tr><tr>
+        <td class="n">08</td>
+        <td class="nm"><b>📦 快递代取代寄</b></td>
+        <td class="ds">驿站存放 · 代寄预约</td>
+        <td class="ac">驿站存放点设置</td>
+      </tr><tr>
+        <td class="n">09</td>
+        <td class="nm"><b>📄 政务事项代办</b></td>
+        <td class="ds">材料代收 · 代交窗口</td>
+        <td class="ac">预约登记</td>
+      </tr></tbody></table>
+    </div><div class="grp">
+      <div class="grp-h"><span>生鲜零售</span><em>30 分钟配送到家 · 满 39 元免配送费</em><i>4 项</i></div>
+      <table><tbody><tr>
+        <td class="n">10</td>
+        <td class="nm"><b>🥦 当日鲜菜</b></td>
+        <td class="ds">每日 6:00 到货</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">11</td>
+        <td class="nm"><b>🍅 临期特惠</b></td>
+        <td class="ds">低至 5 折 · 当日售完</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">12</td>
+        <td class="nm"><b>🥬 邻里拼单</b></td>
+        <td class="ds">满 20 单成团</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">13</td>
+        <td class="nm"><b>🍊 次日自提</b></td>
+        <td class="ds">1 号楼驿站自提</td>
+        <td class="ac">预约登记</td>
+      </tr></tbody></table>
+    </div>
+  </section><section class="cat ">
+    <div class="cat-h"><span class="ci">🧓</span><div><h2>健康养老服务</h2><p>基础健康服务 · 老年专属服务</p></div></div>
+    <div class="grp">
+      <div class="grp-h"><span>基础健康服务</span><em>卫生服务站 · 65 岁以上免挂号费</em><i>6 项</i></div>
+      <table><tbody><tr>
+        <td class="n">14</td>
+        <td class="nm"><b>🏥 社区门诊挂号</b><i class="bdg">免排队</i></td>
+        <td class="ds">—</td>
+        <td class="ac">现场取号</td>
+      </tr><tr>
+        <td class="n">15</td>
+        <td class="nm"><b>🩺 义诊活动</b></td>
+        <td class="ds">—</td>
+        <td class="ac">通知 / 活动列表</td>
+      </tr><tr>
+        <td class="n">16</td>
+        <td class="nm"><b>💉 疫苗预约</b></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">17</td>
+        <td class="nm"><b>📋 健康档案</b></td>
+        <td class="ds">建档 / 调阅</td>
+        <td class="ac">AI 管家问答</td>
+      </tr><tr>
+        <td class="n">18</td>
+        <td class="nm"><b>🩸 免费测血压血糖</b><i class="bdg">时间地点</i></td>
+        <td class="ds">—</td>
+        <td class="ac">时间地点</td>
+      </tr><tr>
+        <td class="n">19</td>
+        <td class="nm"><b>📄 体检报告代取</b></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr></tbody></table>
+    </div><div class="grp">
+      <div class="grp-h"><span>老年专属服务</span><em>60 岁以上可申请，行动不便可上门</em><i>6 项</i></div>
+      <table><tbody><tr>
+        <td class="n">20</td>
+        <td class="nm"><b>💊 慢性病咨询</b></td>
+        <td class="ds">—</td>
+        <td class="ac">AI 管家问答</td>
+      </tr><tr>
+        <td class="n">21</td>
+        <td class="nm"><b>🍚 助餐</b><i class="bdg">可送餐</i></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">22</td>
+        <td class="nm"><b>🛁 助浴</b></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">23</td>
+        <td class="nm"><b>🤝 上门陪护</b></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">24</td>
+        <td class="nm"><b>🛠 适老化改造</b><i class="bdg">可补贴</i></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">25</td>
+        <td class="nm"><b>👨‍⚕️ 家庭医生签约</b></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr></tbody></table>
+    </div>
+  </section><section class="cat warm">
+    <div class="cat-h"><span class="ci">🔧</span><div><h2>便民配套服务</h2><p>便民工具 · 物业延伸</p></div></div>
+    <div class="grp">
+      <div class="grp-h"><span>便民工具</span><em>扫码借用 · 异地归还 · 到期提醒</em><i>3 项</i></div>
+      <table><tbody><tr>
+        <td class="n">26</td>
+        <td class="nm"><b>☂️ 共享雨伞</b></td>
+        <td class="ds">24 小时内免费 · 逾期 0.5 元/天</td>
+        <td class="ac">扫码借用 / 归还</td>
+      </tr><tr>
+        <td class="n">27</td>
+        <td class="nm"><b>🧰 应急维修工具</b></td>
+        <td class="ds">电钻 · 梯子 · 通厕器 · 押金免</td>
+        <td class="ac">扫码借用 / 归还</td>
+      </tr><tr>
+        <td class="n">28</td>
+        <td class="nm"><b>🔋 共享充电宝</b></td>
+        <td class="ds">前 1 小时免费</td>
+        <td class="ac">扫码借用 / 归还</td>
+      </tr></tbody></table>
+    </div><div class="grp">
+      <div class="grp-h"><span>物业延伸</span><em>物业与业主共治，社区只做信息登记</em><i>3 项</i></div>
+      <table><tbody><tr>
+        <td class="n">29</td>
+        <td class="nm"><b>🛵 外卖代收</b></td>
+        <td class="ds">设置存放点 · 预约上门</td>
+        <td class="ac">驿站存放点设置</td>
+      </tr><tr>
+        <td class="n">30</td>
+        <td class="nm"><b>🐾 流浪动物管理</b></td>
+        <td class="ds">养宠专区 · 公约 · 救助</td>
+        <td class="ac">养宠专区 / 救助</td>
+      </tr><tr>
+        <td class="n">31</td>
+        <td class="nm"><b>🏘 房屋租售</b></td>
+        <td class="ds">真实房源 · 业主发布 · 减少加价</td>
+        <td class="ac">房源与业主发布</td>
+      </tr></tbody></table>
+    </div>
+  </section><section class="cat warm">
+    <div class="cat-h"><span class="ci">🏮</span><div><h2>文化便民服务</h2><p>义诊 · 健康报告 · 邻里活动</p></div></div>
+    <div class="grp">
+      <div class="grp-h"><span>文化便民</span><em>社区活动室 · 免费参加</em><i>6 项</i></div>
+      <table><tbody><tr>
+        <td class="n">32</td>
+        <td class="nm"><b>🩺 每周义诊</b></td>
+        <td class="ds">—</td>
+        <td class="ac">通知 / 活动列表</td>
+      </tr><tr>
+        <td class="n">33</td>
+        <td class="nm"><b>📊 健康报告</b></td>
+        <td class="ds">—</td>
+        <td class="ac">AI 管家问答</td>
+      </tr><tr>
+        <td class="n">34</td>
+        <td class="nm"><b>🎉 邻里活动</b></td>
+        <td class="ds">—</td>
+        <td class="ac">通知 / 活动列表</td>
+      </tr><tr>
+        <td class="n">35</td>
+        <td class="nm"><b>📚 图书角借阅</b></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">36</td>
+        <td class="nm"><b>✏️ 四点半课堂</b></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr><tr>
+        <td class="n">37</td>
+        <td class="nm"><b>📱 长者手机课</b></td>
+        <td class="ds">—</td>
+        <td class="ac">预约登记</td>
+      </tr></tbody></table>
+    </div>
+  </section>
+<div class="note"><b>边界（已确认口径）：</b>全部服务只做「入口 + 预约登记」，没有购物车、没有支付。生鲜叫预订、租售叫信息登记、代缴是绑户号看进度——个人主体小程序备案只能报「工具」，这三类真做交易会被驳回。</div>
+<p class="foot">点击原型里的分类卡 → 子板块 tab → 任意服务项，都能走到预约登记页（选时段 + 楼栋 → 提交 → 受理号 + 4 步进度）。</p>
+</div></body></html>
