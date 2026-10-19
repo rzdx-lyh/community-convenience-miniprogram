@@ -5,7 +5,11 @@ dist/
 .idea/
 project.private.config.json
 miniprogram_npm/
-cloudfunctions/*/shared/
+
+# ⚠ 云函数的 shared/ 副本【必须】入库 —— 微信开发者工具上传云函数时会按 .gitignore
+# 过滤文件，一旦忽略它们，上传包里就没有 shared/，运行时立刻
+# `Cannot find module './shared/response'`（2026-10-19 线上事故根因）。
+# 它们由 `npm run build:cf` 从 cloudfunctions/shared/ 同步生成，直接提交即可。
 
 # 小程序内 .js 均为 TS 编译产物（源码是 .ts）；
 # 微信开发者工具「新建页面」会生成空 Page({}) 模板顶替真实页面，同样不入库
