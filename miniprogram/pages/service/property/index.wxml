@@ -1,0 +1,170 @@
+<!-- 物业延伸（CR-027）· 外卖代收 / 流浪动物 / 房屋租售 -->
+<view class="page">
+  <view class="top">
+    <view class="top__t">物业延伸</view>
+    <view class="top__s">物业与业主共治 · 社区只做信息登记</view>
+  </view>
+
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="tab {{tab === item.key ? 'is-on' : ''}}"
+      data-t="{{item.key}}"
+      bindtap="onSwitchTab"
+    >{{item.name}}</view>
+  </view>
+
+  <view class="note">{{tabNote}}</view>
+
+  <!-- 外卖代收 -->
+  <block wx:if="{{tab === 'takeout'}}">
+    <view class="sec">
+      <view class="sec__hd"><text class="sec__t">存放点</text></view>
+      <view wx:for="{{takeoutSpots}}" wx:key="name" class="spot">
+        <view class="spot__n">{{item.name}}</view>
+        <view class="spot__a">{{item.addr}} · {{item.hours}}</view>
+        <view class="spot__h">{{item.note}}</view>
+      </view>
+    </view>
+    <view class="sec">
+      <view class="sec__hd"><text class="sec__t">代收规则</text></view>
+      <view wx:for="{{takeoutRules}}" wx:key="label" class="rule">
+        <text class="rule__l">{{item.label}}</text>
+        <text class="rule__v">{{item.value}}</text>
+      </view>
+      <view class="btn" bindtap="onTakeout">登记外卖代收</view>
+    </view>
+  </block>
+
+  <!-- 流浪动物 -->
+  <block wx:elif="{{tab === 'stray'}}">
+    <view class="sec">
+      <view class="sec__hd"><text class="sec__t">文明公约</text></view>
+      <view wx:for="{{strayRules}}" wx:key="title" class="cv">
+        <view class="cv__t">{{item.title}}</view>
+        <view class="cv__d">{{item.text}}</view>
+      </view>
+    </view>
+    <view class="sec">
+      <view class="sec__hd"><text class="sec__t">定点投喂处</text></view>
+      <view wx:for="{{straySpots}}" wx:key="name" class="spot">
+        <view class="spot__n">{{item.name}}</view>
+        <view class="spot__a">{{item.addr}}</view>
+        <view class="spot__h">{{item.note}}</view>
+      </view>
+      <view class="acts">
+        <view class="btn btn--ghost" data-kind="救助" bindtap="onStray">申请救助</view>
+        <view class="btn btn--ghost" data-kind="举报" bindtap="onStray">不文明行为反映</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 房屋租售 -->
+  <block wx:else>
+    <view class="sec">
+      <view class="sec__hd">
+        <text class="sec__t">在架房源</text>
+        <text class="sec__s">业主自发布</text>
+      </view>
+      <view wx:for="{{leases}}" wx:key="id" class="ls">
+        <view class="ls__hd">
+          <text class="ls__n">{{item.title}}</text>
+          <text class="ls__tag ls__tag--{{item.deal}}">{{item.dealText}}</text>
+        </view>
+        <view class="ls__m">{{item.layout}} · {{item.area}} · {{item.floor}}</view>
+        <view class="ls__p">{{item.price}}</view>
+        <view class="ls__f">
+          <text class="ls__o">{{item.owner}}</text>
+          <text class="ls__v {{item.verified ? 'is-on' : ''}}">{{item.verified ? '已核验业主身份' : '核验中'}}</text>
+        </view>
+        <view class="ls__d">{{item.meta}}</view>
+        <view class="ls__btn" data-id="{{item.id}}" bindtap="onAskLease">联系看房</view>
+      </view>
+      <view class="btn" bindtap="onPublish">我是业主，发布房源</view>
+    </view>
+  </block>
+
+  <view class="foot">
+    社区<text class="foot__b">只做信息登记</text>，不介入物业与业主之间的权责；
+    房屋租售不收中介费、不做资金托管，看房签约请双方线下自行完成。
+  </view>
+
+  <ai-bar page="property" />
+
+  <!-- 外卖代收弹层 -->
+  <view wx:if="{{showTakeout}}" class="mask" bindtap="onCloseTakeout">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet__hd">外卖代收登记</view>
+      <view class="sheet__tip">登记后驿站到件会联系你；生鲜冷链请 1 小时内取走。</view>
+      <view class="sheet__lb">外卖平台 <text class="req">必填</text></view>
+      <input class="inp" placeholder="例：美团 / 饿了么" maxlength="16" value="{{platform}}" bindinput="onInputPlatform" />
+      <view class="sheet__lb">订单号 / 取件码 <text class="opt">选填</text></view>
+      <input class="inp" placeholder="例：8-3-1024" maxlength="24" value="{{code}}" bindinput="onInputCode" />
+      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
+      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{room}}" bindinput="onInputRoom" />
+      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
+      <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{contact}}" bindinput="onInputContact" />
+      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
+      <textarea class="ta" placeholder="例如：晚上 8 点后在家，麻烦送上门" maxlength="120" value="{{note}}" bindinput="onInputNote" />
+      <view class="sheet__ft">
+        <view class="sheet__btn" bindtap="onCloseTakeout">取消</view>
+        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmitTakeout">{{submitting ? '提交中…' : '提交登记'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 流浪动物弹层 -->
+  <view wx:if="{{showStray}}" class="mask" bindtap="onCloseStray">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet__hd">流浪动物{{strayKind}}登记</view>
+      <view class="sheet__tip">社区只做登记与协调；被抓咬伤请立即用肥皂水冲洗 15 分钟并就医。</view>
+      <view class="sheet__lb">位置 <text class="req">必选</text></view>
+      <picker mode="selector" range="{{straySpotNames}}" value="{{straySpotIndex}}" bindchange="onStraySpotChange">
+        <view class="pk">{{straySpot}} ▾</view>
+      </picker>
+      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
+      <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{contact}}" bindinput="onInputContact" />
+      <view class="sheet__lb">情况说明 <text class="opt">选填</text></view>
+      <textarea class="ta" placeholder="例如：有只后腿受伤的橘猫，在投喂点不肯走" maxlength="120" value="{{note}}" bindinput="onInputNote" />
+      <view class="sheet__ft">
+        <view class="sheet__btn" bindtap="onCloseStray">取消</view>
+        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmitStray">{{submitting ? '提交中…' : '提交登记'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 房源发布弹层 -->
+  <view wx:if="{{showLease}}" class="mask" bindtap="onCloseLease">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet__hd">我是业主，发布房源</view>
+      <view class="sheet__tip">社区不收中介费、不做资金托管；提交后需核验业主身份再展示。</view>
+      <view class="tabs tabs--s">
+        <view class="tab {{leaseDeal === 'rent' ? 'is-on' : ''}}" data-d="rent" bindtap="onDealChange">出租</view>
+        <view class="tab {{leaseDeal === 'sale' ? 'is-on' : ''}}" data-d="sale" bindtap="onDealChange">出售</view>
+      </view>
+      <view class="sheet__lb">房源（楼栋单元房号） <text class="req">必填</text></view>
+      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="30" value="{{leaseTitle}}" bindinput="onInputLeaseTitle" />
+      <view class="row2">
+        <view class="row2__i">
+          <view class="sheet__lb">户型 <text class="opt">选填</text></view>
+          <input class="inp" placeholder="2 室 1 厅" maxlength="12" value="{{leaseLayout}}" bindinput="onInputLeaseLayout" />
+        </view>
+        <view class="row2__i">
+          <view class="sheet__lb">面积 <text class="opt">选填</text></view>
+          <input class="inp" placeholder="78㎡" maxlength="12" value="{{leaseArea}}" bindinput="onInputLeaseArea" />
+        </view>
+      </view>
+      <view class="sheet__lb">价格 <text class="req">必填</text></view>
+      <input class="inp" placeholder="出租填 2600 元/月，出售填 186 万" maxlength="20" value="{{leasePrice}}" bindinput="onInputLeasePrice" />
+      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
+      <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{contact}}" bindinput="onInputContact" />
+      <view class="sheet__lb">补充说明 <text class="opt">选填</text></view>
+      <textarea class="ta" placeholder="例如：家电齐全，周末可看房" maxlength="120" value="{{note}}" bindinput="onInputNote" />
+      <view class="sheet__ft">
+        <view class="sheet__btn" bindtap="onCloseLease">取消</view>
+        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmitLease">{{submitting ? '提交中…' : '提交发布'}}</view>
+      </view>
+    </view>
+  </view>
+</view>

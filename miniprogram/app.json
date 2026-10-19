@@ -15,7 +15,11 @@
     "pages/service/bill/index",
     "pages/service/record/index",
     "pages/service/tool/index",
-    "pages/service/express/index"
+    "pages/service/express/index",
+    "pages/service/fresh/index",
+    "pages/service/health/index",
+    "pages/service/culture/index",
+    "pages/service/property/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#F3F5F9",

@@ -121,6 +121,7 @@ async function ask(event) {
       sources: [],
       degraded: true,
       _riskLevel: risk.level,
+      _aiReason: 'risk',
     });
   }
 
@@ -140,10 +141,14 @@ async function ask(event) {
   let answer = '';
   let degraded = true;
   let kbFallback = false;
+  // CR-027：把降级原因透出（no_key / timeout / network / http_xxx / kb_miss / risk / guard）
+  // 以前只有 degraded:true，排查只能靠猜；现在日志与出参都能直接定位。
+  let aiReason = 'kb_miss';
 
   if (!hits.length) {
     // 降级②：未命中 → 兜底话术 + 便民电话
     answer = `${FALLBACK_TEXT}\n便民电话：${hotlineLines()}`;
+    aiReason = 'kb_miss';
     console.log('[qa] 知识库未命中，直接兜底，不调用大模型');
   } else {
     const base = buildRagPrompt(hits, question);
@@ -161,16 +166,19 @@ async function ask(event) {
       if (guard.pass) {
         answer = String(ai.content || '').slice(0, MAX_ANSWER_LEN);
         degraded = false;
+        aiReason = 'ok';
       } else {
         // 输出护栏拦截（疑似编造号码/金额）→ 回落知识库原文
         console.warn('[qa] 输出护栏拦截，回落知识库原文：', guard.suspicious.join(','));
         answer = hits[0].content;
         kbFallback = true;
+        aiReason = 'guard';
       }
     } else if (hits.length) {
       // 降级①：模型不可用 → 直接回知识库原文（仍有用）
       answer = hits[0].content;
       kbFallback = true;
+      aiReason = ai.reason || 'unknown';
     }
   }
 
@@ -198,9 +206,10 @@ async function ask(event) {
     await db.collection('qa_sessions').add({ data: Object.assign({ createdAt: now }, payload) }).catch(() => ({}));
   }
 
-  console.log(`[qa] ask degraded=${degraded} hits=${hits.length} session=${sessionId}`);
+  console.log(`[qa] ask degraded=${degraded} reason=${aiReason} hits=${hits.length} session=${sessionId}`);
   // _riskLevel='none' 为 CR-012 新增可选字段，未命中高风险时恒为 'none'（向后兼容）
-  return ok({ answerId, sessionId, answer, sources, degraded, _riskLevel: 'none' });
+  // _aiReason 为 CR-027 新增可选字段，纯向后兼容，零新增错误码
+  return ok({ answerId, sessionId, answer, sources, degraded, _riskLevel: 'none', _aiReason: aiReason });
 }
 
 /* ------------------------------ qa:history ------------------------------ */

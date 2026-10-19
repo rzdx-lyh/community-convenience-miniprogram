@@ -5,6 +5,36 @@
 > 设计原型 `docs/03-preview/demo.html` 与 `docs/` 下的设计文档走**独立版本轨**，不在本文件记录。
 > 版本号唯一真源：`miniprogram/config/env.ts` 的 `APP_VERSION`，由 `tests/version.test.ts` 守护。
 
+## 未发布（Unreleased）
+
+> 这些改动发生在 v1.1.0 打标之后，**尚未升版**。等本批功能落齐后统一升 `v1.2.0`。
+
+### 新增
+
+- **13 个 AI 兜底项全部做成真页面**（CR-027），聚合为 4 个新页、用 `?tab=` 区分子频道：
+  - **生鲜零售** `pages/service/fresh`：当日鲜菜 / 临期特惠（折扣标签）/ 邻里拼单（成团进度）/ 次日自提
+  - **健康服务** `pages/service/health`：疫苗预约 / 体检报告代取（3 步流程）/ 慢性病咨询 / 年度体检
+  - **文化服务** `pages/service/culture`：图书角借阅（6 分类 + 借阅规则）/ 四点半课堂（4 课程 + 余位进度）
+  - **物业延伸** `pages/service/property`：外卖代收 / 流浪动物（公约 + 投喂点）/ 房屋租售（业主自发布）
+- 改写后 `service-grid.ts` 中 `targetType: 'assistant'` 的服务项 **13 → 0**（不再有"点了只能问一句"的入口）
+- `SEARCH_ALIASES` 新增 7 组（订菜 / 流感 / 接种 / 代收 / 投喂 / 二手房 等）
+- 新增文档：`docs/28-备案整改操作清单.md`、`docs/29-DeepSeek密钥配置与AI通道验收.md`
+
+### 变更
+
+- **AI 降级原因可诊断**（CR-027）：`shared/ai.js` 的 `chat()` 增加 `reason`
+  （`no_key` / `timeout` / `network` / `http_401` / `http_402` / `http_429` / `empty`）；
+  `qa:ask` 新增**可选**出参 `_aiReason`，向后兼容、零新增错误码
+- 新增环境变量 `AI_TIMEOUT_MS`（默认 8000，上限 15000）
+- `PAGE_AI` 入口 13 → **17**；`app.json` 页面 16 → **20**
+
+### 测试
+
+- 新增 `tests/service-cr027.test.ts`（27 条）：守住"不收款 / 不诊断"红线 + 折扣价 < 原价 + 拼单进度解析
+- `npm run verify`：typecheck + lint + **310 条 / 20 文件**全绿
+
+---
+
 ## v1.1.0 — 2026-10-19 · 服务页补全 + 云调用健壮性
 
 > 本版在 v1.0.1 打标之后累积，统一升版。

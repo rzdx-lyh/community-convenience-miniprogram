@@ -1,0 +1,92 @@
+<!-- 健康服务（CR-027）· 疫苗预约 / 体检报告代取 / 慢性病咨询 / 健康报告 -->
+<view class="page">
+  <view class="top">
+    <view class="top__t">健康服务</view>
+    <view class="top__s">卫生服务站 · 65 岁以上免挂号费</view>
+  </view>
+
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="tab {{tab === item.key ? 'is-on' : ''}}"
+      data-t="{{item.key}}"
+      bindtap="onSwitchTab"
+    >{{item.name}}</view>
+  </view>
+
+  <view class="note">{{tabNote}}</view>
+
+  <!-- 疫苗预约 / 慢性病咨询：列表 -->
+  <block wx:if="{{tab === 'vaccine' || tab === 'chronic'}}">
+    <view wx:for="{{items}}" wx:key="id" class="card">
+      <view class="card__n">{{item.name}}</view>
+      <view class="kv"><text class="kv__k">适用</text><text class="kv__v">{{item.target}}</text></view>
+      <view class="kv"><text class="kv__k">材料</text><text class="kv__v">{{item.materials}}</text></view>
+      <view class="kv"><text class="kv__k">地点</text><text class="kv__v">{{item.place}}</text></view>
+      <view class="kv"><text class="kv__k">时间</text><text class="kv__v">{{item.time}}</text></view>
+      <view class="card__tip">{{item.tips}}</view>
+      <view class="btn" data-id="{{item.id}}" bindtap="onBook">预约登记</view>
+    </view>
+  </block>
+
+  <!-- 体检报告代取：流程 + 列表 -->
+  <block wx:elif="{{tab === 'report'}}">
+    <view class="card">
+      <view class="card__n">代取流程</view>
+      <view wx:for="{{steps}}" wx:key="step" class="step">
+        <view class="step__i">{{item.step}}</view>
+        <view class="step__t">{{item.text}}</view>
+      </view>
+    </view>
+    <view wx:for="{{items}}" wx:key="id" class="card">
+      <view class="card__n">{{item.name}}</view>
+      <view class="kv"><text class="kv__k">适用</text><text class="kv__v">{{item.target}}</text></view>
+      <view class="kv"><text class="kv__k">材料</text><text class="kv__v">{{item.materials}}</text></view>
+      <view class="kv"><text class="kv__k">地点</text><text class="kv__v">{{item.place}}</text></view>
+      <view class="kv"><text class="kv__k">时限</text><text class="kv__v">{{item.time}}</text></view>
+      <view class="card__tip">{{item.tips}}</view>
+      <view class="btn" data-id="{{item.id}}" bindtap="onBook">提交代取申请</view>
+    </view>
+  </block>
+
+  <!-- 健康报告 -->
+  <block wx:else>
+    <view class="card">
+      <view class="card__n">年度免费体检</view>
+      <view wx:for="{{annual}}" wx:key="label" class="kv">
+        <text class="kv__k">{{item.label}}</text>
+        <text class="kv__v">{{item.value}}</text>
+      </view>
+      <view class="btn" data-id="" bindtap="onBook">预约体检</view>
+    </view>
+  </block>
+
+  <view class="foot">
+    本页只提供<text class="foot__b">办事口径与预约登记</text>，不做诊断；
+    具体诊疗以医生诊断为准，急症请立即拨打 120。
+  </view>
+
+  <ai-bar page="health" />
+
+  <view wx:if="{{showBook}}" class="mask" bindtap="onCloseBook">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet__hd">{{tabName}} · {{itemName}}</view>
+      <view class="sheet__tip">提交后工作人员会电话与你确认时间；本页不做诊断，急症请拨 120。</view>
+
+      <view class="sheet__lb">期望时段 <text class="opt">选填</text></view>
+      <input class="inp" placeholder="例：周三上午 / 工作日 10 点后" maxlength="24" value="{{slot}}" bindinput="onInputSlot" />
+      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
+      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{room}}" bindinput="onInputRoom" />
+      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
+      <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{contact}}" bindinput="onInputContact" />
+      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
+      <textarea class="ta" placeholder="例如：家里有 70 岁老人，希望安排上门" maxlength="120" value="{{note}}" bindinput="onInputNote" />
+
+      <view class="sheet__ft">
+        <view class="sheet__btn" bindtap="onCloseBook">取消</view>
+        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmit">{{submitting ? '提交中…' : '提交预约'}}</view>
+      </view>
+    </view>
+  </view>
+</view>

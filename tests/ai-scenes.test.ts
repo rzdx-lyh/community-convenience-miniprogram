@@ -101,14 +101,16 @@ describe('HUB_SCENES', () => {
 });
 
 describe('PAGE_AI', () => {
-  it('13 个真实页面全部有配置（页面级 AI 入口的覆盖清单）', () => {
+  it('17 个真实页面全部有配置（页面级 AI 入口的覆盖清单）', () => {
     const pages = Object.keys(PAGE_AI);
-    expect(pages.length).toBe(13);
+    expect(pages.length).toBe(17);
     [
       // v1.1.0 既有
       'hall', 'repair-create', 'repair-list', 'repair-detail', 'notice', 'phonebook', 'circle',
       // CR-026 新增的 6 个服务页
       'meal', 'guide', 'bill', 'record', 'tool', 'express',
+      // CR-027：13 个兜底项聚合而成的 4 个服务页
+      'fresh', 'health', 'culture', 'property',
     ].forEach((key) => expect(pages).toContain(key));
   });
 
