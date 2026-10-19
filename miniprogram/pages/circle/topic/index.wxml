@@ -1,0 +1,68 @@
+<!-- 社区圈子 · 话题 -->
+<view class="page">
+  <view class="sbar" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
+  </view>
+  <view class="nav">
+    <view class="bk" bindtap="goBack">‹</view>
+    <text>话题</text>
+  </view>
+
+  <view class="thd">
+    <view class="thd__hd">
+      <view class="thd__ico">{{meta.icon}}</view>
+      <view class="thd__tt">
+        <text class="thd__nm">#{{meta.name}}</text>
+        <text class="thd__meta">{{meta.members}} 人参与 · 本话题 {{posts.length}} 条动态</text>
+      </view>
+      <view class="{{followed ? 'jw on' : 'jw'}}" bindtap="onFollowTap">{{followed ? '已关注' : '＋ 关注'}}</view>
+    </view>
+    <view class="thd__desc">{{meta.desc}}</view>
+    <view class="thd__acts">
+      <view class="tbtn" bindtap="onJoinTap">＋ 参与话题</view>
+      <view class="tbtn tbtn--ghost" bindtap="onDigestTap">
+        <view class="ic ic-s ic-sparkles" />
+        <text>AI 摘要</text>
+      </view>
+    </view>
+  </view>
+
+  <block wx:if="{{posts.length > 0}}">
+    <view wx:for="{{posts}}" wx:key="id" class="post2">
+      <view class="p-h">
+        <view class="p-av" style="background:{{item.color}}">{{item.av}}</view>
+        <view class="p-who">
+          <view class="p-nm">
+            <text wx:if="{{item.pin}}" class="ptop">置顶</text>
+            <text>{{item.who}}</text>
+            <text wx:if="{{item.official}}" class="p-v">官方</text>
+          </view>
+          <view class="p-mt">{{item.unit}} · {{item.time}}</view>
+        </view>
+      </view>
+      <view class="p-tx">{{item.text}}</view>
+      <view wx:if="{{item.imgs.length > 0}}" class="p-img g3">
+        <view wx:for="{{item.imgs}}" wx:for-item="im" wx:key="*this" class="im">{{im}}</view>
+      </view>
+      <text wx:if="{{item.tag}}" class="p-tag">{{item.tag}}</text>
+      <view class="p-act">
+        <view>
+          <view class="ic ic-s ic-thumb" />
+          <text>{{item.likes}}</text>
+        </view>
+        <view>
+          <view class="ic ic-s ic-chat" />
+          <text>{{item.comments}}</text>
+        </view>
+        <view bindtap="onDigestTap">
+          <view class="ic ic-s ic-sparkles" />
+          <text>AI 摘要</text>
+        </view>
+      </view>
+    </view>
+  </block>
+  <view wx:else class="empty">这个话题还没有动态，来发第一条</view>
+
+  <view style="height:28rpx" />
+</view>

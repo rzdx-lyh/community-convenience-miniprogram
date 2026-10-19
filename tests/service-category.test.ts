@@ -105,14 +105,15 @@ describe('服务数据 · 路由不出死链', () => {
     expect(flat.filter((i) => i.targetType === 'toast')).toEqual([]);
   });
 
-  it('预约类服务带 book 参数，且指向本分类页（页内弹层）', () => {
+  it('预约类服务带 svc 参数，且指向通用预约页（CR-028 从分类页弹层迁出）', () => {
     // CR-026：家庭医生签约从分类页弹层迁到健康档案页的签约弹层，故由 10 降为 9
-    const books = flat.filter((i) => String((i.targetParams ?? {}).book ?? '') !== '');
+    // CR-028：9 项预约服务统一改指独立预约页 /pages/service/book，参数名 book → svc
+    const books = flat.filter((i) => String((i.targetParams ?? {}).svc ?? '') !== '');
     expect(books.length).toBeGreaterThanOrEqual(9);
     books.forEach((item) => {
-      expect(item.targetPath).toBe('/pages/service/category/index');
-      expect(registered).toContain('/pages/service/category/index');
-      // opts 用 | 分隔，供弹层渲染选项 chips
+      expect(item.targetPath).toBe('/pages/service/book/index');
+      expect(registered).toContain('/pages/service/book/index');
+      // opts 用 | 分隔，供预约页第 1 步渲染服务类型 chips
       const opts = String((item.targetParams ?? {}).opts ?? '');
       if (opts) expect(opts.split('|').every((s) => s.trim() !== '')).toBe(true);
     });

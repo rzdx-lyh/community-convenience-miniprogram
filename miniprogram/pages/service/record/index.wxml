@@ -1,122 +1,196 @@
-<!-- 健康档案（CR-026）· 档案概览 → 指标录入 → 自测记录 → 家庭医生签约 -->
+<!-- 健康档案（CR-028）· 页头概览 → 指标卡/趋势 → 自测录入 → 记录 → 家庭医生 -->
 <view class="page">
-  <!-- 档案概览 -->
-  <view class="top">
-    <view class="top__t">我的健康档案</view>
-    <view class="top__s">{{summary}}</view>
-    <view class="top__row">
-      <text class="top__chip">已记录 {{count}} 条</text>
-      <text class="top__chip">仅保存在本机</text>
+  <view class="pgh pgh--teal" style="padding-top:{{statusBarHeight}}px">
+    <view class="sbar light">
+      <text>邻里小助手</text>
+      <text>仅本机保存</text>
+    </view>
+    <view class="pgh-nav">
+      <view class="pgh-bk" bindtap="goBack">‹</view>
+      <text class="pgh-t">健康档案</text>
+      <view class="pgh-rt" bindtap="onBookMeasure">预约测量</view>
+    </view>
+    <view class="pgh-k">
+      <view class="pgh-main">
+        <view class="pgh-lb">最近血压（收缩压）</view>
+        <view class="pgh-num">{{latestSys}}<text class="num-u">mmHg</text></view>
+      </view>
+      <view class="pgh-side">
+        <view class="pgh-lb">近 30 天 {{bpCount}} 次测量</view>
+        <view class="pgh-lb">波动：{{bpLevelText}}</view>
+      </view>
+      <view class="pgh-chip">档案本机</view>
     </view>
   </view>
 
-  <!-- 指标录入 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">记录一次自测</text>
-      <text class="sec__s">填完先看解读，再保存</text>
-    </view>
-
-    <view class="tabs">
-      <view class="tab {{kind === 'bp' ? 'is-on' : ''}}" data-k="bp" bindtap="onSwitchKind">血压</view>
-      <view class="tab {{kind === 'glucose' ? 'is-on' : ''}}" data-k="glucose" bindtap="onSwitchKind">血糖</view>
-    </view>
-
-    <block wx:if="{{kind === 'bp'}}">
-      <view class="row">
-        <view class="row__i">
-          <view class="row__lb">收缩压（高压）</view>
-          <input class="inp" type="digit" value="{{sys}}" placeholder="例：128" placeholder-class="inp__ph" bindinput="onInputSys" />
+  <view class="body">
+    <!-- 趋势 + 指标卡 -->
+    <view class="dash">
+      <view class="d-h">
+        <text class="dh-b">血压趋势</text>
+        <text class="dh-e">最近 {{bpCount}} 次</text>
+      </view>
+      <view wx:if="{{trend.length}}" class="trd">
+        <view class="trd-i" wx:for="{{trend}}" wx:key="k">
+          <view class="trd-b {{item.on ? 'on' : ''}}" style="height:{{item.h}}%" />
         </view>
-        <view class="row__i">
-          <view class="row__lb">舒张压（低压）</view>
-          <input class="inp" type="digit" value="{{dia}}" placeholder="例：82" placeholder-class="inp__ph" bindinput="onInputDia" />
+      </view>
+      <view wx:else class="trd-empty">还没有血压记录，记一条就能看到趋势</view>
+
+      <view class="met">
+        <view class="m">
+          <text class="met-n">{{latestSys}}/{{latestDia}}</text>
+          <text class="met-l">血压 mmHg</text>
+          <text class="met-tag tag-{{bpTag}}">{{bpLevelText}}</text>
+        </view>
+        <view class="m">
+          <text class="met-n">{{gluText}}</text>
+          <text class="met-l">血糖 mmol/L</text>
+          <text class="met-tag tag-{{gluTag}}">{{gluLevelText}}</text>
+        </view>
+        <view class="m">
+          <text class="met-n">{{count}}</text>
+          <text class="met-l">累计记录</text>
+          <text class="met-tag tag-mute">次</text>
         </view>
       </view>
-      <view class="unit">单位 mmHg · 建议安静休息 5 分钟后、同一时段测量</view>
-    </block>
+    </view>
 
-    <block wx:else>
-      <view class="row__lb">血糖值</view>
-      <input class="inp" type="digit" value="{{glucose}}" placeholder="例：6.2" placeholder-class="inp__ph" bindinput="onInputGlucose" />
-      <view class="tabs tabs--s">
-        <view class="tab {{when === 'fasting' ? 'is-on' : ''}}" data-w="fasting" bindtap="onSwitchWhen">空腹</view>
-        <view class="tab {{when === 'post' ? 'is-on' : ''}}" data-w="post" bindtap="onSwitchWhen">餐后 2 小时</view>
+    <!-- 录入 -->
+    <view class="dash">
+      <view class="d-h">
+        <text class="dh-b">记录一次自测</text>
+        <text class="dh-e">先看解读，再保存</text>
       </view>
-      <view class="unit">单位 mmol/L · 末梢血自测值，与静脉血检测结果会有差异</view>
-    </block>
+      <view class="chips kchips">
+        <view class="chip {{kind === 'bp' ? 'on' : ''}}" data-k="bp" bindtap="onSwitchKind">血压</view>
+        <view class="chip {{kind === 'glucose' ? 'on' : ''}}" data-k="glucose" bindtap="onSwitchKind">血糖</view>
+      </view>
 
-    <view class="acts">
-      <view class="btn btn--ghost" bindtap="onInterpret">看解读</view>
-      <view class="btn btn--main" bindtap="onSave">保存记录</view>
-    </view>
-
-    <view wx:if="{{preview}}" class="pv pv--{{preview.level}}">
-      <view class="pv__t">参考解读：{{preview.levelText}}</view>
-      <view class="pv__a">{{preview.advice}}</view>
-    </view>
-  </view>
-
-  <!-- 自测记录 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">自测记录</text>
-      <text class="sec__s">长按卡片可删除</text>
-    </view>
-
-    <view wx:if="{{records.length === 0}}" class="empty">
-      <view class="empty__t">还没有记录</view>
-      <view class="empty__s">在上面填一次血压或血糖，这里就会出现趋势</view>
-    </view>
-
-    <view wx:for="{{records}}" wx:key="id" class="rec" data-id="{{item.id}}" bindlongpress="onRemove">
-      <view class="rec__l">
-        <view class="rec__n">
-          <block wx:if="{{item.kind === 'bp'}}">{{item.sys}} / {{item.dia}} <text class="rec__u">mmHg</text></block>
-          <block wx:else>{{item.glucose}} <text class="rec__u">mmol/L</text></block>
+      <block wx:if="{{kind === 'bp'}}">
+        <view class="frow">
+          <view class="fitem">
+            <text class="flb">收缩压（高压）</text>
+            <input
+              class="inp"
+              type="digit"
+              value="{{sys}}"
+              placeholder="例：128"
+              placeholder-class="ph"
+              bindinput="onInputSys"
+            />
+          </view>
+          <view class="fitem">
+            <text class="flb">舒张压（低压）</text>
+            <input
+              class="inp"
+              type="digit"
+              value="{{dia}}"
+              placeholder="例：82"
+              placeholder-class="ph"
+              bindinput="onInputDia"
+            />
+          </view>
         </view>
-        <view class="rec__d">{{item.timeText}}</view>
-      </view>
-      <view class="rec__r">
-        <view class="rec__lv rec__lv--{{item.level}}">{{item.levelText}}</view>
-        <view class="rec__a">{{item.advice}}</view>
-      </view>
-    </view>
-  </view>
+        <view class="fnote">单位 mmHg · 建议安静休息 5 分钟后、同一时段测量</view>
+      </block>
 
-  <!-- 家庭医生签约 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">家庭医生签约</text>
-      <text class="sec__s">社区门诊 · 免费</text>
-    </view>
-    <view class="sign">
-      <view class="sign__t">签约后可享：每季度一次随访、用药指导、优先转诊、慢病随访提醒</view>
-      <view class="btn btn--main btn--full" bindtap="onSign">提交签约申请</view>
-    </view>
-  </view>
+      <block wx:else>
+        <view class="fitem">
+          <text class="flb">血糖值</text>
+          <input
+            class="inp"
+            type="digit"
+            value="{{glucose}}"
+            placeholder="例：6.2"
+            placeholder-class="ph"
+            bindinput="onInputGlucose"
+          />
+        </view>
+        <view class="chips kchips">
+          <view class="chip {{when === 'fasting' ? 'on' : ''}}" data-w="fasting" bindtap="onSwitchWhen">空腹</view>
+          <view class="chip {{when === 'post' ? 'on' : ''}}" data-w="post" bindtap="onSwitchWhen">餐后 2 小时</view>
+        </view>
+        <view class="fnote">单位 mmol/L · 末梢血自测值与静脉血检测会有差异</view>
+      </block>
 
-  <view class="foot">
-    {{redLine}}
+      <view wx:if="{{preview}}" class="pv pv-{{preview.level}}">
+        <view class="pv-h">参考解读：{{preview.levelText}}</view>
+        <view class="pv-b">{{preview.advice}}</view>
+      </view>
+
+      <view class="acts">
+        <view class="btn3 ghost" bindtap="onInterpret">看解读</view>
+        <view class="btn3 solid" bindtap="onSave">保存记录</view>
+      </view>
+    </view>
+
+    <!-- 测量记录 -->
+    <view class="dash">
+      <view class="d-h">
+        <text class="dh-b">测量记录</text>
+        <text class="dh-e">共 {{count}} 次</text>
+      </view>
+      <view wx:if="{{count === 0}}" class="empty">还没有记录，在上面填一次血压或血糖试试</view>
+      <view wx:else class="tl">
+        <view
+          class="tl-i done"
+          wx:for="{{records}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindlongpress="onRemove"
+        >
+          <view class="tl-d" />
+          <view class="tl-b">
+            <view class="tl-t">{{item.timeText}}</view>
+            <view class="tl-s">{{item.kind === 'bp' ? '血压' : '血糖'}} {{item.valueText}} {{item.unitText}} · {{item.levelText}}</view>
+            <view wx:if="{{index === 0}}" class="tl-a">{{item.advice}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="hint">长按任意记录可删除 · 记录仅保存在本机</view>
+    </view>
+
+    <!-- 问 AI -->
+    <view class="sc" bindtap="onAskAi">
+      <view class="si ai-si"><view class="ic ic-m ic-robot" /></view>
+      <view class="sb">
+        <view class="sn">问 AI：报告怎么看</view>
+        <view class="sd">指标解读 · 不替代医生诊断</view>
+      </view>
+      <view class="sa"><text class="sa-t">去问 ›</text></view>
+    </view>
+
+    <!-- 家庭医生签约 -->
+    <view class="sc" bindtap="onSign">
+      <view class="si doc-si"><view class="ic ic-m ic-doctor" /></view>
+      <view class="sb">
+        <view class="sn">家庭医生签约</view>
+        <view class="sd">季度随访 · 用药指导 · 优先转诊</view>
+      </view>
+      <view class="sa"><text class="sa-t">去签约 ›</text></view>
+    </view>
+
+    <view class="redline">{{redLine}}</view>
   </view>
 
   <!-- CR-024：页面级 AI 入口（上下文 = 健康档案） -->
   <ai-bar page="record" />
 
-  <!-- 签约弹层 -->
+  <!-- 家庭医生签约弹层 -->
   <view wx:if="{{showSign}}" class="mask" bindtap="onCloseSign">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">家庭医生签约申请</view>
-      <view class="sheet__tip">提交后由社区门诊工作人员联系你确认，本页不会上传你的自测记录。</view>
-      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
+    <view class="sheet sheet--wx show" catchtap="noop">
+      <view class="sht-h">家庭医生签约申请</view>
+      <view class="sht-tip">提交后由社区门诊工作人员联系你确认，本页不会上传你的自测记录。</view>
+      <view class="slb">楼栋房号 <text class="req">必填</text></view>
       <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{signRoom}}" bindinput="onInputSignRoom" />
-      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
+      <view class="slb">联系电话 <text class="req">必填</text></view>
       <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{signContact}}" bindinput="onInputSignContact" />
-      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
+      <view class="slb">备注 <text class="opt-t">选填</text></view>
       <textarea class="ta" placeholder="例如：家里有高血压老人，希望上门随访" maxlength="120" value="{{signNote}}" bindinput="onInputSignNote" />
-      <view class="sheet__ft">
-        <view class="sheet__btn" bindtap="onCloseSign">取消</view>
-        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmitSign">{{submitting ? '提交中…' : '提交申请'}}</view>
+      <view class="sht-ft">
+        <view class="sht-btn2" bindtap="onCloseSign">取消</view>
+        <view class="sht-btn2 sht-main" bindtap="onSubmitSign">{{submitting ? '提交中…' : '提交申请'}}</view>
       </view>
     </view>
   </view>

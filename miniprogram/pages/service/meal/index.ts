@@ -1,12 +1,10 @@
 /**
- * 智慧配餐（CR-026）
+ * 智慧配餐（CR-028 重写，保留 CR-026 能力）
  *
- * 结构：目标选择（5 类人群）→ 今日能量卡 + 三大营养素条 → 7 天切换 → 早/午/晚三卡
+ * 结构：配餐目标 / 人数 / 忌口 → 一周三餐 → 营养达成条 → 换一道 / 锁定
  *      → 食材清单 → 预约助餐（走 workorder:create，零新增接口）
  *
  * 数据：**纯本地常量**（viewmodel.ts），不上云、不建档。
- * 理由（用户 2026-10-19 裁决）：新页一律本地配置 + 复用既有接口，赶 10-25 提交，不新增云函数。
- *
  * ⚠ 红线：底部固定「不替代医生或营养师处方」提示，且所有数字标注为参考值。
  */
 import { createWorkOrder } from '../../../services/workorder';
@@ -16,7 +14,6 @@ import {
   achievePercent,
   AVOID_OPTIONS,
   buildMealOrderDescription,
-  DISHES,
   findGoal,
   ingredientList,
   MEAL_GOALS,
@@ -32,7 +29,21 @@ import {
   type Slot,
 } from './viewmodel';
 
+const info = wx.getWindowInfo();
+
 const TIME_SLOTS: string[] = ['今天午餐', '今天晚餐', '明天午餐', '明天晚餐'];
+const PEOPLE = [
+  { n: 1, label: '独居' },
+  { n: 2, label: '两口' },
+  { n: 3, label: '三口' },
+  { n: 4, label: '多人' },
+];
+
+const SLOT_META: Record<Slot, { label: string; color: string; emoji: string }> = {
+  b: { label: '早餐', color: '#1F5FD6', emoji: '🌅' },
+  l: { label: '午餐', color: '#0E7C6B', emoji: '🍚' },
+  d: { label: '晚餐', color: '#A86A05', emoji: '🍲' },
+};
 
 interface SlotVM {
   slot: Slot;
@@ -46,119 +57,122 @@ interface SlotVM {
   name: string;
   emoji: string;
   tags: string[];
+  locked: boolean;
 }
 
-const SLOT_META: Record<Slot, { label: string; color: string; emoji: string }> = {
-  b: { label: '早餐', color: '#1F5FD6', emoji: '🌅' },
-  l: { label: '午餐', color: '#0E7C6B', emoji: '🍚' },
-  d: { label: '晚餐', color: '#A86A05', emoji: '🍲' },
-};
+interface ListItemVM {
+  name: string;
+  count: number;
+}
+
+function pad(n: number): string {
+  return n < 10 ? `0${n}` : String(n);
+}
+
+function buildDayMeta(): string[] {
+  return WEEK_DAYS.map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    return `${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  });
+}
 
 Page({
   data: {
+    statusBarHeight: info.statusBarHeight,
+
+    /** false = 先做目标设置；true = 看方案 */
+    ready: false,
     goals: MEAL_GOALS as MealGoal[],
     goalKey: 'sugar',
     goalName: '控糖',
-    goalDesc: '',
+    goalDesc: '低 GI 主食，控制精制糖',
     goalKcal: 1600,
     goalNa: 1400,
 
-    days: WEEK_DAYS,
-    day: 0,
-
+    peopleList: PEOPLE,
     people: 1,
-    avoids: AVOID_OPTIONS,
+    avoidList: AVOID_OPTIONS.map((name) => ({ name, on: false })),
     avoid: [] as string[],
 
-    /** 今日三餐 */
+    days: WEEK_DAYS,
+    dayMeta: buildDayMeta(),
+    day: 0,
+    dayText: WEEK_DAYS[0],
+
     slots: [] as SlotVM[],
     sum: { kcal: 0, p: 0, c: 0, f: 0, na: 0 } as NutrientSum,
     targets: { p: 0, c: 0, f: 0 },
-    /** 进度条宽度一律转成百分比字符串，wxml 里不做算术 */
+    percent: 0,
+    kcalBar: '0%',
     barP: '0%',
     barC: '0%',
     barF: '0%',
-    percent: 0,
 
     showList: false,
-    listItems: [] as string[],
+    listItems: [] as ListItemVM[],
+    showHelp: false,
 
     showOrder: false,
     times: TIME_SLOTS,
     orderRoom: '',
-    orderTime: '',
+    orderTime: TIME_SLOTS[0],
     orderNote: '',
     submitting: false,
   },
 
-  /** 模块级：当前方案（不进 setData，避免大对象反复序列化） */
+  /** 当前方案不进 setData，避免大对象反复序列化 */
   plan: {} as MealPlan,
+  locked: {} as Record<string, boolean>,
 
-  onLoad(options: Record<string, string | undefined>) {
+  onLoad(options: Record<string, string | undefined>): void {
     trackPageView('pages/service/meal/index');
-    const goal = String(options.goal ?? '').trim();
-    if (goal) this.data.goalKey = goal;
-    this.rebuild();
+    const goal = String(options?.goal ?? '').trim();
+    if (goal) {
+      this.setData({ goalKey: goal });
+      this.applyGoalText();
+      this.setData({ ready: true });
+      this.rebuild();
+    }
   },
 
-  /* ============================ 核心：重算方案 ============================ */
-
-  rebuild(): void {
-    const goal = findGoal(this.data.goalKey);
-    const plan = pickPlan(this.data.goalKey, this.data.day, this.data.avoid);
-    this.plan = plan;
-    const sum = planSum(plan);
-    const targets = ratioTargets(goal);
-    const pct = (v: number, t: number): string => `${Math.min(100, t ? Math.round((v / t) * 100) : 0)}%`;
-
-    const slots: SlotVM[] = (['b', 'l', 'd'] as Slot[]).map((s) => {
-      const d: Dish | undefined = plan[s];
-      const meta = SLOT_META[s];
-      return {
-        slot: s,
-        label: meta.label,
-        color: meta.color,
-        emoji: meta.emoji,
-        kcal: d?.kcal ?? 0,
-        p: d?.p ?? 0,
-        c: d?.c ?? 0,
-        f: d?.f ?? 0,
-        na: d?.na ?? 0,
-        name: d?.name ?? '今日暂无安排',
-        tags: d?.tags ?? [],
-      };
-    });
-
-    this.setData({
-      goalName: goal.name,
-      goalDesc: goal.desc,
-      goalKcal: goal.kcal,
-      goalNa: goal.na,
-      slots,
-      sum,
-      targets,
-      barP: pct(sum.p, targets.p),
-      barC: pct(sum.c, targets.c),
-      barF: pct(sum.f, targets.f),
-      percent: achievePercent(sum, goal),
-    });
+  /** 目标文案（设置页与页头共用） */
+  applyGoalText(): void {
+    const g = findGoal(this.data.goalKey);
+    this.setData({ goalName: g.name, goalDesc: g.desc, goalKcal: g.kcal, goalNa: g.na });
   },
 
-  /* ============================ 交互 ============================ */
+  goBack(): void {
+    if (getCurrentPages().length > 1) {
+      wx.navigateBack();
+      return;
+    }
+    wx.switchTab({ url: '/pages/index/index' });
+  },
+
+  /* ============================ 设置页 ============================ */
+
+  onHelp(): void {
+    this.setData({ showHelp: true });
+  },
+
+  onCloseHelp(): void {
+    this.setData({ showHelp: false });
+  },
 
   onPickGoal(e: WechatMiniprogram.TouchEvent): void {
-    const key = String((e.currentTarget.dataset as { k?: string }).k ?? '');
+    const key = String((e.currentTarget.dataset as { v?: string }).v ?? '');
     if (!key || key === this.data.goalKey) return;
-    track('btn_click', { page: 'meal', target: 'goal', kind: key });
     this.setData({ goalKey: key });
-    this.rebuild();
+    this.applyGoalText();
+    if (this.data.ready) this.rebuild();
   },
 
-  onPickDay(e: WechatMiniprogram.TouchEvent): void {
-    const day = Number((e.currentTarget.dataset as { v?: string }).v ?? 0);
-    if (day === this.data.day) return;
-    this.setData({ day });
-    this.rebuild();
+  onPickPeople(e: WechatMiniprogram.TouchEvent): void {
+    const n = Number((e.currentTarget.dataset as { v?: string }).v ?? 1);
+    if (!n || n === this.data.people) return;
+    this.setData({ people: n });
+    if (this.data.ready) this.update();
   },
 
   onToggleAvoid(e: WechatMiniprogram.TouchEvent): void {
@@ -167,33 +181,39 @@ Page({
     const avoid = this.data.avoid.indexOf(v) >= 0
       ? this.data.avoid.filter((x) => x !== v)
       : this.data.avoid.concat([v]);
-    this.setData({ avoid });
+    this.setData({
+      avoid,
+      avoidList: this.data.avoidList.map((o) => ({ ...o, on: avoid.indexOf(o.name) >= 0 })),
+    });
+    if (this.data.ready) this.rebuild();
+  },
+
+  onStart(): void {
+    track('btn_click', { page: 'meal', target: 'start', kind: this.data.goalKey });
+    this.setData({ ready: true });
+    this.locked = {};
     this.rebuild();
   },
 
-  onPeopleTap(e: WechatMiniprogram.TouchEvent): void {
-    const delta = Number((e.currentTarget.dataset as { d?: string }).d ?? 0);
-    const people = Math.min(6, Math.max(1, this.data.people + delta));
-    if (people === this.data.people) return;
-    this.setData({ people });
+  /** 改目标：回到设置页，保留当前选择 */
+  onResetGoal(): void {
+    this.setData({ ready: false });
   },
 
-  /** 换一道：只在同槽位池内轮换，纯本地重算 */
-  onSwap(e: WechatMiniprogram.TouchEvent): void {
-    const slot = String((e.currentTarget.dataset as { s?: string }).s ?? '') as Slot;
-    if (slot !== 'b' && slot !== 'l' && slot !== 'd') return;
-    const next = swapDish(this.plan, slot, this.data.goalKey, this.data.avoid);
-    if (!next) return;
-    this.plan = { ...this.plan, [slot]: next };
-    track('btn_click', { page: 'meal', target: 'swap', kind: slot });
-    this.applyPlan();
+  /* ============================ 方案 ============================ */
+
+  rebuild(): void {
+    this.plan = pickPlan(this.data.goalKey, this.data.day, this.data.avoid);
+    this.update();
   },
 
-  applyPlan(): void {
+  update(): void {
     const goal = findGoal(this.data.goalKey);
     const sum = planSum(this.plan);
     const targets = ratioTargets(goal);
     const pct = (v: number, t: number): string => `${Math.min(100, t ? Math.round((v / t) * 100) : 0)}%`;
+    const percent = achievePercent(sum, goal);
+
     const slots: SlotVM[] = (['b', 'l', 'd'] as Slot[]).map((s) => {
       const d: Dish | undefined = this.plan[s];
       const meta = SLOT_META[s];
@@ -209,36 +229,80 @@ Page({
         na: d?.na ?? 0,
         name: d?.name ?? '今日暂无安排',
         tags: d?.tags ?? [],
+        locked: !!this.locked[s],
       };
     });
+
     this.setData({
+      goalName: goal.name,
+      goalDesc: goal.desc,
+      goalKcal: goal.kcal,
+      goalNa: goal.na,
+      dayText: WEEK_DAYS[this.data.day] ?? WEEK_DAYS[0],
       slots,
       sum,
+      targets,
+      percent,
+      kcalBar: pct(sum.kcal, goal.kcal),
       barP: pct(sum.p, targets.p),
       barC: pct(sum.c, targets.c),
       barF: pct(sum.f, targets.f),
-      percent: achievePercent(sum, goal),
     });
+  },
+
+  onPickDay(e: WechatMiniprogram.TouchEvent): void {
+    const day = Number((e.currentTarget.dataset as { v?: string }).v ?? 0);
+    if (!Number.isFinite(day) || day === this.data.day) return;
+    this.setData({ day });
+    this.rebuild();
+  },
+
+  /** 换一道：只在同槽位池内轮换，纯本地重算 */
+  onSwap(e: WechatMiniprogram.TouchEvent): void {
+    const slot = String((e.currentTarget.dataset as { s?: string }).s ?? '') as Slot;
+    if (slot !== 'b' && slot !== 'l' && slot !== 'd') return;
+    if (this.locked[slot]) {
+      toast('这一餐已锁定，先解锁再换');
+      return;
+    }
+    const next = swapDish(this.plan, slot, this.data.goalKey, this.data.avoid);
+    if (!next) {
+      toast('没有更多可选菜品');
+      return;
+    }
+    this.plan = { ...this.plan, [slot]: next };
+    track('btn_click', { page: 'meal', target: 'swap', kind: slot });
+    this.update();
+  },
+
+  onToggleLock(e: WechatMiniprogram.TouchEvent): void {
+    const slot = String((e.currentTarget.dataset as { s?: string }).s ?? '');
+    if (!slot) return;
+    this.locked[slot] = !this.locked[slot];
+    this.update();
   },
 
   /* ============================ 食材清单 ============================ */
 
   onOpenList(): void {
-    this.setData({ showList: true, listItems: ingredientList(this.plan) });
+    const items = ingredientList(this.plan);
+    this.setData({
+      showList: true,
+      listItems: items.map((name) => ({ name, count: this.data.people })),
+    });
   },
 
   onCloseList(): void {
     this.setData({ showList: false });
   },
 
-  /** 一键加进生鲜预订：带清单跳通知列表的「生鲜」标签（复用既有页，不新建） */
+  /** 一键加进生鲜预订：复用既有生鲜页，不新建接口 */
   onBuyIngredients(): void {
-    const items = ingredientList(this.plan);
     this.setData({ showList: false });
-    track('btn_click', { page: 'meal', target: 'buy', count: items.length });
+    track('btn_click', { page: 'meal', target: 'buy', count: this.data.listItems.length });
     wx.navigateTo({
-      url: `/pages/notice/list/index?type=activity&tag=${encodeURIComponent('生鲜')}`,
-      fail: () => toast('页面暂时打不开，请稍后再试'),
+      url: '/pages/service/fresh/index',
+      fail: () => toast('生鲜页暂时打不开，请稍后再试'),
     });
   },
 
@@ -298,15 +362,11 @@ Page({
     }
   },
 
-  /** 阻止弹层内部点击冒泡到遮罩 */
   noop(): void {
-    /* noop */
+    /* 阻止弹层点击冒泡 */
   },
 
   onShareAppMessage(): { title: string; path: string } {
     return { title: `智慧配餐 · ${this.data.goalName}方案`, path: '/pages/service/meal/index' };
   },
 });
-
-/** DISHES 只用于类型导出校验，避免 tree-shaking 误删（页面里实际由 viewmodel 使用） */
-export const __DISHES_COUNT__ = DISHES.length;

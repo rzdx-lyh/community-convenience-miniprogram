@@ -1,0 +1,93 @@
+/* 引导页补充样式（原型类未覆盖部分） */
+.page.authp {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.au-pts text {
+  display: block;
+}
+.au-pts .n {
+  font-size: 32rpx;
+  font-weight: 800;
+}
+.au-pts .l {
+  font-size: 17rpx;
+  opacity: 0.8;
+}
+
+.feat {
+  display: flex;
+  align-items: flex-start;
+  gap: 18rpx;
+  padding: 18rpx 0;
+  border-bottom: 1px solid #EFF1F4;
+}
+.feat:last-of-type {
+  border-bottom: 0;
+  padding-bottom: 8rpx;
+}
+.feat__i {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.fi--blue {
+  background: #EAF1FE;
+  color: #1F5FD6;
+}
+.fi--teal {
+  background: #E6F5F2;
+  color: #0E7C6B;
+}
+.fi--gold {
+  background: #FDF3E1;
+  color: #A86A05;
+}
+.fi--indigo {
+  background: #EDECFB;
+  color: #4B45B8;
+}
+.feat__b {
+  flex: 1;
+  min-width: 0;
+}
+.feat__n {
+  display: block;
+  font-size: 25rpx;
+  font-weight: 800;
+  color: var(--t1);
+}
+.feat__d {
+  display: block;
+  margin-top: 4rpx;
+  font-size: 19rpx;
+  color: var(--t3);
+  line-height: 1.5;
+}
+
+.au-btn {
+  margin-top: 24rpx;
+}
+.au-btn--hover {
+  transform: scale(0.985);
+  filter: brightness(0.95);
+}
+.au-btn .ar {
+  font-size: 34rpx;
+  opacity: 0.8;
+}
+.lnk {
+  color: var(--blue);
+  font-weight: 600;
+}
+.au-tip .ic {
+  flex: none;
+  color: var(--t3);
+}

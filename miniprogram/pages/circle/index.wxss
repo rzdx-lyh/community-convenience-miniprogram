@@ -1,149 +1,75 @@
-/* 社区圈子页（FE-12） */
-.page {
-  min-height: 100vh;
-  background: var(--bg);
-  padding: 0 var(--space-4) var(--space-5);
-}
+/* 社区圈子补充样式 */
 
-/* Tag 分类 Tab */
-.tabs {
-  display: flex;
-  gap: var(--space-2);
-  padding: var(--space-3) 0;
-}
+/* 恢复图标尺寸档（layout 的 .ic 覆盖了 icons 的 .ic-s/.ic-m） */
+.ic.ic-s { width: 32rpx; height: 32rpx; }
+.ic.ic-m { width: 40rpx; height: 40rpx; }
 
-.tabs__item {
-  padding: 0 var(--space-4);
-  height: 64rpx;
-  line-height: 64rpx;
-  border-radius: var(--radius-full);
-  background: var(--card);
-  color: var(--text-2);
-  font-size: var(--font-sub);
-}
+.hover-dim { opacity: .86; }
 
-.tabs__item.is-active {
-  background: var(--brand);
-  color: var(--card);
-  font-weight: 700;
-}
+.nav--flat { border-bottom: 0; }
 
-/* 帖子卡片 */
-.post {
-  background: var(--card);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-  padding: var(--space-4);
-  margin-bottom: var(--space-3);
-}
-
-.post__head {
+/* 圈子信息条（原型用内联 style） */
+.cb-ic {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 18rpx;
+  background: #DCE8FA;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-cap);
-  color: var(--text-2);
+  justify-content: center;
+  flex: none;
+}
+.cbar .cb-b { flex: 1; min-width: 0; }
+.cbar .cb-b .t { display: block; font-size: 25rpx; font-weight: 800; color: #16407F; }
+.cbar .cb-b .s { display: block; font-size: 19rpx; color: #5A7096; margin-top: 4rpx; }
+
+/* AI 摘要（原型 b / i / ul / li 换成 view + 类名） */
+.aidig .d-top { display: flex; align-items: center; gap: 8rpx; font-size: 25rpx; font-weight: 800; position: relative; }
+.aidig .dt { font-weight: 800; }
+.aidig .d-badge {
+  font-size: 17rpx;
+  background: rgba(255, 255, 255, .24);
+  padding: 1px 10rpx;
+  border-radius: 6rpx;
+  font-weight: 400;
+}
+.aidig .d-li { position: relative; margin-top: 12rpx; font-size: 21rpx; line-height: 1.62; padding-left: 24rpx; }
+.aidig .d-li::before { content: '·'; position: absolute; left: 6rpx; }
+
+/* feed tab 计数 */
+.ftabs .em {
+  font-style: normal;
+  font-size: 17rpx;
+  color: var(--blue);
+  background: var(--blue-l);
+  padding: 0 8rpx;
+  border-radius: 6rpx;
+  margin-left: 6rpx;
+  vertical-align: 1px;
 }
 
-.post__type {
-  padding: 0 var(--space-2);
-  height: 40rpx;
-  line-height: 40rpx;
-  border-radius: var(--radius-s);
-  background: var(--brand-light);
-  color: var(--brand);
-  font-weight: 600;
-}
+/* 话题广场标题（原型内联 margin） */
+.st--topic { margin: 24rpx 24rpx 0; padding: 0 0 12rpx; }
 
-.post__top {
-  padding: 0 var(--space-2);
-  height: 40rpx;
-  line-height: 40rpx;
-  border-radius: var(--radius-s);
-  background: var(--accent-warm-light);
-  color: var(--accent-warm);
-  font-weight: 600;
-}
+/* 话题卡文案（原型 .tc b / .tc span） */
+.tc .tc-b { display: flex; align-items: center; gap: 8rpx; font-size: 23rpx; font-weight: 800; color: var(--t1); }
+.tc .tc-s { display: block; font-size: 18rpx; color: var(--t3); margin-top: 6rpx; }
 
-.post__time {
-  margin-left: auto;
-}
+/* 帖子动作条（原型 .p-act div） */
+.p-act .a { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8rpx; font-size: 22rpx; color: var(--t2); padding: 6rpx 0; border-radius: 12rpx; }
+.p-act .a.on { color: #C9302C; font-weight: 700; }
 
-.post__title {
-  margin-top: var(--space-2);
-  font-size: var(--font-card);
-  font-weight: 700;
-  color: var(--text-1);
-}
-
-.post__content {
-  margin-top: var(--space-1);
-  font-size: var(--font-body);
-  color: var(--text-2);
+/* 帖子扩展信息行（价格 / 时间 / 状态） */
+.p-x {
+  margin-top: 16rpx;
+  font-size: 20rpx;
+  color: #4A5D78;
+  background: #F4F7FC;
+  border-radius: 12rpx;
+  padding: 10rpx 16rpx;
   line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
-.post__content.is-expanded {
-  -webkit-line-clamp: unset;
-  overflow: visible;
-}
+.circle-foot { height: 168rpx; }
 
-.post__foot {
-  margin-top: var(--space-3);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: var(--font-cap);
-  color: var(--text-2);
-}
-
-.post__author {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.post__badge {
-  padding: 0 var(--space-1);
-  height: 36rpx;
-  line-height: 36rpx;
-  border-radius: var(--radius-s);
-  background: var(--brand);
-  color: var(--card);
-  font-weight: 600;
-}
-
-.post__tags {
-  margin-top: var(--space-2);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-}
-
-.post__tag {
-  padding: 0 var(--space-2);
-  height: 40rpx;
-  line-height: 40rpx;
-  border-radius: var(--radius-full);
-  background: var(--green-light);
-  color: var(--green);
-  font-size: var(--font-cap);
-}
-
-.list-footer {
-  text-align: center;
-  padding: var(--space-3) 0;
-  font-size: var(--font-cap);
-  color: var(--text-2);
-}
-
-/* 关怀模式：时间戳等辅助文字升为次级文字（design-tokens §③ 对比度升级） */
-.care-mode .post__time,
-.care-mode .post__foot,
-.care-mode .list-footer {
-  color: var(--text-2);
-}
+.page { background: var(--bg); }

@@ -1,0 +1,49 @@
+<!-- 登录页 · 微信一键登录 + 协议勾选（未勾选禁用） -->
+<view class="page authp">
+  <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
+  </view>
+
+  <view class="au-hero">
+    <view class="au-logo">邻</view>
+    <view class="au-nm">邻里小助手</view>
+    <view class="au-sb">阳光社区 · 报修缴费挂号，一个入口办完</view>
+    <view class="au-pts">
+      <view><text class="n">38</text><text class="l">项服务</text></view>
+      <view><text class="n">8</text><text class="l">个板块</text></view>
+      <view><text class="n">24h</text><text class="l">自助办理</text></view>
+    </view>
+  </view>
+
+  <view class="au-card">
+    <view class="au-t">登录后即可预约、报修与发布</view>
+
+    <view class="au-btn {{busy ? 'busy' : ''}} {{agree ? '' : 'off'}}" hover-class="au-btn--hover" bindtap="onWxLogin">
+      <view class="au-wx"><view class="ic ic-s icw ic-chat" /></view>
+      <text>{{busy ? '正在登录…' : '微信一键登录'}}</text>
+    </view>
+
+    <view class="au-alt" bindtap="onPhoneLogin">
+      <text>手机号登录</text>
+      <text class="em">个人主体无法获取手机号，当前版本未开放</text>
+    </view>
+
+    <view class="ckb {{agree ? 'on' : ''}}" bindtap="onToggleAgree">
+      <view class="box"><text wx:if="{{agree}}" class="tick">✓</text></view>
+      <view class="ckb__t">我已阅读并同意
+        <text class="lnk" data-kind="user" catchtap="onOpenDoc">《用户协议》</text>
+        和
+        <text class="lnk" data-kind="privacy" catchtap="onOpenDoc">《隐私政策》</text>
+      </view>
+    </view>
+
+    <view class="au-tip">
+      <view class="ic ic-s ic-lock" />
+      <text>仅收集办事必需信息：昵称、楼栋房号、联系方式；不下单不采集位置，不向第三方共享。</text>
+    </view>
+  </view>
+
+  <view class="skip" bindtap="onSkip">先逛逛社区 ›</view>
+  <view class="au-foot">{{appVersion}} · 阳光社区 · 演示原型，不产生真实账号</view>
+</view>

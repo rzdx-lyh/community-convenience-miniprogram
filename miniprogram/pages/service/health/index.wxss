@@ -1,217 +1,34 @@
-/* 健康服务（CR-027）· 全部取 Design Token v1.5 */
-.page {
-  min-height: 100vh;
-  padding-bottom: 160rpx;
-  background: var(--bg);
-}
+/* 健康服务补充样式（原型类之外的局部排版） */
+.pgh--teal{--h1:#14A085;--h2:#0A6B58}
+.ph{display:flex;align-items:center;gap:22rpx;margin-top:22rpx;position:relative;z-index:2}
+.ph__t{font-size:42rpx;font-weight:800;letter-spacing:.6rpx}
+.ph__s{font-size:19rpx;opacity:.86;margin-top:8rpx;line-height:1.5}
+.tabs-card{padding:18rpx 20rpx}
+.tabs-card .chips{flex-wrap:nowrap}
+.tabs-card .chip{flex:1;justify-content:center;padding:0 8rpx;font-size:21rpx}
+.tip--row{display:flex;align-items:flex-start;gap:10rpx}
+.tip--row .ic{flex:none;margin-top:2rpx}
+.grp__bd{padding:10rpx 24rpx 24rpx}
+.gh__b{font-size:25rpx;font-weight:800;display:flex;align-items:center;gap:12rpx}
+.gh__b::before{content:'';width:5rpx;height:22rpx;border-radius:4rpx;background:var(--blue);flex:none}
+.gh__p{display:block;margin-top:8rpx;font-size:19rpx;color:var(--t3);line-height:1.4}
+.lbl__em{font-style:normal;font-size:19rpx;font-weight:400;color:var(--t3)}
+.kv{display:flex;gap:14rpx;padding:8rpx 0;font-size:21rpx;line-height:1.55}
+.kv__k{width:68rpx;flex:none;color:var(--t3)}
+.kv__v{flex:1;color:var(--t2)}
+.hint{display:flex;align-items:flex-start;gap:8rpx;margin-top:8rpx;padding:12rpx 14rpx;border-radius:12rpx;background:var(--gold-l);font-size:18rpx;color:#8A5A00;line-height:1.55}
+.hint .ic{flex:none;color:#A86A05}
+.acts{margin-top:18rpx}
+.acts .btn3{width:100%;height:80rpx}
+.step{display:flex;align-items:flex-start;gap:14rpx;padding:10rpx 0}
+.step__n{width:38rpx;height:38rpx;border-radius:50%;background:var(--teal-l);color:var(--teal);font-size:19rpx;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.step__t{flex:1;font-size:21rpx;color:var(--t2);line-height:1.55}
+.gap{height:24rpx}
 
-.top {
-  padding: var(--space-4);
-  background: var(--brand-gradient);
-}
-.top__t {
-  font-size: 36rpx;
-  font-weight: 800;
-  color: #fff;
-}
-.top__s {
-  margin-top: var(--space-1);
-  font-size: var(--font-cap);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.tabs {
-  display: flex;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4) 0;
-}
-.tab {
-  flex: 1;
-  height: 64rpx;
-  border-radius: var(--radius-m);
-  background: var(--card);
-  color: var(--text-2);
-  font-size: var(--font-cap);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.tab.is-on {
-  background: var(--brand);
-  color: #fff;
-  font-weight: 700;
-}
-
-.note {
-  padding: var(--space-2) var(--space-4) 0;
-  font-size: 20rpx;
-  color: var(--text-3);
-}
-
-.card {
-  margin: var(--space-3) var(--space-4) 0;
-  padding: var(--space-3);
-  background: var(--card);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-}
-.card__n {
-  font-size: var(--font-sub);
-  font-weight: 700;
-  color: var(--text-1);
-}
-.card__tip {
-  margin-top: var(--space-2);
-  padding: var(--space-2);
-  border-radius: var(--radius-s);
-  background: var(--bg);
-  font-size: 20rpx;
-  color: var(--text-2);
-  line-height: 1.6;
-}
-
-.kv {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  font-size: var(--font-cap);
-  line-height: 1.6;
-}
-.kv__k {
-  flex: none;
-  width: 72rpx;
-  color: var(--text-3);
-}
-.kv__v {
-  flex: 1;
-  min-width: 0;
-  color: var(--text-1);
-}
-
-.step {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-.step__i {
-  flex: none;
-  width: 40rpx;
-  height: 40rpx;
-  border-radius: var(--radius-full);
-  background: var(--brand-light);
-  color: var(--brand);
-  font-size: 22rpx;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.step__t {
-  flex: 1;
-  min-width: 0;
-  font-size: var(--font-cap);
-  color: var(--text-2);
-  line-height: 1.6;
-}
-
-.btn {
-  margin-top: var(--space-3);
-  height: 76rpx;
-  border-radius: var(--radius-m);
-  background: var(--brand);
-  color: #fff;
-  font-size: var(--font-body);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.foot {
-  padding: var(--space-4);
-  font-size: 20rpx;
-  color: var(--text-3);
-  line-height: 1.7;
-}
-.foot__b {
-  color: var(--error);
-  font-weight: 700;
-}
-
-.mask {
-  position: fixed;
-  left: 0; right: 0; top: 0; bottom: 0;
-  background: var(--mask);
-  z-index: var(--z-mask);
-}
-.sheet {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  max-height: 84vh;
-  padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
-  background: var(--card);
-  border-radius: var(--radius-l) var(--radius-l) 0 0;
-  z-index: var(--z-modal);
-  overflow-y: auto;
-}
-.sheet__hd {
-  font-size: var(--font-card);
-  font-weight: 700;
-  color: var(--text-1);
-}
-.sheet__lb {
-  margin-top: var(--space-3);
-  font-size: var(--font-sub);
-  color: var(--text-2);
-}
-.sheet__tip {
-  margin-top: var(--space-2);
-  font-size: var(--font-cap);
-  color: var(--text-3);
-  line-height: 1.6;
-}
-.req { color: var(--error); font-size: 20rpx; }
-.opt { color: var(--text-3); font-size: 20rpx; }
-.inp {
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: var(--space-1);
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg);
-  border-radius: var(--radius-m);
-  font-size: var(--font-sub);
-  color: var(--text-1);
-}
-.ta {
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: var(--space-1);
-  height: 140rpx;
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg);
-  border-radius: var(--radius-m);
-  font-size: var(--font-sub);
-  color: var(--text-1);
-}
-.sheet__btn {
-  margin-top: var(--space-3);
-  height: 84rpx;
-  border-radius: var(--radius-m);
-  background: var(--bg);
-  color: var(--text-2);
-  font-size: var(--font-body);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.sheet__btn--main {
-  background: var(--brand);
-  color: #fff;
-  font-weight: 700;
-}
-.sheet__ft {
-  display: flex;
-  gap: var(--space-2);
-}
-.sheet__ft .sheet__btn { flex: 1; }
-.is-dis { opacity: 0.6; }
+/* 弹层内部（.sheet 已 fixed，内部用自身排版） */
+.sh-h{font-size:28rpx;font-weight:800;text-align:center}
+.sh-sub{text-align:center;font-size:19rpx;color:var(--t3);margin-top:6rpx}
+.sh-body{margin-top:10rpx;max-height:52vh;overflow-y:auto}
+.sh-note{margin-top:18rpx;font-size:17rpx;color:var(--t3);line-height:1.5}
+.sh-btns{display:flex;gap:18rpx;margin-top:22rpx}
+.sh-btns .btn{flex:1;width:auto}

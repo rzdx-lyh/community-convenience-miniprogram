@@ -1,0 +1,50 @@
+<!-- 引导页 · 品牌介绍 → 登录 -->
+<view class="page authp">
+  <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
+  </view>
+
+  <view class="au-hero">
+    <view class="au-logo">邻</view>
+    <view class="au-nm">邻里小助手</view>
+    <view class="au-sb">阳光社区 · 报修缴费挂号，一个入口办完</view>
+    <view class="au-pts">
+      <view><text class="n">38</text><text class="l">项服务</text></view>
+      <view><text class="n">8</text><text class="l">个板块</text></view>
+      <view><text class="n">24h</text><text class="l">自助办理</text></view>
+    </view>
+  </view>
+
+  <view class="au-card">
+    <view class="au-t">社区里的事，一次说清</view>
+
+    <view wx:for="{{feats}}" wx:key="n" class="feat">
+      <view class="feat__i fi--{{item.c}}">
+        <view class="ic ic-s ic-{{item.i}}" />
+      </view>
+      <view class="feat__b">
+        <text class="feat__n">{{item.n}}</text>
+        <text class="feat__d">{{item.d}}</text>
+      </view>
+    </view>
+
+    <view class="au-btn" hover-class="au-btn--hover" bindtap="onStart">
+      <text>开始使用</text>
+      <text class="ar">›</text>
+    </view>
+    <view class="au-alt" bindtap="onSkip">先逛逛，稍后登录</view>
+
+    <view class="au-tip">
+      <view class="ic ic-s ic-lock" />
+      <text>继续即表示同意
+        <text class="lnk" data-kind="user" bindtap="onOpenDoc">《用户协议》</text>
+        与
+        <text class="lnk" data-kind="privacy" bindtap="onOpenDoc">《隐私政策》</text>
+        ，仅收集办事必需信息。
+      </text>
+    </view>
+  </view>
+
+  <view class="au-foot">v1.1.0 · 阳光社区 · 演示原型，不产生真实账号</view>
+</view>

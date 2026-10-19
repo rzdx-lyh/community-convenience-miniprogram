@@ -1,0 +1,39 @@
+/* 社区门诊取号（CR-028）· 仅补充原型没有的文本节点与网格 */
+.bwrap { padding: 4rpx 24rpx 24rpx; }
+.bwrap .lbl { margin: 26rpx 0 14rpx; }
+.bpad { padding: 12rpx 24rpx 32rpx; }
+.bpad2 { padding: 26rpx 0 40rpx; }
+
+.dept-chip { gap: 8rpx; }
+.dept-chip .ic { color: var(--t2); }
+.dept-chip.on .ic { color: var(--blue); }
+
+.docblk { padding: 0 24rpx; margin: 0; }
+.doc-k {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 18rpx;
+  background: #E6F5F2;
+  color: #0E7C6B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.doc-n { display: block; font-size: 25rpx; font-weight: 700; }
+.doc-t { display: block; font-size: 19rpx; color: var(--t3); margin-top: 4rpx; }
+.doc-on {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.sgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14rpx; }
+.slot-chip { justify-content: center; padding: 0 6rpx; font-size: 21rpx; }
+.slot-chip.off { opacity: 0.45; }
+
+.btn.is-dis { background: #B9C6DD; color: #fff; }
+
+.rcpt .rc-t { display: block; margin-top: 20rpx; font-size: 29rpx; font-weight: 800; }
+.rcpt .rc-p { display: block; margin-top: 10rpx; font-size: 20rpx; color: var(--t3); line-height: 1.6; }

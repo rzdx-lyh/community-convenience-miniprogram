@@ -1,9 +1,6 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "社区圈子",
-  "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark",
-  "usingComponents": {
-    "empty-state": "../../components/empty-state/index",
-    "ai-bar": "../../components/ai-bar/index"
-  }
+  "enablePullDownRefresh": false,
+  "backgroundTextStyle": "dark"
 }

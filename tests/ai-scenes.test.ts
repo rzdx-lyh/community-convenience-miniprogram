@@ -101,9 +101,9 @@ describe('HUB_SCENES', () => {
 });
 
 describe('PAGE_AI', () => {
-  it('17 个真实页面全部有配置（页面级 AI 入口的覆盖清单）', () => {
+  it('25 个真实页面全部有配置（页面级 AI 入口的覆盖清单）', () => {
     const pages = Object.keys(PAGE_AI);
-    expect(pages.length).toBe(17);
+    expect(pages.length).toBe(25);
     [
       // v1.1.0 既有
       'hall', 'repair-create', 'repair-list', 'repair-detail', 'notice', 'phonebook', 'circle',

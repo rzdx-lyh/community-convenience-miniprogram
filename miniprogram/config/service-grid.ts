@@ -5,11 +5,12 @@
  * 结构：4 类 / 8 板块 / 38 项（与设计原型 docs/03-preview/demo.html 的 CATS 逐项对齐，名称一致）。
  *
  * 路由约定（不新增 targetType，零新增动作）：
- *   - 需预约登记的服务：targetType=page → 本分类页自身 + targetParams.book，页内弹层提交；
- *     这样 38 项不必各建一个表单页（契约 CR-022 已登记）
+ *   - 需预约登记的服务：targetType=page → `/pages/service/book/index?svc=<服务名>&opts=<类型|类型>`，
+ *     由通用预约页统一承载 3 步流程（服务类型 → 时间 → 地址），
+ *     这样 38 项不必各建一个表单页（契约 CR-022 已登记；CR-028 改为独立 book 页）
  *   - 通知/活动类：targetType=notice（带 type/tag 筛选）
  *   - 卫生站相关：targetType=page → /pages/phonebook/index?category=medical
- *   - 其余尚未建页的（缴费/生鲜/设备/租售等）：targetType=assistant + 预置问句
+ *   - 其余尚未建页的：targetType=assistant + 预置问句
  *
  * ⚠ 改 targetPath 前必须确认页面已在 app.json 注册，否则点击无反应。
  */
@@ -49,8 +50,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '保洁',
             desc: '60 元/小时起',
             targetType: 'page',
-            targetPath: '/pages/service/category/index',
-            targetParams: { book: '保洁', cat: 'life', opts: '日常保洁|深度保洁|玻璃清洗|开荒保洁' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '保洁', cat: 'life', opts: '日常保洁|深度保洁|玻璃清洗|开荒保洁' },
             sort: 1,
           },
           {
@@ -58,8 +59,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '家电维修',
             desc: '空调/冰箱/洗衣机',
             targetType: 'page',
-            targetPath: '/pages/service/category/index',
-            targetParams: { book: '家电维修', cat: 'life', opts: '空调|冰箱|洗衣机|热水器' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '家电维修', cat: 'life', opts: '空调|冰箱|洗衣机|热水器' },
             sort: 2,
           },
           {
@@ -67,8 +68,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '管道疏通',
             desc: '马桶/地漏/下水',
             targetType: 'page',
-            targetPath: '/pages/service/category/index',
-            targetParams: { book: '管道疏通', cat: 'life', opts: '马桶|地漏|厨房下水|阳台' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '管道疏通', cat: 'life', opts: '马桶|地漏|厨房下水|阳台' },
             sort: 3,
           },
           {
@@ -76,8 +77,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '保姆钟点工',
             desc: '按次或长期',
             targetType: 'page',
-            targetPath: '/pages/service/category/index',
-            targetParams: { book: '保姆钟点工', cat: 'life', opts: '钟点工|住家保姆|白班保姆' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '保姆钟点工', cat: 'life', opts: '钟点工|住家保姆|白班保姆' },
             sort: 4,
           },
           {
@@ -85,8 +86,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '开锁换锁',
             desc: '需房产证明',
             targetType: 'page',
-            targetPath: '/pages/service/category/index',
-            targetParams: { book: '开锁换锁', cat: 'life', opts: '开门|换锁芯|装智能锁' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '开锁换锁', cat: 'life', opts: '开门|换锁芯|装智能锁' },
             sort: 5,
           },
           {
@@ -94,8 +95,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '空调清洗',
             desc: '挂机80/柜机150',
             targetType: 'page',
-            targetPath: '/pages/service/category/index',
-            targetParams: { book: '空调清洗', cat: 'life', opts: '挂机|柜机|中央空调' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '空调清洗', cat: 'life', opts: '挂机|柜机|中央空调' },
             sort: 6,
           },
         ],
@@ -288,8 +289,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '助浴',
             desc: '上门助浴',
             targetType: 'page',
-            targetPath: '/pages/service/category/index',
-            targetParams: { book: '助浴', cat: 'elder', opts: '上门助浴|陪护助浴' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '助浴', cat: 'elder', opts: '上门助浴|陪护助浴' },
             sort: 3,
           },
           {
@@ -297,8 +298,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '上门陪护',
             desc: '白天/夜间',
             targetType: 'page',
-            targetPath: '/pages/service/category/index',
-            targetParams: { book: '上门陪护', cat: 'elder', opts: '白天陪护|夜间陪护|24 小时' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '上门陪护', cat: 'elder', opts: '白天陪护|夜间陪护|24 小时' },
             sort: 4,
           },
           {
@@ -306,8 +307,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '适老化改造',
             desc: '可申请补贴',
             targetType: 'page',
-            targetPath: '/pages/service/category/index',
-            targetParams: { book: '适老化改造', cat: 'elder', opts: '防滑地面|安全扶手|坐便改造|全屋适老' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '适老化改造', cat: 'elder', opts: '防滑地面|安全扶手|坐便改造|全屋适老' },
             sort: 5,
           },
           {
@@ -400,8 +401,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '房屋租售',
             desc: '真实房源·业主发布',
             targetType: 'page',
-            targetPath: '/pages/service/property/index',
-            targetParams: { tab: 'lease' },
+            // CR-028：租售已从 property 页拆出为独立页（设计稿 pgLease），改指新页
+            targetPath: '/pages/service/lease/index',
             sort: 3,
           },
         ],

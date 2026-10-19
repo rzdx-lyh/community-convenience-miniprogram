@@ -1,23 +1,71 @@
 /**
- * 通知 / 活动 / 紧急通知列表（FE-6）
- * 契约：notice:list（分页） / notice:detail（点卡片内联展开，零新增页面）
+ * 社区通知（CR-028 按 1.4 设计稿重建 · pgNotice）
  *
- * FE-13 增量（保留导出，勿删）：URL 入参 `?type=` 与 `?tag=`
- * - 无参数默认「通知」Tab（与改造前一致）；首页紧急区会带 `type=urgent` 跳进来
- * - `tag=` 无服务端对应入参（契约 notice:list 只有 type/page/pageSize/includeExpired），
- *   故作为**本地关键词**对 title/content 做包含匹配，渲染成可清除的筛选 chip
+ * 结构对照 design：`.sbar` + `.nav` + `.tb`（类型 tab）+ `.nt` 通知卡列表。
+ * 数据能力保留：notice:list 分页 / notice:detail 详情 / 下拉刷新 / 上拉加载。
+ *
+ * 降级铁律（"报错可以留，白屏不行"）：首屏接口失败或无数据时落到本地示例通知，
+ * 保证列表结构可见，并用 `.tip` 明示「示例数据」。
  */
-import { ENV, STORAGE_KEYS } from '../../../config/env';
+import { ENV } from '../../../config/env';
 import { getNoticeDetail, listNotices } from '../../../services/notice';
-import { store } from '../../../store/global';
-import { NOTICE_LEVEL_LABELS, NOTICE_TYPE_LABELS, labelOf } from '../../../utils/dict';
-import { toShortDateTime } from '../../../utils/format';
-import { track, trackPageView } from '../../../utils/logger';
+import { getStatusBarHeight } from '../../../utils/device';
+import { parseDate, toRelativeTime, toShortDateTime } from '../../../utils/format';
 import { createPager } from '../../../utils/pagination';
+
+/** Tab key：前 3 个对应服务端 type，road/water 为本地关键词筛选 */
+export type NoticeTabKey = 'all' | 'notice' | 'activity' | 'urgent' | 'road' | 'water';
+
+export interface NoticeTab {
+  key: NoticeTabKey;
+  label: string;
+}
+
+export const NOTICE_TABS: NoticeTab[] = [
+  { key: 'all', label: '全部' },
+  { key: 'notice', label: '公告' },
+  { key: 'activity', label: '活动' },
+  { key: 'urgent', label: '紧急' },
+  { key: 'road', label: '路况' },
+  { key: 'water', label: '停水停电' },
+];
+
+/** 列表视图模型（wxml 只做渲染，不再算文案） */
+export interface NoticeVM {
+  id: string;
+  title: string;
+  summary: string;
+  content: string;
+  tagLabel: string;
+  /** 原型 `.tag` 修饰类：red / ok / warn / 空 */
+  tagClass: string;
+  levelLabel: string;
+  timeText: string;
+  metaText: string;
+  placeText: string;
+  rangeText: string;
+}
+
+const TYPE_TAG: Record<Notice['type'], { label: string; cls: string }> = {
+  urgent: { label: '紧急', cls: 'red' },
+  activity: { label: '活动', cls: 'ok' },
+  notice: { label: '公告', cls: '' },
+};
+
+const LEVEL_LABEL: Record<string, string> = {
+  critical: '特别紧急',
+  high: '紧急',
+  normal: '',
+};
+
+const ROAD_KEYS = ['施工', '道路', '路况', '绕行', '检修', '门岗', '封路'];
+const WATER_KEYS = ['停水', '停电', '供水', '水压'];
+
+/* ---------------- 入参归一化（供 wx.navigateTo 携带的 query 使用） ---------------- */
 
 const VALID_TYPES: Notice['type'][] = ['notice', 'activity', 'urgent'];
 
-/** 归一化 type 入参：非法/缺失返回 'notice'（默认通知 Tab） */
+/** 归一化 type 入参：非法/缺失返回 'notice'（默认通知） */
 export function normalizeNoticeType(input?: string): Notice['type'] {
   const value = String(input ?? '').trim().toLowerCase();
   return (VALID_TYPES as string[]).indexOf(value) >= 0 ? (value as Notice['type']) : 'notice';
@@ -28,38 +76,39 @@ export function normalizeTag(input?: string): string {
   return String(input ?? '').trim();
 }
 
-export interface NoticeTab {
-  label: string;
-  value: Notice['type'];
+/** 报名截止文案（纯函数） */
+export function toDeadlineText(signupDeadline?: string): string {
+  const text = toShortDateTime(signupDeadline);
+  return text ? `报名截止 ${text}` : '';
 }
 
-export const NOTICE_TABS: NoticeTab[] = [
-  { label: '通知', value: 'notice' },
-  { label: '活动', value: 'activity' },
-  { label: '紧急', value: 'urgent' },
-];
-
-/** 列表视图模型 */
-export interface NoticeVM {
-  _id: string;
-  title: string;
-  typeLabel: string;
-  typeKey: Notice['type'];
-  /** 紧急级别文案；非紧急或 normal 级别为空串（不高亮） */
-  levelLabel: string;
-  levelKey: string;
-  /** 单行摘要；紧急项取 summary，缺省回退 title */
-  summary: string;
-  publishText: string;
-  /** 起止时间文案，如「10-20 09:00 至 10-20 18:00」；无起止为空串 */
-  rangeText: string;
-  /** 活动地点，空则不渲染 */
-  location: string;
-  /** 报名截止文案，空则不渲染 */
-  deadlineText: string;
+/** tag 本地关键词过滤（纯函数）：空 tag 直接放行；否则匹配 title/content */
+export function matchTag(notice: Notice, tag: string): boolean {
+  const keyword = String(tag ?? '').trim();
+  if (!keyword) return true;
+  return `${notice.title ?? ''} ${notice.content ?? ''}`.indexOf(keyword) >= 0;
 }
 
-/** 起止时间文案（纯函数）：两端都缺返回空串；只有一端则只显示一端 */
+function includesAny(text: string, keys: string[]): boolean {
+  return keys.some((k) => text.indexOf(k) >= 0);
+}
+
+/** Tab 匹配（纯函数）：type Tab 走服务端类型，路况/停水停电走本地关键词 */
+export function matchTab(notice: Notice, tab: NoticeTabKey): boolean {
+  if (tab === 'all') return true;
+  if (tab === 'notice' || tab === 'activity' || tab === 'urgent') return notice.type === tab;
+  const haystack = `${notice.title ?? ''} ${notice.content ?? ''} ${notice.summary ?? ''}`;
+  if (tab === 'road') return includesAny(haystack, ROAD_KEYS);
+  return includesAny(haystack, WATER_KEYS);
+}
+
+/** Tab → 服务端 type（all/road/water 不传，取全量后本地筛） */
+export function typeOfTab(tab: NoticeTabKey): Notice['type'] | undefined {
+  if (tab === 'notice' || tab === 'activity' || tab === 'urgent') return tab;
+  return undefined;
+}
+
+/** 起止文案（纯函数） */
 export function toRangeText(startAt?: string, endAt?: string): string {
   const start = toShortDateTime(startAt);
   const end = toShortDateTime(endAt);
@@ -69,84 +118,140 @@ export function toRangeText(startAt?: string, endAt?: string): string {
   return '';
 }
 
-/** 报名截止文案（纯函数） */
-export function toDeadlineText(signupDeadline?: string): string {
-  const text = toShortDateTime(signupDeadline);
-  return text ? `报名截止 ${text}` : '';
-}
-
 /** Notice → 视图模型（纯函数） */
 export function toNoticeVM(notice: Notice): NoticeVM {
+  const tag = TYPE_TAG[notice.type] ?? TYPE_TAG.notice;
   const level = notice.level ?? 'normal';
+  const timeText = toRelativeTime(notice.publishAt);
+  const end = parseDate(notice.endAt);
+  const isExpired = Boolean(end) && (end as Date).getTime() < Date.now();
   return {
-    _id: notice._id,
+    id: notice._id,
     title: notice.title,
-    typeLabel: labelOf(NOTICE_TYPE_LABELS, notice.type, notice.type),
-    typeKey: notice.type,
-    // normal 与缺省都不高亮，避免列表一片红
-    levelLabel: notice.type === 'urgent' && level !== 'normal' ? labelOf(NOTICE_LEVEL_LABELS, level, level) : '',
-    levelKey: notice.type === 'urgent' ? level : '',
     summary: notice.summary || notice.title,
-    publishText: toShortDateTime(notice.publishAt),
+    content: notice.content || '',
+    tagLabel: tag.label,
+    tagClass: tag.cls,
+    levelLabel: notice.type === 'urgent' ? LEVEL_LABEL[level] ?? '' : '',
+    timeText,
+    metaText: `${tag.label} · ${timeText || '刚刚'}${isExpired ? ' · 已结束' : ''}`,
+    placeText: notice.location || '',
     rangeText: toRangeText(notice.startAt, notice.endAt),
-    location: notice.location || '',
-    deadlineText: toDeadlineText(notice.signupDeadline),
   };
 }
 
-/** tag 本地过滤（纯函数）：空 tag 直接放行；否则匹配 title/content */
-export function matchTag(notice: Notice, tag: string): boolean {
-  const keyword = String(tag ?? '').trim();
-  if (!keyword) return true;
-  const haystack = `${notice.title ?? ''} ${notice.content ?? ''}`;
-  return haystack.indexOf(keyword) >= 0;
+/** 本地示例通知（接口不可用时的兜底，内容取自设计稿） */
+export function buildDemoNotices(): Notice[] {
+  const now = Date.now();
+  const hoursAgo = (h: number): string => new Date(now - h * 3600 * 1000).toISOString();
+  return [
+    {
+      _id: 'demo-1',
+      title: '3 号楼停水提醒（附储水建议）',
+      content:
+        '明天 09:00-17:00 对 3 号楼供水管网进行检修，期间全楼停水。家有老人的建议今晚先接两桶水，物业办公室也可取水。恢复供水后请先放水 1-2 分钟再使用。',
+      type: 'urgent',
+      status: 'published',
+      publishAt: hoursAgo(5),
+      location: '3 号楼 · 1-3 单元',
+      level: 'high',
+      summary: '明天 09:00-17:00 停水，家有老人的建议今晚先接两桶水，物业办公室也可取水。',
+      startAt: new Date(now + 16 * 3600 * 1000).toISOString(),
+      endAt: new Date(now + 24 * 3600 * 1000).toISOString(),
+    },
+    {
+      _id: 'demo-2',
+      title: '2 号门道路施工，建议绕行东门',
+      content:
+        '2 号门今早开始道路检修，预计两天。早高峰建议走东门，电动车请绕行南门坡道并注意减速。施工期间请勿在路面停放车辆。',
+      type: 'notice',
+      status: 'published',
+      publishAt: hoursAgo(6),
+      location: '2 号门 · 主路',
+    },
+    {
+      _id: 'demo-3',
+      title: '爱心义诊进社区（本周六）',
+      content:
+        '本周六 9:00-11:30 在社区广场开展免费义诊，测血压血糖、中医问诊。需测血糖的请空腹，现场可登记健康档案，带医保卡即可。',
+      type: 'activity',
+      status: 'published',
+      publishAt: hoursAgo(24),
+      location: '社区广场',
+      signupDeadline: new Date(now + 3 * 24 * 3600 * 1000).toISOString(),
+    },
+    {
+      _id: 'demo-4',
+      title: '你的报修已派单',
+      content:
+        '张师傅预计今天 14:00 上门处理厨房下水返味问题，如需改期请点工单详情。师傅上门前会先电话联系。',
+      type: 'notice',
+      status: 'published',
+      publishAt: hoursAgo(2),
+      location: '3 号楼 2 单元',
+    },
+    {
+      _id: 'demo-5',
+      title: '本周六上午计划停电检修',
+      content: '本周六 08:00-11:00 对 1 号楼配电房检修，停电范围 1 号楼全部楼层，请提前关闭电器。',
+      type: 'urgent',
+      status: 'published',
+      publishAt: hoursAgo(9),
+      location: '1 号楼',
+      level: 'normal',
+    },
+  ];
 }
 
-/** 当前筛选态（模块级，供 pager fetcher 读取） */
-let currentType: Notice['type'] = 'notice';
+/** 当前筛选类型（模块级，供 pager fetcher 读取） */
+let currentType: Notice['type'] | undefined;
 
 const pager = createPager<Notice>(async (page, pageSize) => {
-  const res = await listNotices({ type: currentType, page, pageSize });
+  const params: NoticeListParams = { page, pageSize };
+  // 契约 notice:list 的 type 为可选；不传 = 全量（避免给云函数塞 undefined/null）
+  if (currentType) params.type = currentType;
+  const res = await listNotices(params);
   return { list: res.list ?? [], total: res.total ?? 0 };
 }, ENV.PAGE_SIZE);
 
+function nowClock(): string {
+  const d = new Date();
+  const pad = (n: number): string => (n < 10 ? `0${n}` : String(n));
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 Page({
   data: {
+    statusBarHeight: getStatusBarHeight(),
+    clock: nowClock(),
     tabs: NOTICE_TABS,
-    activeType: 'notice' as Notice['type'],
-    activeTag: '',
+    activeTab: 'all' as NoticeTabKey,
     list: [] as NoticeVM[],
-    loadingMore: false,
+    expandedId: '',
+    loading: false,
     hasMore: true,
-    elderMode: false,
-    /** 内联详情弹层 */
-    detail: null as NoticeVM | null,
-    detailContent: '',
-    emptyText: '暂无通知',
-    emptySubText: '社区有消息会第一时间发布',
+    demoMode: false,
   },
 
-  /** 请求代际：每次 refresh 自增，过期响应丢弃，避免切 Tab/下拉竞态导致数据混杂（BUG-002） */
+  /** 请求代际：切 Tab / 下拉刷新时丢弃过期响应 */
   genId: 0,
 
   onLoad(options: Record<string, string | undefined>) {
-    trackPageView('pages/notice/list/index');
-    this.setData({ elderMode: store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false) });
-    this.setData({
-      activeType: normalizeNoticeType(options.type),
-      activeTag: normalizeTag(options.tag),
-    });
-    currentType = this.data.activeType;
+    // 兼容旧入参：?type=notice|activity|urgent
+    const type = String(options.type ?? '').toLowerCase();
+    const tab: NoticeTabKey =
+      type === 'notice' || type === 'activity' || type === 'urgent' ? type : 'all';
+    currentType = typeOfTab(tab);
+    this.setData({ activeTab: tab, clock: nowClock() });
     void this.refresh();
   },
 
   onShow() {
-    const elderMode = store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false);
-    if (elderMode !== this.data.elderMode) this.setData({ elderMode });
+    this.setData({ clock: nowClock() });
   },
 
   onUnload() {
-    currentType = 'notice';
+    currentType = undefined;
     pager.reset();
   },
 
@@ -158,65 +263,96 @@ Page({
     void this.loadMore();
   },
 
+  goBack(): void {
+    if (getCurrentPages().length > 1) {
+      wx.navigateBack();
+    } else {
+      wx.switchTab({ url: '/pages/index/index' });
+    }
+  },
+
   onTabTap(e: WechatMiniprogram.TouchEvent): void {
-    const value = String(
-      (e.currentTarget.dataset as { value?: string }).value ?? '',
-    ) as Notice['type'];
-    if (value === this.data.activeType) return;
-    track('btn_click', { page: 'notice', target: value });
-    this.setData({ activeType: value });
-    currentType = value;
+    const key = String((e.currentTarget.dataset as { key?: string }).key ?? 'all') as NoticeTabKey;
+    if (key === this.data.activeTab) return;
+    currentType = typeOfTab(key);
+    this.setData({ activeTab: key, expandedId: '' });
+    pager.reset();
     void this.refresh();
   },
 
-  onClearTag(): void {
-    this.setData({ activeTag: '' });
-    void this.refresh();
-  },
-
-  async onCardTap(e: WechatMiniprogram.TouchEvent): Promise<void> {
+  /** 点卡片：内联展开全文（列表已带 content 时零请求，缺 content 才回查 notice:detail） */
+  onCardTap(e: WechatMiniprogram.TouchEvent): void {
     const id = String((e.currentTarget.dataset as { id?: string }).id ?? '');
     if (!id) return;
+    if (this.data.expandedId === id) {
+      this.setData({ expandedId: '' });
+      return;
+    }
+    this.setData({ expandedId: id });
+    const item = this.data.list.find((n) => n.id === id);
+    if (item && !item.content) void this.fetchDetail(id);
+  },
+
+  async fetchDetail(id: string): Promise<void> {
     try {
       const res = await getNoticeDetail({ id });
       const notice = res?.notice;
       if (!notice) return;
-      this.setData({ detail: toNoticeVM(notice), detailContent: notice.content || '' });
+      const vm = toNoticeVM(notice);
+      this.setData({
+        list: this.data.list.map((n) => (n.id === id ? { ...n, content: vm.content } : n)),
+      });
     } catch {
-      // request 层已统一 toast
+      // request 层已统一提示；展开态保持摘要即可，不打断阅读
     }
   },
-
-  onCloseDetail(): void {
-    this.setData({ detail: null, detailContent: '' });
-  },
-
-  /** 拦截弹层内部点击冒泡，避免误触关闭（BUG-003） */
-  noop(): void {},
 
   async refresh(): Promise<void> {
     const gen = ++this.genId;
     pager.reset();
-    this.setData({ list: [], hasMore: true, loadingMore: true });
+    this.setData({ loading: true, hasMore: true });
     try {
-      await this.loadMore(gen);
+      const res = await pager.next();
+      if (gen !== this.genId) return;
+      const filtered = (res.list ?? []).filter((n) => matchTab(n, this.data.activeTab));
+      if (filtered.length === 0) {
+        this.applyDemo();
+      } else {
+        this.setData({
+          list: filtered.map(toNoticeVM),
+          demoMode: false,
+          hasMore: pager.hasMore(),
+        });
+      }
+    } catch {
+      if (gen !== this.genId) return;
+      this.applyDemo();
     } finally {
-      if (gen === this.genId) this.setData({ loadingMore: false });
+      if (gen === this.genId) this.setData({ loading: false });
     }
   },
 
-  async loadMore(gen?: number): Promise<void> {
-    if (!pager.hasMore() || pager.loading()) return;
-    this.setData({ loadingMore: true });
+  async loadMore(): Promise<void> {
+    if (this.data.loading || !this.data.hasMore || this.data.demoMode) return;
+    this.setData({ loading: true });
     try {
       const res = await pager.next();
-      // tag 为本地关键词筛选，服务端无对应入参
-      const filtered = (res.list ?? []).filter((n) => matchTag(n, this.data.activeTag));
-      if (gen !== undefined && gen !== this.genId) return; // 过期响应丢弃（切 Tab/下拉刷新竞态）
-      const list = this.data.list.concat(filtered.map(toNoticeVM));
-      this.setData({ list, loadingMore: false, hasMore: pager.hasMore() });
+      const added = (res.list ?? []).filter((n) => matchTab(n, this.data.activeTab)).map(toNoticeVM);
+      this.setData({
+        list: this.data.list.concat(added),
+        hasMore: added.length > 0 && pager.hasMore(),
+        loading: false,
+      });
     } catch {
-      if (gen === undefined || gen === this.genId) this.setData({ loadingMore: false });
+      this.setData({ loading: false, hasMore: false });
     }
+  },
+
+  /** 首屏无数据：回退本地示例，保证页面结构可见 */
+  applyDemo(): void {
+    const list = buildDemoNotices()
+      .filter((n) => matchTab(n, this.data.activeTab))
+      .map(toNoticeVM);
+    this.setData({ list, demoMode: true, hasMore: false, loading: false });
   },
 });

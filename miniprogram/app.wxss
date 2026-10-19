@@ -1,6 +1,8 @@
 /* 矢量图标系统（CR-025 · 生成物，见 scripts/gen-icons.mjs）
+   布局类体系（CR-028 · 生成物，见 scripts/gen-layout-wxss.mjs）
    必须在最顶部：@import 只允许出现在文件开头 */
 @import "./styles/icons.wxss";
+@import "./styles/layout.wxss";
 
 /* ============================================================
  * app.wxss · 全局样式与 Design Token
@@ -137,4 +139,21 @@ page.care-mode,
   background: var(--card);
   border-radius: var(--radius-l);
   box-shadow: var(--shadow-card);
+}
+
+/* ===== 按压态工具类（CR-028）=====
+ * 原型用 CSS :active 表达按压反馈，小程序不支持 :active，
+ * 统一改用 hover-class="u-hover" / "u-hover-bg"，避免每页各写一套。
+ */
+.u-hover {
+  opacity: 0.88;
+}
+
+.u-hover-bg {
+  background: #f3f6fc;
+}
+
+.u-hover-scale {
+  transform: scale(0.985);
+  filter: brightness(0.94);
 }

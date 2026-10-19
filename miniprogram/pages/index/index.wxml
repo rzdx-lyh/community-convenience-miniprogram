@@ -1,172 +1,185 @@
-<!--
-  首页 v1.2（FE-11 · 对照 docs/03-preview/index.html 1:1 实现）
-  ⚠ 红线：绿色头部与下方内容在**同一滚动容器**（整页自然流）内做负边距叠压，
-    不得把内容放进独立 overflow:auto 容器，否则通知卡顶部会被裁切。
--->
-<view class="page {{elderMode ? 'care-mode' : ''}}">
-  <!-- ========== 区域 1：政务蓝渐变头部（填满顶部，含状态栏） ========== -->
-  <view class="header" style="padding-top: {{statusBarHeight}}px">
-    <!-- 胶囊占位行：独占一行避让微信胶囊/灵动岛，社区定位放在它的下面 -->
-    <view class="header__capsule-row">
-      <view class="header__capsule" style="width: {{capsuleWidth}}px"></view>
+<!-- 首页（设计稿 pgHome v1.4） -->
+<view class="page page--tab">
+  <!-- 渐变头部 -->
+  <view class="hd">
+    <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
+      <text>08:42</text>
+      <text>●●● ▮</text>
     </view>
 
-    <!-- 品牌行：logo + 服务名 + 定位 + 紧急求助 + 头像 -->
-    <view class="brand">
-      <view class="brand__logo">猎</view>
-      <view class="brand__info">
-        <view class="brand__name">猎奇便民服务</view>
-        <view class="brand__loc"><view class="ic ic-s icw ic-pin"></view>{{communityName}}</view>
+    <view class="r1">
+      <view class="lg">猎</view>
+      <view class="nm">猎奇便民服务</view>
+      <view class="lb {{locState}}" bindtap="onLocTap">
+        <view wx:if="{{locState === 'locating'}}" class="lp" />
+        <view wx:else class="ic ic-s ic-pin icw" />
+        <text class="tx">{{locText}}</text>
+        <text class="ch">›</text>
       </view>
-      <view class="brand__urgent" hover-class="brand__urgent--hover" bindtap="onUrgentTap">
-        <view class="ic ic-s ic-bolt"></view>
-        <text>紧急</text>
-      </view>
-      <view class="brand__avatar" bindtap="onProfileTap">{{avatarText}}</view>
     </view>
 
-    <!-- 搜索框（点击进办事大厅，完整检索在那里） -->
-    <view class="search" hover-class="search--hover" bindtap="onSearchTap">
-      <view class="ic ic-m ic-search"></view>
-      <text class="search__ph">搜服务：保洁、助餐、雨伞、租…</text>
-      <text class="search__go">搜索</text>
+    <view class="sbox">
+      <view class="ic ic-s ic-search s-ic" />
+      <input
+        placeholder="搜服务：保洁、助餐、雨伞、租…"
+        value="{{kw}}"
+        confirm-type="search"
+        bindinput="onKwInput"
+        bindconfirm="onSearch"
+      />
+      <view class="go" bindtap="onSearch">搜索</view>
     </view>
 
-    <!-- 4 个快捷入口 -->
     <view class="qk">
       <view
+        class="qk-i"
         wx:for="{{quick}}"
         wx:key="k"
-        class="qk__i"
-        hover-class="qk__i--hover"
         data-k="{{item.k}}"
         bindtap="onQuickTap"
+        hover-class="hover-dim"
       >
-        <view class="qk__ico ic ic-l icw ic-{{item.i}}"></view>
-        <text class="qk__tx">{{item.t}}</text>
+        <view class="ic ic-s ic-{{item.i}} icw" />
+        <text>{{item.t}}</text>
       </view>
     </view>
   </view>
 
-  <!-- ========== 区域 2~4：内容区（通知卡负边距压在头部下缘） ========== -->
-  <view class="content">
-    <!-- 白色通知卡 -->
-    <view class="notice" bindtap="onNoticeTap">
-      <view class="notice__main">
-        <view class="notice__icon">
-          <view wx:if="{{urgentState === 'empty'}}" class="ic ic-l ic-check-c"></view>
-          <view wx:elif="{{urgentState === 'error'}}" class="ic ic-l ic-warn"></view>
-          <view wx:else class="ic ic-l ic-file"></view>
-        </view>
-        <view class="notice__text">
-          <view class="notice__title">{{urgentTitle}}</view>
-          <view class="notice__sub">{{urgentSub}}</view>
-        </view>
-        <view class="notice__deco"></view>
-      </view>
-
-      <view wx:if="{{urgentState === 'error'}}" class="notice__retry" catchtap="onRetryUrgent">重试</view>
-      <view wx:else class="notice__divider"></view>
-
-      <!-- 快捷 pill -->
-      <view class="pills">
-        <view class="pill" catchtap="onNoticePillTap">
-          <view class="ic ic-m ic-megaphone"></view>
-          <text class="pill__text">本周公告</text>
-        </view>
-        <view class="pill" catchtap="onRoadPillTap">
-          <view class="ic ic-m ic-cone"></view>
-          <text class="pill__text">最近路况</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 服务分类（4 张竖卡：名称 + 板块 + 项数），对齐原型首页「服务分类」区 -->
-    <view class="section">
-      <view class="section__head">
-        <view class="section__title section__title--inline">服务分类</view>
-        <view class="section__more" catchtap="onHallMore">
-          <text>全部</text>
-          <text class="section__more-arrow">›</text>
-        </view>
+  <view class="body">
+    <!-- 服务分类 -->
+    <view class="sec">
+      <view class="st">
+        <text class="b">服务分类</text>
+        <text class="em">4 类 · 8 板块 · {{totalItems}} 项</text>
+        <text class="more" bindtap="onMoreHall">全部 ›</text>
       </view>
       <view class="zq">
         <view
-          wx:for="{{grid}}"
-          wx:key="key"
           class="zqc"
-          hover-class="zqc--hover"
+          wx:for="{{cats}}"
+          wx:key="key"
           data-key="{{item.key}}"
-          bindtap="onGridTap"
+          bindtap="onCatTap"
+          hover-class="hover-dim"
         >
-          <view class="zqc__top">
-            <text class="zqc__name">{{item.title}}</text>
-            <text class="zqc__cnt">{{item.count}} 项</text>
+          <text class="b">{{item.title}}</text>
+          <text class="p">{{item.groups}}</text>
+          <text class="cnt">{{item.count}} 项</text>
+          <text class="ar">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 常用服务 -->
+    <view class="sec">
+      <view class="st">
+        <text class="b">常用服务</text>
+        <text class="more" bindtap="onMoreHall">更多 ›</text>
+      </view>
+      <view class="card">
+        <view class="g4 th-blue">
+          <view
+            class="gi"
+            wx:for="{{common}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="onCellTap"
+            hover-class="hover-dim"
+          >
+            <view class="ic ic-m ic-{{item.icon}}" />
+            <text class="n">{{item.name}}</text>
+            <text class="d">{{item.desc}}</text>
           </view>
-          <view class="zqc__sub">{{item.subLine1}} · {{item.subLine2}}</view>
-          <text class="zqc__ar">›</text>
         </view>
       </view>
     </view>
 
-    <!-- v1.1.0 / CR-019：AI 助手入口卡（首屏纵向补全 · 第 1 块） -->
-    <view class="ai-entry" hover-class="ai-entry--hover" bindtap="onAiEntryTap">
-      <view class="ai-entry__icon ic ic-l ic-robot"></view>
-      <view class="ai-entry__body">
-        <view class="ai-entry__title">AI 办事助手</view>
-        <view class="ai-entry__sub">办事流程、报修缴费，一句话问清楚</view>
+    <!-- 附近服务 -->
+    <view class="sec">
+      <view class="st">
+        <text class="b">附近服务</text>
+        <text class="em">按实时定位排序</text>
+        <text class="more" data-url="/pages/map/index" bindtap="onGo">地图 ›</text>
       </view>
-      <view class="ai-entry__go">去问问</view>
-    </view>
-
-    <!-- v1.1.0 / CR-019：社区动态 3 条（首屏纵向补全 · 第 2 块；为空整块隐藏） -->
-    <view wx:if="{{feed.length > 0}}" class="section">
-      <view class="section__head">
-        <view class="section__title section__title--inline">社区动态</view>
-        <view class="section__more" catchtap="onMoreNotices">
-          <text>全部</text>
-          <text class="section__more-arrow">›</text>
+      <view class="card card--pad">
+        <view class="row" data-url="/pages/map/index" bindtap="onGo" hover-class="hover-dim">
+          <view class="k k-blue"><view class="ic ic-m ic-map" /></view>
+          <view class="m">
+            <text class="m-t">社区地图 · 8 个点位</text>
+            <text class="m-s">最近 60 m · 共享雨伞 1 号楼大厅</text>
+          </view>
+          <text class="ar">›</text>
+        </view>
+        <view class="row" data-url="/pages/assistant/index" bindtap="onGo" hover-class="hover-dim">
+          <view class="k k-indigo"><view class="ic ic-m ic-chat" /></view>
+          <view class="m">
+            <text class="m-t">问 AI 管家</text>
+            <text class="m-s">免费模型在线 · 回答标注来源</text>
+          </view>
+          <text class="v v-teal">在线</text>
+          <text class="ar">›</text>
+        </view>
+        <view class="row" data-url="/pages/service/meal/index" bindtap="onGo" hover-class="hover-dim">
+          <view class="k k-teal"><view class="ic ic-m ic-bowl" /></view>
+          <view class="m">
+            <text class="m-t">智慧配餐 · 今日三餐</text>
+            <text class="m-s">控糖方案 · 1560 kcal · 可换菜</text>
+          </view>
+          <text class="v v-teal">新</text>
+          <text class="ar">›</text>
         </view>
       </view>
-      <view class="feed">
+    </view>
+
+    <!-- AI 管家提醒 -->
+    <view class="sec">
+      <view class="st">
+        <text class="b">AI 管家提醒</text>
+        <text class="em">根据你的工单与社区通知生成</text>
+      </view>
+      <view class="card card--pad">
+        <view class="row" data-url="/pages/service/book/index" bindtap="onGo" hover-class="hover-dim">
+          <view class="k k-blue"><view class="ic ic-m ic-wrench" /></view>
+          <view class="m">
+            <text class="m-t">你的报修已派单</text>
+            <text class="m-s">师傅预计 14:00 上门 · 点看进度</text>
+          </view>
+          <text class="ar">›</text>
+        </view>
+        <view class="row" data-url="/pages/notice/list/index" bindtap="onGo" hover-class="hover-dim">
+          <view class="k k-gold"><view class="ic ic-m ic-droplet" /></view>
+          <view class="m">
+            <text class="m-t">明天 09:00 起 3 号楼停水</text>
+            <text class="m-s">建议今晚先储水 · 家有老人优先</text>
+          </view>
+          <text class="ar">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 社区动态 -->
+    <view class="sec sec--last">
+      <view class="st">
+        <text class="b">社区动态</text>
+        <text class="more" data-filter="" bindtap="onMoreNotice">全部 ›</text>
+      </view>
+      <view class="card card--pad">
         <view
-          wx:for="{{feed}}"
-          wx:key="id"
-          class="feed__item"
-          hover-class="feed__item--hover"
-          data-type="{{item.type}}"
-          bindtap="onFeedTap"
+          class="row"
+          wx:for="{{notices}}"
+          wx:key="t"
+          data-filter="{{item.filter}}"
+          bindtap="onMoreNotice"
+          hover-class="hover-dim"
         >
-          <view class="feed__tag feed__tag--{{item.type}}">{{item.typeLabel}}</view>
-          <view class="feed__body">
-            <view class="feed__title">{{item.title}}</view>
-            <view class="feed__meta">
-              <text>{{item.meta}}</text>
-              <view wx:if="{{item.location}}" class="feed__loc">
-                <view class="ic ic-s ic-pin"></view>
-                <text>{{item.location}}</text>
-              </view>
-            </view>
+          <view class="k k-gray"><text class="tag {{item.type}}">{{item.lb}}</text></view>
+          <view class="m">
+            <text class="m-t">{{item.t}}</text>
+            <text class="m-s">{{item.m}}</text>
           </view>
+          <text class="ar">›</text>
         </view>
       </view>
-    </view>
-  </view>
-
-  <!-- ========== 紧急求助半屏弹层（设计预览 §4.2） ========== -->
-  <view wx:if="{{showEmergency}}" class="mask" bindtap="closeEmergency">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__title">紧急求助</view>
-      <view wx:for="{{contacts}}" wx:key="phone" class="sheet__row">
-        <view class="sheet__info">
-          <view class="sheet__name">{{item.name}}</view>
-          <view wx:if="{{item.remark}}" class="sheet__remark">{{item.remark}}</view>
-        </view>
-        <view class="sheet__btn" hover-class="sheet__btn--hover" data-phone="{{item.phone}}" catchtap="onCallPhone">
-          拨号
-        </view>
-      </view>
-      <view class="sheet__footer">{{emergencyTip}}</view>
     </view>
   </view>
 </view>

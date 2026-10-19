@@ -1,384 +1,182 @@
 /**
- * 首页 v1.2 改版（FE-11）
- * 结构：绿色渐变头部（填满顶部）→ 白色通知卡（负边距叠压）→ 双 pill → 2×2 四类服务宫格
- * ⚠ 实现红线：头部与内容必须在**同一滚动容器**内做负边距叠压，
- *   否则通知卡顶部会被裁切（设计预览 §0 v1.2 已踩坑）。本页用整页自然流（无独立 overflow 容器）。
- * 数据源：notice:urgentLatest + service:list（Promise.all 并发，首屏 ≤2 次云调用）
+ * 首页（按设计稿 pgHome v1.4 重建）
+ * 结构：渐变头部（定位 + 搜索 + 4 快捷）→ 服务分类 4 专区卡 → 常用服务 → 附近服务 → AI 提醒 → 社区动态
  */
-import { EMERGENCY_FOOTER_TIP, LOCAL_EMERGENCY_CONTACTS, type EmergencyContact } from '../../config/emergency';
-import { ENV, STORAGE_KEYS } from '../../config/env';
-import { getProfile } from '../../services/auth';
-import { listNotices, listUrgentLatest } from '../../services/notice';
-import { listPhonebook } from '../../services/phonebook';
-import { listServices } from '../../services/service';
-import { store } from '../../store/global';
-import { PHONE_CATEGORY_LABELS } from '../../utils/dict';
-import { getCapsuleSafeWidth, getStatusBarHeight } from '../../utils/device';
-import { displayName, initialOf } from '../../utils/format';
-import { track, trackPageView } from '../../utils/logger';
-import { goNoticeList, goCircleRoad, navigateByTarget } from '../../utils/navigator';
-import { toast } from '../../utils/ui';
-import {
-  COMMUNITY_NAME,
-  FEED_LIMIT,
-  toFeedVM,
-  toGridVM,
-  toUrgentVM,
-  type FeedVM,
-  type GridVM,
-  type UrgentState,
-  type UrgentVM,
-} from './viewmodel';
+import { LOCAL_SERVICE_CATEGORIES } from '../../config/service-grid';
+import { navigateByTarget } from '../../utils/navigator';
 
-/** 模块级：宫格原始分类（保留 items 供点击分发）与轮播定时器 */
-let categories: ServiceCategory[] = [];
-let swipeTimer = 0;
+const info = wx.getWindowInfo();
+
+/** 服务项 key → 图标名（icons.wxss 已存在） */
+const ICONS: Record<string, string> = {
+  house_clean: 'broom',
+  house_repair: 'wrench',
+  house_drain: 'pipe',
+  house_nanny: 'nurse',
+  house_lock: 'key',
+  house_ac: 'snow',
+  bill_utility: 'bulb',
+  bill_express: 'package',
+  bill_gov: 'file',
+  fresh_veg: 'leaf',
+  fresh_clear: 'tagpct',
+  fresh_group: 'cart',
+  fresh_pickup: 'basket',
+  health_reg: 'hospital',
+  health_clinic: 'stetho',
+  health_vaccine: 'syringe',
+  health_record: 'clipboard',
+  health_meal: 'bowl',
+  health_bp: 'droplet',
+  health_report: 'file',
+  elderly_chronic: 'pill',
+  elderly_meal: 'bowl',
+  elderly_bath: 'bathtub',
+  elderly_escort: 'handshake',
+  elderly_reno: 'tools',
+  elderly_doctor: 'doctor',
+  tools_umbrella: 'umbrella',
+  tools_toolkit: 'toolbox',
+  tools_power: 'battery',
+  ext_takeout: 'scooter',
+  ext_stray: 'paw',
+  ext_lease: 'building',
+  culture_weekly: 'stetho',
+  culture_hr: 'activity',
+  culture_neighbor: 'megaphone',
+  culture_lib: 'book',
+  culture_class: 'pencil',
+  culture_phone: 'phone',
+};
+
+const COMMON_NAMES = ['保洁', '家电维修', '水电燃气代缴', '助餐', '社区门诊挂号', '共享雨伞', '当日鲜菜', '房屋租售'];
+
+/** 模块级：扁平的 38 项（点击时按 key 找回原始 target） */
+let flatItems: ServiceItem[] = [];
 
 Page({
   data: {
-    statusBarHeight: 20,
-    capsuleWidth: 97,
-    elderMode: false,
-    communityName: COMMUNITY_NAME,
+    statusBarHeight: info.statusBarHeight,
+    kw: '',
+    locState: 'ok',
+    locText: '阳光社区 · 3 号楼',
 
-    nickName: '居民朋友',
-    accountId: '',
-    avatarText: '邻',
-
-    urgentState: 'loading' as UrgentState,
-    urgentList: [] as UrgentVM[],
-    urgentIndex: 0,
-    urgentTitle: '加载中…',
-    urgentSub: '正在获取社区紧急通知',
-
-    grid: [] as GridVM[],
-
-    /** 头部 4 个快捷入口（原型首页 qk 行）；i = 图标系统里的图标名（见 styles/icons.wxss） */
     quick: [
       { i: 'wrench', t: '报修', k: 'repair' },
-      { i: 'bulb', t: '缴费', k: 'pay' },
+      { i: 'bolt', t: '缴费', k: 'pay' },
       { i: 'hospital', t: '挂号', k: 'reg' },
       { i: 'bowl', t: '助餐', k: 'meal' },
     ],
 
-    /** v1.1.0 / CR-019：首屏补全 —— 社区动态 3 条（空则整块隐藏） */
-    feed: [] as FeedVM[],
+    cats: [] as Array<{ key: string; title: string; groups: string; count: number }>,
+    totalItems: 0,
+    common: [] as Array<{ key: string; name: string; desc: string; icon: string }>,
 
-    showEmergency: false,
-    contacts: [] as EmergencyContact[],
-    emergencyTip: EMERGENCY_FOOTER_TIP,
+    notices: [
+      { t: '3 号楼停水提醒（附储水建议）', m: '紧急 · 5 小时前', lb: '紧急', type: 'red', filter: 'urgent' },
+      { t: '2 号门道路施工，建议绕行东门', m: '公告 · 6 小时前', lb: '公告', type: '', filter: 'notice' },
+      { t: '爱心义诊进社区（本周六）', m: '活动 · 1 天前', lb: '活动', type: 'ok', filter: 'activity' },
+    ],
   },
 
   onLoad() {
-    trackPageView('pages/index/index');
-    this.setData({
-      statusBarHeight: getStatusBarHeight(),
-      capsuleWidth: getCapsuleSafeWidth(),
-      elderMode: store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false),
-      contacts: LOCAL_EMERGENCY_CONTACTS,
-    });
-    // ⚠ 先把「静默登录」跑完，再并发拉数据。
-    // 云端 requireUser 会校验用户记录存在；若与登录并发，notice:urgentLatest 可能
-    // 先到并拿到 401，首页显示「公告加载失败 / 请检查网络后重试」——
-    // 看起来像网络问题，实际是时序问题。多花一次登录往返（≈300ms）换确定性，值得。
-    void (async () => {
-      await this.loadProfile();
-      await Promise.all([this.loadUrgent(), this.loadServices(), this.loadFeed()]);
-    })();
+    this.buildData();
   },
 
-  onShow() {
-    const elderMode = store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false);
-    if (elderMode !== this.data.elderMode) this.setData({ elderMode });
-    // 「我的」页改过资料后回到首页即时刷新（读缓存，不发请求）
-    const profile = store.peek<User | null>(STORAGE_KEYS.PROFILE, null);
-    if (profile) this.applyProfile(profile);
-  },
+  buildData() {
+    const cats = LOCAL_SERVICE_CATEGORIES.map((c) => ({
+      key: c.key,
+      title: c.title,
+      groups: (c.groups ?? []).map((g) => g.name).join(' · '),
+      count: c.items.length,
+    }));
 
-  onHide() {
-    this.stopSwipe();
-  },
-
-  onUnload() {
-    this.stopSwipe();
-  },
-
-  onPullDownRefresh() {
-    void Promise.all([this.loadUrgent(), this.loadServices(), this.loadFeed()]).finally(() =>
-      wx.stopPullDownRefresh(),
-    );
-  },
-
-  /* ============================ 数据加载 ============================ */
-
-  applyProfile(profile: User): void {
-    this.setData({
-      nickName: displayName(profile.nickName),
-      accountId: profile.accountId ?? '',
-      avatarText: initialOf(profile.nickName),
-    });
-  },
-
-  async loadProfile(): Promise<void> {
-    try {
-      const profile = await getProfile();
-      this.applyProfile(profile);
-    } catch {
-      // 未登录/失败：保持默认文案「居民朋友」，不阻塞首屏其它区域
-      this.setData({ nickName: '居民朋友', accountId: '', avatarText: '邻' });
-    }
-  },
-
-  async loadUrgent(): Promise<void> {
-    this.setData({ urgentState: 'loading', urgentTitle: '加载中…', urgentSub: '正在获取社区紧急通知' });
-    try {
-      const res = await listUrgentLatest({ limit: ENV.URGENT_LIMIT });
-      const list = (res.list ?? []).map<UrgentVM>(toUrgentVM); // summary 为空回退 title（契约约定）
-      if (list.length === 0) {
-        // 空态协议：空数组是合法结果，不是错误
-        this.stopSwipe();
-        this.setData({
-          urgentState: 'empty',
-          urgentList: [],
-          urgentTitle: '暂无紧急通知',
-          urgentSub: '社区运行正常',
-        });
-        return;
-      }
-      this.setData({
-        urgentState: 'normal',
-        urgentList: list,
-        urgentIndex: 0,
-        urgentTitle: list[0].title,
-        urgentSub: list[0].sub,
+    const flat: ServiceItem[] = [];
+    LOCAL_SERVICE_CATEGORIES.forEach((c) => {
+      (c.groups ?? []).forEach((g) => {
+        g.items.forEach((it) => flat.push(it));
       });
-      this.startSwipe();
-    } catch {
-      this.stopSwipe();
-      this.setData({
-        urgentState: 'error',
-        urgentTitle: '公告加载失败',
-        urgentSub: '请检查网络后重试',
-      });
-    }
+    });
+    flatItems = flat;
+
+    const common = COMMON_NAMES.map((name) => flat.find((it) => it.name === name))
+      .filter((it): it is ServiceItem => !!it)
+      .map((it) => ({
+        key: it.key,
+        name: it.name,
+        desc: it.desc ?? '',
+        icon: ICONS[it.key] ?? 'grid',
+      }));
+
+    this.setData({ cats, totalItems: flat.length, common });
   },
 
-  async loadServices(): Promise<void> {
-    // listServices 内部已兜底：接口空/失败 → 回退本地常量，保证 0 白屏
-    const list = await listServices();
-    categories = list;
-    this.setData({ grid: list.map(toGridVM) });
+  /* ---------------------------- 交互 ---------------------------- */
+
+  onKwInput(e: WechatMiniprogram.Input): void {
+    this.setData({ kw: e.detail.value });
   },
 
-  /**
-   * v1.1.0 / CR-019：加载「社区动态」3 条（复用 notice:list，零新增接口）。
-   * 失败/为空 → feed=[]，wxml 整块不渲染（宁可少一块，也不留空框）。
-   */
-  async loadFeed(): Promise<void> {
-    try {
-      const res = await listNotices({ page: 1, pageSize: FEED_LIMIT });
-      const list = (res.list ?? []).slice(0, FEED_LIMIT).map<FeedVM>(toFeedVM);
-      this.setData({ feed: list });
-    } catch {
-      this.setData({ feed: [] });
-    }
+  /** 搜索：tab 页不能带 query，用本地缓存把关键词交给办事大厅 */
+  onSearch(): void {
+    wx.setStorageSync('pendingHallKw', this.data.kw);
+    wx.switchTab({ url: '/pages/hall/index' });
   },
 
-  /* ============================ 轮播控制 ============================ */
-
-  startSwipe(): void {
-    this.stopSwipe();
-    const list = this.data.urgentList;
-    if (!list || list.length <= 1) return;
-    swipeTimer = setInterval(() => {
-      const next = (this.data.urgentIndex + 1) % list.length;
-      this.setData({ urgentIndex: next, urgentTitle: list[next].title, urgentSub: list[next].sub });
-    }, ENV.URGENT_SWIPE_INTERVAL) as unknown as number;
-  },
-
-  stopSwipe(): void {
-    if (swipeTimer) {
-      clearInterval(swipeTimer);
-      swipeTimer = 0;
-    }
-  },
-
-  /* ============================ 交互事件 ============================ */
-
-  /** 通知卡点击：有数据跳紧急通知列表；失败态等同重试 */
-  onNoticeTap(): void {
-    track('btn_click', { page: 'index', target: 'notice_card' });
-    if (this.data.urgentState === 'error') {
-      void this.loadUrgent();
-      return;
-    }
-    if (this.data.urgentState === 'empty') {
-      goNoticeList({});
-      return;
-    }
-    // 契约附 A.3：通知列表页只认 type / tag 两个入参；不再自造 id 参数（lead 2026-10-14 裁决）
-    goNoticeList({ type: 'urgent' });
-  },
-
-  onRetryUrgent(): void {
-    void this.loadUrgent();
-  },
-
-  /** 「本周公告」pill → 通知/活动列表 */
-  onNoticePillTap(): void {
-    track('btn_click', { page: 'index', target: 'pill_notice' });
-    goNoticeList({});
-  },
-
-  /** 「最近路况」pill → 社区圈子路况筛选（契约 §circle:list 说明） */
-  onRoadPillTap(): void {
-    track('btn_click', { page: 'index', target: 'pill_road' });
-    goCircleRoad();
-  },
-
-  /**
-   * 宫格点击：进「服务分类页」（FE-14 / CR-022）。
-   * 原来用 ActionSheet 展开子项——8 项尚可，扩到 38 项后一屏放不下、也没有说明文字。
-   */
-  onGridTap(e: WechatMiniprogram.TouchEvent): void {
-    const key = String((e.currentTarget.dataset as { key?: string }).key ?? '');
-    const category = categories.find((c) => c.key === key);
-    if (!category) {
-      toast('该服务暂未开通');
-      return;
-    }
-    track('btn_click', { target: 'grid_to_category', kind: key });
-    wx.navigateTo({
-      url: `/pages/service/category/index?cat=${key}`,
-      fail: () => {
-        // 兜底：分类页打不开时回退到原 ActionSheet，保证子项仍可达
-        const items = category.items ?? [];
-        if (items.length === 0) {
-          toast('该服务暂未开通');
-          return;
-        }
-        wx.showActionSheet({
-          itemList: items.map((i) => i.name),
-          success: (res) => {
-            const item = items[res.tapIndex];
-            if (item) navigateByTarget(item);
-          },
-          fail: () => {
-            /* 用户取消，静默 */
-          },
-        });
-      },
+  onLocTap(): void {
+    if (this.data.locState === 'locating') return;
+    this.setData({ locState: 'locating', locText: '定位中…' });
+    wx.getLocation({
+      type: 'gcj02',
+      success: () => this.setData({ locState: 'ok', locText: '阳光社区 · 3 号楼' }),
+      fail: () => this.setData({ locState: 'denied', locText: '未授权 · 点此开启' }),
     });
   },
 
-  /* ============================ 首屏补全模块（v1.1.0） ============================ */
-
-  /** AI 助手入口卡 → AI 办事助手（不带预设问题，让用户自由输入） */
-  /** 头部搜索框：直接进办事大厅搜（大厅才有完整检索能力） */
-  onSearchTap(): void {
-    wx.switchTab({ url: '/pages/repair/list/index' });
-  },
-
-  /** 分类区「全部 ›」 */
-  onHallMore(): void {
-    wx.switchTab({ url: '/pages/repair/list/index' });
-  },
-
-  /** 头部头像 → 我的 */
-  onProfileTap(): void {
-    wx.switchTab({ url: '/pages/profile/index' });
-  },
-
-  /** 头部 4 个快捷入口：直接落到各自最合适的既有页面，不做中转页 */
   onQuickTap(e: WechatMiniprogram.TouchEvent): void {
-    const k = String((e.currentTarget.dataset as { k?: string }).k ?? '');
-    track('btn_click', { target: 'home_quick', kind: k });
+    const k = String(e.currentTarget.dataset.k ?? '');
     if (k === 'repair') {
       wx.navigateTo({ url: '/pages/repair/create/index' });
       return;
     }
     if (k === 'pay') {
-      wx.navigateTo({ url: '/pages/service/category/index?cat=support' });
+      wx.navigateTo({ url: '/pages/service/bill/index' });
       return;
     }
     if (k === 'reg') {
       wx.navigateTo({ url: '/pages/phonebook/index?category=medical' });
       return;
     }
-    wx.navigateTo({ url: '/pages/notice/list/index?type=activity&tag=%E5%8A%A9%E9%A4%90' });
+    wx.navigateTo({ url: '/pages/service/meal/index' });
   },
 
-  onAiEntryTap(): void {
-    track('btn_click', { page: 'index', target: 'ai_entry' });
-    wx.navigateTo({ url: '/pages/assistant/index', fail: () => toast('页面暂时打不开，请稍后再试') });
+  /** 服务分类卡 → 办事大厅对应分类 */
+  onCatTap(e: WechatMiniprogram.TouchEvent): void {
+    const key = String(e.currentTarget.dataset.key ?? '');
+    wx.setStorageSync('pendingHallCat', key);
+    wx.switchTab({ url: '/pages/hall/index' });
   },
 
-  /** 动态条点击 → 通知列表按该条类型筛选（紧急/公告/活动） */
-  onFeedTap(e: WechatMiniprogram.TouchEvent): void {
-    const type = String((e.currentTarget.dataset as { type?: string }).type ?? '');
-    track('btn_click', { page: 'index', target: 'feed_item', type });
-    goNoticeList(type === 'activity' || type === 'notice' || type === 'urgent' ? { type } : {});
+  onCellTap(e: WechatMiniprogram.TouchEvent): void {
+    const key = String(e.currentTarget.dataset.key ?? '');
+    const item = flatItems.find((it) => it.key === key);
+    if (!item) return;
+    navigateByTarget(item);
   },
 
-  /** 「全部 ›」→ 通知列表全量 */
-  onMoreNotices(): void {
-    track('btn_click', { page: 'index', target: 'feed_more' });
-    goNoticeList({});
+  onGo(e: WechatMiniprogram.TouchEvent): void {
+    const url = String(e.currentTarget.dataset.url ?? '');
+    if (!url) return;
+    wx.navigateTo({ url });
   },
 
-  /* ============================ 紧急求助 ============================ */
-
-  async onUrgentTap(): Promise<void> {
-    track('btn_click', { page: 'index', target: 'urgent_help' });
-    this.setData({ showEmergency: true });
-    await this.loadEmergencyContacts();
+  onMoreHall(): void {
+    wx.switchTab({ url: '/pages/hall/index' });
   },
 
-  /** 号码优先取 phonebook:list（emergency/property），失败/断网用本地兜底常量 */
-  async loadEmergencyContacts(): Promise<void> {
-    const merged: EmergencyContact[] = [...LOCAL_EMERGENCY_CONTACTS];
-    const seen: Record<string, boolean> = {};
-    merged.forEach((c) => {
-      seen[c.phone] = true;
-    });
-    try {
-      const [emergency, property] = await Promise.all([
-        listPhonebook({ category: 'emergency' }),
-        listPhonebook({ category: 'property' }),
-      ]);
-      (emergency.list ?? []).concat(property.list ?? []).forEach((p) => {
-        if (seen[p.phone]) return;
-        seen[p.phone] = true;
-        merged.push({ name: p.name, phone: p.phone, remark: p.remark || PHONE_CATEGORY_LABELS[p.category] });
-      });
-      this.setData({ contacts: merged });
-    } catch {
-      // 断网兜底：110/119/120 与本地值班号码必须始终可用
-      this.setData({ contacts: merged });
-    }
-  },
-
-  closeEmergency(): void {
-    this.setData({ showEmergency: false });
-  },
-
-  onCallPhone(e: WechatMiniprogram.TouchEvent): void {
-    const phone = String((e.currentTarget.dataset as { phone?: string }).phone ?? '');
-    if (!phone) return;
-    wx.makePhoneCall({
-      phoneNumber: phone,
-      fail: () => {
-        /* 用户取消拨号，静默 */
-      },
-    });
-  },
-
-  /** 阻止弹层内部点击冒泡到遮罩 */
-  noop(): void {
-    /* noop */
-  },
-
-  onShareAppMessage(): { title: string; path: string } {
-    return { title: `${COMMUNITY_NAME} · 社区便民服务`, path: '/pages/index/index' };
+  onMoreNotice(e: WechatMiniprogram.TouchEvent): void {
+    const filter = String(e.currentTarget.dataset.filter ?? '');
+    const suffix = filter === 'urgent' || filter === 'activity' ? `?type=${filter}` : '';
+    wx.navigateTo({ url: `/pages/notice/list/index${suffix}` });
   },
 });

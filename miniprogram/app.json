@@ -1,15 +1,22 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/repair/list/index",
+    "pages/hall/index",
     "pages/circle/index",
     "pages/profile/index",
-    "pages/repair/create/index",
-    "pages/repair/detail/index",
-    "pages/notice/list/index",
+    "pages/auth/welcome/index",
+    "pages/auth/login/index",
+    "pages/circle/post/index",
+    "pages/circle/topic/index",
+    "pages/circle/detail/index",
+    "pages/circle/digest/index",
+    "pages/circle/mine/index",
+    "pages/map/index",
     "pages/assistant/index",
+    "pages/notice/list/index",
     "pages/phonebook/index",
-    "pages/service/category/index",
+    "pages/service/book/index",
+    "pages/service/booking/index",
     "pages/service/meal/index",
     "pages/service/guide/index",
     "pages/service/bill/index",
@@ -19,9 +26,15 @@
     "pages/service/fresh/index",
     "pages/service/health/index",
     "pages/service/culture/index",
-    "pages/service/property/index"
+    "pages/service/property/index",
+    "pages/service/lease/index",
+    "pages/service/category/index",
+    "pages/repair/list/index",
+    "pages/repair/create/index",
+    "pages/repair/detail/index"
   ],
   "window": {
+    "navigationStyle": "custom",
     "navigationBarBackgroundColor": "#F3F5F9",
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "社区便民",
@@ -41,14 +54,14 @@
         "selectedIconPath": "assets/tabbar/home-on.png"
       },
       {
-        "pagePath": "pages/repair/list/index",
-        "text": "办事大厅",
+        "pagePath": "pages/hall/index",
+        "text": "办事",
         "iconPath": "assets/tabbar/hall.png",
         "selectedIconPath": "assets/tabbar/hall-on.png"
       },
       {
         "pagePath": "pages/circle/index",
-        "text": "社区圈子",
+        "text": "圈子",
         "iconPath": "assets/tabbar/circle.png",
         "selectedIconPath": "assets/tabbar/circle-on.png"
       },
@@ -59,6 +72,12 @@
         "selectedIconPath": "assets/tabbar/profile-on.png"
       }
     ]
+  },
+  "requiredPrivateInfos": ["getLocation"],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于在地图上显示你附近的社区服务点（物业、卫生站、快递柜等）"
+    }
   },
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"

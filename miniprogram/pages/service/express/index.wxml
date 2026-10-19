@@ -1,105 +1,180 @@
-<!-- 快递代取代寄（CR-026）· 我的申请 → 点位 → 收费 → 提交 -->
-<view class="page">
-  <!-- 两个主操作 -->
-  <view class="top">
-    <view class="top__t">快递代取代寄</view>
-    <view class="top__s">驿站代收 · 上门送件 · 冷链暂存</view>
-    <view class="top__acts">
-      <view class="top__btn" data-k="pickup" bindtap="onApply">帮我代取</view>
-      <view class="top__btn top__btn--ghost" data-k="send" bindtap="onApply">帮我代寄</view>
+<!-- 快递代取 · 彩色页头 → 在库包裹 → 驿站 / 规则 → 我的申请 → 预约 -->
+<view class="page page--fbar">
+  <view class="pgh pgh--teal">
+    <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
+      <text>邻里小助手</text>
+      <text>● ● ●</text>
     </view>
-  </view>
-
-  <!-- 我的申请 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">我的申请</text>
-      <text class="sec__s">共 {{orders.length}} 条</text>
+    <view class="pgh-nav">
+      <text class="pgh-bk" bindtap="goBack">‹</text>
+      <text class="pgh-t">快递代收</text>
+      <text class="pgh-rt" bindtap="onOpenSpots">存放点</text>
     </view>
-
-    <view wx:if="{{orders.length === 0}}" class="empty">
-      <view class="empty__t">还没有代取代寄申请</view>
-      <view class="empty__s">点上方按钮提交，驿站处理进度会在这里显示</view>
-    </view>
-
-    <view wx:for="{{orders}}" wx:key="id" class="od">
-      <view class="od__l">
-        <view class="od__n">{{item.kindText}} · {{item.company}}</view>
-        <view class="od__d">{{item.code}} · {{item.sizeText}} · {{item.room}}</view>
-        <view class="od__t">{{item.timeText}}</view>
+    <view class="pgh-k">
+      <view class="pgh-ic"><view class="ic ic-l ic-package" /></view>
+      <view>
+        <view class="pgh-lb" style="margin-bottom:6px">1 号楼驿站 · 我的包裹</view>
+        <view class="pgh-num">{{packages.length}}<text class="unit">件在库</text></view>
       </view>
-      <view class="od__r">
-        <view class="od__s">{{item.statusText}}</view>
-        <view class="od__c" data-id="{{item.id}}" bindtap="onCancel">撤销</view>
+      <view class="pgh-chip" data-k="pickup" bindtap="onOpenForm">预约送上门 ›</view>
+    </view>
+  </view>
+
+  <view class="body">
+    <!-- 在库包裹 -->
+    <view wx:for="{{packages}}" wx:key="code" class="tkt">
+      <view class="tk-lb">
+        {{item.name}}
+        <text class="tag ok tk-tag">可取件</text>
+      </view>
+      <view class="tk-cd">{{item.code}}</view>
+      <view class="tk-dl"></view>
+      <view class="tk-r"><text>入库时间</text><text>{{item.timeText}}</text></view>
+      <view class="tk-r"><text>保管期限</text><text>{{item.keep}}</text></view>
+      <view class="tk-a">
+        <view class="btn3 ghost" data-k="pickup" bindtap="onOpenForm">预约送上门</view>
+        <view class="btn3 solid" data-k="pickup" bindtap="onOpenForm">去取件</view>
+      </view>
+    </view>
+
+    <!-- 驿站信息 -->
+    <view class="dash">
+      <view class="d-h"><text class="dh-b">驿站信息</text><text class="dh-em">距你 210 m · 8:00-21:00</text></view>
+      <view class="notice-list">
+        <view>无人值守时段可到南门岗亭取；</view>
+        <view>超 3 天未取将由驿站退回快递员；</view>
+        <view>大件请提前打电话让驿站帮搬。</view>
+      </view>
+    </view>
+
+    <!-- 代取规则 -->
+    <view class="dash">
+      <view class="d-h"><text class="dh-b">代取服务费</text><text class="dh-em">线下结算</text></view>
+      <view wx:for="{{rules}}" wx:key="label" class="rule-row">
+        <text class="rule-l">{{item.label}}</text>
+        <text class="rule-v">{{item.value}}</text>
+      </view>
+      <view class="rule-note">费用由跑腿志愿者上门时线下结算，本页不收款、不代付货款。</view>
+    </view>
+
+    <!-- 我的申请 -->
+    <view class="sec">
+      <view class="st">
+        <text class="st-b">我的申请</text>
+        <text class="st-e">可随时撤销</text>
+      </view>
+      <view wx:if="{{orders.length === 0}}" class="empty">还没有代取申请，点下方按钮预约</view>
+      <view wx:for="{{orders}}" wx:key="id" class="ord">
+        <view class="ord-l">
+          <view class="ord-n">{{item.company}} · {{item.sizeText}}</view>
+          <view class="ord-s">{{item.kindText}} · {{item.spotText}}</view>
+          <view class="ord-s">{{item.timeText}}</view>
+          <view class="ord-s">服务费 {{item.feeText}} · 跑腿志愿者线下结算</view>
+        </view>
+        <view class="ord-r">
+          <text class="tag warn">{{item.statusText}}</text>
+          <text class="ord-x" data-id="{{item.id}}" bindtap="onCancel">取消</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="page-note">
+      代收属于便民服务，不代付货款、不拆包；破损请在驿站当场拍照登记。
+    </view>
+
+    <ai-bar page="express" />
+  </view>
+
+  <view class="fbar">
+    <view class="fbar-sum">
+      <view class="fbar-t">代取小件 2 元起</view>
+      <view class="fbar-s">服务费线下结算 · 本页不收款</view>
+    </view>
+    <view class="fbar-btn" data-k="pickup" bindtap="onOpenForm">预约代取</view>
+  </view>
+
+  <!-- 预约弹层 -->
+  <view wx:if="{{sheet === 'form'}}" class="mask" bindtap="onCloseSheet">
+    <view class="sheet show" catchtap="noop" catchtouchmove="noop">
+      <view class="sh-hd">{{kindName}}</view>
+      <view class="sh-sub">1 号楼驿站 · 8:00-21:00</view>
+
+      <view class="lbl">服务类型<text class="em">必选</text></view>
+      <view class="chips">
+        <view class="chip {{kind === 'pickup' ? 'on' : ''}}" data-k="pickup" bindtap="onPickKind">帮我代取</view>
+        <view class="chip {{kind === 'send' ? 'on' : ''}}" data-k="send" bindtap="onPickKind">帮我代寄</view>
+      </view>
+
+      <view class="lbl">快递公司<text class="em">必选</text></view>
+      <view class="chips">
+        <view
+          wx:for="{{companies}}"
+          wx:key="*this"
+          class="chip {{company === item ? 'on' : ''}}"
+          data-v="{{item}}"
+          bindtap="onPickCompany"
+        >{{item}}</view>
+      </view>
+
+      <view class="lbl">包裹大小<text class="em">必选</text></view>
+      <view class="chips">
+        <view
+          wx:for="{{sizes}}"
+          wx:key="key"
+          class="chip {{size === item.key ? 'on' : ''}}"
+          data-s="{{item.key}}"
+          bindtap="onPickSize"
+        >{{item.name}} · {{item.fee}}</view>
+      </view>
+      <view class="size-hint">{{sizeName}} 服务费 {{sizeFee}}，由跑腿志愿者线下结算。</view>
+
+      <view class="lbl">取件点位<text class="em">必选</text></view>
+      <view class="chips">
+        <view
+          wx:for="{{spotNames}}"
+          wx:key="*this"
+          class="chip {{spotName === item ? 'on' : ''}}"
+          data-n="{{item}}"
+          bindtap="onPickSpot"
+        >{{item}}</view>
+      </view>
+
+      <view class="lbl">{{kind === 'pickup' ? '取件码' : '寄件单号'}}<text class="em">必填</text></view>
+      <input class="inp" placeholder="仅用于本次代取，不会展示给他人" maxlength="32" value="{{code}}" bindinput="onInputCode" />
+      <view class="lbl">楼栋房号<text class="em">必填</text></view>
+      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="32" value="{{room}}" bindinput="onInputRoom" />
+      <view class="lbl">联系电话<text class="em">必填</text></view>
+      <input class="inp" type="number" placeholder="用于送达联系" maxlength="15" value="{{contact}}" bindinput="onInputContact" />
+      <view class="lbl">备注<text class="em">选填</text></view>
+      <textarea class="ta" placeholder="例如：放门口快递架，不用敲门" maxlength="120" value="{{note}}" bindinput="onInputNote" />
+
+      <view class="pay-note">
+        本页不收款、不代付货款。服务费由跑腿志愿者线下结算，请在交接时当面确认。
+      </view>
+      <view class="sh-btns">
+        <view class="btn ghost" bindtap="onCloseSheet">取消</view>
+        <view class="btn" bindtap="onSubmit">{{submitting ? '提交中…' : '提交预约'}}</view>
       </view>
     </view>
   </view>
 
-  <!-- 点位 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">驿站点位</text>
-      <text class="sec__s">大件请到驿站取</text>
-    </view>
-    <view wx:for="{{spots}}" wx:key="name" class="spot">
-      <view class="spot__n">{{item.name}}</view>
-      <view class="spot__a">{{item.addr}}</view>
-      <view class="spot__h">{{item.hours}} · {{item.note}}</view>
-    </view>
-  </view>
-
-  <!-- 收费 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">收费标准</text>
-      <text class="sec__s">现场结算</text>
-    </view>
-    <view wx:for="{{rules}}" wx:key="label" class="rule">
-      <text class="rule__l">{{item.label}}</text>
-      <text class="rule__v">{{item.value}}</text>
-    </view>
-  </view>
-
-  <view class="foot">
-    本页<text class="foot__b">不代收货款、不做在线支付</text>，费用在驿站取件时现场结算；
-    取件码是你的个人凭证，请勿发给他人。
-  </view>
-
-  <!-- CR-024：页面级 AI 入口（上下文 = 快递代取） -->
-  <ai-bar page="express" />
-
-  <!-- 申请弹层 -->
-  <view wx:if="{{showForm}}" class="mask" bindtap="onCloseForm">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">{{kindName}}</view>
-      <view class="sheet__tip">提交后驿站工作人员处理，费用现场结算；本页不代收货款。</view>
-
-      <view class="sheet__lb">快递公司 <text class="req">必选</text></view>
-      <picker mode="selector" range="{{companies}}" value="{{companyIndex}}" bindchange="onCompanyChange">
-        <view class="pk">{{company}} ▾</view>
-      </picker>
-
-      <view class="sheet__lb">{{kind === 'pickup' ? '取件码' : '寄件单号'}} <text class="req">必填</text></view>
-      <input class="inp" placeholder="{{kind === 'pickup' ? '例：8-3-1024' : '寄件后填快递单号'}}" maxlength="30" value="{{code}}" bindinput="onInputCode" />
-
-      <view class="sheet__lb">件型 <text class="req">必选</text></view>
-      <picker mode="selector" range="{{sizeNames}}" value="{{sizeIndex}}" bindchange="onSizeChange">
-        <view class="pk">{{sizeNames[sizeIndex]}} ▾</view>
-      </picker>
-      <view class="sheet__tip">{{sizeHint}}</view>
-
-      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
-      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{room}}" bindinput="onInputRoom" />
-
-      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
-      <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{contact}}" bindinput="onInputContact" />
-
-      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
-      <textarea class="ta" placeholder="例如：晚上 7 点后在家，可直接送上门" maxlength="120" value="{{note}}" bindinput="onInputNote" />
-
-      <view class="sheet__ft">
-        <view class="sheet__btn" bindtap="onCloseForm">取消</view>
-        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmit">{{submitting ? '提交中…' : '提交申请'}}</view>
+  <!-- 存放点 -->
+  <view wx:if="{{sheet === 'spots'}}" class="mask" bindtap="onCloseSheet">
+    <view class="sheet show" catchtap="noop" catchtouchmove="noop">
+      <view class="sh-hd">快递存放点</view>
+      <view class="sh-sub">共 {{spots.length}} 个点位</view>
+      <view class="spot-list">
+        <view wx:for="{{spots}}" wx:key="name" class="row">
+          <view class="k tint-teal"><view class="ic ic-s ic-package" /></view>
+          <view class="m">
+            <view class="rb">{{item.name}}</view>
+            <view class="rs">{{item.addr}} · {{item.note}}</view>
+          </view>
+          <view class="v">{{item.hours}}</view>
+        </view>
+      </view>
+      <view class="sh-btns">
+        <view class="btn" bindtap="onCloseSheet">知道了</view>
       </view>
     </view>
   </view>

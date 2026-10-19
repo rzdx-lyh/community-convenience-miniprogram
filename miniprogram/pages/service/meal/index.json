@@ -1,8 +1,7 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "智慧配餐",
-  "navigationBarBackgroundColor": "#F3F5F9",
-  "navigationBarTextStyle": "black",
-  "usingComponents": {
-    "ai-bar": "../../../components/ai-bar/index"
-  }
+  "navigationBarBackgroundColor": "#1FA97A",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {}
 }

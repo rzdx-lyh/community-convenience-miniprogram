@@ -20,6 +20,10 @@ export interface ExpressOrder {
   size: ExpressSize;
   sizeText: string;
   room: string;
+  /** 取件点位（登记用） */
+  spot?: string;
+  /** 代取服务费口径（线下结算，页面不收款） */
+  fee?: string;
   timeText: string;
   status: 'pending' | 'done';
   statusText: string;

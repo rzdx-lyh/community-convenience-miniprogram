@@ -15,8 +15,8 @@ export type HealthTab = 'vaccine' | 'report' | 'chronic' | 'annual';
 export const HEALTH_TABS: Array<{ key: HealthTab; name: string; note: string }> = [
   { key: 'vaccine', name: '疫苗预约', note: '社区卫生服务站 · 儿童/成人/流感' },
   { key: 'report', name: '体检报告代取', note: '行动不便可申请上门代取' },
-  { key: 'chronic', name: '慢性病咨询', note: '高血压 / 糖尿病 · 需带病历与用药清单' },
-  { key: 'annual', name: '健康报告', note: '65 岁以上年度免费体检 · 报告汇总' },
+  { key: 'chronic', name: '慢病随访', note: '高血压 / 糖尿病 · 需带病历与用药清单' },
+  { key: 'annual', name: '年度体检', note: '65 岁以上年度免费体检 · 报告汇总' },
 ];
 
 export interface HealthItem {

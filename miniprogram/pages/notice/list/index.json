@@ -1,8 +1,9 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "社区通知",
   "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
   "usingComponents": {
-    "empty-state": "../../../components/empty-state/index",
     "ai-bar": "../../../components/ai-bar/index"
   }
 }

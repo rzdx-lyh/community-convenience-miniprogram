@@ -1,119 +1,154 @@
-<!-- 办事指南（CR-026）· 分类 + 搜索 → 事项卡 → 详情弹层（材料/窗口/时限/退回原因） -->
+<!-- 办事指南 · 分类 + 搜索 → 事项卡 → 详情（材料/流程/地点/时限） -->
 <view class="page">
-  <!-- 搜索 -->
-  <view class="search">
-    <view class="search__box">
-      <view class="ic ic-m ic-search"></view>
+  <view class="pgh pgh--blue" style="padding-top:{{statusBarHeight}}px">
+    <view class="pgh-nav">
+      <view class="pgh-bk" bindtap="goBack">‹</view>
+      <text class="pgh-t">办事指南</text>
+      <text class="pgh-rt">社区服务站</text>
+    </view>
+    <view class="ph">
+      <view class="pgh-ic"><view class="ic ic-l icw ic-clipboard" /></view>
+      <view class="ph__b">
+        <view class="ph__t">办事指南</view>
+        <view class="ph__s">材料一次带齐 · 窗口与时限写清楚</view>
+      </view>
+    </view>
+    <view class="sbox gsearch">
+      <view class="ic ic-s ic-search" />
       <input
-        class="search__input"
         value="{{keyword}}"
-        placeholder="搜事项：居住证、高龄补贴、医保…"
-        placeholder-class="search__ph"
+        placeholder="搜事项：居住证、补贴、医保…"
+        placeholder-class="gph"
         confirm-type="search"
         bindinput="onSearchInput"
       />
-      <view wx:if="{{keyword}}" class="search__clear" catchtap="onClearKeyword">✕</view>
+      <text wx:if="{{keyword}}" class="go" bindtap="onClearKeyword">清空</text>
     </view>
   </view>
 
-  <!-- 分类 chip -->
-  <scroll-view class="cats" scroll-x enable-flex show-scrollbar="{{false}}">
-    <view
-      wx:for="{{cats}}"
-      wx:key="*this"
-      class="cat {{activeCat === item ? 'cat--on' : ''}}"
-      data-v="{{item}}"
-      bindtap="onPickCat"
-    >{{item}}</view>
-  </scroll-view>
+  <view class="body">
+    <view class="blk cats-card">
+      <view class="cats">
+        <view
+          wx:for="{{cats}}"
+          wx:key="*this"
+          class="cat {{activeCat === item ? 'on' : ''}}"
+          data-v="{{item}}"
+          bindtap="onPickCat"
+        >{{item}}</view>
+      </view>
+    </view>
 
-  <!-- 事项列表 -->
-  <view class="list">
+    <view class="st">
+      <text class="st__b">共 {{list.length}} 项</text>
+      <text class="st__em">以窗口现场办理为准</text>
+    </view>
+
     <view
       wx:for="{{list}}"
       wx:key="key"
-      class="card"
-      hover-class="card--hover"
+      class="card gcard"
+      hover-class="gcard--hover"
       data-k="{{item.key}}"
       bindtap="onOpenDetail"
     >
-      <view class="card__hd">
-        <text class="card__n">{{item.name}}</text>
-        <text class="card__c">{{item.cat}}</text>
+      <view class="gc__top">
+        <text class="gc__n">{{item.name}}</text>
+        <text class="tag">{{item.cat}}</text>
       </view>
-      <view class="card__d">{{item.desc}}</view>
-      <view class="card__ft">
-        <text class="card__m">{{item.limit}}</text>
-        <text class="card__m">{{item.trips}}</text>
+      <view class="gc__d">{{item.desc}}</view>
+      <view class="gc__m">
+        <view class="gm">
+          <text class="gm__k">地点</text>
+          <text class="gm__v">{{item.window}}</text>
+        </view>
+        <view class="gm">
+          <text class="gm__k">时限</text>
+          <text class="gm__v">{{item.limit}}</text>
+        </view>
+        <view class="gm">
+          <text class="gm__k">跑几趟</text>
+          <text class="gm__v">{{item.trips}}</text>
+        </view>
       </view>
+      <view class="gc__more">查看材料与流程 <text class="ar">›</text></view>
+    </view>
+
+    <view wx:if="{{list.length === 0}}" class="empty">没有找到相关事项，换个关键词或分类试试</view>
+
+    <view class="tip">
+      指南内容为社区公开办事口径摘要，不虚构政策条文；材料与时限可能调整，办理前可拨打社区服务站电话确认。
+    </view>
+    <view class="gap" />
+  </view>
+
+  <!-- 事项详情 -->
+  <view wx:if="{{detail}}" class="mask show" bindtap="onCloseDetail" />
+  <view wx:if="{{detail}}" class="sheet show">
+    <view class="sh-h">{{detail.name}}</view>
+    <view class="sh-sub">{{detail.cat}} · {{detail.desc}}</view>
+    <view class="sh-body">
+      <view class="sh-lb">所需材料</view>
+      <view wx:for="{{detail.materials}}" wx:key="*this" class="mat">
+        <text class="mat__n">{{index + 1}}</text>
+        <text class="mat__t">{{item}}</text>
+      </view>
+
+      <view class="sh-lb">办理信息</view>
+      <view class="kv">
+        <text class="kv__k">地点</text>
+        <text class="kv__v">{{detail.window}}</text>
+      </view>
+      <view class="kv">
+        <text class="kv__k">时限</text>
+        <text class="kv__v">{{detail.limit}}</text>
+      </view>
+      <view class="kv">
+        <text class="kv__k">趟数</text>
+        <text class="kv__v">{{detail.trips}}</text>
+      </view>
+
+      <view class="sh-lb">办理流程</view>
+      <view class="flow">{{detail.flowText}}</view>
+
+      <view class="sh-lb">常见退回原因</view>
+      <view wx:for="{{detail.pitfalls}}" wx:key="*this" class="pit">· {{item}}</view>
+
+      <view class="sh-note">以上为公开口径摘要，具体以窗口现场办理为准；社区不收取任何代办费。</view>
+    </view>
+    <view class="sh-btns">
+      <view class="btn ghost" bindtap="onCloseDetail">关闭</view>
+      <view class="btn" bindtap="onOrder">申请代办</view>
     </view>
   </view>
 
-  <empty-state
-    wx:if="{{list.length === 0}}"
-    type="search"
-    text="没有找到相关事项"
-    subText="换个关键词，或切换到「全部」分类"
-  />
-
-  <view class="foot">以上为社区公示的办事口径，<text class="foot__b">具体以窗口现场办理为准</text>。</view>
-
-  <!-- CR-024：页面级 AI 入口（上下文 = 办事指南） -->
-  <ai-bar page="guide" />
-
-  <!-- 详情弹层 -->
-  <view wx:if="{{detail}}" class="mask" bindtap="onCloseDetail">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">
-        <text class="sheet__t">{{detail.name}}</text>
-        <text class="sheet__x" bindtap="onCloseDetail">✕</text>
-      </view>
-      <view class="sheet__d">{{detail.desc}}</view>
-
-      <view class="sheet__sec">
-        <view class="sheet__lb">所需材料</view>
-        <view wx:for="{{detail.materials}}" wx:key="*this" class="sheet__li">
-          <text class="sheet__dot">·</text><text>{{item}}</text>
-        </view>
-      </view>
-
-      <view class="sheet__sec">
-        <view class="sheet__kv"><text class="sheet__k">办理窗口</text><text class="sheet__v">{{detail.window}}</text></view>
-        <view class="sheet__kv"><text class="sheet__k">办理时限</text><text class="sheet__v">{{detail.limit}}</text></view>
-        <view class="sheet__kv"><text class="sheet__k">需要跑几趟</text><text class="sheet__v">{{detail.trips}}</text></view>
-      </view>
-
-      <view class="sheet__sec sheet__sec--warn">
-        <view class="sheet__lb">常见退回原因（少跑一趟的关键）</view>
-        <view wx:for="{{detail.pitfalls}}" wx:key="*this" class="sheet__li">
-          <text class="sheet__dot">!</text><text>{{item}}</text>
-        </view>
-      </view>
-
-      <view class="sheet__btn sheet__btn--main" bindtap="onOrder">申请代办</view>
-      <view class="sheet__btn" bindtap="onCloseDetail">关闭</view>
-    </view>
-  </view>
-
-  <!-- 代办申请弹层 -->
-  <view wx:if="{{showOrder}}" class="mask" bindtap="onCloseOrder">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">申请代办 · {{detail.name}}</view>
-      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
-      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{orderRoom}}" bindinput="onInputRoom" />
-      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
-      <input class="inp" placeholder="方便工作人员联系你" maxlength="20" value="{{orderContact}}" bindinput="onInputContact" />
-      <view class="sheet__lb">期望时间</view>
+  <!-- 代办申请 -->
+  <view wx:if="{{showOrder}}" class="mask show" bindtap="onCloseOrder" />
+  <view wx:if="{{showOrder}}" class="sheet show">
+    <view class="sh-h">政务代办申请</view>
+    <view class="sh-sub">{{detail.name}}</view>
+    <view class="sh-body">
+      <view class="lbl">期望时间</view>
       <view class="chips">
-        <view wx:for="{{times}}" wx:key="*this" class="chip {{orderTime === item ? 'chip--on' : ''}}" data-v="{{item}}" bindtap="onPickTime">{{item}}</view>
+        <view
+          wx:for="{{times}}"
+          wx:key="*this"
+          class="chip {{orderTime === item ? 'on' : ''}}"
+          data-v="{{item}}"
+          bindtap="onPickTime"
+        >{{item}}</view>
       </view>
-      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
-      <textarea class="ta" placeholder="例如：工作日白天家里没人，可约晚上" maxlength="120" value="{{orderNote}}" bindinput="onInputNote" />
-      <view class="sheet__tip">代办只做材料代收代交，不代收任何费用；证件类需本人到场的无法代办。</view>
-      <view class="sheet__ft">
-        <view class="sheet__btn" bindtap="onCloseOrder">取消</view>
-        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmitOrder">{{submitting ? '提交中…' : '提交申请'}}</view>
-      </view>
+      <view class="lbl">楼栋房号</view>
+      <input class="inp" value="{{orderRoom}}" maxlength="20" placeholder="例：3 号楼 2 单元 502" bindinput="onInputRoom" />
+      <view class="lbl">联系电话</view>
+      <input class="inp" value="{{orderContact}}" type="number" maxlength="15" placeholder="工作人员联系用" bindinput="onInputContact" />
+      <view class="lbl">备注 <text class="lbl__em">可选</text></view>
+      <input class="inp" value="{{orderNote}}" maxlength="60" placeholder="如：老人行动不便，需上门取材料" bindinput="onInputNote" />
+      <view class="sh-note">代办只协助整理与递交材料，不承诺办理结果，不收取费用。</view>
+    </view>
+    <view class="sh-btns">
+      <view class="btn ghost" bindtap="onCloseOrder">取消</view>
+      <view class="btn" bindtap="onSubmitOrder">{{submitting ? '提交中…' : '提交申请'}}</view>
     </view>
   </view>
 </view>

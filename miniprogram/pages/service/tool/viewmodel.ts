@@ -114,6 +114,8 @@ export function findTool(key: string): ToolMeta | undefined {
 /** 借用台账里的一行（本地） */
 export interface BorrowRow {
   id: string;
+  /** 设备编号（现场标签，展示用） */
+  no?: string;
   kind: ToolKind;
   name: string;
   spot: string;

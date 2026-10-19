@@ -1,0 +1,200 @@
+<!-- 通用预约（CR-028）· 服务类型 → 时间 → 地址 → 提交收据 -->
+<view class="page {{done ? '' : 'page--fbar'}}">
+  <!-- 提交成功：凭证 + 时间轴 -->
+  <block wx:if="{{done}}">
+    <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
+      <text>邻里小助手</text>
+      <text>预约凭证</text>
+    </view>
+    <view class="nav">
+      <view class="bk" bindtap="goBack">‹</view>
+      <text>预约已提交</text>
+    </view>
+
+    <view class="rcpt">
+      <view class="ok"><view class="ic ic-m ic-check" /></view>
+      <text class="rc-t">{{svc}}</text>
+      <text class="no">{{no}}</text>
+      <text class="rc-p">{{receiptText}}</text>
+    </view>
+
+    <view class="blk">
+      <view class="tl">
+        <view class="tl-i {{item.cls}}" wx:for="{{timeline}}" wx:key="title">
+          <view class="tl-d" />
+          <view class="tl-b">
+            <view class="tl-t">{{item.title}}</view>
+            <view class="tl-s">{{item.desc}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tip">本次只做登记与转派，不含预付费用；师傅上门后按明码标价结算，乱收费可投诉并全额退款。</view>
+    <view class="pgpad">
+      <view class="btn ghost" bindtap="goBack">返回</view>
+    </view>
+  </block>
+
+  <!-- 预约流程 -->
+  <block wx:else>
+    <view class="pgh pgh--blue" style="padding-top:{{statusBarHeight}}px">
+      <view class="sbar light">
+        <text>邻里小助手</text>
+        <text>预约登记</text>
+      </view>
+      <view class="pgh-nav">
+        <view class="pgh-bk" bindtap="goBack">‹</view>
+        <text class="pgh-t">{{svc}}</text>
+        <view class="pgh-rt" bindtap="openHelp">服务说明</view>
+      </view>
+      <view class="pgh-k">
+        <view class="pgh-ic"><view class="ic ic-m ic-toolbox icw" /></view>
+        <view class="pgh-km">
+          <view class="pgh-lb">{{grpName}} · {{catName}}</view>
+          <view class="pgh-svc">{{svc}}</view>
+        </view>
+        <view class="pgh-chip">0 元预约</view>
+      </view>
+    </view>
+
+    <view class="body">
+      <!-- 步骤条 -->
+      <view class="stp">
+        <block wx:for="{{steps}}" wx:key="n">
+          <view wx:if="{{index}}" class="ln" />
+          <view class="s {{item.cls}}" data-n="{{item.n}}" bindtap="onStep">
+            <view class="n">
+              <view wx:if="{{item.cls === 'done'}}" class="ic ic-s ic-check" />
+              <text wx:else>{{item.n}}</text>
+            </view>
+            <text class="tx">{{item.text}}</text>
+          </view>
+        </block>
+      </view>
+
+      <!-- 第 1 步：服务类型 -->
+      <block wx:if="{{step === 1}}">
+        <view class="lblw">
+          <view class="lbl">要办哪项 <text class="lbl-em">可多选</text></view>
+        </view>
+        <view class="ogrid">
+          <view
+            class="opt {{item.on ? 'on' : ''}}"
+            wx:for="{{optList}}"
+            wx:key="name"
+            data-v="{{item.name}}"
+            bindtap="onChooseOpt"
+          >
+            <view class="ok2">
+              <view wx:if="{{item.on}}" class="ic ic-s ic-check" />
+            </view>
+            <text class="opt-t">{{item.name}}</text>
+            <text class="opt-d">约 60 分钟 · 明码标价</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 第 2 步：日期 + 时段 -->
+      <block wx:if="{{step === 2}}">
+        <view class="lblw"><view class="lbl">选日期</view></view>
+        <view class="drow">
+          <view
+            class="dchip {{dayIndex === index ? 'on' : ''}}"
+            wx:for="{{days}}"
+            wx:key="label"
+            data-v="{{index}}"
+            bindtap="onChooseDay"
+          >
+            <text class="dc-t">{{item.label}}</text>
+            <text class="dc-s">{{item.md}}</text>
+          </view>
+        </view>
+
+        <view class="lblw"><view class="lbl">选时段 <text class="lbl-em">师傅上门时间</text></view></view>
+        <view class="tgrid">
+          <view
+            class="ts {{slot === item.name ? 'on' : ''}}"
+            wx:for="{{slots}}"
+            wx:key="name"
+            data-v="{{item.name}}"
+            bindtap="onChooseSlot"
+          >
+            <text class="ts-t">{{item.name}}</text>
+            <text class="ts-s">{{item.remain}}</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 第 3 步：地址 + 备注 + 摘要 -->
+      <block wx:if="{{step === 3}}">
+        <view class="lblw"><view class="lbl">上门地址</view></view>
+        <view class="chips chipsw">
+          <view
+            class="chip {{unit === item ? 'on' : ''}}"
+            wx:for="{{units}}"
+            wx:key="*this"
+            data-v="{{item}}"
+            bindtap="onChooseUnit"
+          >{{item}}</view>
+        </view>
+        <view class="pad12">
+          <input
+            class="inp"
+            value="{{room}}"
+            placeholder="房号（如 2 单元 302）"
+            placeholder-class="ph"
+            bindinput="onInputRoom"
+          />
+        </view>
+
+        <view class="lblw"><view class="lbl">备注 <text class="lbl-em">选填</text></view></view>
+        <view class="pad12">
+          <textarea
+            class="ta"
+            value="{{note}}"
+            placeholder="例如：老人在家，请提前打电话"
+            placeholder-class="ph"
+            maxlength="120"
+            bindinput="onInputNote"
+          />
+        </view>
+
+        <view class="dash">
+          <view class="d-h">
+            <text class="dh-b">预约摘要</text>
+            <text class="dh-e">可返回修改</text>
+          </view>
+          <view class="tk-r"><text>服务</text><text>{{svc}} {{optText ? '· ' + optText : ''}}</text></view>
+          <view class="tk-r"><text>时间</text><text>{{slot || '待选'}}</text></view>
+          <view class="tk-r"><text>地址</text><text>{{addrText}}</text></view>
+        </view>
+      </block>
+
+      <view class="pgtail" />
+    </view>
+
+    <view class="fbar">
+      <view class="sum">
+        <text class="sum-b">{{sumTxt}}</text>
+        <text class="sum-s">{{subTxt}}</text>
+      </view>
+      <view wx:if="{{step !== 3}}" class="btn2" bindtap="onNext">下一步</view>
+      <view wx:else class="btn2 {{ready ? '' : 'is-dis'}}" bindtap="onSubmit">
+        {{submitting ? '提交中…' : ready ? '提交预约' : '请补全信息'}}
+      </view>
+    </view>
+  </block>
+
+  <!-- 服务说明弹层 -->
+  <view wx:if="{{showHelp}}" class="mask" bindtap="closeHelp">
+    <view class="sheet sheet--wx show" catchtap="noop">
+      <view class="sht-h">预约怎么走</view>
+      <view class="sht-b">1. 选择服务类型与服务时段；</view>
+      <view class="sht-b">2. 社区在 2 小时内电话确认，师傅按约定时间上门；</view>
+      <view class="sht-b">3. 上门后出示明码标价，服务完成再结算，不收预付款。</view>
+      <view class="sht-b sht-warn">如遇乱收费，可在「我的 - 意见反馈」投诉，核实后全额退款。</view>
+      <view class="sht-btn" bindtap="closeHelp">知道了</view>
+    </view>
+  </view>
+</view>

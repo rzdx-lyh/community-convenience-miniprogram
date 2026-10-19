@@ -1,0 +1,62 @@
+<!-- 社区圈子 · AI 今日摘要 -->
+<view class="page">
+  <view class="sbar" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
+  </view>
+  <view class="nav">
+    <view class="bk" bindtap="goBack">‹</view>
+    <text>AI 今日摘要</text>
+    <view class="rt" bindtap="onRefresh">↻ 重新生成</view>
+  </view>
+
+  <view class="hero">
+    <view class="hero__t">
+      <view class="ic ic-m ic-sparkles icw" />
+      <text>今天社区发生了 {{items.length}} 件事</text>
+    </view>
+    <view class="hero__s">共 {{totalPosts}} 条动态 · 已按「影响你出行 / 能参与 / 与你楼栋相关」筛过 · {{generatedAt}} 生成</view>
+  </view>
+
+  <view class="oc">
+    <view class="oc__h">
+      <view class="ic ic-s ic-clipboard" />
+      <text>摘要</text>
+    </view>
+    <view wx:for="{{items}}" wx:key="t" class="oi">
+      <view class="n">{{index + 1}}</view>
+      <view class="oi__b">
+        <view class="oi__t">
+          <text>{{item.t}}</text>
+          <text class="tag">{{item.ty}}</text>
+        </view>
+        <text class="oi__d">{{item.b}}</text>
+        <text class="oi__s">{{item.s}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="oc">
+    <view class="oc__h">
+      <view class="ic ic-s ic-tag" />
+      <text>值得关注的话题</text>
+    </view>
+    <view
+      wx:for="{{topics}}"
+      wx:key="name"
+      class="oi"
+      data-topic="{{item.name}}"
+      bindtap="onTopicTap"
+    >
+      <view class="n n--light">{{item.icon}}</view>
+      <view class="oi__b">
+        <text class="oi__t">#{{item.name}}</text>
+        <text class="oi__d">{{item.members}} 人参与</text>
+      </view>
+      <text class="ar">›</text>
+    </view>
+  </view>
+
+  <view class="note">AI 只归纳社区内的公开动态，不读取私聊与个人信息；摘要可能不完整，具体以原帖为准。</view>
+  <view style="height:28rpx" />
+</view>

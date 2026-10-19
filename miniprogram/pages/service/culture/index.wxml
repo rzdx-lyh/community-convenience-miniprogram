@@ -1,103 +1,148 @@
-<!-- 文化服务（CR-027）· 图书角借阅 / 四点半课堂 -->
+<!-- 图书文化 · 图书角借阅 / 四点半课堂（不收款） -->
 <view class="page">
-  <view class="top">
-    <view class="top__t">文化服务</view>
-    <view class="top__s">社区活动室 · 免费参加</view>
-  </view>
-
-  <view class="tabs">
-    <view
-      wx:for="{{tabs}}"
-      wx:key="key"
-      class="tab {{tab === item.key ? 'is-on' : ''}}"
-      data-t="{{item.key}}"
-      bindtap="onSwitchTab"
-    >{{item.name}}</view>
-  </view>
-
-  <view class="note">{{tabNote}}</view>
-
-  <!-- 图书角 -->
-  <block wx:if="{{tab === 'library'}}">
-    <view class="sec">
-      <view class="sec__hd">
-        <text class="sec__t">在架书目</text>
-        <text class="sec__s">共 {{books.length}} 本</text>
+  <view class="pgh pgh--indigo" style="padding-top:{{statusBarHeight}}px">
+    <view class="pgh-nav">
+      <view class="pgh-bk" bindtap="goBack">‹</view>
+      <text class="pgh-t">图书文化</text>
+      <text class="pgh-rt">社区活动室</text>
+    </view>
+    <view class="ph">
+      <view class="pgh-ic"><view class="ic ic-l icw ic-book-open" /></view>
+      <view class="ph__b">
+        <view class="ph__t">图书文化</view>
+        <view class="ph__s">免费借阅 · 放学托管 · 全部线下登记</view>
       </view>
-      <picker mode="selector" range="{{cats}}" value="{{catIndex}}" bindchange="onCatChange">
-        <view class="pk">{{cat}} ▾</view>
-      </picker>
+    </view>
+  </view>
 
-      <view wx:for="{{books}}" wx:key="id" class="bk">
-        <view class="bk__l">
-          <view class="bk__n">{{item.name}}</view>
-          <view class="bk__d">{{item.cat}} · {{item.author}}</view>
-          <view class="bk__m">{{item.meta}}</view>
+  <view class="body">
+    <view class="blk tabs-card">
+      <view class="chips">
+        <view
+          wx:for="{{tabs}}"
+          wx:key="key"
+          class="chip {{tab === item.key ? 'on' : ''}}"
+          data-t="{{item.key}}"
+          bindtap="onSwitchTab"
+        >{{item.name}}</view>
+      </view>
+    </view>
+
+    <view class="tip blue tip--row">
+      <view class="ic ic-s ic-info" />
+      <text>{{tabNote}}</text>
+    </view>
+
+    <!-- 图书角 -->
+    <block wx:if="{{tab === 'library'}}">
+      <view class="catbar">
+        <view
+          wx:for="{{cats}}"
+          wx:key="*this"
+          class="cat {{cat === item ? 'on' : ''}}"
+          data-v="{{item}}"
+          bindtap="onCatTap"
+        >{{item}}</view>
+      </view>
+
+      <view class="grp">
+        <view class="gh">
+          <text class="gh__b">在架书目</text>
+          <text class="gh__p">共 {{books.length}} 本 · 点「借阅」登记</text>
         </view>
-        <view class="bk__r">
-          <view class="bk__s">在架 {{item.stock}}/{{item.total}}</view>
-          <view class="bk__btn {{item.stock > 0 ? '' : 'is-dis'}}" data-id="{{item.id}}" bindtap="onBorrow">
-            {{item.stock > 0 ? '借阅' : '已借出'}}
+        <view class="grp__bd">
+          <view wx:for="{{books}}" wx:key="id" class="book">
+            <view class="cover cb--{{index % 4}}">
+              <view class="ic ic-l icw ic-book" />
+            </view>
+            <view class="book__b">
+              <view class="book__n">{{item.name}}</view>
+              <view class="book__m">{{item.author}} · {{item.cat}}</view>
+              <view class="book__tags">
+                <text class="tag {{item.stock > 0 ? 'ok' : 'red'}}">
+                  {{item.stock > 0 ? '在架 ' + item.stock + ' 本' : '已借完'}}
+                </text>
+                <text class="book__meta">{{item.meta}}</text>
+              </view>
+            </view>
+            <view
+              class="book__btn {{item.stock > 0 ? '' : 'off'}}"
+              data-id="{{item.id}}"
+              bindtap="onBorrow"
+            >{{item.stock > 0 ? '借阅' : '已借完'}}</view>
           </view>
         </view>
       </view>
-    </view>
 
-    <view class="sec">
-      <view class="sec__hd"><text class="sec__t">借阅规则</text></view>
-      <view wx:for="{{rules}}" wx:key="label" class="rule">
-        <text class="rule__l">{{item.label}}</text>
-        <text class="rule__v">{{item.value}}</text>
-      </view>
-    </view>
-  </block>
-
-  <!-- 四点半课堂 -->
-  <block wx:else>
-    <view class="sec">
-      <view class="sec__hd">
-        <text class="sec__t">本周课程</text>
-        <text class="sec__s">放学后托管</text>
-      </view>
-      <view wx:for="{{classes}}" wx:key="id" class="cl">
-        <view class="cl__n">{{item.name}}</view>
-        <view class="kv"><text class="kv__k">时间</text><text class="kv__v">{{item.time}}</text></view>
-        <view class="kv"><text class="kv__k">对象</text><text class="kv__v">{{item.target}}</text></view>
-        <view class="kv"><text class="kv__k">师资</text><text class="kv__v">{{item.teacher}}</text></view>
-        <view class="cl__d">{{item.desc}}</view>
-        <view class="bar"><view class="bar__in" style="width:{{item.percent}}%"></view></view>
-        <view class="cl__f">
-          <text class="cl__s">余 {{item.seats}} / {{item.total}} 个名额</text>
-          <view class="cl__btn {{item.full ? 'is-dis' : ''}}" data-id="{{item.id}}" bindtap="onJoin">
-            {{item.full ? '已满' : '报名'}}
+      <view class="grp">
+        <view class="gh">
+          <text class="gh__b">图书角规则</text>
+          <text class="gh__p">无罚款 · 逾期暂停借阅</text>
+        </view>
+        <view class="grp__bd">
+          <view wx:for="{{rules}}" wx:key="label" class="kv">
+            <text class="kv__k">{{item.label}}</text>
+            <text class="kv__v">{{item.value}}</text>
           </view>
         </view>
       </view>
-    </view>
-  </block>
+    </block>
 
-  <view class="foot">
-    本页<text class="foot__b">不收款</text>；图书角免费借阅，课堂材料费（如有）现场收取并公示。
+    <!-- 四点半课堂 -->
+    <block wx:else>
+      <view wx:for="{{classes}}" wx:key="id" class="grp">
+        <view class="gh">
+          <text class="gh__b">{{item.name}}</text>
+          <text class="gh__p">{{item.time}} · {{item.target}}</text>
+        </view>
+        <view class="grp__bd">
+          <view class="kv">
+            <text class="kv__k">师资</text>
+            <text class="kv__v">{{item.teacher}}</text>
+          </view>
+          <view class="kv">
+            <text class="kv__k">说明</text>
+            <text class="kv__v">{{item.desc}}</text>
+          </view>
+          <view class="seat">
+            <text class="seat__t">余位 {{item.seats}} / {{item.total}}</text>
+            <text class="seat__p">{{item.percent}}% 已报</text>
+          </view>
+          <view class="bar"><view class="fill" style="width:{{item.percent}}%"></view></view>
+          <view class="acts">
+            <view
+              class="btn3 {{item.full ? 'ghost' : 'solid'}}"
+              data-id="{{item.id}}"
+              bindtap="onJoin"
+            >{{item.full ? '已满，看看其他课' : '报名参加'}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="tip">
+      本页只做借阅 / 报名登记，不收取任何费用；课堂材料费（如有）由社区现场收取并公示。借阅请到活动室找管理员取书。
+    </view>
+    <view class="gap" />
   </view>
 
-  <ai-bar page="culture" />
-
-  <view wx:if="{{showForm}}" class="mask" bindtap="onCloseForm">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">{{kind === '借书' ? '借阅登记' : '课堂报名'}} · {{itemName}}</view>
-      <view class="sheet__tip">提交后到社区活动室（会所 2 层 201）办理；本页不收款。</view>
-
-      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
-      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{room}}" bindinput="onInputRoom" />
-      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
-      <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{contact}}" bindinput="onInputContact" />
-      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
-      <textarea class="ta" placeholder="例如：孩子二年级，想报周二书法" maxlength="120" value="{{note}}" bindinput="onInputNote" />
-
-      <view class="sheet__ft">
-        <view class="sheet__btn" bindtap="onCloseForm">取消</view>
-        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmit">{{submitting ? '提交中…' : '提交'}}</view>
-      </view>
+  <!-- 登记弹层 -->
+  <view wx:if="{{showForm}}" class="mask show" bindtap="onCloseForm" />
+  <view wx:if="{{showForm}}" class="sheet show">
+    <view class="sh-h">{{kind === '借书' ? '图书借阅登记' : '课堂报名'}}</view>
+    <view class="sh-sub">{{itemName}}</view>
+    <view class="sh-body">
+      <view class="lbl">楼栋房号</view>
+      <input class="inp" value="{{room}}" maxlength="20" placeholder="例：3 号楼 2 单元 502" bindinput="onInputRoom" />
+      <view class="lbl">联系电话</view>
+      <input class="inp" value="{{contact}}" type="number" maxlength="15" placeholder="取书 / 上课通知用" bindinput="onInputContact" />
+      <view class="lbl">备注 <text class="lbl__em">可选</text></view>
+      <input class="inp" value="{{note}}" maxlength="50" placeholder="如：孩子姓名、年级" bindinput="onInputNote" />
+      <view class="sh-note">提交后由图书角管理员电话确认；不收款，材料费现场公示。</view>
+    </view>
+    <view class="sh-btns">
+      <view class="btn ghost" bindtap="onCloseForm">取消</view>
+      <view class="btn" bindtap="onSubmit">{{submitting ? '提交中…' : '提交登记'}}</view>
     </view>
   </view>
 </view>

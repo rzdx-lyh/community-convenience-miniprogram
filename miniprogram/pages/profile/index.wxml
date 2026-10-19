@@ -1,75 +1,214 @@
-<!--
-  我的（FE-8）
-  - 根节点挂 .care-mode：关怀模式下由 app.wxss 的 CSS 变量整体放大字号（非整页缩放）
-  - 未同意隐私政策时不渲染任何个人信息（合规硬要求）
--->
-<view class="page {{elderMode ? 'care-mode' : ''}}">
-  <block wx:if="{{agreedPrivacy}}">
-    <!-- 用户信息卡 -->
-    <view class="user">
-      <view class="user__avatar">{{avatarText}}</view>
-      <view class="user__info">
-        <view class="user__nick">{{nickName}}</view>
-        <view wx:if="{{roleLabel}}" class="user__role">{{roleLabel}}</view>
-      </view>
+<!-- 我的（设计稿 pgProfile v1.4） -->
+<view class="page {{care ? 'care-mode' : ''}}">
+  <!-- 资料头 -->
+  <view class="hd hd--prof">
+    <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
+      <text>08:42</text>
+      <text>●●● ▮</text>
     </view>
 
-    <!-- 我的报修入口（Tab 页，switchTab；v1.1.0 起该 Tab 名为「办事大厅」） -->
-    <view class="card">
-      <view class="row" bindtap="onGoOrders">
-        <view class="row__label">
-          <view class="row__title">我的报修记录</view>
-          <view class="row__sub">提交报修、查看处理进度</view>
+    <view class="pf-row">
+      <view class="pfa av1">
+        <text>{{prof.av}}</text>
+        <view class="cam"><view class="ic ic-s ic-pencil" /></view>
+      </view>
+      <view class="pf-mid">
+        <view class="pnm">
+          <text>{{prof.name}}</text>
+          <view class="ic ic-s ic-pencil ed" />
         </view>
-        <view class="row__arrow">›</view>
-      </view>
-    </view>
-
-    <!-- 社区账号（可编辑，规则见契约 CR-009） -->
-    <view class="card">
-      <view class="row" bindtap="onEditAccountId">
-        <view class="row__label">
-          <view class="row__title">社区账号</view>
-          <view class="row__sub">4-20 位小写字母开头，可含数字和下划线</view>
+        <view class="psg">{{prof.sign}}</view>
+        <view class="pf-badges">
+          <view class="pbadge">
+            <view class="ic ic-s ic-pin icw" />
+            <text>{{prof.addr}}</text>
+          </view>
+          <view class="pbadge">
+            <view class="ic ic-s ic-check-c icw" />
+            <text>已实名</text>
+          </view>
         </view>
-        <view class="row__value">{{accountId}}</view>
-        <view class="row__arrow">›</view>
+      </view>
+      <view class="pf-share"><view class="ic ic-m ic-share icw" /></view>
+    </view>
+  </view>
+
+  <view class="body">
+    <!-- 数据统计 -->
+    <view class="pstats">
+      <view
+        class="c"
+        wx:for="{{stats}}"
+        wx:key="t"
+        data-url="{{item.url}}"
+        bindtap="onStat"
+        hover-class="hover-dim"
+      >
+        <text class="n">{{item.n}}</text>
+        <text class="l">{{item.t}}</text>
       </view>
     </view>
 
-    <!-- 关怀模式开关 -->
-    <view class="card">
-      <view class="row">
-        <view class="row__label">
-          <view class="row__title">关怀模式</view>
-          <view class="row__sub">放大全站字号，便于阅读</view>
+    <!-- 家庭与地址 -->
+    <view class="sec">
+      <view class="st">
+        <text class="b">家庭与地址</text>
+        <text class="em">可为家人代下单</text>
+        <text class="more" bindtap="onMemberAdd">＋ 添加</text>
+      </view>
+      <view class="card card--memb">
+        <view class="memb">
+          <view class="mb" bindtap="onMemberTap">
+            <view class="a av1"><text>明</text></view>
+            <text class="mb-n">本人</text>
+          </view>
+          <view class="mb" wx:for="{{members}}" wx:key="k" bindtap="onMemberTap">
+            <view class="a {{item.cls}}"><text>{{item.av}}</text></view>
+            <text class="mb-n">{{item.n}}</text>
+          </view>
+          <view class="mb add" bindtap="onMemberAdd">
+            <view class="a"><view class="ic ic-s ic-plus" /></view>
+            <text class="mb-n">添加</text>
+          </view>
         </view>
-        <switch
-          class="row__switch"
-          checked="{{elderMode}}"
-          color="var(--brand)"
-          bindchange="onElderModeChange"
-        />
-      </view>
-    </view>
 
-    <!-- 隐私政策入口 -->
-    <view class="card">
-      <view class="row" bindtap="onViewPrivacy">
-        <view class="row__label">
-          <view class="row__title">隐私政策</view>
+        <view class="addr-list">
+          <view class="row" wx:for="{{addrs}}" wx:key="k" data-k="{{item.k}}" bindtap="onAddr">
+            <view class="k {{item.def ? 'k-blue' : 'k-gray'}}"><view class="ic ic-m ic-pin" /></view>
+            <view class="m">
+              <text class="m-t">{{item.t}}</text>
+              <text class="m-s">{{item.def ? '默认地址 · 上门服务优先' : '备用地址'}}</text>
+            </view>
+            <text class="v {{item.def ? 'v-def' : 'v-set'}}">{{item.def ? '默认' : '设为默认'}}</text>
+          </view>
         </view>
-        <view class="row__arrow">›</view>
       </view>
     </view>
-  </block>
 
-  <!-- 未同意隐私政策：停留在此，不展示任何个人信息 -->
-  <view wx:else class="privacy">
-    <view class="privacy__icon">🔒</view>
-    <view class="privacy__text">未同意隐私政策，暂不展示个人信息</view>
-    <view class="privacy__btn" hover-class="privacy__btn--hover" bindtap="showPrivacyModal">
-      查看并同意
+    <!-- 我的服务 -->
+    <view class="sec">
+      <view class="st"><text class="b">我的服务</text></view>
+      <view class="card card--pad">
+        <view
+          class="row"
+          wx:for="{{services}}"
+          wx:key="k"
+          data-url="{{item.url}}"
+          bindtap="onGo"
+          hover-class="hover-dim"
+        >
+          <view class="k tone-{{item.tone}}"><view class="ic ic-m ic-{{item.icon}}" /></view>
+          <view class="m">
+            <text class="m-t">{{item.t}}</text>
+            <text class="m-s">{{item.d}}</text>
+          </view>
+          <text wx:if="{{item.v}}" class="v">{{item.v}}</text>
+          <text class="ar">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 设置中心 -->
+    <view class="sec">
+      <view class="st">
+        <text class="b">设置中心</text>
+        <text class="em">通知只发你要的</text>
+      </view>
+      <view class="card">
+        <view class="pset">
+          <view class="pr" data-k="wo" bindtap="onNoticeSwitch">
+            <view class="plb">
+              <text class="t">工单进度</text>
+              <text class="d">报修派单 / 上门 / 完成时通知</text>
+            </view>
+            <view class="asw {{notice.wo ? 'on' : ''}}" />
+          </view>
+          <view class="pr" data-k="out" bindtap="onNoticeSwitch">
+            <view class="plb">
+              <text class="t">停水停电</text>
+              <text class="d">提前 1 天提醒，家有老人优先</text>
+            </view>
+            <view class="asw {{notice.out ? 'on' : ''}}" />
+          </view>
+          <view class="pr" data-k="act" bindtap="onNoticeSwitch">
+            <view class="plb">
+              <text class="t">社区活动</text>
+              <text class="d">每周最多 2 条，不发广告</text>
+            </view>
+            <view class="asw {{notice.act ? 'on' : ''}}" />
+          </view>
+
+          <view class="pr">
+            <view class="plb">
+              <text class="t">字号</text>
+              <text class="d">特大等同关怀模式</text>
+            </view>
+            <view class="seg seg--inline">
+              <view class="g {{font === 'std' ? 'on' : ''}}" data-v="std" bindtap="onFont">标准</view>
+              <view class="g {{font === 'lg' ? 'on' : ''}}" data-v="lg" bindtap="onFont">大</view>
+              <view class="g {{font === 'xl' ? 'on' : ''}}" data-v="xl" bindtap="onFont">特大</view>
+            </view>
+          </view>
+
+          <view class="pr" bindtap="onCare">
+            <view class="plb">
+              <text class="t">关怀模式</text>
+              <text class="d">放大全站字号，便于阅读</text>
+            </view>
+            <view class="asw {{care ? 'on' : ''}}" />
+          </view>
+
+          <view class="pr" data-url="/pages/map/index" bindtap="onGo">
+            <view class="plb">
+              <text class="t">社区地图</text>
+              <text class="d">点位 · 楼栋 · 步行路线</text>
+            </view>
+            <text class="ar">›</text>
+          </view>
+
+          <view class="pr" data-url="/pages/phonebook/index" bindtap="onGo">
+            <view class="plb">
+              <text class="t">社区电话簿</text>
+              <text class="d">物业 · 卫生站 · 便民商户</text>
+            </view>
+            <text class="ar">›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 帮助 -->
+    <view class="sec">
+      <view class="card">
+        <view class="pset">
+          <view class="pr" bindtap="onHelp">
+            <view class="plb">
+              <text class="t">帮助与反馈</text>
+              <text class="d">常见问题 · 意见反馈 · 人工客服</text>
+            </view>
+            <text class="ar">›</text>
+          </view>
+          <view class="pr" bindtap="onAbout">
+            <view class="plb">
+              <text class="t">关于小程序</text>
+              <text class="d">1.4 · 猎奇小分队</text>
+            </view>
+            <text class="ar">›</text>
+          </view>
+          <view class="pr" bindtap="onMine">
+            <view class="plb">
+              <text class="t">我的圈子</text>
+              <text class="d">我的发布 · 回复 · 收藏</text>
+            </view>
+            <text class="ar">›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="pfoot">
+      <text>1.4 · 社区便民</text>
+      <text>本页数据均为演示数据，不做真实存储</text>
     </view>
   </view>
 </view>

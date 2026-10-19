@@ -1,11 +1,10 @@
 /**
- * 办事指南（CR-026）
+ * 办事指南（CR-026 / CR-028 视觉重写）
  *
- * 结构：分类 chip → 事项卡片列表 → 点开详情弹层（材料 / 窗口 / 时限 / 跑几趟 / 常见退回）
- *      → 可「申请代办」（走 workorder:create）
+ * 分类 chip → 搜索 → 事项卡片 → 详情弹层（材料 / 窗口 / 时限 / 跑几趟 / 常见退回）
+ * → 可「申请代办」（走 workorder:create）。
  *
- * 数据：纯本地常量（viewmodel.ts）。为什么不上云：
- *   办事口径是**公开且低频变更**的信息，放端上比放库里更稳（断网可查、演示不依赖云）。
+ * 数据：纯本地常量（viewmodel.ts），断网可查；不臆造政策条文。
  */
 import { createWorkOrder } from '../../../services/workorder';
 import { track, trackPageView } from '../../../utils/logger';
@@ -21,15 +20,19 @@ import {
 } from './viewmodel';
 
 const TIME_SLOTS: string[] = ['工作日上班时间', '本周末', '下周一'];
+const info = wx.getWindowInfo();
+
+type GuideDetail = GuideItem & { materialText: string; flowText: string };
 
 Page({
   data: {
+    statusBarHeight: info.statusBarHeight,
     cats: GUIDE_CATS,
     activeCat: '全部',
     keyword: '',
     list: [] as GuideVM[],
 
-    detail: null as (GuideItem & { materialText: string }) | null,
+    detail: null as GuideDetail | null,
 
     showOrder: false,
     times: TIME_SLOTS,
@@ -53,6 +56,11 @@ Page({
   apply(): void {
     this.raw = filterGuide(this.data.activeCat, this.data.keyword);
     this.setData({ list: this.raw.map(toGuideVM) });
+  },
+
+  goBack(): void {
+    if (getCurrentPages().length > 1) wx.navigateBack();
+    else wx.switchTab({ url: '/pages/index/index' });
   },
 
   onPickCat(e: WechatMiniprogram.TouchEvent): void {
@@ -80,7 +88,11 @@ Page({
     if (!item) return;
     track('btn_click', { page: 'guide', target: 'detail', kind: key });
     this.setData({
-      detail: { ...item, materialText: item.materials.join('、') },
+      detail: {
+        ...item,
+        materialText: item.materials.join('、'),
+        flowText: `到${item.window}取号 → 提交材料 → 领取回执，按告知时限领结果。`,
+      },
     });
   },
 
@@ -142,16 +154,12 @@ Page({
           note: this.data.orderNote,
         }),
       });
-      this.setData({ showOrder: false, submitting: false, orderRoom: '', orderNote: '' });
+      this.setData({ showOrder: false, submitting: false, orderRoom: '', orderNote: '', detail: null });
       wx.showToast({ title: '已提交，工作人员会电话联系', icon: 'none' });
     } catch {
       this.setData({ submitting: false });
       toast('提交失败，请稍后重试');
     }
-  },
-
-  noop(): void {
-    /* noop */
   },
 
   onShareAppMessage(): { title: string; path: string } {

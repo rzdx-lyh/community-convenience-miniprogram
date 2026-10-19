@@ -1,7 +1,6 @@
 {
-  "navigationBarTitleText": "缴费账单",
-  "navigationBarBackgroundColor": "#F3F5F9",
-  "navigationBarTextStyle": "black",
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "缴费代办",
   "usingComponents": {
     "ai-bar": "../../../components/ai-bar/index"
   }

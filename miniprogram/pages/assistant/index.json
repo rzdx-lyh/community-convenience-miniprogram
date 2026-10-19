@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "AI 办事助手"
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "AI 助手",
+  "backgroundTextStyle": "dark"
 }

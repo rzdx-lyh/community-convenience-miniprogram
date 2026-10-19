@@ -1,6 +1,6 @@
 {
   "navigationStyle": "custom",
-  "navigationBarTitleText": "社区便民",
-  "enablePullDownRefresh": true,
+  "navigationBarTitleText": "邻里小助手",
+  "enablePullDownRefresh": false,
   "backgroundTextStyle": "light"
 }

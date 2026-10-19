@@ -1,265 +1,70 @@
-/* 生鲜零售（CR-027）· 全部取 Design Token v1.5 */
-.page {
-  min-height: 100vh;
-  padding-bottom: 160rpx;
-  background: var(--bg);
-}
+/* 生鲜零售 · 页面补充样式（商品卡沿用 .sk/.skc 原型类） */
+.tip-row { display: flex; align-items: center; gap: 10rpx; }
+.tip-row .ic { flex: none; }
+.strong { font-weight: 800; }
+.tb--top { margin-top: 10rpx; border-top: 1px solid var(--line); }
+.tab-note { padding: 14rpx 28rpx 0; font-size: 18rpx; color: var(--t3); }
 
-.top {
-  padding: var(--space-4);
-  background: var(--brand-gradient);
+/* 商品卡徽标 / 价格 / 进度 */
+.skc .hot { z-index: 2; }
+.skc .pr-b { font-size: 28rpx; font-weight: 800; color: var(--red); font-family: ui-monospace, Menlo, monospace; }
+.skc .pr-i { font-style: normal; font-size: 18rpx; color: var(--t3); }
+.skc .prog { margin-top: 10rpx; }
+.skc .prog .bar { margin-top: 6rpx; height: 6rpx; }
+.bar-fill { display: block; height: 100%; border-radius: 4rpx; background: var(--teal); }
+.prog-t { margin-top: 5rpx; font-size: 16rpx; color: var(--t3); line-height: 1.4; }
+.sold { margin-top: 6rpx; font-size: 17rpx; color: var(--red); font-weight: 700; }
+
+/* 数量控件（原型 .qty i 针对 i 标签，这里用 view 重写） */
+.skc .qty .qty-i {
+  width: 38rpx;
+  height: 38rpx;
+  border-radius: 50%;
+  border: 1px solid var(--blue);
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  line-height: 1;
 }
-.top__t {
-  font-size: 36rpx;
+.skc .qty .qty-n { font-size: 22rpx; font-weight: 800; color: var(--blue); }
+.skc .add { z-index: 2; }
+
+.grid-note { padding: 10rpx 28rpx 30rpx; font-size: 18rpx; color: var(--t3); text-align: center; line-height: 1.6; }
+
+/* 底部购物车 */
+.footbar { left: 0; right: 0; z-index: 20; }
+.fb-l { flex: 1; min-width: 0; }
+.fb-c { font-size: 18rpx; color: var(--t3); }
+.fb-t { font-size: 30rpx; font-weight: 800; color: var(--red); font-family: ui-monospace, Menlo, monospace; }
+.fb-btn {
+  width: 240rpx;
+  height: 80rpx;
+  border-radius: 18rpx;
+  background: var(--blue);
+  color: #fff;
+  font-size: 26rpx;
   font-weight: 800;
-  color: #fff;
-}
-.top__s {
-  margin-top: var(--space-1);
-  font-size: var(--font-cap);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.tabs {
-  display: flex;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4) 0;
-}
-.tab {
-  flex: 1;
-  height: 64rpx;
-  border-radius: var(--radius-m);
-  background: var(--card);
-  color: var(--text-2);
-  font-size: var(--font-cap);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.tab.is-on {
-  background: var(--brand);
-  color: #fff;
-  font-weight: 700;
-}
+.fb-btn.is-dis { background: #DCE3EC; color: #9AA6B6; }
 
-.note {
-  padding: var(--space-2) var(--space-4) 0;
-  font-size: 20rpx;
-  color: var(--text-3);
-}
-
-.sec {
-  margin: var(--space-3) var(--space-4) 0;
-  padding: var(--space-3);
-  background: var(--card);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-}
-
-.it {
-  display: flex;
-  gap: var(--space-2);
-  padding: var(--space-3) 0;
-  border-bottom: 2rpx solid var(--line);
-}
-.it__l {
-  flex: 1;
-  min-width: 0;
-}
-.it__n {
-  font-size: var(--font-sub);
-  font-weight: 700;
-  color: var(--text-1);
-}
-.it__off {
-  margin-left: 8rpx;
-  padding: 2rpx 10rpx;
-  border-radius: var(--radius-s);
-  background: var(--error);
-  color: #fff;
-  font-size: 20rpx;
-  font-weight: 400;
-}
-.it__s {
-  margin-top: 4rpx;
-  font-size: var(--font-cap);
-  color: var(--text-2);
-}
-.it__m {
-  margin-top: 4rpx;
-  font-size: 20rpx;
-  color: var(--text-3);
-}
-.bar {
-  margin-top: var(--space-2);
-  height: 10rpx;
-  width: 260rpx;
-  border-radius: var(--radius-full);
-  background: var(--bg);
-  overflow: hidden;
-}
-.bar__in {
-  height: 100%;
-  border-radius: var(--radius-full);
-  background: var(--brand-gradient);
-}
-
-.it__r {
-  flex: none;
-  width: 180rpx;
-  text-align: right;
-}
-.it__cur {
-  font-size: 30rpx;
-  font-weight: 800;
-  color: var(--error);
-}
-.it__old {
-  margin-left: 8rpx;
-  font-size: 20rpx;
-  color: var(--text-3);
-  text-decoration: line-through;
-}
-.it__k {
-  margin-top: 4rpx;
-  font-size: 20rpx;
-  color: var(--text-3);
-}
-.it__btn {
-  margin-top: var(--space-2);
-  height: 60rpx;
-  border-radius: var(--radius-full);
-  background: var(--brand);
-  color: #fff;
-  font-size: var(--font-cap);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.it__btn.is-dis {
-  background: var(--bg);
-  color: var(--text-3);
-}
-
-.foot {
-  padding: var(--space-4);
-  font-size: 20rpx;
-  color: var(--text-3);
-  line-height: 1.7;
-}
-.foot__b {
-  color: var(--error);
-  font-weight: 700;
-}
-
-.mask {
-  position: fixed;
-  left: 0; right: 0; top: 0; bottom: 0;
-  background: var(--mask);
-  z-index: var(--z-mask);
-}
-.sheet {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  max-height: 84vh;
-  padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
-  background: var(--card);
-  border-radius: var(--radius-l) var(--radius-l) 0 0;
-  z-index: var(--z-modal);
-  overflow-y: auto;
-}
-.sheet__hd {
-  font-size: var(--font-card);
-  font-weight: 700;
-  color: var(--text-1);
-}
-.sheet__lb {
-  margin-top: var(--space-3);
-  font-size: var(--font-sub);
-  color: var(--text-2);
-}
-.sheet__tip {
-  margin-top: var(--space-2);
-  font-size: var(--font-cap);
-  color: var(--text-3);
-  line-height: 1.6;
-}
-.req { color: var(--error); font-size: 20rpx; }
-.opt { color: var(--text-3); font-size: 20rpx; }
-.row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: var(--space-3);
-}
-.row__lb {
-  font-size: var(--font-sub);
-  color: var(--text-2);
-}
-.step {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-.step__b {
-  width: 56rpx;
-  height: 56rpx;
-  border-radius: var(--radius-s);
-  background: var(--bg);
-  color: var(--text-1);
-  font-size: 28rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.step__n {
-  min-width: 60rpx;
-  text-align: center;
-  font-size: var(--font-sub);
-  font-weight: 700;
-  color: var(--text-1);
-}
-.inp {
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: var(--space-1);
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg);
-  border-radius: var(--radius-m);
-  font-size: var(--font-sub);
-  color: var(--text-1);
-}
-.ta {
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: var(--space-1);
-  height: 140rpx;
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg);
-  border-radius: var(--radius-m);
-  font-size: var(--font-sub);
-  color: var(--text-1);
-}
-.sheet__btn {
-  margin-top: var(--space-3);
-  height: 84rpx;
-  border-radius: var(--radius-m);
-  background: var(--bg);
-  color: var(--text-2);
-  font-size: var(--font-body);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.sheet__btn--main {
-  background: var(--brand);
-  color: #fff;
-  font-weight: 700;
-}
-.sheet__ft {
-  display: flex;
-  gap: var(--space-2);
-}
-.sheet__ft .sheet__btn { flex: 1; }
-.is-dis { opacity: 0.6; }
+/* 预订弹层 */
+.sheet { max-height: 84vh; overflow-y: auto; }
+.sh-hd { font-size: 28rpx; font-weight: 800; text-align: center; }
+.sh-sub { margin-top: 8rpx; font-size: 19rpx; color: var(--t3); text-align: center; }
+.olist { margin-top: 18rpx; border-top: 1px solid #F1F4F9; }
+.orow { display: flex; align-items: center; gap: 14rpx; padding: 16rpx 0; border-bottom: 1px solid #F6F8FB; font-size: 22rpx; }
+.on { flex: 1; min-width: 0; font-weight: 700; }
+.os { margin-left: 8rpx; font-size: 17rpx; font-weight: 400; color: var(--t3); }
+.oc { color: var(--t2); font-size: 20rpx; }
+.oa { width: 120rpx; text-align: right; font-weight: 800; }
+.ototal { display: flex; justify-content: space-between; align-items: baseline; padding: 18rpx 0 4rpx; font-size: 21rpx; color: var(--t2); }
+.ot { font-size: 30rpx; font-weight: 800; color: var(--red); font-family: ui-monospace, Menlo, monospace; }
+.lbl .em { margin-left: auto; font-size: 18rpx; font-weight: 400; color: var(--t3); font-style: normal; }
+.pay-note { margin-top: 18rpx; padding: 14rpx 18rpx; background: var(--gold-l); border-radius: 14rpx; font-size: 18rpx; color: #8A5A00; line-height: 1.6; }
+.sh-btns { display: flex; gap: 16rpx; margin-top: 22rpx; }
+.sh-btns .btn { flex: 1; width: auto; height: 80rpx; font-size: 26rpx; }

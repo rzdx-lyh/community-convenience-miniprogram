@@ -147,7 +147,8 @@ describe('办事指南', () => {
 
   it('视图模型只带卡片字段（减少 setData 体积）', () => {
     const vm = toGuideVM(GUIDE_ITEMS[0]);
-    expect(Object.keys(vm).sort()).toEqual(['cat', 'desc', 'key', 'limit', 'name', 'trips']);
+    // CR-028：guide 页重写时补了 window（办理时间窗口），随卡片一起下发
+    expect(Object.keys(vm).sort()).toEqual(['cat', 'desc', 'key', 'limit', 'name', 'trips', 'window']);
   });
 
   it('findGuide 命中返回事项、未命中返回 undefined', () => {

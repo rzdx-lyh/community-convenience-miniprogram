@@ -1,0 +1,64 @@
+<!-- 社区圈子 · 我的圈子 -->
+<view class="page">
+  <view class="sbar" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
+  </view>
+  <view class="nav">
+    <view class="bk" bindtap="goBack">‹</view>
+    <text>我的圈子</text>
+  </view>
+
+  <view class="ftabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="{{active === item.key ? 'f on' : 'f'}}"
+      data-key="{{item.key}}"
+      bindtap="onTabTap"
+    >{{item.label}}</view>
+  </view>
+
+  <block wx:if="{{list.length > 0}}">
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="post2"
+      data-topic="{{item.topic}}"
+      bindtap="onPostTap"
+    >
+      <view class="p-h">
+        <view class="p-av" style="background:{{item.color}}">{{item.av}}</view>
+        <view class="p-who">
+          <view class="p-nm">
+            <text>{{item.who}}</text>
+            <text class="tag">#{{item.topic}}</text>
+          </view>
+          <view class="p-mt">{{item.unit}} · {{item.time}}</view>
+        </view>
+      </view>
+      <view class="p-tx">{{item.text}}</view>
+      <view wx:if="{{item.imgs.length > 0}}" class="p-img g3">
+        <view wx:for="{{item.imgs}}" wx:for-item="im" wx:key="*this" class="im">{{im}}</view>
+      </view>
+      <text wx:if="{{item.tag}}" class="p-tag">{{item.tag}}</text>
+      <view class="p-act">
+        <view>
+          <view class="ic ic-s ic-thumb" />
+          <text>{{item.likes}}</text>
+        </view>
+        <view>
+          <view class="ic ic-s ic-chat" />
+          <text>{{item.comments}}</text>
+        </view>
+        <view>
+          <view class="ic ic-s ic-chev-r" />
+          <text>看话题</text>
+        </view>
+      </view>
+    </view>
+  </block>
+  <view wx:else class="empty">{{emptyText}}</view>
+
+  <view style="height:28rpx" />
+</view>

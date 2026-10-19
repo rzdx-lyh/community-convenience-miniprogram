@@ -1,141 +1,247 @@
-<!-- 智慧配餐（CR-026）· 目标选择 → 能量卡 → 7 天 → 三餐 → 食材清单 → 预约 -->
-<view class="page">
-  <!-- ① 目标人群 -->
-  <view class="hd">
-    <view class="hd__t">选择配餐目标</view>
-    <view class="goals">
-      <view
-        wx:for="{{goals}}"
-        wx:key="key"
-        class="goal {{goalKey === item.key ? 'goal--on' : ''}}"
-        data-k="{{item.key}}"
-        bindtap="onPickGoal"
-      >
-        <text class="goal__n">{{item.name}}</text>
-        <text class="goal__k">{{item.kcal}} kcal</text>
+<!-- 智慧配餐（CR-028）· 目标设置 → 一周三餐 → 营养达成 → 食材清单 → 预约助餐 -->
+<view class="page page--fbar">
+  <!-- 设置页 -->
+  <block wx:if="{{!ready}}">
+    <view class="pgh pgh--green" style="padding-top:{{statusBarHeight}}px">
+      <view class="sbar light">
+        <text>邻里小助手</text>
+        <text>参考值 · 非处方</text>
+      </view>
+      <view class="pgh-nav">
+        <view class="pgh-bk" bindtap="goBack">‹</view>
+        <text class="pgh-t">智慧配餐</text>
+        <view class="pgh-rt" bindtap="onHelp">怎么算的</view>
+      </view>
+      <view class="pgh-k">
+        <view class="pgh-ic"><view class="ic ic-m ic-bowl icw" /></view>
+        <view class="pgh-km">
+          <view class="pgh-lb">先告诉我你要吃成什么样</view>
+          <view class="pgh-svc">按目标生成一周三餐</view>
+        </view>
       </view>
     </view>
-    <view class="hd__d">{{goalDesc}} · 钠上限 {{goalNa}} mg</view>
+
+    <view class="body">
+      <view class="lblw"><view class="lbl">配餐目标 <text class="lbl-em">单选</text></view></view>
+      <view class="ogrid">
+        <view
+          class="opt {{goalKey === item.key ? 'on' : ''}}"
+          wx:for="{{goals}}"
+          wx:key="key"
+          data-v="{{item.key}}"
+          bindtap="onPickGoal"
+        >
+          <view class="ok2">
+            <view wx:if="{{goalKey === item.key}}" class="ic ic-s ic-check" />
+          </view>
+          <text class="opt-t">{{item.name}}</text>
+          <text class="opt-d">{{item.desc}}</text>
+        </view>
+      </view>
+
+      <view class="lblw"><view class="lbl">用餐人数</view></view>
+      <view class="prow">
+        <view
+          class="dchip {{people === item.n ? 'on' : ''}}"
+          wx:for="{{peopleList}}"
+          wx:key="n"
+          data-v="{{item.n}}"
+          bindtap="onPickPeople"
+        >
+          <text class="dc-t">{{item.n}} 人</text>
+          <text class="dc-s">{{item.label}}</text>
+        </view>
+      </view>
+
+      <view class="lblw"><view class="lbl">忌口 <text class="lbl-em">可多选</text></view></view>
+      <view class="chips chipsw">
+        <view
+          class="chip {{item.on ? 'on' : ''}}"
+          wx:for="{{avoidList}}"
+          wx:key="name"
+          data-v="{{item.name}}"
+          bindtap="onToggleAvoid"
+        >{{item.name}}</view>
+      </view>
+
+      <view class="tip">按《中国居民膳食指南》配比生成，热量为参考值；有慢性病请以签约医生意见为准。</view>
+      <view class="pgtail" />
+    </view>
+
+    <view class="fbar">
+      <view class="sum">
+        <text class="sum-b">{{goalName}} · {{people}} 人份</text>
+        <text class="sum-s">目标 {{goalKcal}} kcal / 日 · 钠 {{goalNa}} mg</text>
+      </view>
+      <view class="btn2" bindtap="onStart">生成一周配餐</view>
+    </view>
+  </block>
+
+  <!-- 方案页 -->
+  <block wx:else>
+    <view class="pgh pgh--green" style="padding-top:{{statusBarHeight}}px">
+      <view class="sbar light">
+        <text>邻里小助手</text>
+        <text>参考值 · 非处方</text>
+      </view>
+      <view class="pgh-nav">
+        <view class="pgh-bk" bindtap="goBack">‹</view>
+        <text class="pgh-t">智慧配餐</text>
+        <view class="pgh-rt" bindtap="onResetGoal">改目标</view>
+      </view>
+      <view class="pgh-k">
+        <view class="pgh-main">
+          <view class="pgh-lb">今日能量 · {{goalName}}方案</view>
+          <view class="pgh-num">{{sum.kcal}}<text class="num-u">/ {{goalKcal}} kcal</text></view>
+        </view>
+        <view class="pgh-side">
+          <view class="pgh-lb">{{dayText}} · {{people}} 人份</view>
+          <view class="pgh-lb">钠 {{sum.na}} / {{goalNa}} mg</view>
+        </view>
+        <view class="pgh-chip" bindtap="onOpenList">食材清单 ›</view>
+      </view>
+    </view>
+
+    <view class="body">
+      <!-- 营养达成 -->
+      <view class="dash nut">
+        <view class="nut-l">
+          <text class="nut-p">{{percent}}%</text>
+          <text class="nut-s">热量达成</text>
+          <view class="bar nut-tr"><view class="bar-in" style="width:{{kcalBar}};background:#1FA97A" /></view>
+        </view>
+        <view class="nbl">
+          <view class="nbr">
+            <text class="nbr-k">蛋白</text>
+            <view class="bar"><view class="bar-in" style="width:{{barP}};background:#1F5FD6" /></view>
+            <text class="nbr-v">{{sum.p}} / {{targets.p}} g</text>
+          </view>
+          <view class="nbr">
+            <text class="nbr-k">碳水</text>
+            <view class="bar"><view class="bar-in" style="width:{{barC}};background:#F2A93B" /></view>
+            <text class="nbr-v">{{sum.c}} / {{targets.c}} g</text>
+          </view>
+          <view class="nbr">
+            <text class="nbr-k">脂肪</text>
+            <view class="bar"><view class="bar-in" style="width:{{barF}};background:#C9302C" /></view>
+            <text class="nbr-v">{{sum.f}} / {{targets.f}} g</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 一周切换 -->
+      <view class="wkr">
+        <view
+          class="wkd {{day === index ? 'on' : ''}}"
+          wx:for="{{days}}"
+          wx:key="*this"
+          data-v="{{index}}"
+          bindtap="onPickDay"
+        >
+          <text class="wk-t">{{item}}</text>
+          <text class="wk-d">{{dayMeta[index]}}</text>
+        </view>
+      </view>
+
+      <!-- 三餐 -->
+      <view class="dish" wx:for="{{slots}}" wx:key="slot">
+        <view class="dhd">
+          <text class="dt" style="background:{{item.color}}">{{item.label}}</text>
+          <text class="dkc">{{item.kcal}} kcal · 蛋白 {{item.p}}g</text>
+        </view>
+        <view class="dbd">
+          <view class="dim">{{item.emoji}}</view>
+          <view class="dinfo">
+            <view class="dnm">{{item.name}}</view>
+            <view class="dnu">碳水 {{item.c}}g · 脂肪 {{item.f}}g · 钠 {{item.na}}mg</view>
+            <view class="dtg">
+              <text wx:for="{{item.tags}}" wx:for-item="tg" wx:key="*this">{{tg}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="dac">
+          <view data-s="{{item.slot}}" bindtap="onSwap">
+            <view class="ic ic-s ic-refresh" />
+            <text>换一道</text>
+          </view>
+          <view class="{{item.locked ? 'on' : ''}}" data-s="{{item.slot}}" bindtap="onToggleLock">
+            <view class="ic ic-s ic-{{item.locked ? 'lock' : 'unlock'}}" />
+            <text>{{item.locked ? '已锁定' : '锁定'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="meal-note">配餐依据《中国居民膳食指南（2022）》与目标人群能量需求估算。</view>
+      <view class="meal-note">菜品可按忌口自动替换，仅供参考，不替代医生或营养师处方。</view>
+      <view class="pgtail" />
+    </view>
+
+    <view class="fbar">
+      <view class="sum">
+        <text class="sum-b">{{people}} 人份 · {{goalName}}</text>
+        <text class="sum-s">今日三餐 {{sum.kcal}} kcal</text>
+      </view>
+      <view class="btn2" bindtap="onOrder">预约助餐</view>
+    </view>
+  </block>
+
+  <!-- 食材清单 -->
+  <view wx:if="{{showList}}" class="mask" bindtap="onCloseList">
+    <view class="sheet sheet--wx show" catchtap="noop">
+      <view class="sht-h">今日食材清单</view>
+      <view class="sht-tip">{{people}} 人份 · 共 {{listItems.length}} 项</view>
+      <view class="ing" wx:for="{{listItems}}" wx:key="name">
+        <text>{{item.name}}</text>
+        <text class="ing-n">×{{item.count}}</text>
+      </view>
+      <view class="sht-ft">
+        <view class="sht-btn2" bindtap="onCloseList">关闭</view>
+        <view class="sht-btn2 sht-main" bindtap="onBuyIngredients">加入生鲜预订</view>
+      </view>
+    </view>
   </view>
 
-  <!-- ② 今日能量 + 三大营养素 -->
-  <view class="sum">
-    <view class="sum__top">
-      <view class="sum__num">{{sum.kcal}}<text class="sum__u">/ {{goalKcal}} kcal</text></view>
-      <view class="sum__pct">{{percent}}%</view>
-    </view>
-    <view class="sum__sub">钠 {{sum.na}} / {{goalNa}} mg · {{people}} 人份</view>
-    <view class="bars">
-      <view class="bar"><text class="bar__n">蛋白</text><view class="bar__t"><view class="bar__f" style="width:{{barP}};background:#1F5FD6"></view></view><text class="bar__v">{{sum.p}}/{{targets.p}}g</text></view>
-      <view class="bar"><text class="bar__n">碳水</text><view class="bar__t"><view class="bar__f" style="width:{{barC}};background:#F2A93B"></view></view><text class="bar__v">{{sum.c}}/{{targets.c}}g</text></view>
-      <view class="bar"><text class="bar__n">脂肪</text><view class="bar__t"><view class="bar__f" style="width:{{barF}};background:#C9302C"></view></view><text class="bar__v">{{sum.f}}/{{targets.f}}g</text></view>
-    </view>
-  </view>
-
-  <!-- ③ 7 天切换 -->
-  <scroll-view class="week" scroll-x enable-flex show-scrollbar="{{false}}">
-    <view
-      wx:for="{{days}}"
-      wx:key="*this"
-      class="wk {{day === index ? 'wk--on' : ''}}"
-      data-v="{{index}}"
-      bindtap="onPickDay"
-    >{{item}}</view>
-  </scroll-view>
-
-  <!-- ④ 忌口 + 份数 -->
-  <view class="ctl">
-    <view class="ctl__row">
-      <text class="ctl__lb">忌口</text>
+  <!-- 预约助餐 -->
+  <view wx:if="{{showOrder}}" class="mask" bindtap="onCloseOrder">
+    <view class="sheet sheet--wx show" catchtap="noop">
+      <view class="sht-h">预约助餐</view>
+      <view class="sht-tip">提交后由社区食堂电话确认，餐费现场结算，不在本页收款。</view>
+      <view class="slb">送餐时段</view>
       <view class="chips">
         <view
-          wx:for="{{avoids}}"
+          class="chip {{orderTime === item ? 'on' : ''}}"
+          wx:for="{{times}}"
           wx:key="*this"
-          class="chip {{avoid[index] ? '' : 'chip--on'}}"
           data-v="{{item}}"
-          bindtap="onToggleAvoid"
+          bindtap="onPickTime"
         >{{item}}</view>
       </view>
-    </view>
-    <view class="ctl__row">
-      <text class="ctl__lb">份数</text>
-      <view class="step">
-        <view class="step__b" data-d="-1" bindtap="onPeopleTap">−</view>
-        <text class="step__n">{{people}}</text>
-        <view class="step__b" data-d="1" bindtap="onPeopleTap">＋</view>
-      </view>
-    </view>
-  </view>
-
-  <!-- ⑤ 三餐 -->
-  <view class="dish" wx:for="{{slots}}" wx:key="slot">
-    <view class="dish__hd">
-      <text class="dish__tag" style="background:{{item.color}}">{{item.label}}</text>
-      <text class="dish__kc">{{item.kcal}} kcal · 蛋白 {{item.p}}g</text>
-    </view>
-    <view class="dish__bd">
-      <view class="dish__em">{{item.emoji}}</view>
-      <view class="dish__info">
-        <view class="dish__nm">{{item.name}}</view>
-        <view class="dish__nu">碳水 {{item.c}}g · 脂肪 {{item.f}}g · 钠 {{item.na}}mg</view>
-        <view class="dish__tags">
-          <text wx:for="{{item.tags}}" wx:for-item="tg" wx:key="*this" class="dish__tg">{{tg}}</text>
-        </view>
-      </view>
-    </view>
-    <view class="dish__ac">
-      <view class="dish__btn" data-s="{{item.slot}}" bindtap="onSwap">换一道</view>
-      <view class="dish__btn" bindtap="onOpenList">食材清单</view>
-    </view>
-  </view>
-
-  <!-- ⚠ WXML 不支持 <br>（会被当成未闭合标签导致编译失败），换行用两个 view -->
-  <view class="foot">配餐依据《中国居民膳食指南（2022）》与目标人群能量需求估算，数值为参考值；</view>
-  <view class="foot foot--last">
-    菜品可按忌口替换，<text class="foot__b">仅供参考，不替代医生或营养师处方</text>。
-  </view>
-
-  <!-- 底部操作条 -->
-  <view class="fbar">
-    <view class="fbar__s"><text class="fbar__b">{{people}} 人份 · {{goalName}}</text>今日 {{sum.kcal}} kcal</view>
-    <view class="fbar__btn" bindtap="onOrder">预约助餐</view>
-  </view>
-
-  <!-- 食材清单弹层 -->
-  <view wx:if="{{showList}}" class="mask" bindtap="onCloseList">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">今日食材清单</view>
-      <view class="sheet__sub">{{people}} 人份 · 共 {{listItems.length}} 项</view>
-      <view class="sheet__list">
-        <view wx:for="{{listItems}}" wx:key="*this" class="sheet__row">
-          <text>{{item}}</text><text class="sheet__x">×{{people}}</text>
-        </view>
-      </view>
-      <view class="sheet__btn sheet__btn--main" bindtap="onBuyIngredients">一键加进生鲜预订</view>
-      <view class="sheet__btn" bindtap="onCloseList">关闭</view>
-    </view>
-  </view>
-
-  <!-- 预约助餐弹层 -->
-  <view wx:if="{{showOrder}}" class="mask" bindtap="onCloseOrder">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">预约助餐</view>
-      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
+      <view class="slb">楼栋房号 <text class="req">必填</text></view>
       <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{orderRoom}}" bindinput="onInputRoom" />
-      <view class="sheet__lb">配送时间</view>
-      <view class="chips">
-        <view wx:for="{{times}}" wx:key="*this" class="chip {{orderTime === item ? 'chip--on' : ''}}" data-v="{{item}}" bindtap="onPickTime">{{item}}</view>
-      </view>
-      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
-      <textarea class="ta" placeholder="例如：家里有老人，饭菜煮软一点" maxlength="120" value="{{orderNote}}" bindinput="onInputNote" />
-      <view class="sheet__tip">提交后由社区工作人员电话确认，费用现场结算，本页不收款。</view>
-      <view class="sheet__ft">
-        <view class="sheet__btn" bindtap="onCloseOrder">取消</view>
-        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmitOrder">{{submitting ? '提交中…' : '提交预约'}}</view>
+      <view class="slb">备注 <text class="opt-n">选填</text></view>
+      <textarea
+        class="ta"
+        placeholder="例如：少盐、米饭软一点"
+        maxlength="120"
+        value="{{orderNote}}"
+        bindinput="onInputNote"
+      />
+      <view class="sht-ft">
+        <view class="sht-btn2" bindtap="onCloseOrder">取消</view>
+        <view class="sht-btn2 sht-main" bindtap="onSubmitOrder">{{submitting ? '提交中…' : '提交预约'}}</view>
       </view>
     </view>
   </view>
 
-  <!-- CR-024：页面级 AI 入口（上下文 = 当前配餐目标） -->
-  <ai-bar page="meal" context="智慧配餐·{{goalName}}" />
+  <!-- 配餐口径说明 -->
+  <view wx:if="{{showHelp}}" class="mask" bindtap="onCloseHelp">
+    <view class="sheet sheet--wx show" catchtap="noop">
+      <view class="sht-h">配餐怎么算的</view>
+      <view class="sht-b">1. 能量按目标人群估算：控糖 1600、控压 1700、减脂 1400、术后 1800、老年软食 1500 kcal。</view>
+      <view class="sht-b">2. 三大营养素按 蛋白 18% / 碳水 52% / 脂肪 30% 配比。</view>
+      <view class="sht-b">3. 菜品优先匹配目标标签，再按忌口过滤；钠上限按目标 1300-1800mg。</view>
+      <view class="sht-b sht-warn">以上为膳食建议，不替代医生或营养师处方；糖尿病、肾病、术后患者请遵医嘱。</view>
+      <view class="sht-btn" bindtap="onCloseHelp">知道了</view>
+    </view>
+  </view>
 </view>

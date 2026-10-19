@@ -1,8 +1,6 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "便民电话簿",
   "enablePullDownRefresh": true,
-  "usingComponents": {
-    "empty-state": "../../components/empty-state/index",
-    "ai-bar": "../../components/ai-bar/index"
-  }
+  "backgroundColor": "#1F5FD6"
 }

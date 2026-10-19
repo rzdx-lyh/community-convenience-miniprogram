@@ -1,0 +1,148 @@
+<!--
+  社区圈子 · 动态详情（CR-028）
+  对照 docs/03-preview/demo.html pgPost（1861-1912）实现。
+  ⚠ 原型用 <br> 换行的地方已拆成独立 <view>，WXML 不支持 <br>。
+-->
+<view class="page page--fbar">
+  <view class="sbar" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
+  </view>
+
+  <view class="nav">
+    <view class="bk" bindtap="goBack">‹</view>
+    <text>动态详情</text>
+    <view class="rt" bindtap="onShare">↗ 转发</view>
+  </view>
+
+  <!-- ===== 主体：帖子卡 ===== -->
+  <view class="post2">
+    <view class="p-h">
+      <view class="p-av" style="background:{{post.avatarColor}}">{{post.avatar}}</view>
+      <view class="p-who">
+        <view class="p-nm">
+          <text wx:if="{{post.pinned}}" class="ptop">置顶</text>
+          <text>{{post.who}}</text>
+          <text wx:if="{{post.official}}" class="p-v">官方</text>
+        </view>
+        <view class="p-mt">{{post.unit}} · {{post.time}}</view>
+      </view>
+    </view>
+
+    <view class="p-tx">{{post.text}}</view>
+
+    <!-- 图片（原型用色块占位，这里同样用色块，避免引入未授权图片） -->
+    <view wx:if="{{post.images.length > 0}}" class="p-img" style="grid-template-columns:repeat(2,1fr)">
+      <view wx:for="{{post.images}}" wx:key="*this" class="im" style="background:{{item}}">
+        <text>图</text>
+      </view>
+    </view>
+
+    <!-- 类型卡 -->
+    <view class="xc x-road">
+      <text class="k">{{post.typeLabel}}</text>
+      <text>{{post.extra}}</text>
+    </view>
+
+    <!-- 活动报名条（type=event） -->
+    <view wx:if="{{post.type === 'event'}}" class="tpbar" bindtap="onJoinEvent" style="box-shadow:none;background:#F5FAF8;border:1px solid #D8EDE7">
+      <view style="display:flex;align-items:center;gap:6rpx">
+        <view class="ic ic-s ic-users"></view>
+        <text>已有 {{post.joined}} 位邻居报名</text>
+      </view>
+      <view class="rt2" style="margin-left:auto">
+        <block wx:if="{{joinedFlag}}">已报名</block>
+        <block wx:else>我要报名 ›</block>
+      </view>
+    </view>
+
+    <!-- 采纳回答（type=ask） -->
+    <view wx:if="{{post.type === 'ask' && post.best}}" class="xc x-ask">
+      <text class="k">采纳回答</text>
+      <text>{{post.best}}</text>
+    </view>
+
+    <view wx:if="{{post.tag}}" class="p-tag">{{post.tag}}</view>
+
+    <!-- 操作行 -->
+    <view class="p-act">
+      <view class="{{liked ? 'on' : ''}}" bindtap="onLike">
+        <view class="ic ic-s ic-thumb"></view>
+        <text>{{likeCount}}</text>
+      </view>
+      <view class="{{saved ? 'sv' : ''}}" bindtap="onSave">
+        <view class="ic ic-s {{saved ? 'ic-star-f' : 'ic-star'}}"></view>
+        <text>{{saved ? '已收藏' : '收藏'}}</text>
+      </view>
+      <view bindtap="onMore">··· 更多</view>
+    </view>
+  </view>
+
+  <!-- ===== 评论区 ===== -->
+  <view class="cmt">
+    <view style="font-size:25rpx;font-weight:800">评论 {{comments.length}}</view>
+
+    <block wx:if="{{comments.length > 0}}">
+      <view
+        wx:for="{{comments}}"
+        wx:key="meta"
+        class="ci"
+        data-who="{{item.who}}"
+        bindtap="onReplyTap"
+      >
+        <view class="ca" style="background:{{item.color}}">{{item.avatar}}</view>
+        <view class="cb">
+          <view>
+            <text style="font-weight:800">{{item.who}}</text>
+            <text wx:if="{{item.official}}" class="p-v">官方</text>
+          </view>
+          <view style="font-size:21rpx;line-height:1.55;margin-top:2rpx">
+            <text wx:if="{{item.replyTo}}" class="rt2">@{{item.replyTo}} </text>
+            <text>{{item.text}}</text>
+          </view>
+          <view style="font-size:17rpx;color:#98A2B3;font-style:normal">{{item.meta}}</view>
+        </view>
+      </view>
+    </block>
+    <view wx:else style="font-size:21rpx;color:#98A2B3;padding:20rpx 0">还没有评论，来说第一句</view>
+
+    <view style="text-align:center;font-size:19rpx;color:#98A2B3;padding:20rpx 0 4rpx">— 点任意评论可 @ 对方回复 —</view>
+  </view>
+
+  <!-- ===== 相关动态 ===== -->
+  <view wx:if="{{related.length > 0}}" class="oc" style="margin:20rpx 24rpx 0;background:#fff;border-radius:22rpx;padding:24rpx">
+    <view style="display:flex;align-items:center;gap:8rpx;font-weight:800;font-size:25rpx">
+      <view class="ic ic-s ic-pin"></view>
+      <text>相关动态</text>
+    </view>
+    <view
+      wx:for="{{related}}"
+      wx:key="id"
+      class="oi"
+      data-id="{{item.id}}"
+      bindtap="onOpenRelated"
+    >
+      <view class="n">{{item.avatar}}</view>
+      <view>
+        <view style="font-weight:700;font-size:23rpx;line-height:1.4">{{item.text}}</view>
+        <view style="font-size:19rpx;color:#98A2B3;margin-top:4rpx">{{item.who}} · {{item.topic}} · 赞 {{item.likes}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view style="height:28rpx"></view>
+
+  <!-- ===== 吸底评论输入 ===== -->
+  <view class="cinput">
+    <view wx:if="{{replyTo}}" class="rtx" bindtap="onCancelReply">@{{replyTo}} ×</view>
+    <input
+      class="cin"
+      value="{{commentText}}"
+      placeholder="{{replyTo ? '回复 @' + replyTo : '说点什么…'}}"
+      placeholder-class="placeholder"
+      bindinput="onCommentInput"
+      bindconfirm="onSendComment"
+    />
+    <button class="send" bindtap="onSendComment">发送</button>
+  </view>
+</view>

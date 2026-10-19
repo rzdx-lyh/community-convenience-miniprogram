@@ -1,0 +1,7 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "房屋租售",
+  "usingComponents": {
+    "ai-bar": "../../../components/ai-bar/index"
+  }
+}

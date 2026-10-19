@@ -1,0 +1,45 @@
+/* 办事大厅补充样式 */
+
+/* 恢复图标尺寸档（layout 的 .ic 覆盖了 icons 的 .ic-s/.ic-m） */
+.ic.ic-s { width: 32rpx; height: 32rpx; }
+.ic.ic-m { width: 40rpx; height: 40rpx; }
+
+.hover-dim { opacity: .86; }
+
+.nav--flat { border-bottom: 0; }
+
+.hall-search { background: #fff; padding: 0 24rpx 20rpx; }
+.sbox--flat { background: #F2F5FA; border: 1px solid var(--line); }
+.sbox .s-ic { opacity: .55; }
+
+/* 原型用 HTML 标签选择器（b/p），换成类名后补排版 */
+.st .b { font-size: 28rpx; font-weight: 800; flex: 1; }
+.st .em { font-style: normal; font-size: 19rpx; color: var(--t3); }
+
+.gh .b { font-size: 25rpx; font-weight: 800; display: flex; align-items: center; gap: 12rpx; }
+.gh-bar { width: 5rpx; height: 22rpx; border-radius: 4rpx; background: var(--blue); flex: none; }
+.gh .p { display: block; margin-top: 8rpx; font-size: 19rpx; color: var(--t3); line-height: 1.4; }
+
+/* AI 集群卡文案 */
+.aigc .h .b { font-size: 23rpx; font-weight: 800; }
+.aigc .p { display: block; font-size: 18rpx; color: var(--t3); line-height: 1.5; }
+
+/* 场景图标底色（原型为内联 color，这里用色板类） */
+.tone-blue { background: #EAF1FE; }
+.tone-red { background: #FDECEB; }
+.tone-teal { background: #E6F5F2; }
+.tone-green { background: #E8F6EF; }
+.tone-gold { background: #FDF3E1; }
+.tone-indigo { background: #EDECFB; }
+.tone-cyan { background: #E4F5F8; }
+
+/* 宫格图标底色（按分类主题） */
+.th-blue .ic { background: #EAF1FE; }
+.th-teal .ic { background: #E6F5F2; }
+.th-gold .ic { background: #FDF3E1; }
+.th-indigo .ic { background: #EDECFB; }
+
+/* 板块宫格内图标略小，四列才不挤 */
+.grp .gi .ic { width: 72rpx; height: 72rpx; }
+
+.hall-foot { height: 28rpx; }

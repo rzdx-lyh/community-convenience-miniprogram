@@ -1,0 +1,97 @@
+<!-- 社区门诊取号（CR-028）· 科室 → 医生 → 时段 → 取号凭证 -->
+<view class="page">
+  <!-- 取号成功 -->
+  <block wx:if="{{taken}}">
+    <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
+      <text>邻里小助手</text>
+      <text>社区门诊</text>
+    </view>
+    <view class="nav">
+      <view class="bk" bindtap="goBack">‹</view>
+      <text>取号成功</text>
+    </view>
+
+    <view class="rcpt">
+      <view class="ok"><view class="ic ic-m ic-check" /></view>
+      <text class="rc-t">{{dept}} · {{doctor}}</text>
+      <text class="no">{{no}}</text>
+      <text class="rc-p">{{slotText}} · 卫生服务站 1 层</text>
+      <text class="rc-p">前面等待 {{prev}} 人 · 预计 {{waitMin}} 分钟</text>
+    </view>
+
+    <view class="tip">到号前 10 分钟会推送提醒；过号需重新取号。65 岁以上免挂号费。</view>
+    <view class="bpad">
+      <view class="btn ghost" bindtap="onReset">重新取号</view>
+    </view>
+  </block>
+
+  <!-- 取号流程 -->
+  <block wx:else>
+    <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
+      <text>邻里小助手</text>
+      <text>社区门诊</text>
+    </view>
+    <view class="nav">
+      <view class="bk" bindtap="goBack">‹</view>
+      <text>社区门诊挂号</text>
+    </view>
+
+    <view class="bwrap">
+      <view class="lbl">1. 选科室</view>
+      <view class="chips">
+        <view
+          class="chip dept-chip {{dept === item.name ? 'on' : ''}}"
+          wx:for="{{depts}}"
+          wx:key="name"
+          data-v="{{item.name}}"
+          bindtap="onDept"
+        >
+          <view class="ic ic-s ic-{{item.icon}}" />
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+
+      <block wx:if="{{dept}}">
+        <view class="lbl">2. 选医生</view>
+        <view class="blk docblk">
+          <view
+            class="row"
+            wx:for="{{doctors}}"
+            wx:key="name"
+            data-v="{{item.name}}"
+            bindtap="onDoctor"
+          >
+            <view class="k doc-k"><view class="ic ic-m ic-doctor" /></view>
+            <view class="m">
+              <text class="doc-n">{{item.name}}</text>
+              <text class="doc-t">{{item.title}}</text>
+            </view>
+            <view class="v {{doctor === item.name ? 'doc-on' : ''}}">
+              <block wx:if="{{doctor === item.name}}">
+                <view class="ic ic-s ic-check" />
+                <text>已选</text>
+              </block>
+              <text wx:else>{{item.queue}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <block wx:if="{{doctor}}">
+        <view class="lbl">3. 选时段</view>
+        <view class="sgrid">
+          <view
+            class="chip slot-chip {{slot === item.name ? 'on' : ''}} {{item.off ? 'off' : ''}}"
+            wx:for="{{slots}}"
+            wx:key="name"
+            data-v="{{item.name}}"
+            bindtap="onSlot"
+          >{{item.name}}</view>
+        </view>
+      </block>
+      <view class="bpad2">
+        <view class="btn {{canTake ? '' : 'is-dis'}}" bindtap="onTake">{{btnText}}</view>
+      </view>
+    </view>
+  </block>
+</view>

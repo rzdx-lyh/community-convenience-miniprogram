@@ -1,7 +1,7 @@
 /**
- * 文化服务（CR-027）
+ * 文化服务（CR-027 / CR-028 视觉重写）
  *
- * 图书角借阅（分类筛选 + 借阅规则）/ 四点半课堂（课程 + 余位进度）→ 登记弹层
+ * 图书角借阅（分类筛选 + 借阅规则）/ 四点半课堂（课程 + 余位进度）→ 登记弹层。
  *
  * ⚠ 红线：本页不收款；材料费（如有）现场收取并公示。
  */
@@ -29,15 +29,17 @@ interface ClassVM extends ClassItem {
   full: boolean;
 }
 
+const info = wx.getWindowInfo();
+
 Page({
   data: {
+    statusBarHeight: info.statusBarHeight,
     tabs: CULTURE_TABS,
     tab: 'library' as CultureTab,
     tabNote: CULTURE_TABS[0].note,
 
     /** 图书角 */
     cats: BOOK_CATS,
-    catIndex: 0,
     cat: '全部',
     books: BOOKS as BookItem[],
     rules: LIBRARY_RULES,
@@ -74,6 +76,11 @@ Page({
     this.setData({ tabNote: meta.note });
   },
 
+  goBack(): void {
+    if (getCurrentPages().length > 1) wx.navigateBack();
+    else wx.switchTab({ url: '/pages/index/index' });
+  },
+
   onSwitchTab(e: WechatMiniprogram.TouchEvent): void {
     const t = String((e.currentTarget.dataset as { t?: string }).t ?? 'library') as CultureTab;
     if (t === this.data.tab) return;
@@ -81,10 +88,10 @@ Page({
     this.setData({ tab: t }, () => this.render());
   },
 
-  onCatChange(e: WechatMiniprogram.PickerChange): void {
-    const idx = Number(e.detail.value ?? 0);
-    const cat = this.data.cats[idx] ?? '全部';
-    this.setData({ catIndex: idx, cat, books: filterBooks(cat) });
+  onCatTap(e: WechatMiniprogram.TouchEvent): void {
+    const cat = String((e.currentTarget.dataset as { v?: string }).v ?? '全部');
+    if (cat === this.data.cat) return;
+    this.setData({ cat, books: filterBooks(cat) });
   },
 
   onBorrow(e: WechatMiniprogram.TouchEvent): void {
@@ -165,9 +172,5 @@ Page({
       this.setData({ submitting: false });
       toast('提交失败，请稍后重试');
     }
-  },
-
-  noop(): void {
-    /* noop */
   },
 });

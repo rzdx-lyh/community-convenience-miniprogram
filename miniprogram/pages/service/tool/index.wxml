@@ -1,100 +1,186 @@
-<!-- 共享设备（CR-026）· 借用中 → 设备列表 → 点位 → 借用登记 -->
+<!-- 共享设备 · 彩色页头 → 借用中圆环 → 点位 → 设备 → 借还记录 -->
 <view class="page">
-  <!-- 借用中 -->
-  <view class="top">
-    <view class="top__t">我借用的设备</view>
-    <view class="top__n">{{borrows.length}}</view>
-    <view class="top__s">扫码借用 · 异地归还 · 到期提醒</view>
-  </view>
-
-  <view wx:if="{{borrows.length > 0}}" class="sec">
-    <view wx:for="{{borrows}}" wx:key="id" class="bw">
-      <view class="bw__l">
-        <view class="bw__n">{{item.name}}</view>
-        <view class="bw__d">{{item.spot}} · {{item.timeText}} 借出</view>
-        <view class="bw__due">请在 {{item.dueText}} 前归还</view>
+  <view class="pgh pgh--teal">
+    <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
+      <text>邻里小助手</text>
+      <text>● ● ●</text>
+    </view>
+    <view class="pgh-nav">
+      <text class="pgh-bk" bindtap="goBack">‹</text>
+      <text class="pgh-t">{{currentName}}</text>
+      <text class="pgh-rt" bindtap="onOpenSpots">点位</text>
+    </view>
+    <view class="pgh-k">
+      <view>
+        <view class="pgh-lb" style="margin-bottom:6px">{{currentBorrow ? '借用中' : '本小区可借'}}</view>
+        <view class="pgh-num">{{currentBorrow ? '1' : currentStock}}<text class="unit">{{currentBorrow ? '件' : currentUnit}}</text></view>
       </view>
-      <view class="bw__btn" data-id="{{item.id}}" bindtap="onReturn">已归还</view>
+      <view class="pgh-lb">
+        <view>{{spots.length}} 个投放点 · 免押金</view>
+        <view>{{currentBorrow ? '可在任意点位归还' : currentFree}}</view>
+      </view>
+      <view class="pgh-chip" bindtap="onMainAction">{{currentBorrow ? '异地归还' : '扫码借用'}} ›</view>
     </view>
   </view>
 
-  <!-- 设备列表 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">可借设备</text>
-      <text class="sec__s">登记后到点位扫码取件</text>
+  <view class="body">
+    <!-- 借用中 / 可借状态 -->
+    <view class="dev">
+      <view class="dev-ring {{currentBorrow ? 'is-on' : 'is-idle'}}">
+        <view class="rc">
+          <text class="rc-b">{{currentBorrow ? remainText : '—'}}</text>
+          <text class="rc-s">{{currentBorrow ? '剩余归还时间' : '未借用'}}</text>
+        </view>
+      </view>
+      <view class="dn">{{currentName}}</view>
+      <view class="ds">{{currentDesc}}</view>
+      <view class="dev-btns">
+        <view class="btn3 ghost" bindtap="onOpenSpots">查看点位</view>
+        <view class="btn3 solid" bindtap="onMainAction">{{currentBorrow ? '异地归还' : '扫码借用'}}</view>
+      </view>
+      <view wx:if="{{currentBorrow}}" class="dev-remind">
+        <view class="ic ic-s ic-bell"></view>
+        到期提醒已开启 · 提前 1 天 18:00 推送
+      </view>
     </view>
 
-    <view wx:for="{{tools}}" wx:key="key" class="tool">
-      <view class="tool__hd">
-        <text class="tool__n">{{item.name}}</text>
-        <text class="tool__tag {{item.borrowing ? 'is-on' : ''}}">{{item.borrowing ? '借用中' : (item.soldOut ? '已借完' : '可借')}}</text>
-      </view>
-      <view class="tool__d">{{item.desc}}</view>
+    <!-- 点位分布示意 -->
+    <view class="map">
+      <view class="pin" style="left:24%;top:36%"><view class="ic ic-s ic-pin"></view></view>
+      <view class="pin" style="left:56%;top:26%"><view class="ic ic-s ic-pin"></view></view>
+      <view class="pin" style="left:76%;top:64%"><view class="ic ic-s ic-pin"></view></view>
+      <view class="lg">点位分布 · {{spots.length}} 个投放点</view>
+    </view>
 
-      <view class="bar">
-        <view class="bar__in" style="width:{{item.percent}}%"></view>
+    <!-- 6 类设备 -->
+    <view class="sec">
+      <view class="st">
+        <text class="st-b">可借设备</text>
+        <text class="st-e">免押金 · 实名登记</text>
       </view>
-      <view class="tool__st">余 {{item.stock}} / {{item.total}} 件</view>
-
-      <view class="rule">
-        <text class="rule__i">免费：{{item.free}}</text>
-        <text class="rule__i">超时：{{item.over}}</text>
-        <text class="rule__i">期限：{{item.limit}}</text>
+      <view
+        wx:for="{{tools}}"
+        wx:key="key"
+        class="sc"
+        hover-class="hover-dim"
+        data-k="{{item.key}}"
+        bindtap="onSelectTool"
+      >
+        <view class="si tint-{{item.tint}}">
+          <view class="ic ic-m ic-{{item.icon}}" />
+        </view>
+        <view class="sb">
+          <view class="sn">
+            {{item.name}}
+            <text wx:if="{{item.borrowed}}" class="tag warn">借用中</text>
+          </view>
+          <view class="sd">{{item.desc}}</view>
+          <view class="sd">{{item.free}} · 可借 {{item.stock}}/{{item.total}}</view>
+        </view>
+        <view class="sa"><text class="stock">{{item.stock}}<text class="stock-u">{{item.unit}}</text></text></view>
       </view>
-      <view class="tool__note">{{item.note}}</view>
+    </view>
 
-      <view class="btn btn--main {{item.soldOut || item.borrowing ? 'is-dis' : ''}}" data-k="{{item.key}}" bindtap="onBorrow">
-        {{item.borrowing ? '已在借用中' : (item.soldOut ? '暂无可借' : '登记借用')}}
+    <!-- 借还记录 -->
+    <view class="dash">
+      <view class="d-h"><text class="dh-b">借还记录</text><text class="dh-em">最近 6 条</text></view>
+      <view wx:if="{{records.length === 0}}" class="empty">还没有借用记录，扫码借用后会出现在这里</view>
+      <view wx:for="{{records}}" wx:key="id" class="rec">
+        <view class="rec-l">
+          <view class="rec-n">
+            {{item.name}}
+            <text class="tag {{item.status === 'borrowing' ? 'warn' : 'ok'}}">{{item.statusText}}</text>
+          </view>
+          <view class="rec-s">{{item.spot}} · {{item.timeText}}</view>
+          <view class="rec-s">应还 {{item.dueText}}</view>
+        </view>
+        <view
+          wx:if="{{item.status === 'borrowing'}}"
+          class="btn3 ghost rec-btn"
+          data-id="{{item.id}}"
+          bindtap="onReturn"
+        >已归还</view>
+      </view>
+    </view>
+
+    <!-- 借用须知 -->
+    <view class="dash">
+      <view class="d-h"><text class="dh-b">借用须知</text><text class="dh-em">免押金</text></view>
+      <view class="notice-list">
+        <view>1. 微信扫码即借，需实名授权；</view>
+        <view>2. 各类设备免费时长不同，超时按标准计费；</view>
+        <view>3. 任意投放点可异地归还，归还后页面确认；</view>
+        <view>4. 损坏或丢失按成本价赔偿，具体以点位公示为准。</view>
+      </view>
+    </view>
+
+    <view class="page-note">设备由社区统一投放与消毒，问题可在「圈子 → 邻里求助」反馈。</view>
+  </view>
+
+  <!-- 借用登记 -->
+  <view wx:if="{{sheet === 'borrow'}}" class="mask" bindtap="onCloseSheet">
+    <view class="sheet show" catchtap="noop" catchtouchmove="noop">
+      <view class="sh-hd">借用 · {{currentName}}</view>
+      <view class="sh-sub">{{currentFree}} · 免押金</view>
+
+      <view class="lbl">取件点位<text class="em">必选</text></view>
+      <view class="chips">
+        <view
+          wx:for="{{spotNames}}"
+          wx:key="*this"
+          class="chip {{spotName === item ? 'on' : ''}}"
+          data-n="{{item}}"
+          bindtap="onPickSpot"
+        >{{item}}</view>
+      </view>
+
+      <view class="lbl">借用时长<text class="em">必选</text></view>
+      <view class="chips">
+        <view
+          wx:for="{{dayOptions}}"
+          wx:key="d"
+          class="chip {{borrowDays === item.d ? 'on' : ''}}"
+          data-d="{{item.d}}"
+          bindtap="onPickDays"
+        >{{item.label}}</view>
+      </view>
+      <view class="due-preview">预计归还时间：{{duePreview}}</view>
+
+      <view class="lbl">楼栋房号<text class="em">必填</text></view>
+      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="32" value="{{room}}" bindinput="onInputRoom" />
+      <view class="lbl">联系电话<text class="em">必填</text></view>
+      <input class="inp" type="number" placeholder="用于到期提醒" maxlength="15" value="{{contact}}" bindinput="onInputContact" />
+      <view class="lbl">备注<text class="em">选填</text></view>
+      <textarea class="ta" placeholder="例如：老人使用，需要帮忙送上楼" maxlength="120" value="{{note}}" bindinput="onInputNote" />
+
+      <view class="pay-note">本页不收取押金或费用；借用登记后到点位扫码取件。</view>
+      <view class="sh-btns">
+        <view class="btn ghost" bindtap="onCloseSheet">取消</view>
+        <view class="btn" bindtap="onSubmitBorrow">{{submitting ? '提交中…' : '提交借用登记'}}</view>
       </view>
     </view>
   </view>
 
   <!-- 点位 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">借还点位</text>
-      <text class="sec__s">任意点位均可归还</text>
-    </view>
-    <view wx:for="{{spots}}" wx:key="name" class="spot">
-      <view class="spot__n">{{item.name}}</view>
-      <view class="spot__a">{{item.addr}}</view>
-      <view class="spot__h">{{item.hours}} · 可借：{{item.tools}}</view>
-    </view>
-  </view>
-
-  <view class="foot">
-    本页只做<text class="foot__b">借用登记与点位查询</text>，不收押金、不代收款；
-    实际借还以现场扫码与工作人员核对为准。
-  </view>
-
-  <!-- CR-024：页面级 AI 入口（上下文 = 共享设备） -->
-  <ai-bar page="tool" />
-
-  <!-- 借用登记弹层 -->
-  <view wx:if="{{showBorrow}}" class="mask" bindtap="onCloseBorrow">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">借用登记 · {{borrowName}}</view>
-      <view class="sheet__tip">提交后请到所选点位扫码取件；本页不收押金。</view>
-
-      <view class="sheet__lb">取件点位 <text class="req">必选</text></view>
-      <picker mode="selector" range="{{spotNames}}" value="{{spotIndex}}" bindchange="onSpotChange">
-        <view class="pk">{{borrowSpot}} ▾</view>
-      </picker>
-
-      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
-      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{room}}" bindinput="onInputRoom" />
-
-      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
-      <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{contact}}" bindinput="onInputContact" />
-
-      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
-      <textarea class="ta" placeholder="例如：晚上 8 点后来取" maxlength="120" value="{{note}}" bindinput="onInputNote" />
-
-      <view class="sheet__ft">
-        <view class="sheet__btn" bindtap="onCloseBorrow">取消</view>
-        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmitBorrow">{{submitting ? '提交中…' : '提交登记'}}</view>
+  <view wx:if="{{sheet === 'spots'}}" class="mask" bindtap="onCloseSheet">
+    <view class="sheet show" catchtap="noop" catchtouchmove="noop">
+      <view class="sh-hd">投放点位</view>
+      <view class="sh-sub">共 {{spots.length}} 个点位，可就近取还</view>
+      <view class="spot-list">
+        <view wx:for="{{spots}}" wx:key="name" class="row">
+          <view class="k tint-teal"><view class="ic ic-s ic-pin" /></view>
+          <view class="m">
+            <view class="rb">{{item.name}}</view>
+            <view class="rs">{{item.addr}} · {{item.tools}}</view>
+          </view>
+          <view class="v">{{item.hours}}</view>
+        </view>
+      </view>
+      <view class="sh-btns">
+        <view class="btn" bindtap="onCloseSheet">知道了</view>
       </view>
     </view>
   </view>
+
+  <ai-bar page="tool" />
 </view>

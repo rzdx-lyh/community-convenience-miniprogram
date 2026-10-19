@@ -1,248 +1,106 @@
-/* 通知 / 活动 / 紧急通知列表（FE-6）· 全部取 Design Token v1.1 */
-.page {
-  min-height: 100vh;
-  padding-bottom: var(--space-6);
-  background: var(--bg);
+/* 社区通知 · 原型类之外的最小补充（原型类见 styles/layout.wxss） */
+
+.sbar__sig {
+  font-size: 17rpx;
+  letter-spacing: 1rpx;
+  color: var(--t3);
 }
 
-/* 类型 Tab */
-.tabs {
-  display: flex;
-  padding: var(--space-3) var(--space-4);
-  gap: var(--space-2);
-  background: var(--card);
-  border-bottom: 2rpx solid var(--line);
+.nav--plain {
+  border-bottom: 0;
 }
-.tab {
-  height: 64rpx;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-full);
-  border: 2rpx solid var(--line);
-  font-size: var(--font-sub);
-  color: var(--text-2);
-  display: flex;
-  align-items: center;
-}
-.tab-on {
-  background: var(--brand-light);
-  border-color: var(--brand);
-  color: var(--brand);
+
+.rt--muted {
+  color: var(--t3);
   font-weight: 600;
 }
 
-/* 标签筛选 chip */
-.chip-row {
-  padding: var(--space-2) var(--space-4) 0;
-}
-.chip {
-  display: inline-flex;
-  align-items: center;
-  height: 56rpx;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-full);
-  background: var(--brand-light);
-}
-.chip-text {
-  font-size: var(--font-cap);
-  color: var(--brand);
-  font-weight: 600;
-}
-.chip-x {
-  margin-left: var(--space-2);
-  font-size: var(--font-sub);
-  color: var(--brand);
+/* 6 个 tab 平分：原型 24rpx 在 750rpx 下偏挤，降到 22rpx */
+.tb .t {
+  font-size: 22rpx;
 }
 
-/* 列表 */
-.list {
-  padding: var(--space-3) var(--space-4);
-}
-.card {
-  background: var(--card);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-  padding: var(--space-4);
-  margin-bottom: var(--space-3);
-}
-.card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.card-title {
-  flex: 1;
-  font-size: var(--font-card);
-  font-weight: 700;
-  color: var(--text-1);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 类型标签 */
-.tag {
-  height: 48rpx;
-  padding: 0 20rpx;
-  border-radius: var(--radius-full);
-  font-size: var(--font-cap);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  flex: none;
-  margin-left: var(--space-2);
-}
-.tag-notice {
-  background: var(--brand-light);
-  color: var(--brand);
-}
-.tag-activity {
-  background: var(--accent-warm-light);
-  color: var(--accent-warm);
-}
-.tag-urgent {
-  background: var(--urgent-bg);
-  color: var(--urgent);
-}
-
-/* 紧急项 */
-.urg-line {
-  display: flex;
-  align-items: center;
-  margin-top: var(--space-2);
-}
-.level {
-  height: 40rpx;
-  padding: 0 16rpx;
-  margin-right: var(--space-2);
-  border-radius: var(--radius-s);
-  background: var(--urgent);
-  display: flex;
-  align-items: center;
+.nt .h .tag {
   flex: none;
 }
-.level-text {
-  font-size: var(--font-cap);
-  color: #ffffff;
-  font-weight: 700;
-}
-.summary {
-  flex: 1;
-  font-size: var(--font-sub);
-  color: var(--text-1);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.range {
-  display: block;
-  margin-top: var(--space-1);
-  font-size: var(--font-cap);
-  color: var(--urgent);
+
+.nt__ago {
+  margin-left: auto;
+  font-size: 18rpx;
+  color: var(--t3);
 }
 
-/* 活动项 */
-.line {
-  display: block;
-  margin-top: var(--space-2);
-  font-size: var(--font-sub);
-  color: var(--text-2);
-}
-.line.hot {
-  color: var(--accent-warm);
-  font-weight: 600;
+.nt .tt {
+  font-size: 26rpx;
 }
 
-.time {
-  display: block;
-  margin-top: var(--space-2);
-  font-size: var(--font-cap);
-  color: var(--text-3);
+/* 展开后的全文 */
+.nt__more {
+  margin-top: 12rpx;
+  padding-top: 14rpx;
+  border-top: 1px dashed var(--line);
 }
 
-.loading {
-  padding: var(--space-4);
-  text-align: center;
-}
-.loading-text {
-  font-size: var(--font-cap);
-  color: var(--text-3);
+.bd--full {
+  font-size: 22rpx;
+  line-height: 1.72;
+  color: var(--t2);
+  white-space: pre-wrap;
 }
 
-/* 内联详情弹层 */
-.mask {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: var(--mask);
-  z-index: var(--z-mask);
-  display: flex;
-  align-items: flex-end;
-}
-.sheet {
-  width: 100%;
-  max-height: 76vh;
-  background: var(--card);
-  border-radius: var(--radius-l) var(--radius-l) 0 0;
-  padding: var(--space-4);
+.nt__rows {
   display: flex;
   flex-direction: column;
-}
-.sheet-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-.sheet-title {
-  flex: 1;
-  font-size: var(--font-card);
-  font-weight: 700;
-  color: var(--text-1);
-  line-height: 1.35;
-}
-.sheet-close {
-  font-size: var(--font-title);
-  color: var(--text-3);
-  padding-left: var(--space-3);
-}
-.sheet-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-.sheet-tag {
-  padding: 0 16rpx;
-  height: 40rpx;
-  border-radius: var(--radius-s);
-  background: var(--brand-light);
-  color: var(--brand);
-  font-size: var(--font-cap);
-  display: flex;
-  align-items: center;
-}
-.sheet-text {
-  font-size: var(--font-cap);
-  color: var(--text-3);
-  line-height: 40rpx;
-}
-.sheet-body {
-  margin-top: var(--space-3);
-  max-height: 52vh;
-}
-.sheet-content {
-  display: block;
-  font-size: var(--font-body);
-  color: var(--text-2);
-  line-height: 1.7;
+  gap: 8rpx;
+  margin-top: 12rpx;
 }
 
-/* 关怀模式 */
-.care-mode .card-title,
-.care-mode .sheet-title {
-  font-size: var(--font-title);
+.nt__row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 19rpx;
+  color: var(--t3);
 }
-.care-mode .sheet-content {
-  font-size: var(--font-card);
+
+.nt__row .ic {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 0;
+  font-size: 22rpx;
+  color: var(--t3);
+}
+
+.nt__fold {
+  margin-top: 12rpx;
+  font-size: 19rpx;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.nt .mt {
+  align-items: center;
+}
+
+.nt__expand {
+  margin-left: auto;
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.empty__t {
+  font-size: 24rpx;
+  color: var(--t2);
+  font-weight: 700;
+}
+
+.empty__s {
+  margin-top: 6rpx;
+  font-size: 20rpx;
+  color: var(--t3);
+}
+
+/* 按压态（原型 :active 在小程序不生效） */
+.hv {
+  opacity: 0.72;
 }

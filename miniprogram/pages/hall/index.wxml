@@ -1,0 +1,112 @@
+<!-- 办事大厅（设计稿 pgHall v1.4） -->
+<view class="page">
+  <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
+  </view>
+
+  <view class="nav nav--flat">办事大厅</view>
+
+  <view class="hall-search">
+    <view class="sbox sbox--flat">
+      <view class="ic ic-s ic-search s-ic" />
+      <input
+        placeholder="搜服务：保洁、助餐、雨伞、租…"
+        value="{{kw}}"
+        confirm-type="search"
+        bindinput="onKwInput"
+        bindconfirm="onSearch"
+      />
+      <view class="go" bindtap="onSearch">搜索</view>
+    </view>
+  </view>
+
+  <!-- AI 助手集群（搜索时不占位） -->
+  <view class="sec" wx:if="{{!kw}}">
+    <view class="st">
+      <text class="b">AI 助手集群</text>
+      <text class="em">{{scenes.length}} 个场景 · 点开就能问</text>
+    </view>
+    <view class="aig">
+      <view
+        class="aigc"
+        wx:for="{{scenes}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        data-q="{{item.q}}"
+        bindtap="onSceneTap"
+        hover-class="hover-dim"
+      >
+        <view class="h">
+          <view class="k2 tone-{{item.tone}}"><view class="ic ic-s ic-{{item.icon}}" /></view>
+          <text class="b">{{item.name}}</text>
+        </view>
+        <text class="p">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tb">
+    <view
+      class="t {{active === item.key ? 'on' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="key"
+      data-k="{{item.key}}"
+      bindtap="onCatTap"
+    >{{item.name}}</view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <block wx:if="{{kw}}">
+    <view class="grp">
+      <view class="gh">
+        <view class="b"><view class="gh-bar" /><text>搜索「{{kw}}」</text></view>
+        <text class="p">命中 {{hits.length}} 项</text>
+      </view>
+      <view class="g4 th-{{theme}}" wx:if="{{hits.length}}">
+        <view
+          class="gi"
+          wx:for="{{hits}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onItemTap"
+          hover-class="hover-dim"
+        >
+          <text wx:if="{{item.badge}}" class="bdg">{{item.badge}}</text>
+          <view class="ic ic-m ic-{{item.icon}}" />
+          <text class="n">{{item.name}}</text>
+          <text class="d">{{item.desc}}</text>
+        </view>
+      </view>
+      <view wx:else class="empty">没找到这项服务，换个词试试</view>
+    </view>
+  </block>
+
+  <!-- 分类板块 -->
+  <block wx:else>
+    <view class="grp" wx:for="{{groups}}" wx:key="key">
+      <view class="gh">
+        <view class="b"><view class="gh-bar" /><text>{{item.name}}</text></view>
+        <text class="p">{{item.note}} · {{item.count}} 项</text>
+      </view>
+      <view class="g4 th-{{theme}}">
+        <view
+          class="gi"
+          wx:for="{{item.items}}"
+          wx:for-item="cell"
+          wx:key="key"
+          data-key="{{cell.key}}"
+          bindtap="onItemTap"
+          hover-class="hover-dim"
+        >
+          <text wx:if="{{cell.badge}}" class="bdg">{{cell.badge}}</text>
+          <view class="ic ic-m ic-{{cell.icon}}" />
+          <text class="n">{{cell.name}}</text>
+          <text class="d">{{cell.desc}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view class="hall-foot" />
+</view>

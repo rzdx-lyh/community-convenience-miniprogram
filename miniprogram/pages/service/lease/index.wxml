@@ -1,0 +1,142 @@
+<!-- 房屋租售 · 彩色页头 → 筛选 → 房源卡 → 详情 / 发布 / 求租 -->
+<view class="page">
+  <view class="pgh pgh--indigo">
+    <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
+      <text>邻里小助手</text>
+      <text>● ● ●</text>
+    </view>
+    <view class="pgh-nav">
+      <text class="pgh-bk" bindtap="goBack">‹</text>
+      <text class="pgh-t">房屋租售</text>
+      <text class="pgh-rt" bindtap="onOpenWant">求租登记</text>
+    </view>
+    <view class="pgh-k">
+      <view>
+        <view class="pgh-lb" style="margin-bottom:6px">小区在挂房源</view>
+        <view class="pgh-num">{{totalCount}}<text class="unit">套</text></view>
+      </view>
+      <view class="pgh-lb">
+        <view>全部业主直挂 · 社区已核验</view>
+        <view>不做中介撮合、不收佣金</view>
+      </view>
+      <view class="pgh-chip" bindtap="onOpenPost">我要发布 ›</view>
+    </view>
+  </view>
+
+  <view class="body">
+    <view class="seg seg--filter">
+      <view
+        wx:for="{{filters}}"
+        wx:key="key"
+        class="g {{deal === item.key ? 'on' : ''}}"
+        data-v="{{item.key}}"
+        bindtap="onSwitchDeal"
+      >{{item.name}}</view>
+    </view>
+
+    <view wx:if="{{houses.length === 0}}" class="empty">这个分类暂时没有房源，换个筛选看看</view>
+
+    <view
+      wx:for="{{houses}}"
+      wx:key="id"
+      class="hcard"
+      hover-class="hover-dim"
+      data-id="{{item.id}}"
+      bindtap="onOpenHouse"
+    >
+      <view class="hph hph--{{index % 4}}">
+        <text class="hb">{{item.dealText}}</text>
+        <view class="hp">{{item.priceText}}<text class="hp-i">{{item.unitText}}</text></view>
+        <view class="hv">{{item.brief}}</view>
+      </view>
+      <view class="hinfo">
+        <view class="ht">{{item.title}}</view>
+        <view class="hd">{{item.desc}}</view>
+        <view class="htags">
+          <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="htag">{{tag}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="page-note">
+      社区只提供信息登记，不做撮合、不收佣金、不代收租金与押金；请勿发布虚假房源。
+    </view>
+  </view>
+
+  <!-- 房源详情 -->
+  <view wx:if="{{sheet === 'detail'}}" class="mask" bindtap="onCloseSheet">
+    <view class="sheet show" catchtap="noop" catchtouchmove="noop">
+      <view class="dt-hd">
+        <view class="dt-emoji">{{activeEmoji}}</view>
+        <view class="dt-hl">
+          <view class="dt-t">{{activeTitle}}</view>
+          <view class="dt-d">{{activeDesc}}</view>
+        </view>
+      </view>
+      <view class="dt-price">{{activePriceText}}<text class="hp-i">{{activeUnitText}}</text></view>
+      <view class="htags">
+        <text wx:for="{{activeTags}}" wx:key="*this" class="htag">{{item}}</text>
+      </view>
+      <view class="dt-detail">{{activeDetail}}</view>
+      <view class="tip">社区已核验产权资料；看房、议价与签约由双方线下完成，社区不介入交易。</view>
+      <view class="sh-btns">
+        <view class="btn ghost" bindtap="onCloseSheet">关闭</view>
+        <view class="btn" bindtap="onContact">联系房东</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我要发布 -->
+  <view wx:if="{{sheet === 'post'}}" class="mask" bindtap="onCloseSheet">
+    <view class="sheet show" catchtap="noop" catchtouchmove="noop">
+      <view class="sh-hd">发布房源</view>
+      <view class="sh-sub">业主直挂 · 社区核验后展示</view>
+
+      <view class="lbl">交易方式<text class="em">必选</text></view>
+      <view class="chips">
+        <view class="chip {{postDeal === 'rent' ? 'on' : ''}}" data-d="rent" bindtap="onPostDeal">出租</view>
+        <view class="chip {{postDeal === 'sell' ? 'on' : ''}}" data-d="sell" bindtap="onPostDeal">出售</view>
+      </view>
+
+      <view class="lbl">房源<text class="em">必填</text></view>
+      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="32" value="{{postTitle}}" bindinput="onInputPostTitle" />
+      <view class="lbl">户型<text class="em">选填</text></view>
+      <input class="inp" placeholder="例：2 室 1 厅" maxlength="20" value="{{postLayout}}" bindinput="onInputPostLayout" />
+      <view class="lbl">面积（㎡）<text class="em">选填</text></view>
+      <input class="inp" type="digit" placeholder="例：68" maxlength="10" value="{{postArea}}" bindinput="onInputPostArea" />
+      <view class="lbl">挂牌价<text class="em">必填</text></view>
+      <input class="inp" placeholder="出租填元/月，出售填万元" maxlength="20" value="{{postPrice}}" bindinput="onInputPostPrice" />
+      <view class="lbl">联系电话<text class="em">必填</text></view>
+      <input class="inp" type="number" placeholder="仅用于核验联系" maxlength="15" value="{{postContact}}" bindinput="onInputPostContact" />
+      <view class="lbl">补充说明<text class="em">选填</text></view>
+      <textarea class="ta" placeholder="朝向、装修、可看房时间等" maxlength="160" value="{{postNote}}" bindinput="onInputPostNote" />
+
+      <view class="pay-note">发布免费。社区只做信息登记，不收中介费，也不代收租金与押金。</view>
+      <view class="sh-btns">
+        <view class="btn ghost" bindtap="onCloseSheet">取消</view>
+        <view class="btn" bindtap="onSubmitPost">{{submitting ? '提交中…' : '提交核验'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 求租登记 -->
+  <view wx:if="{{sheet === 'want'}}" class="mask" bindtap="onCloseSheet">
+    <view class="sheet show" catchtap="noop" catchtouchmove="noop">
+      <view class="sh-hd">求租登记</view>
+      <view class="sh-sub">填写需求，有合适房源时社区联系你</view>
+
+      <view class="lbl">联系电话<text class="em">必填</text></view>
+      <input class="inp" type="number" placeholder="用于联系看房" maxlength="15" value="{{wantContact}}" bindinput="onInputWantContact" />
+      <view class="lbl">求租需求<text class="em">必填</text></view>
+      <textarea class="ta" placeholder="例：2 室，预算 2500 以内，希望 11 月入住" maxlength="160" value="{{wantNote}}" bindinput="onInputWantNote" />
+
+      <view class="pay-note">社区只做信息登记，不撮合交易、不收中介费，也不代收租金与押金。</view>
+      <view class="sh-btns">
+        <view class="btn ghost" bindtap="onCloseSheet">取消</view>
+        <view class="btn" bindtap="onSubmitWant">{{submitting ? '提交中…' : '提交登记'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <ai-bar page="lease" />
+</view>

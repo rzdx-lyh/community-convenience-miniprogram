@@ -1,0 +1,91 @@
+<!-- 社区圈子 · 发布动态 -->
+<view class="page page--fbar">
+  <view class="sbar" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
+  </view>
+  <view class="nav">
+    <view class="bk" bindtap="goBack">‹</view>
+    <text>发布动态</text>
+    <view class="rt" bindtap="onClear">清空</view>
+  </view>
+
+  <view class="blk">
+    <view class="lbl">动态类型</view>
+    <view class="chips">
+      <view
+        wx:for="{{types}}"
+        wx:key="key"
+        class="{{type === item.key ? 'chip on' : 'chip'}}"
+        data-key="{{item.key}}"
+        bindtap="onTypeTap"
+      >{{item.label}}</view>
+    </view>
+
+    <view class="lbl">正文</view>
+    <textarea
+      class="ta"
+      value="{{content}}"
+      placeholder="{{placeholder}}"
+      placeholder-class="ph"
+      maxlength="600"
+      bindinput="onContentInput"
+    ></textarea>
+    <view class="cnt">{{contentLen}} / 600</view>
+
+    <block wx:if="{{type === 'sell'}}">
+      <view class="fitem">
+        <text class="k">价格</text>
+        <input value="{{price}}" placeholder="如 ￥80 / 免费送" bindinput="onPriceInput" />
+      </view>
+    </block>
+
+    <block wx:if="{{type === 'event'}}">
+      <view class="fitem">
+        <text class="k">时间</text>
+        <input value="{{whenText}}" placeholder="如 本周日 15:00" bindinput="onWhenInput" />
+      </view>
+      <view class="fitem">
+        <text class="k">地点</text>
+        <input value="{{whereText}}" placeholder="如 社区活动室 2 楼" bindinput="onWhereInput" />
+      </view>
+    </block>
+
+    <view class="lbl">配图（可选 · 最多 9 张）</view>
+    <view class="dgrid">
+      <view wx:for="{{images}}" wx:key="*this" class="d">
+        <image src="{{item}}" mode="aspectFill" />
+        <view class="del" data-idx="{{index}}" catchtap="onRemoveImage">×</view>
+      </view>
+      <view wx:if="{{images.length < maxImages}}" class="d add" bindtap="onChooseImage">
+        <text class="plus">＋</text>
+        <text>添加图片</text>
+      </view>
+    </view>
+
+    <view class="lbl">话题</view>
+    <view class="chips">
+      <view
+        wx:for="{{topics}}"
+        wx:key="*this"
+        class="{{topic === item ? 'chip on' : 'chip'}}"
+        data-topic="{{item}}"
+        bindtap="onTopicTap"
+      >#{{item}}</view>
+    </view>
+
+    <view class="aipolish" bindtap="onAiPolish">
+      <view class="ic ic-s ic-sparkles" />
+      <text>AI 帮我写完整</text>
+    </view>
+
+    <view class="tip2">发布后社区内所有邻居可见；请勿发布广告、涉隐私或未经核实的信息。</view>
+    <view style="height:20rpx" />
+  </view>
+
+  <view class="fbar">
+    <text class="fbar__sum">{{contentLen}} 字</text>
+    <text wx:if="{{topic}}" class="fbar__sum">· #{{topic}}</text>
+    <button class="btn" disabled="{{!canPublish}}" bindtap="onPublish">发布</button>
+  </view>
+</view>

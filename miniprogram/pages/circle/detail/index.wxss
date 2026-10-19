@@ -1,0 +1,53 @@
+/* 动态详情（CR-028）· 只补原型用内联 style 表达、布局层未收录的规则 */
+
+/* 原型：<div class="cinput" style="position:sticky;bottom:0"> —— 小程序改吸底固定 */
+.cinput {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: content-box;
+}
+
+/* 原型 .p-act div 的后代选择器在 wxss 里对 <view> 同样生效，
+   这里只补「图标 + 数字」之间的基线对齐（微信 text 行高偏下） */
+.p-act view {
+  line-height: 1;
+}
+
+/* 评论区昵称行：原型 b + span.p-v 同行 */
+.cb > view:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 23rpx;
+}
+
+/* 类型卡里两项（标签 + 说明）在原型是同一行内联，这里保证垂直居中 */
+.xc {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+/* 相关动态的圆形/圆角头像（原型 .oc .oi .n 已有，补底色） */
+.oi .n {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 16rpx;
+  background: #eef3fb;
+  color: #4a5a73;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 800;
+  flex: none;
+}
+
+.placeholder {
+  color: #98a2b3;
+}

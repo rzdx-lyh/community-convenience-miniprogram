@@ -1,155 +1,36 @@
-/* 便民电话簿（FE-7）· 全部取 Design Token v1.1 */
-.page {
-  min-height: 100vh;
-  padding-bottom: var(--space-6);
-  background: var(--bg);
-}
-
-/* 分类 Tab */
-.tabs {
-  display: flex;
-  padding: var(--space-3) var(--space-4);
-  gap: var(--space-2);
-  background: var(--card);
-  border-bottom: 2rpx solid var(--line);
-  overflow-x: auto;
-  white-space: nowrap;
-}
-.tab {
-  height: 64rpx;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-full);
-  border: 2rpx solid var(--line);
-  font-size: var(--font-sub);
-  color: var(--text-2);
-  display: inline-flex;
-  align-items: center;
-  flex: none;
-}
-.tab-on {
-  background: var(--brand-light);
-  border-color: var(--brand);
-  color: var(--brand);
-  font-weight: 600;
-}
-
-/* 搜索 */
-.search {
-  display: flex;
-  align-items: center;
-  margin: var(--space-3) var(--space-4) 0;
-  padding: 0 var(--space-3);
-  height: 80rpx;
-  border-radius: var(--radius-full);
-  background: var(--card);
-  box-shadow: var(--shadow-card);
-}
-.search-input {
-  flex: 1;
-  height: 80rpx;
-  font-size: var(--font-sub);
-  color: var(--text-1);
-}
-.search-ph {
-  color: var(--text-3);
-}
-.search-clear {
-  font-size: var(--font-card);
-  color: var(--text-3);
-  padding-left: var(--space-2);
-}
-
-/* 分组 */
-.groups {
-  padding: var(--space-3) var(--space-4);
-}
-.group {
-  margin-bottom: var(--space-4);
-}
-.group-head {
-  padding: 0 var(--space-1) var(--space-2);
-}
-.group-title {
-  font-size: var(--font-sub);
-  font-weight: 700;
-  color: var(--text-3);
-}
-
-/* 号码行 */
-.row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--card);
-  border-radius: var(--radius-l);
-  box-shadow: var(--shadow-card);
-  padding: var(--space-3) var(--space-4);
-  margin-bottom: var(--space-2);
-}
-.row-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.row-name {
-  font-size: var(--font-body);
-  font-weight: 700;
-  color: var(--text-1);
-}
-.row-remark {
-  margin-top: 4rpx;
-  font-size: var(--font-cap);
-  color: var(--text-3);
-}
-.row-right {
-  display: flex;
-  align-items: center;
-  flex: none;
-  margin-left: var(--space-3);
-}
-/* 公共服务号码不脱敏，完整可见（110/119/120 等短号同样原样展示） */
-.row-phone {
-  font-size: var(--font-body);
-  font-weight: 700;
-  color: var(--brand);
-}
-.row-call {
-  margin-left: var(--space-3);
-  padding: 0 var(--space-3);
-  height: 56rpx;
-  border-radius: var(--radius-full);
-  background: var(--brand-light);
-  color: var(--brand);
-  font-size: var(--font-cap);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-}
-
-.loading {
-  padding: var(--space-6);
-  text-align: center;
-}
-.loading-text {
-  font-size: var(--font-cap);
-  color: var(--text-3);
-}
-
-.foot {
-  display: block;
-  padding: 0 var(--space-4) var(--space-4);
-  font-size: var(--font-cap);
-  color: var(--text-3);
-  text-align: center;
-}
-
-/* 关怀模式 */
-.care-mode .row-name {
-  font-size: var(--font-card);
-}
-.care-mode .row-phone {
-  font-size: var(--font-card);
-}
-.care-mode .row-call {
-  height: 72rpx;
-}
+/* 电话簿补充样式 */
+.pgh--blue{--h1:#2E6BE0;--h2:#153F9B}
+.ph{display:flex;align-items:center;gap:22rpx;margin-top:22rpx;position:relative;z-index:2}
+.ph__t{font-size:42rpx;font-weight:800}
+.ph__s{font-size:19rpx;opacity:.86;margin-top:8rpx}
+.psearch{margin-top:26rpx;position:relative;z-index:2}
+.gph{color:#98A2B3}
+.ecard{margin:0 24rpx;border-radius:22rpx;padding:22rpx 24rpx;background:linear-gradient(135deg,#E4573D,#B92F1D);color:#fff;box-shadow:0 10rpx 28rpx rgba(185,47,29,.24)}
+.ecard__h{display:flex;align-items:center;gap:10rpx}
+.ecard__t{font-size:25rpx;font-weight:800}
+.ecard__s{margin-left:auto;font-size:17rpx;opacity:.82}
+.ecard__g{display:flex;gap:14rpx;margin-top:16rpx}
+.ec{flex:1;height:96rpx;border-radius:16rpx;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ec--hover{background:rgba(255,255,255,.28)}
+.ec__n{font-size:36rpx;font-weight:800;letter-spacing:1rpx;line-height:1.1}
+.ec__l{font-size:17rpx;opacity:.86;margin-top:2rpx}
+.tabs-card{padding:16rpx 20rpx}
+.phone-tabs{flex-wrap:nowrap;overflow-x:auto}
+.phone-tabs .chip{flex:none}
+.pbl{padding:4rpx 24rpx 12rpx}
+.gh__b{font-size:25rpx;font-weight:800;display:flex;align-items:center;gap:12rpx}
+.gh__b::before{content:'';width:5rpx;height:22rpx;border-radius:4rpx;background:var(--blue);flex:none}
+.gh__p{display:block;margin-top:8rpx;font-size:19rpx;color:var(--t3);line-height:1.4}
+.pbc{padding:16rpx 0}
+.pbc--hover{background:#FAFBFC}
+.pbc .acell-i{width:52rpx;height:52rpx;border-radius:14rpx;background:var(--blue-l);color:var(--blue)}
+.pbc .acell-d{font-size:18rpx;line-height:1.4}
+.pbc__n{font-size:25rpx;font-weight:700}
+.pbc__r{flex:none;text-align:right;margin-left:12rpx}
+.pbc__num{display:block;font-size:25rpx;font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
+.pbc__call{display:inline-block;margin-top:5rpx;padding:2rpx 12rpx;border-radius:198rpx;background:var(--blue-l);color:var(--blue);font-size:16rpx;font-weight:700}
+.grp--em .gh__b::before{background:var(--red)}
+.grp--em .pbc__num{color:var(--red)}
+.grp--em .pbc .acell-i{background:var(--red-l);color:var(--red)}
+.grp--em .pbc__call{background:var(--red-l);color:var(--red)}
+.gap{height:24rpx}

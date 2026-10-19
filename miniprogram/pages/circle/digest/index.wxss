@@ -1,0 +1,21 @@
+/* AI 摘要：渐变头部 + 摘要行排版（原型用内联 style，这里类化） */
+.hero {
+  margin: 20rpx 24rpx 0;
+  padding: 26rpx 24rpx;
+  border-radius: 22rpx;
+  color: #fff;
+  background: linear-gradient(118deg, #1F5FD6, #3C7BEA);
+}
+.hero__t { display: flex; align-items: center; gap: 10rpx; font-size: 28rpx; font-weight: 800; }
+.hero__s { margin-top: 10rpx; font-size: 19rpx; line-height: 1.55; opacity: .9; }
+
+.oc__h { display: flex; align-items: center; gap: 8rpx; font-size: 23rpx; font-weight: 800; color: var(--t1); }
+.oc__h text { font-size: 23rpx; }
+
+.oi__b { flex: 1; min-width: 0; }
+.oi__t { display: flex; align-items: center; gap: 10rpx; font-size: 23rpx; font-weight: 800; line-height: 1.45; }
+.oi__d { display: block; margin-top: 6rpx; font-size: 20rpx; color: var(--t2); line-height: 1.5; }
+.oi__s { display: block; margin-top: 2rpx; font-size: 18rpx; color: #B0BAC8; line-height: 1.5; }
+.n--light { background: #EEF3FB; color: #1F5FD6; font-size: 26rpx; font-weight: 400; }
+.ar { flex: none; align-self: center; font-size: 28rpx; color: #98A2B3; }
+.note { margin: 20rpx 24rpx 14rpx; font-size: 19rpx; color: var(--t3); line-height: 1.65; }

@@ -72,7 +72,8 @@ describe('图标引用有效性', () => {
     const missing: string[] = [];
     walk(SRC).forEach((file) => {
       const text = readFileSync(file, 'utf8');
-      const re = /ic-([a-z][\w-]*)/g;
+      // ⚠ 必须带左边界：否则 conic-gradient 里的 "ic-gradient" 会被误判成图标名
+      const re = /(?<![a-zA-Z0-9-])ic-([a-z][\w-]*)/g;
       let m: RegExpExecArray | null;
       while ((m = re.exec(text)) !== null) {
         const name = m[1];

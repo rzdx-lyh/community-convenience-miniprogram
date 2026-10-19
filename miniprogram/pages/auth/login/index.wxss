@@ -1,0 +1,86 @@
+/* 登录页补充样式 */
+.page.authp {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.au-pts text {
+  display: block;
+}
+.au-pts .n {
+  font-size: 32rpx;
+  font-weight: 800;
+}
+.au-pts .l {
+  font-size: 17rpx;
+  opacity: 0.8;
+}
+
+.au-btn {
+  margin-bottom: 4rpx;
+}
+.au-btn--hover {
+  transform: scale(0.985);
+  filter: brightness(0.95);
+}
+.au-btn.off {
+  opacity: 0.5;
+  box-shadow: none;
+  pointer-events: none;
+}
+.au-wx .ic {
+  color: #fff;
+}
+
+.au-alt text {
+  display: block;
+}
+.au-alt .em {
+  font-size: 17rpx;
+  color: var(--t3);
+  margin-top: 4rpx;
+}
+
+.ckb .box {
+  width: 30rpx;
+  height: 30rpx;
+  border-radius: 8rpx;
+  border: 3rpx solid #C9D2DE;
+  background: #fff;
+  flex: none;
+  margin-top: 1rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ckb.on .box {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+.ckb .tick {
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 800;
+  line-height: 1;
+}
+.ckb__t {
+  flex: 1;
+  min-width: 0;
+}
+.lnk {
+  color: var(--blue);
+  font-weight: 600;
+}
+.au-tip .ic {
+  flex: none;
+  color: var(--t3);
+}
+
+.skip {
+  text-align: center;
+  font-size: 21rpx;
+  color: var(--t2);
+  padding: 26rpx 0 0;
+}

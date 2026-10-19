@@ -1,79 +1,94 @@
-<!-- 生鲜零售（CR-027）· 4 子频道 → 商品列表 → 预订登记 -->
-<view class="page">
-  <view class="top">
-    <view class="top__t">生鲜零售</view>
-    <view class="top__s">30 分钟配送到家 · 满 39 元免配送费</view>
+<!-- 生鲜零售 · 提示条 → 频道 tab → 商品双列 → 购物车 → 预订 -->
+<view class="page page--fbar">
+  <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
+    <text>邻里小助手</text>
+    <text>● ● ●</text>
+  </view>
+  <view class="nav">
+    <text class="bk" bindtap="goBack">‹</text>
+    生鲜零售
   </view>
 
-  <view class="tabs">
+  <view class="tip blue tip-row">
+    <view class="ic ic-s ic-scooter"></view>
+    <text>30 分钟配送到家 · 满 39 元免配送费 · <text class="strong">只做预订，不在此支付</text></text>
+  </view>
+
+  <view class="tb tb--top">
     <view
       wx:for="{{tabs}}"
       wx:key="key"
-      class="tab {{tab === item.key ? 'is-on' : ''}}"
+      class="t {{tab === item.key ? 'on' : ''}}"
       data-t="{{item.key}}"
       bindtap="onSwitchTab"
     >{{item.name}}</view>
   </view>
 
-  <view class="note">{{tabNote}}</view>
+  <view class="tab-note">{{tabNote}}</view>
 
-  <view class="sec">
-    <view wx:for="{{items}}" wx:key="id" class="it">
-      <view class="it__l">
-        <view class="it__n">
-          {{item.name}}
-          <text wx:if="{{item.discount}}" class="it__off">{{item.discount}}</text>
+  <view class="sk">
+    <view wx:for="{{items}}" wx:key="id" class="skc">
+      <view wx:if="{{item.discount}}" class="hot">{{item.discount}}</view>
+      <view wx:elif="{{item.isGroup}}" class="hot">拼单</view>
+      <view class="im">{{item.emoji}}</view>
+      <view class="ib">
+        <view class="nm">{{item.name}}</view>
+        <view class="ds">{{item.spec}}</view>
+        <view class="pr">
+          <text class="pr-b">¥{{item.price}}</text>
+          <text class="pr-i">/份</text>
         </view>
-        <view class="it__s">{{item.spec}}</view>
-        <view class="it__m">{{item.meta}}</view>
-        <view wx:if="{{item.percent > 0}}" class="bar">
-          <view class="bar__in" style="width:{{item.percent}}%"></view>
+        <view wx:if="{{item.isGroup}}" class="prog">
+          <view class="bar"><view class="bar-fill" style="width:{{item.percent}}%"></view></view>
+          <view class="prog-t">{{item.meta}}</view>
         </view>
+        <view wx:if="{{item.soldOutText}}" class="sold">{{item.soldOutText}}</view>
       </view>
-      <view class="it__r">
-        <view class="it__p">
-          <text class="it__cur">¥{{item.price}}</text>
-          <text wx:if="{{item.origin}}" class="it__old">¥{{item.origin}}</text>
-        </view>
-        <view class="it__k">剩 {{item.stock}} 份</view>
-        <view class="it__btn {{item.canBuy ? '' : 'is-dis'}}" data-id="{{item.id}}" bindtap="onOrder">
-          {{item.canBuy ? '预订' : '已售罄'}}
-        </view>
+
+      <view wx:if="{{item.count > 0}}" class="qty">
+        <view class="qty-i" data-t="{{tab}}" data-i="{{item.id}}" bindtap="onMinus">−</view>
+        <text class="qty-n">{{item.count}}</text>
+        <view class="qty-i" data-t="{{tab}}" data-i="{{item.id}}" bindtap="onPlus">+</view>
       </view>
+      <view wx:else class="add" data-t="{{tab}}" data-i="{{item.id}}" bindtap="onPlus">+</view>
     </view>
   </view>
 
-  <view class="foot">
-    本页只做<text class="foot__b">预订登记</text>，不收款、不代扣；
-    价格为参考价，实际在驿站自提时现场结算。
-  </view>
+  <view class="grid-note">生鲜每日 6:00 到货，图片为示意；价格随行就市，以档口当日标价为准。</view>
 
   <ai-bar page="fresh" />
 
-  <view wx:if="{{showOrder}}" class="mask" bindtap="onCloseOrder">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">预订 · {{itemName}}</view>
-      <view class="sheet__tip">{{itemSpec}} · 参考价 ¥{{itemPrice}}（到店结算，本页不收款）</view>
+  <view class="footbar">
+    <view class="fb-l">
+      <view class="fb-c">已选 {{cartCount}} 件</view>
+      <view class="fb-t">¥{{cartTotalText}}</view>
+    </view>
+    <view class="fb-btn {{cartCount ? '' : 'is-dis'}}" bindtap="onOpenOrder">提交预订</view>
+  </view>
 
-      <view class="row">
-        <view class="row__lb">数量</view>
-        <view class="step">
-          <view class="step__b" bindtap="onMinus">−</view>
-          <view class="step__n">{{count}}</view>
-          <view class="step__b" bindtap="onPlus">＋</view>
+  <!-- 预订弹层 -->
+  <view wx:if="{{showOrder}}" class="mask" bindtap="onCloseOrder">
+    <view class="sheet show" catchtap="noop" catchtouchmove="noop">
+      <view class="sh-hd">确认预订</view>
+      <view class="sh-sub">{{tabName}} · 共 {{cartCount}} 件</view>
+      <view class="olist">
+        <view wx:for="{{cartLines}}" wx:key="key" class="orow">
+          <view class="on">{{item.name}}<text class="os">{{item.spec}}</text></view>
+          <view class="oc">× {{item.count}}</view>
+          <view class="oa">¥{{item.lineTotal}}</view>
         </view>
       </view>
-
-      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
-      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{room}}" bindinput="onInputRoom" />
-      <view class="sheet__lb">联系电话 <text class="req">必填</text></view>
-      <input class="inp" type="number" placeholder="例：13800138000" maxlength="16" value="{{contact}}" bindinput="onInputContact" />
-      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
-      <textarea class="ta" placeholder="例如：晚上 7 点后来取，要新鲜一点的" maxlength="120" value="{{note}}" bindinput="onInputNote" />
-
-      <view class="sheet__ft">
-        <view class="sheet__btn" bindtap="onCloseOrder">取消</view>
-        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmit">{{submitting ? '提交中…' : '提交预订'}}</view>
+      <view class="ototal">参考合计<text class="ot">¥{{cartTotalText}}</text></view>
+      <view class="lbl">楼栋房号<text class="em">必填</text></view>
+      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="32" value="{{room}}" bindinput="onInputRoom" />
+      <view class="lbl">联系电话<text class="em">必填</text></view>
+      <input class="inp" type="number" placeholder="用于到货通知" maxlength="15" value="{{contact}}" bindinput="onInputContact" />
+      <view class="lbl">备注<text class="em">选填</text></view>
+      <textarea class="ta" placeholder="例如：放门口，不用敲门" maxlength="120" value="{{note}}" bindinput="onInputNote" />
+      <view class="pay-note">本页不收款。预订成功后到驿站自提时现场结算，未取自动取消。</view>
+      <view class="sh-btns">
+        <view class="btn ghost" bindtap="onCloseOrder">再看看</view>
+        <view class="btn" bindtap="onSubmit">{{submitting ? '提交中…' : '确认预订'}}</view>
       </view>
     </view>
   </view>

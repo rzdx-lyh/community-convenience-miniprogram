@@ -1,270 +1,144 @@
-/* AI 办事助手（FE-2）· 全部取 Design Token v1.1，禁止硬编码色值 */
-.page {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: var(--bg);
+/* AI 助手 · 原型类之外的补充（气泡/思考/引用均在 layout.wxss，这里只补布局与固定输入条） */
+
+.page--chat {
+  padding-bottom: 200rpx;
 }
 
-/* 顶部导航 */
-.nav {
+.sbar__sig {
+  font-size: 17rpx;
+  color: var(--t3);
+}
+
+.nav--plain {
+  border-bottom: 0;
+}
+
+/* 欢迎卡 */
+.wel {
+  margin-bottom: 22rpx;
+  padding: 24rpx;
+  background: #fff;
+  border-radius: 22rpx;
+  box-shadow: var(--sh);
+}
+
+.wel__t {
   display: flex;
   align-items: center;
-  height: 88rpx;
-  padding: 0 var(--space-4);
-  background: var(--card);
-  border-bottom: 2rpx solid var(--line);
-  flex: none;
+  gap: 10rpx;
+  font-size: 27rpx;
+  font-weight: 800;
 }
-.nav-back {
-  width: 88rpx;
-  height: 88rpx;
+
+.wel__t .ic {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 14rpx;
+  background: var(--indigo-l);
+  color: var(--indigo);
+  font-size: 26rpx;
+}
+
+.wel__d {
+  margin-top: 10rpx;
+  font-size: 21rpx;
+  line-height: 1.68;
+  color: var(--t2);
+}
+
+/* 原型里 `.sug div` / `.think div` / `.mtag b` 依赖 HTML 元素选择器，
+   小程序只有 view/text，这里按类名补回同款样式 */
+.sug view {
+  font-size: 19rpx;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--blue);
+  padding: 6rpx 16rpx;
+  border-radius: 198rpx;
+}
+
+.think view {
+  font-size: 20rpx;
+  color: var(--t3);
+  line-height: 1.7;
+  display: flex;
+  gap: 8rpx;
+}
+
+.think view.done {
+  color: #5A6472;
+}
+
+.mtag__b {
+  background: var(--blue-l);
+  color: var(--blue);
+  padding: 1px 10rpx;
+  border-radius: 6rpx;
+  font-weight: 800;
+}
+
+/* 回答正文保留换行 */
+.bub__t {
+  font-size: 24rpx;
+  line-height: 1.72;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 来源引用（原型 .cites 内是 span，小程序用 view） */
+.cites .cite {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-}
-.nav-back-icon {
-  font-size: 40rpx;
-  color: var(--text-1);
-}
-.nav-title {
-  flex: 1;
-  font-size: var(--font-title);
-  font-weight: 700;
-  color: var(--text-1);
-}
-.nav-actions {
-  display: flex;
-  gap: var(--space-3);
-}
-.nav-act {
-  font-size: var(--font-sub);
-  color: var(--brand);
+  gap: 6rpx;
+  font-size: 17rpx;
+  background: #F1F5FD;
+  color: #4A5D78;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
 }
 
-/* 对话区 */
-.chat {
-  flex: 1;
-  padding: var(--space-3) var(--space-4);
-  box-sizing: border-box;
-}
-.row {
-  display: flex;
-  margin-bottom: var(--space-4);
-}
-.row-ai {
-  justify-content: flex-start;
-}
-.row-user {
-  justify-content: flex-end;
-}
-.avatar {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: var(--radius-full);
-  font-size: 22rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  margin-right: var(--space-2);
-}
-.avatar-ai {
-  background: var(--brand-light);
-  color: var(--brand);
-  font-weight: 700;
+.cites .cite .ic {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 0;
+  font-size: 18rpx;
+  color: #4A5D78;
 }
 
-.bubble {
-  max-width: 75%;
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-l);
-}
-.bubble-ai {
-  background: var(--card);
-  border-top-left-radius: var(--radius-s);
-  box-shadow: var(--shadow-card);
-}
-.bubble-user {
-  background: var(--brand-gradient);
-  border-top-right-radius: var(--radius-s);
-}
-.bubble-text {
-  font-size: var(--font-body);
-  line-height: 1.4;
-  color: var(--text-1);
-}
-.bubble-user-text {
-  color: #ffffff;
-}
-.bubble-time {
-  display: block;
-  margin-top: var(--space-2);
-  font-size: var(--font-cap);
-  color: var(--text-3);
-}
-.bubble-time-user {
-  color: rgba(255, 255, 255, 0.75);
-  text-align: right;
+/* 输入区：固定底部，长会话不把输入框推走 */
+.aiask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: #fff;
 }
 
-/* 来源引用条 */
-.source {
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
-  border-top: 2rpx solid var(--green);
-}
-.source-text {
-  font-size: var(--font-cap);
-  color: var(--green);
+.aiask .voice .ic {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  color: inherit;
+  font-size: 30rpx;
 }
 
-/* 降级态 */
-.degraded {
-  margin-top: var(--space-2);
-  padding: var(--space-2);
-  background: var(--accent-warm-light);
-  border-radius: var(--radius-m);
-}
-.degraded-text {
-  font-size: var(--font-cap);
-  color: var(--text-2);
-}
-.degraded-btn {
-  margin-top: var(--space-2);
-  height: 64rpx;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-m);
-  background: var(--accent-warm);
-  display: inline-flex;
-  align-items: center;
-}
-.degraded-btn-text {
-  font-size: var(--font-cap);
-  color: #ffffff;
-  font-weight: 600;
+.send--busy {
+  opacity: 0.45;
 }
 
-/* 反馈 */
-.feedback {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-.fb {
-  height: 56rpx;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-full);
-  border: 2rpx solid var(--line);
-  font-size: var(--font-cap);
-  color: var(--text-2);
-  display: flex;
-  align-items: center;
-}
-.fb-on {
-  background: var(--brand-light);
-  border-color: var(--brand);
-  color: var(--brand);
-}
-.disclaimer {
-  display: block;
-  margin-top: var(--space-2);
-  font-size: var(--font-cap);
-  color: var(--text-3);
-}
-.thinking {
-  font-size: var(--font-body);
-  color: var(--text-2);
-}
-
-/* 快捷提问 */
-.suggest {
-  margin-top: var(--space-3);
-}
-.suggest-title {
-  font-size: var(--font-cap);
-  color: var(--text-3);
-}
-.suggest-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-.suggest-pill {
-  height: 64rpx;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-full);
-  background: var(--brand-light);
-  color: var(--brand);
-  font-size: var(--font-sub);
-  display: flex;
-  align-items: center;
-}
-
-/* 底部输入栏 */
-.composer {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  background: var(--card);
-  border-top: 2rpx solid var(--line);
-  flex: none;
-}
-.voice {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: var(--radius-full);
-  background: var(--brand);
+/* 原型按钮是 <button>（自带居中），小程序用 view 需补 flex 居中 */
+.aiask .send {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: none;
 }
-.voice-icon {
-  font-size: 32rpx;
-}
-.input {
-  flex: 1;
-  height: 88rpx;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-m);
-  border: 2rpx solid var(--line);
-  font-size: var(--font-body);
-  background: var(--card);
-}
-.input-ph {
-  color: var(--text-3);
-}
-.send {
-  height: 88rpx;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-m);
-  background: var(--brand);
-  display: flex;
-  align-items: center;
-  flex: none;
-}
-.send-off {
-  opacity: 0.4;
-}
-.send-text {
-  font-size: var(--font-btn);
-  color: #ffffff;
+
+.aifoot__link {
+  color: var(--blue);
   font-weight: 700;
 }
 
-/* 关怀模式：字号重排（非整页 scale） */
-.care-mode .bubble-text {
-  font-size: var(--font-title);
-}
-.care-mode .suggest-pill,
-.care-mode .fb {
-  height: 80rpx;
-}
-.care-mode .voice,
-.care-mode .input,
-.care-mode .send {
-  height: 104rpx;
+.hv {
+  opacity: 0.72;
 }

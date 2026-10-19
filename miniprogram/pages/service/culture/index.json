@@ -1,8 +1,5 @@
 {
-  "navigationBarTitleText": "文化服务",
-  "navigationBarBackgroundColor": "#F3F5F9",
-  "navigationBarTextStyle": "black",
-  "usingComponents": {
-    "ai-bar": "../../../components/ai-bar/index"
-  }
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "图书文化",
+  "backgroundColor": "#4B45B8"
 }

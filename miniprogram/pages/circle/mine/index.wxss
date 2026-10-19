@@ -1,0 +1,4 @@
+/* 我的圈子：仅补 tab 与卡片之间的间距，其余沿用 layout.wxss */
+.ftabs { margin-top: 4rpx; }
+.post2 .p-act { gap: 0; }
+.empty { padding-top: 120rpx; }

@@ -1,8 +1,5 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "健康服务",
-  "navigationBarBackgroundColor": "#F3F5F9",
-  "navigationBarTextStyle": "black",
-  "usingComponents": {
-    "ai-bar": "../../../components/ai-bar/index"
-  }
+  "backgroundColor": "#0E7C6B"
 }

@@ -31,7 +31,9 @@ export function initialOfName(name: string): string {
   return String(name ?? '').trim().slice(0, 1) || '服';
 }
 
-/** 把单个服务项拍平成视图模型；book/opts 都从 targetParams 解出 */
+/** 把单个服务项拍平成视图模型；预约标志与选项都从 targetParams 解出
+ *  CR-028：预约类服务改指独立预约页，参数名 book → svc；
+ *          这里同时兼容两种写法（旧数据 / 服务端缓存仍可能是 book）。 */
 export function toItemVM(item: ServiceItem): ItemVM {
   const params = item.targetParams ?? {};
   return {
@@ -39,7 +41,7 @@ export function toItemVM(item: ServiceItem): ItemVM {
     name: item.name,
     desc: item.desc ?? '',
     iconText: initialOfName(item.name),
-    book: String(params.book ?? '') !== '',
+    book: String(params.svc ?? params.book ?? '') !== '',
     opts: String(params.opts ?? '')
       .split('|')
       .map((s) => s.trim())

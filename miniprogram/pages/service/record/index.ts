@@ -1,7 +1,7 @@
 /**
- * 健康档案（CR-026）
+ * 健康档案（CR-028 重写，保留 CR-026 能力）
  *
- * 结构：档案概览 → 指标录入（血压 / 血糖）→ 自测记录 → 家庭医生签约
+ * 结构：彩色页头（最近血压）→ 指标卡 + 趋势 → 记录一次自测 → 测量记录 → 家庭医生签约
  *
  * ⚠ 两条红线（写死在文案里，别删）：
  *   1. **数据纯本地**：自测记录只存 Storage，不上传云端、不新增集合；
@@ -22,11 +22,32 @@ import {
   type RecordKind,
 } from './viewmodel';
 
-/** 自测记录存储键（本地，不上传云端） */
+const info = wx.getWindowInfo();
+
+/** 自测记录存储键（本地，不上传云端）——保持与 CR-026 完全兼容 */
 const RECORD_KEY = STORAGE_KEYS.HEALTH_RECORDS;
 
 const RED_LINE =
   '本页记录仅保存在本机，不会上传；指标解读为一般性参考，不能替代医生诊断，异常请及时到社区门诊就诊。';
+
+interface RecVM extends HealthRecord {
+  valueText: string;
+  unitText: string;
+  icon: string;
+}
+
+interface TrendVM {
+  k: number;
+  h: number;
+  on: boolean;
+}
+
+function tagOf(level?: string): string {
+  if (level === 'normal') return 'ok';
+  if (level === 'watch') return 'warn';
+  if (level === 'high') return 'hi';
+  return 'mute';
+}
 
 function nowText(): string {
   const d = new Date();
@@ -36,10 +57,21 @@ function nowText(): string {
 
 Page({
   data: {
+    statusBarHeight: info.statusBarHeight,
+
     /** 档案概览 */
     summary: '',
     redLine: RED_LINE,
     count: 0,
+    bpCount: 0,
+    latestSys: '--',
+    latestDia: '--',
+    bpLevelText: '待记录',
+    bpTag: 'mute',
+    gluText: '--',
+    gluLevelText: '待记录',
+    gluTag: 'mute',
+    trend: [] as TrendVM[],
 
     /** 录入区 */
     kind: 'bp' as RecordKind,
@@ -50,7 +82,7 @@ Page({
     preview: null as { levelText: string; advice: string; level: string } | null,
 
     /** 记录列表 */
-    records: [] as HealthRecord[],
+    records: [] as RecVM[],
 
     /** 签约弹层 */
     showSign: false,
@@ -76,10 +108,61 @@ Page({
 
   loadRecords(): void {
     const list = getStorage<HealthRecord[]>(RECORD_KEY) ?? [];
+    const bpList = list.filter((r) => r.kind === 'bp');
+    const bp = bpList[0];
+    const glu = list.filter((r) => r.kind === 'glucose')[0];
+
+    const recent = bpList.slice(0, 7).reverse();
+    const vals = recent.map((r) => r.sys);
+    const min = vals.length ? Math.min(...vals) - 4 : 0;
+    const max = vals.length ? Math.max(...vals) + 4 : 1;
+    const trend: TrendVM[] = recent.map((r, i) => ({
+      k: i,
+      h: Math.max(24, Math.min(100, Math.round(((r.sys - min) / (max - min || 1)) * 76 + 24))),
+      on: i === recent.length - 1,
+    }));
+
     this.setData({
-      records: list,
+      records: list.slice(0, 10).map((r) => ({
+        ...r,
+        valueText: r.kind === 'bp' ? `${r.sys} / ${r.dia}` : `${r.glucose}`,
+        unitText: r.kind === 'bp' ? 'mmHg' : 'mmol/L',
+        icon: r.kind === 'bp' ? 'heart' : 'droplet',
+      })),
       count: list.length,
+      bpCount: bpList.length,
+      latestSys: bp ? String(bp.sys) : '--',
+      latestDia: bp ? String(bp.dia) : '--',
+      bpLevelText: bp ? bp.levelText : '待记录',
+      bpTag: tagOf(bp?.level),
+      gluText: glu ? String(glu.glucose) : '--',
+      gluLevelText: glu ? glu.levelText : '待记录',
+      gluTag: tagOf(glu?.level),
+      trend,
       summary: latestSummary(list),
+    });
+  },
+
+  goBack(): void {
+    if (getCurrentPages().length > 1) {
+      wx.navigateBack();
+      return;
+    }
+    wx.switchTab({ url: '/pages/index/index' });
+  },
+
+  /** 页头右上角：预约上门测量（走通用预约页，不新增页面） */
+  onBookMeasure(): void {
+    wx.navigateTo({
+      url: `/pages/service/book/index?svc=${encodeURIComponent('上门健康测量')}&cat=health&opts=${encodeURIComponent('血压|血糖|两项都测')}`,
+      fail: () => toast('预约页暂时打不开，请稍后再试'),
+    });
+  },
+
+  onAskAi(): void {
+    wx.navigateTo({
+      url: '/pages/assistant/index',
+      fail: () => toast('AI 助手暂时打不开，请稍后再试'),
     });
   },
 

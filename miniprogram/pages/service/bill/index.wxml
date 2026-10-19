@@ -1,108 +1,167 @@
-<!-- 缴费账单（CR-026）· 待缴合计 → 户号绑定 → 账单列表 → 水费试算 → 缴费引导 -->
+<!-- 缴费代办 · 彩色页头 → 账单卡 → 代办进度 → 水费试算 -->
 <view class="page">
-  <!-- 待缴合计 -->
-  <view class="top">
-    <view class="top__t">本期待缴合计</view>
-    <view class="top__n">¥ {{unpaid}}</view>
-    <view class="top__s">{{demoHintText}} · 共 {{bills.length}} 笔</view>
-    <view class="top__btn" bindtap="onPayGuide">去微信「生活缴费」缴纳</view>
+  <view class="pgh pgh--gold">
+    <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
+      <text>邻里小助手</text>
+      <text>● ● ●</text>
+    </view>
+    <view class="pgh-nav">
+      <text class="pgh-bk" bindtap="goBack">‹</text>
+      <text class="pgh-t">缴费代办</text>
+      <text class="pgh-rt" bindtap="onHelp">说明</text>
+    </view>
+    <view class="pgh-k">
+      <view>
+        <view class="pgh-lb" style="margin-bottom:6px">本期应缴合计</view>
+        <view class="pgh-num"><text class="cur">¥</text>{{totalText}}</view>
+      </view>
+      <view class="pgh-lb">
+        <view>{{summaryText}}</view>
+        <view>资金在微信「生活缴费」完成</view>
+      </view>
+      <view class="pgh-chip" bindtap="onHelp">不经手资金 ›</view>
+    </view>
   </view>
 
-  <!-- 户号绑定 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">户号绑定</text>
-      <text class="sec__s">绑定后可查欠费与账单</text>
-    </view>
+  <view class="body">
+    <!-- 水 / 电 / 燃气 -->
     <view
-      wx:for="{{accounts}}"
+      wx:for="{{bills}}"
       wx:key="key"
-      class="acc {{item.bound ? 'acc--on' : ''}}"
+      class="sc"
+      hover-class="hover-dim"
       data-k="{{item.key}}"
-      bindtap="onBind"
+      bindtap="onBillTap"
     >
-      <view class="acc__l">
-        <view class="acc__n">{{item.name}}</view>
-        <view class="acc__m">{{item.masked}}</view>
+      <view class="si tint-{{item.tint}}">
+        <view class="ic ic-m ic-{{item.icon}}" />
       </view>
-      <view class="acc__r">{{item.bound ? '重新绑定' : '去绑定'}}</view>
+      <view class="sb">
+        <view class="sn">
+          {{item.name}}
+          <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
+        </view>
+        <view class="sd">户号 {{item.masked}} · {{item.dayText}}</view>
+        <view class="bar">
+          <view class="bar-fill" style="width:{{item.percent}}%;background:{{item.color}}"></view>
+        </view>
+      </view>
+      <view class="sa">
+        <text class="b">{{item.amountText}}</text>
+        <text class="sa-s">{{item.bound ? '应缴' : '未绑定'}}</text>
+      </view>
+    </view>
+
+    <!-- 代办进度 -->
+    <view class="dash" style="margin-top:24rpx">
+      <view class="d-h"><text class="dh-b">代办进度</text><text class="dh-em">近 7 天</text></view>
+      <view class="tl" style="margin-top:8rpx">
+        <view class="tl-i done">
+          <view class="tl-d"></view>
+          <view class="tl-b">
+            <view class="tl-t">代缴登记已提交</view>
+            <view class="tl-s">水费 · 10-17 09:12</view>
+          </view>
+        </view>
+        <view class="tl-i now">
+          <view class="tl-d"></view>
+          <view class="tl-b">
+            <view class="tl-t">社区代缴中</view>
+            <view class="tl-s">预计今天 15:00 前完成，完成后推送凭证</view>
+          </view>
+        </view>
+        <view class="tl-i todo">
+          <view class="tl-d"></view>
+          <view class="tl-b">
+            <view class="tl-t">完成</view>
+            <view class="tl-s">可在我的 → 代办记录下载电子凭证</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 水费试算（保留原有试算能力） -->
+    <view class="dash">
+      <view class="d-h"><text class="dh-b">水费试算</text><text class="dh-em">阶梯价 + 污水 1.1 元/吨</text></view>
+      <input
+        class="inp calc-inp"
+        type="digit"
+        value="{{usage}}"
+        placeholder="输入本月用水量（吨）"
+        bindinput="onUsageInput"
+      />
+      <block wx:if="{{calc}}">
+        <view wx:for="{{calc.tiers}}" wx:key="label" class="calc-row">
+          <text class="calc-l">{{item.label}}</text>
+          <text class="calc-m">{{item.usage}} 吨 × {{item.price}}</text>
+          <text class="calc-a">¥ {{item.amount}}</text>
+        </view>
+        <view class="calc-row">
+          <text class="calc-l">污水处理费</text>
+          <text class="calc-m">{{calc.usage}} 吨 × 1.1</text>
+          <text class="calc-a">¥ {{calc.sewage}}</text>
+        </view>
+        <view class="calc-row calc-row--sum">
+          <text class="calc-l">合计</text>
+          <text class="calc-a">¥ {{calc.total}}</text>
+        </view>
+      </block>
+      <view wx:else class="calc-ph">试算结果仅供核对，实际金额以官方账单为准。</view>
+    </view>
+
+    <view class="page-note">
+      代缴只做登记与转派，付款在微信「生活缴费」完成；社区不留存你的支付信息。
     </view>
   </view>
 
-  <!-- 账单列表 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">账单明细</text>
-    </view>
-    <view wx:for="{{bills}}" wx:key="id" class="bill">
-      <view class="bill__l">
-        <view class="bill__tag" style="background:{{item.color}}">{{item.name}}</view>
-        <view class="bill__p">{{item.period}}</view>
-      </view>
-      <view class="bill__m">{{item.usage}} {{item.unit}}</view>
-      <view class="bill__r">
-        <text class="bill__a">¥ {{item.amount}}</text>
-        <text class="bill__s {{item.paid ? 'is-paid' : ''}}">{{item.statusText}}</text>
-      </view>
+  <!-- 弹层 -->
+  <view wx:if="{{sheet}}" class="mask" bindtap="onCloseSheet">
+    <view class="sheet show" catchtap="noop" catchtouchmove="noop">
+      <!-- 办理账单 -->
+      <block wx:if="{{sheet === 'bill'}}">
+        <view class="sh-hd">{{activeName}} · 应缴 {{activeAmountText}}</view>
+        <view class="sh-sub">户号 {{activeAccountText}}</view>
+        <view class="tip">本页不收款、不代扣。缴纳请在微信「生活缴费」完成；需要志愿者上门可在此登记代办。</view>
+        <view class="lbl">楼栋房号<text class="em">必填</text></view>
+        <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="32" value="{{proxyRoom}}" bindinput="onInputProxyRoom" />
+        <view class="lbl">备注<text class="em">选填</text></view>
+        <textarea class="ta" placeholder="例如：老人不会操作，希望协助" maxlength="120" value="{{proxyNote}}" bindinput="onInputProxyNote" />
+        <view class="sh-btns">
+          <view class="btn ghost" bindtap="onPayGuide">去生活缴费</view>
+          <view class="btn" bindtap="onSubmitProxy">{{submitting ? '提交中…' : '登记代办'}}</view>
+        </view>
+      </block>
+
+      <!-- 户号绑定 -->
+      <block wx:if="{{sheet === 'bind'}}">
+        <view class="sh-hd">绑定{{activeName}}户号</view>
+        <view class="sh-sub">户号只存在本机，核对通过后生效</view>
+        <view class="lbl">户号<text class="em">必填</text></view>
+        <input class="inp" placeholder="填写纸质账单或表箱上的编号" maxlength="24" value="{{bindAccount}}" bindinput="onInputBindAccount" />
+        <view class="lbl">楼栋房号<text class="em">必填</text></view>
+        <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="32" value="{{bindRoom}}" bindinput="onInputBindRoom" />
+        <view class="lbl">备注<text class="em">选填</text></view>
+        <textarea class="ta" placeholder="例如：户名是家人的名字" maxlength="120" value="{{bindNote}}" bindinput="onInputBindNote" />
+        <view class="sh-btns">
+          <view class="btn ghost" bindtap="onCloseSheet">取消</view>
+          <view class="btn" bindtap="onSubmitBind">{{submitting ? '提交中…' : '提交绑定'}}</view>
+        </view>
+      </block>
+
+      <!-- 资金说明 -->
+      <block wx:if="{{sheet === 'help'}}">
+        <view class="sh-hd">关于资金</view>
+        <view class="help-list">
+          <view>1. 本页只做户号绑定、账单展示与代办登记，不收款、不代扣。</view>
+          <view>2. 缴纳在微信「生活缴费」完成，社区不经手资金、不留存支付信息。</view>
+          <view>3. 代办登记提交后由社区志愿者转派，完成后推送电子凭证。</view>
+        </view>
+        <view class="sh-btns">
+          <view class="btn" bindtap="onCloseSheet">我知道了</view>
+        </view>
+      </block>
     </view>
   </view>
 
-  <!-- 水费试算 -->
-  <view class="sec">
-    <view class="sec__hd">
-      <text class="sec__t">水费试算</text>
-      <text class="sec__s">阶梯价 + 污水处理费 1.1 元/吨</text>
-    </view>
-    <input
-      class="inp"
-      type="digit"
-      value="{{usage}}"
-      placeholder="输入本月用水量（吨）"
-      placeholder-class="inp__ph"
-      bindinput="onUsageInput"
-    />
-    <block wx:if="{{calc}}">
-      <view wx:for="{{calc.tiers}}" wx:key="label" class="tier">
-        <text class="tier__l">{{item.label}}</text>
-        <text class="tier__m">{{item.usage}} 吨 × {{item.price}}</text>
-        <text class="tier__a">¥ {{item.amount}}</text>
-      </view>
-      <view class="tier">
-        <text class="tier__l">污水处理费</text>
-        <text class="tier__m">{{calc.usage}} 吨 × 1.1</text>
-        <text class="tier__a">¥ {{calc.sewage}}</text>
-      </view>
-      <view class="tier tier--sum">
-        <text class="tier__l">合计</text>
-        <text class="tier__a">¥ {{calc.total}}</text>
-      </view>
-    </block>
-  </view>
-
-  <view class="foot">
-    本页仅做账单查询与户号登记，<text class="foot__b">不收款、不代扣</text>；
-    金额以官方账单为准，实际缴纳请在微信「生活缴费」完成。
-  </view>
-
-  <!-- CR-024：页面级 AI 入口（上下文 = 缴费账单） -->
   <ai-bar page="bill" />
-
-  <!-- 户号绑定弹层 -->
-  <view wx:if="{{showBind}}" class="mask" bindtap="onCloseBind">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet__hd">户号绑定 · {{bindKindName}}</view>
-      <view class="sheet__tip">{{bindHint}}</view>
-      <view class="sheet__lb">户号 <text class="req">必填</text></view>
-      <input class="inp" placeholder="按上方提示填写户号" maxlength="24" value="{{bindAccount}}" bindinput="onInputAccount" />
-      <view class="sheet__lb">楼栋房号 <text class="req">必填</text></view>
-      <input class="inp" placeholder="例：3 号楼 2 单元 502" maxlength="24" value="{{bindRoom}}" bindinput="onInputRoom" />
-      <view class="sheet__lb">备注 <text class="opt">选填</text></view>
-      <textarea class="ta" placeholder="例如：户名是家人的名字" maxlength="120" value="{{bindNote}}" bindinput="onInputNote" />
-      <view class="sheet__tip">提交后由工作人员核对户名与房号，一致即可生效；本页不收款。</view>
-      <view class="sheet__ft">
-        <view class="sheet__btn" bindtap="onCloseBind">取消</view>
-        <view class="sheet__btn sheet__btn--main {{submitting ? 'is-dis' : ''}}" bindtap="onSubmitBind">{{submitting ? '提交中…' : '提交登记'}}</view>
-      </view>
-    </view>
-  </view>
 </view>

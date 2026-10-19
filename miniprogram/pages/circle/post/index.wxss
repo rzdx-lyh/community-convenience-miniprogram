@@ -1,0 +1,23 @@
+/* 发布动态：只补原型未覆盖的表单行、图片宫格与底部条定位 */
+.fbar { left: 0; right: 0; }
+.fbar .btn { flex: 1; width: auto; height: 80rpx; font-size: 26rpx; }
+.fbar .btn[disabled] { background: #DCE3EC; color: #9AA6B6; }
+.fbar__sum { flex: none; font-size: 19rpx; color: var(--t3); }
+
+.lbl { font-size: 23rpx; font-weight: 700; color: var(--t2); margin: 24rpx 0 12rpx; }
+.cnt { margin-top: 8rpx; text-align: right; font-size: 18rpx; color: var(--t3); }
+.ph { color: #A9B4C4; }
+
+.dgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14rpx; margin-top: 6rpx; }
+.d { position: relative; height: 186rpx; border-radius: 16rpx; overflow: hidden; background: linear-gradient(135deg, #EEF3FB, #DCE6F6); }
+.d image { width: 100%; height: 100%; display: block; }
+.d .del { position: absolute; right: 8rpx; top: 8rpx; width: 36rpx; height: 36rpx; border-radius: 50%; background: rgba(0, 0, 0, .5); color: #fff; font-size: 24rpx; line-height: 34rpx; text-align: center; }
+.d.add { border: 1px dashed #C9D3E2; background: #fff; color: #A9B4C4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6rpx; font-size: 19rpx; }
+.d.add .plus { font-size: 46rpx; line-height: 1; }
+
+.fitem { display: flex; align-items: center; height: 84rpx; border-bottom: 1px solid #F1F4F9; }
+.fitem .k { width: 180rpx; flex: none; font-size: 23rpx; color: var(--t2); }
+.fitem input { flex: 1; font-size: 23rpx; text-align: right; }
+
+.aipolish { display: inline-flex; align-items: center; gap: 8rpx; margin-top: 22rpx; padding: 10rpx 20rpx; border-radius: 198rpx; background: var(--blue-l); color: var(--blue); font-size: 20rpx; font-weight: 700; }
+.tip2 { margin-top: 20rpx; font-size: 19rpx; color: var(--t3); line-height: 1.6; }

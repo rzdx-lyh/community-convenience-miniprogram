@@ -1,57 +1,117 @@
-<!-- 社区圈子（FE-12 · 最小版只读流） -->
-<view class="page {{elderMode ? 'care-mode' : ''}}">
-  <!-- Tag 分类 Tab -->
-  <view class="tabs">
-    <view
-      wx:for="{{tabs}}"
-      wx:key="value"
-      class="tabs__item {{activeType === item.value ? 'is-active' : ''}}"
-      data-value="{{item.value}}"
-      bindtap="onTabTap"
-    >{{item.label}}</view>
+<!-- 社区圈子（设计稿 pgCircle v1.4） -->
+<view class="page circle-page">
+  <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
   </view>
 
-  <!-- CR-024：页面级 AI 入口（上下文 = 邻里互助） -->
-  <ai-bar page="circle" />
+  <view class="nav nav--flat">
+    <text>社区圈子</text>
+    <view class="rt" bindtap="onPostNew">＋ 发布</view>
+  </view>
 
-  <!-- 列表 -->
-  <block wx:if="{{list.length > 0}}">
-    <view
-      wx:for="{{list}}"
-      wx:key="_id"
-      class="post"
-      data-id="{{item._id}}"
-      bindtap="onCardTap"
-    >
-      <view class="post__head">
-        <text class="post__type">{{item.typeLabel}}</text>
-        <text wx:if="{{item.topFlag}}" class="post__top">置顶</text>
-        <text class="post__time">{{item.timeText}}</text>
-      </view>
-      <view class="post__title">{{item.title}}</view>
-      <view class="post__content {{item.expanded ? 'is-expanded' : ''}}">{{item.content}}</view>
-      <view class="post__foot">
-        <view class="post__author">
-          <text class="post__author-name">{{item.authorName}}</text>
-          <text wx:if="{{item.isOfficial}}" class="post__badge">官方</text>
-        </view>
-        <text class="post__view">{{item.viewCount}} 次浏览</text>
-      </view>
-      <view wx:if="{{item.tags.length > 0}}" class="post__tags">
-        <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="post__tag">{{tag}}</text>
-      </view>
+  <!-- 圈子信息条 -->
+  <view class="cbar">
+    <view class="cb-ic"><view class="ic ic-m ic-building" /></view>
+    <view class="cb-b">
+      <text class="t">阳光社区圈子</text>
+      <text class="s">1,286 位邻居 · 今日 32 条新动态</text>
     </view>
-    <view class="list-footer">
-      <text wx:if="{{loadingMore}}">加载中…</text>
-      <text wx:elif="{{hasMore}}">上拉加载更多</text>
-      <text wx:else>没有更多了</text>
+    <view class="join" bindtap="onMine">已加入</view>
+  </view>
+
+  <!-- AI 今日摘要 -->
+  <view class="aidig" bindtap="onDigest" hover-class="hover-dim">
+    <view class="d-top">
+      <view class="ic ic-s ic-sparkles icw" />
+      <text class="dt">AI 今日摘要</text>
+      <text class="d-badge">32 条动态 → 3 件事</text>
+    </view>
+    <view class="d-li">2 号门施工中，早高峰走东门，电动车绕南门坡道。</view>
+    <view class="d-li">西门口路面已修好，不用再绕了。</view>
+    <view class="d-li">周六羽毛球、周日读书会都还能报名。</view>
+    <view class="go2">看完整摘要 ›</view>
+  </view>
+
+  <!-- feed tabs -->
+  <view class="ftabs">
+    <view class="f {{feed === 'rec' ? 'on' : ''}}" data-v="rec" bindtap="onFeedTab">推荐</view>
+    <view class="f {{feed === 'follow' ? 'on' : ''}}" data-v="follow" bindtap="onFeedTab">
+      <text>关注</text><text class="em">{{followN}}</text>
+    </view>
+    <view class="f {{feed === 'near' ? 'on' : ''}}" data-v="near" bindtap="onFeedTab">
+      <text>本楼</text><text class="em">{{nearN}}</text>
+    </view>
+  </view>
+
+  <!-- 话题广场 -->
+  <view class="st st--topic">
+    <text class="b">话题广场</text>
+    <text class="em">{{topics.length}} 个话题</text>
+    <text class="more" bindtap="onDigest">AI 摘要 ›</text>
+  </view>
+  <view class="ctabs">
+    <view
+      class="tc"
+      wx:for="{{topics}}"
+      wx:key="name"
+      data-v="{{item.name}}"
+      bindtap="onTopicTap"
+      hover-class="hover-dim"
+    >
+      <view class="tc-b"><view class="ic ic-s ic-{{item.icon}}" /><text>{{item.name}}</text></view>
+      <text class="tc-s">{{item.m}} 人参与</text>
+    </view>
+  </view>
+
+  <!-- 帖子流 -->
+  <block wx:if="{{list.length}}">
+    <view class="post2" wx:for="{{list}}" wx:key="id">
+      <view class="p-h" data-id="{{item.id}}" bindtap="onPostTap">
+        <view class="p-av" style="background:{{item.color}}">{{item.av}}</view>
+        <view class="p-who">
+          <view class="p-nm">
+            <text wx:if="{{item.pin}}" class="ptop">置顶</text>
+            <text>{{item.who}}</text>
+            <text wx:if="{{item.official}}" class="p-v">官方</text>
+          </view>
+          <view class="p-mt">{{item.unit}} · {{item.time}}</view>
+        </view>
+        <view class="p-more">···</view>
+      </view>
+
+      <view class="p-tx" data-id="{{item.id}}" bindtap="onPostTap">{{item.text}}</view>
+
+      <view class="p-img {{item.imgClass}}" wx:if="{{item.imgs.length}}">
+        <view class="im" wx:for="{{item.imgs}}" wx:for-item="im" wx:key="*this">{{im}}</view>
+      </view>
+
+      <view class="p-x" wx:if="{{item.xline}}">{{item.xline}}</view>
+
+      <text class="p-tag" wx:if="{{item.tag}}">{{item.tag}}</text>
+
+      <view class="p-act">
+        <view class="a {{item.liked ? 'on' : ''}}" data-id="{{item.id}}" catchtap="onLike">
+          <view class="ic ic-s ic-thumb" />
+          <text>{{item.likes}}</text>
+        </view>
+        <view class="a" data-id="{{item.id}}" catchtap="onPostTap">
+          <view class="ic ic-s ic-chat" />
+          <text>{{item.comments}}</text>
+        </view>
+        <view class="a">
+          <view class="ic ic-s ic-star" />
+          <text>收藏</text>
+        </view>
+        <view class="a"><text>↗ 转发</text></view>
+      </view>
     </view>
   </block>
+  <view wx:else class="empty">这个话题下还没有动态，来发第一条</view>
 
-  <empty-state
-    wx:else
-    type="circle"
-    text="{{emptyText}}"
-    subText="{{emptySubText}}"
-  />
+  <view class="circle-foot" />
+
+  <view class="fab2" bindtap="onPostNew" hover-class="hover-dim">
+    <view class="ic ic-m ic-plus icw" />
+  </view>
 </view>

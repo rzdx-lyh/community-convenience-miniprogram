@@ -34,6 +34,7 @@ export interface GuideVM {
   desc: string;
   limit: string;
   trips: string;
+  window: string;
 }
 
 export const GUIDE_CATS: string[] = ['全部', '证件办理', '补贴申领', '医疗医保', '公积金社保', '其他'];
@@ -153,6 +154,7 @@ export function toGuideVM(item: GuideItem): GuideVM {
     desc: item.desc,
     limit: item.limit,
     trips: item.trips,
+    window: item.window,
   };
 }
 

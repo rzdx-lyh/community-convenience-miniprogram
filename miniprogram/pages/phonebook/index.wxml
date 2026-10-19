@@ -1,63 +1,107 @@
-<!-- 便民电话簿（FE-7）· 一键拨号必须由用户点击触发 -->
-<view class="page {{elderMode ? 'care-mode' : ''}}">
-  <!-- 分类 Tab -->
-  <view class="tabs">
-    <block wx:for="{{tabs}}" wx:key="value">
-      <view class="tab {{item.value === activeCategory ? 'tab-on' : ''}}" data-value="{{item.value}}" bindtap="onTabTap">
-        <text>{{item.label}}</text>
+<!-- 便民电话簿 · 点击整行直接拨号（110/119/120 原样展示） -->
+<view class="page">
+  <view class="pgh pgh--blue" style="padding-top:{{statusBarHeight}}px">
+    <view class="pgh-nav">
+      <view class="pgh-bk" bindtap="goBack">‹</view>
+      <text class="pgh-t">便民电话簿</text>
+      <text class="pgh-rt">一键拨号</text>
+    </view>
+    <view class="ph">
+      <view class="pgh-ic"><view class="ic ic-l icw ic-phone" /></view>
+      <view class="ph__b">
+        <view class="ph__t">社区电话簿</view>
+        <view class="ph__s">物业 / 卫生站 / 维修 / 紧急，点一下直接拨出</view>
       </view>
-    </block>
+    </view>
+    <view class="sbox psearch">
+      <view class="ic ic-s ic-search" />
+      <input
+        value="{{keyword}}"
+        placeholder="搜名称 / 号码 / 备注"
+        placeholder-class="gph"
+        confirm-type="search"
+        bindinput="onSearchInput"
+      />
+      <text wx:if="{{keyword}}" class="go" bindtap="onClearKeyword">清空</text>
+    </view>
   </view>
 
-  <!-- 搜索（本地即时过滤） -->
-  <view class="search">
-    <input
-      class="search-input"
-      value="{{keyword}}"
-      placeholder="搜名称 / 号码 / 备注"
-      placeholder-class="search-ph"
-      confirm-type="search"
-      bindinput="onSearchInput"
-    />
-    <text wx:if="{{keyword}}" class="search-clear" bindtap="onClearKeyword">×</text>
-  </view>
-
-  <!-- CR-024：页面级 AI 入口（上下文 = 便民电话；本页「转人工」降级为提示） -->
-  <ai-bar page="phonebook" />
-
-  <view wx:if="{{loading}}" class="loading">
-    <text class="loading-text">加载中…</text>
-  </view>
-
-  <!-- 分组列表 -->
-  <view class="groups">
-    <block wx:for="{{sections}}" wx:key="key">
-      <view class="group">
-        <view class="group-head">
-          <text class="group-title">{{item.label}}</text>
+  <view class="body">
+    <!-- 紧急号码常驻 -->
+    <view class="ecard">
+      <view class="ecard__h">
+        <view class="ic ic-s icw ic-bolt" />
+        <text class="ecard__t">紧急求助</text>
+        <text class="ecard__s">真实短号 · 不会被改号</text>
+      </view>
+      <view class="ecard__g">
+        <view
+          wx:for="{{emergency}}"
+          wx:key="phone"
+          class="ec"
+          hover-class="ec--hover"
+          data-phone="{{item.phone}}"
+          bindtap="onCall"
+        >
+          <text class="ec__n">{{item.phone}}</text>
+          <text class="ec__l">{{item.name}}</text>
         </view>
-        <block wx:for="{{item.items}}" wx:key="_id">
-          <view class="row" data-phone="{{item.phone}}" bindtap="onCall">
-            <view class="row-main">
-              <text class="row-name">{{item.name}}</text>
-              <text wx:if="{{item.remark}}" class="row-remark">{{item.remark}}</text>
+      </view>
+    </view>
+
+    <view class="blk tabs-card">
+      <view class="chips phone-tabs">
+        <view
+          wx:for="{{tabs}}"
+          wx:key="value"
+          class="chip {{activeCategory === item.value ? 'on' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="onTabTap"
+        >{{item.label}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{loading}}" class="empty">正在加载号码…</view>
+
+    <block wx:elif="{{sections.length > 0}}">
+      <view
+        wx:for="{{sections}}"
+        wx:key="key"
+        class="grp {{item.key === 'emergency' ? 'grp--em' : ''}}"
+      >
+        <view class="gh">
+          <text class="gh__b">{{item.label}}</text>
+          <text class="gh__p">{{item.items.length}} 个号码 · 点击拨出</text>
+        </view>
+        <view class="pbl">
+          <view
+            wx:for="{{item.items}}"
+            wx:key="_id"
+            wx:for-item="p"
+            class="acell pbc"
+            hover-class="pbc--hover"
+            data-phone="{{p.phone}}"
+            bindtap="onCall"
+          >
+            <view class="acell-i"><view class="ic ic-s ic-phone" /></view>
+            <view class="acell-t">
+              <text class="pbc__n">{{p.name}}</text>
+              <view wx:if="{{p.remark}}" class="acell-d">{{p.remark}}</view>
             </view>
-            <view class="row-right">
-              <text class="row-phone">{{item.phone}}</text>
-              <text class="row-call">拨号</text>
+            <view class="pbc__r">
+              <text class="pbc__num">{{p.phone}}</text>
+              <text class="pbc__call">拨号</text>
             </view>
           </view>
-        </block>
+        </view>
       </view>
     </block>
+
+    <view wx:else class="empty">没有找到相关号码，换个关键词或切换到「全部」分类</view>
+
+    <view class="tip">
+      号码来自社区公示与物业备案；仅提供拨号，不会自动拨出。紧急情况请优先拨打 110 / 119 / 120。
+    </view>
+    <view class="gap" />
   </view>
-
-  <empty-state
-    wx:if="{{sections.length === 0 && !loading}}"
-    type="search"
-    text="没有找到相关号码"
-    subText="换个关键词，或切换到「全部」分类"
-  />
-
-  <text class="foot">点击号码直接拨出，号码均为社区公示的公共服务电话</text>
 </view>
