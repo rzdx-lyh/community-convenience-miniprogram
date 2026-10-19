@@ -1,12 +1,7 @@
 'use strict';
 
-/**
- * 资源 circle：action = list / detail
- * 契约：contracts/api-contract.md §circle（v1.2 新增，只读数据流；发帖/评论/点赞列 P2）
- *
- * 隐私：authorOpenid 只入库不下发，出参一律剔除。
- * 排序：topFlag 降序 → publishAt 降序（list 与 detail 共用同一规则）。
- */
+
+
 const { ok, fail, CODES, handler, omit } = require('./shared/response');
 const { db } = require('./shared/db');
 const { getOpenId, requireUser } = require('./shared/auth');

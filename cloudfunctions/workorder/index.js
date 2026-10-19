@@ -1,11 +1,7 @@
 'use strict';
 
-/**
- * 资源 workorder：action = create / list / detail / cancel / handle
- * 契约：contracts/api-contract.md §workorder
- * 状态机：pending→assigned→processing→done；closed/canceled 为终态，非法流转返回 400
- * 数据隔离：居民仅见本人工单（越权 403），物业/管理员见全部
- */
+
+
 const { ok, fail, CODES, handler } = require('./shared/response');
 const { db } = require('./shared/db');
 const { getOpenId, requireUser, requireStaff } = require('./shared/auth');

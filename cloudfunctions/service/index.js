@@ -1,12 +1,7 @@
 'use strict';
 
-/**
- * 资源 service：action = list
- * 契约：contracts/api-contract.md §service:list（v1.2 新增，四类服务宫格聚合，不分页）
- *
- * 降级铁律（BE-11 / 风险 R-D）：任何异常都必须返回 { code:0, data:{ list:[] } }，
- * 绝不能返回 500 —— 让前端回退本地常量 config/service-grid.ts，保证 Demo 不白屏。
- */
+
+
 const { ok, fail, CODES, handler } = require('./shared/response');
 const { db } = require('./shared/db');
 const { getOpenId, requireUser } = require('./shared/auth');

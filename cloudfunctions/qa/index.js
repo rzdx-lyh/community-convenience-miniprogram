@@ -1,12 +1,7 @@
 'use strict';
 
-/**
- * 资源 qa：action = ask / history / clear / feedback / suggest
- * 契约：contracts/api-contract.md §qa（RAG + 多轮会话 + 双层护栏 + 分级降级）
- *
- * 调用链：输入护栏 → 知识库检索 → 大模型（8s 超时）→ 输出护栏 → 落会话 → 返回
- * 无 DEEPSEEK_API_KEY 时全链路降级：知识库命中回原文，未命中回兜底话术 + 便民电话
- */
+
+
 const { ok, fail, CODES, handler } = require('./shared/response');
 const { db } = require('./shared/db');
 const { getOpenId, requireUser } = require('./shared/auth');

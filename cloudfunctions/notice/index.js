@@ -1,12 +1,7 @@
 'use strict';
 
-/**
- * 资源 notice：action = list / detail / urgentLatest
- * 契约：contracts/api-contract.md §notice（v1.2：type 增加 urgent，新增 urgentLatest）
- *
- * 兼容铁律：type=notice/activity 的行为与 v1.1 完全一致（仅新增枚举值与可选入参）；
- * 新字段 level/startAt/endAt/summary 全部可空，老数据无需迁移。
- */
+
+
 const { ok, fail, CODES, handler } = require('./shared/response');
 const { db } = require('./shared/db');
 const { getOpenId, requireUser } = require('./shared/auth');
