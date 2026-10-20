@@ -52,9 +52,9 @@
 .v-teal { color: #0B6146; font-size: 19rpx; }
 
 /* 宫格图标底色 */
-.th-blue .ic { background: #EAF1FE; }
-.th-teal .ic { background: #E6F5F2; }
-.th-gold .ic { background: #FDF3E1; }
-.th-indigo .ic { background: #EDECFB; }
+.th-blue .ic { background-color: #EAF1FE; }
+.th-teal .ic { background-color: #E6F5F2; }
+.th-gold .ic { background-color: #FDF3E1; }
+.th-indigo .ic { background-color: #EDECFB; }
 
 .sec--last { margin-bottom: 16rpx; padding-bottom: 24rpx; }

@@ -95,6 +95,33 @@ for (const d of allPageDirs) {
   if (!registered.has(d)) warns.push(`未注册页面 pages/${d.replace('pages/', '')}（有文件但不在 app.json.pages 里，不会被编译）`);
 }
 
+/* 5.5 图标被 background 简写清空
+   `.th-blue .ic { background: #EAF1FE }` 这类写法会把 icons.wxss 里的
+   background-image 一并 reset → 图标只剩一块纯色底（2026-10-20 首页 8 宫格、
+   AI 助手欢迎卡均踩过）。必须写 background-color。 */
+const icOverwrite = [];
+function scanWxss(dir) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = resolve(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name !== 'node_modules') scanWxss(full);
+      continue;
+    }
+    if (!entry.name.endsWith('.wxss')) continue;
+    const text = readFileSync(full, 'utf8');
+    for (const m of text.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      const sel = m[1].trim().replace(/\s+/g, ' ');
+      const body = m[2];
+      if (!/\.ic(?![a-z0-9-])/.test(sel)) continue;
+      if (/background(?!-)\s*:/.test(body)) icOverwrite.push(`${relative(MP, full)} → ${sel.slice(0, 56)}`);
+    }
+  }
+}
+scanWxss(MP);
+for (const e of icOverwrite) {
+  errors.push(`图标被 background 简写清空 ${e}（简写会重置 background-image，图标变纯色块 → 改用 background-color）`);
+}
+
 /* 6. 跳转目标存在性：wxml/ts 里写的 /pages/xxx 是否都在 app.json 注册 */
 const registeredPaths = new Set(pages.map((p) => `/${p}`));
 const navErrors = new Set();

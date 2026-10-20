@@ -34,7 +34,9 @@
   width: 44rpx;
   height: 44rpx;
   border-radius: 14rpx;
-  background: var(--indigo-l);
+  /* ⚠ 必须用 background-color：background 简写会把 icons.wxss 里的
+     background-image 一并清空，图标变成纯色块（2026-10-20 首页 8 宫格同因） */
+  background-color: var(--indigo-l);
   color: var(--indigo);
   font-size: 26rpx;
 }
