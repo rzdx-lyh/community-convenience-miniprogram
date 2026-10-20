@@ -112,10 +112,23 @@
   - /var/user/index.js
   at Object.<anonymous> (/var/user/index.js:2:15)
   ```
-- 根因：**云端运行的 `index.js` 是旧版本**，写成裸模块名 `require('response')`；
-  本地早已改为 `require('./shared/response')`。旧包同时缺 `shared/` 目录 → 模块解析失败。
-  - 本地同目录 `require` 实测可正常加载（`exports` 为 object），故**不是代码缺陷**，是部署版本滞后。
-  - 报错路径 `/var/user/index.js:2` 也印证：当前本地 `index.js` 第 2 行是空行，第 5 行才是 require。
+- 根因（**2026-10-20 17:50 最终定位，前两次判断均错误**）：
+  **共享模块副本目录 `shared/` 与微信云函数运行时注入的同名目录冲突。**
+  - 报错栈底部出现 `at /var/user/shared/function.js:8`，而 `function.js` **不在我们的代码包里**
+    → 它是运行时注入到 `/var/user/shared/` 的入口包装。
+  - 我们的副本目录也叫 `shared/`，解压后被运行时目录覆盖 → `response.js` 等共享模块全部消失
+    → `require('./shared/response')` 报 Cannot find module。
+  - 前两次误判为「部署滞后」：因为本地加载正常、部署包下载核对也齐全（下载的是**部署包**，
+    不是运行时解压后的目录），所以看起来"代码和包都对"。真正的线索只在**运行时报错栈**里。
+  - 证据链：① 本地 8 函数 require 全通过 ② 云端部署包含 `shared/` 16 文件
+    ③ 运行时栈出现 `shared/function.js`（我们没这个文件）⇒ 同名目录被占用。
+- 修复（最终）：
+  - `scripts/build-cf.mjs` 打包目标 `shared/` → **`lib/`**
+  - 8 个 `index.js` 共 **38 处** `require('./shared/` → `./lib/`
+  - `scripts/cloud-preflight.mjs` 新增「禁止残留 `shared/` 副本」硬检查
+  - 删除 8 个函数目录下旧的 `shared/` 副本（源 `cloudfunctions/shared/` 保留）
+  - 验证：预检 3 项绿 → 8 函数本地加载 OK → 部署 5846 文件成功 →
+    云端产物顶层只有 `lib`、无 `shared`、`index.js` 第 5 行指 `./lib/response` → 加载成功
 - 修复（2026-10-20 13:30 完成）：
   1. `node scripts/build-cf.mjs --clean`（重建 8 个函数目录下的 `shared/`，不动 node_modules）
   2. `cli cloud functions deploy --env <env> --names <8 个函数> --project <根目录>`

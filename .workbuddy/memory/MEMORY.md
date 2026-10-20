@@ -53,8 +53,10 @@
 - 电话簿 11 条中 `020-8888xxxx` 段为**占位号需替换**；**110/119/120 是真号严禁替换**。
 - 密钥只进云函数环境变量，源码零明文；`keys/`、`project.private.config.json` 已 gitignore。
 - **云函数打包**：每个函数目录**自包含**，`scripts/build-cf.mjs` 把 `cloudfunctions/shared/` 拷进各函数目录
-  → 源码里 require 必须写 `./shared/...`，写 `../shared/...` 本地能跑、上传后 `MODULE_NOT_FOUND`
-  （曾致线上全部云调用失败，前端统一弹「网络异常」）。`cloud-preflight.mjs` 已死守。
+  **并改名为 `lib/`**（源码里 require 写 `./lib/...`，写 `../lib/...` 本地能跑、上传后 `MODULE_NOT_FOUND`）。
+  ⚠️ **副本目录绝不能叫 `shared`**：微信运行时会在 `/var/user/shared/` 注入自己的 `function.js`，
+  同名会被覆盖 → 共享模块全消失（2026-10-20 第 3 次复发，BUG-008，报错栈可见 `shared/function.js`）。
+  下划线前缀也不行（上传会跳过 `_shared/`）。`cloud-preflight.mjs` 已加硬检查。
 - **自定义组件用全局 `.ic-*` 图标**：组件 json 必须加 `"styleIsolation": "apply-shared"`，
   否则 isolated 隔离导致图标全空白（`ai-bar` 踩过）。
 - **WXML 不支持 `<br>`**（被解析为未闭合标签 → 编译失败）。
