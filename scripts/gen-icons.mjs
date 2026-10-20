@@ -48,7 +48,7 @@ const WHITE_ICONS = new Set([
   // 通用入口（AI、紧急、导航、消息）
   'robot', 'sparkles', 'phone', 'bell', 'megaphone', 'chat', 'plus', 'check', 'bolt', 'map',
   // CR-028 页面重写：彩色页头 .pgh-ic（半透明白底）里的服务图标
-  'book', 'clipboard', 'syringe',
+  'book', 'clipboard', 'syringe', 'package',
 ]);
 
 /** 从原型里抽出 <symbol id="ic-xxx" ...>inner</symbol> */

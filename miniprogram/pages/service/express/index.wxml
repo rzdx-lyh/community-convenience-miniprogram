@@ -11,7 +11,7 @@
       <text class="pgh-rt" bindtap="onOpenSpots">存放点</text>
     </view>
     <view class="pgh-k">
-      <view class="pgh-ic"><view class="ic ic-l ic-package" /></view>
+      <view class="pgh-ic"><view class="ic ic-l icw ic-package" /></view>
       <view>
         <view class="pgh-lb" style="margin-bottom:6px">1 号楼驿站 · 我的包裹</view>
         <view class="pgh-num">{{packages.length}}<text class="unit">件在库</text></view>
