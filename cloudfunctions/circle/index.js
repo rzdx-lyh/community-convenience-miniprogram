@@ -2,10 +2,10 @@
 
 
 
-const { ok, fail, CODES, handler, omit } = require('./shared/response');
-const { db } = require('./shared/db');
-const { getOpenId, requireUser } = require('./shared/auth');
-const { paginate, isBlank } = require('./shared/time');
+const { ok, fail, CODES, handler, omit } = require('./lib/response');
+const { db } = require('./lib/db');
+const { getOpenId, requireUser } = require('./lib/auth');
+const { paginate, isBlank } = require('./lib/time');
 
 const TYPES = ['road', 'notice', 'activity'];
 const PRIVATE_FIELDS = ['authorOpenid'];

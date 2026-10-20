@@ -39,9 +39,13 @@ function copyDir(src, dest) {
 
 const clean = process.argv.includes('--clean');
 resources.forEach((r) => {
-  const target = path.join(CF_ROOT, r, 'shared');
+  // ⚠ 副本目录名必须是 lib，**不能叫 shared**：
+  //   微信云函数运行时会在 /var/user/shared/ 下注入自己的 function.js（入口包装），
+  //   我们的 shared/ 与之同名，解压后被覆盖 → 运行时 require('./shared/response')
+  //   报 Cannot find module（2026-10-20 线上实锤，报错栈里出现 shared/function.js）。
+  const target = path.join(CF_ROOT, r, 'lib');
   if (clean && existsSync(target)) rmSync(target, { recursive: true, force: true });
   copyDir(SHARED, target);
-  console.log(`已打包 shared/ → cloudfunctions/${r}/shared/`);
+  console.log(`已打包 shared/ → cloudfunctions/${r}/lib/`);
 });
 console.log(`完成：${resources.length} 个云函数（${resources.join(', ')}）。上传后可用 --clean 清理本地副本。`);

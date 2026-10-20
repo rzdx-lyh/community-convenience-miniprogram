@@ -2,9 +2,9 @@
 
 
 
-const { ok, fail, CODES, handler } = require('./shared/response');
-const { getOpenId, ensureUser, toProfile } = require('./shared/auth');
-const { updateProfile } = require('./shared/profile');
+const { ok, fail, CODES, handler } = require('./lib/response');
+const { getOpenId, ensureUser, toProfile } = require('./lib/auth');
+const { updateProfile } = require('./lib/profile');
 
 async function login() {
   const openid = getOpenId();

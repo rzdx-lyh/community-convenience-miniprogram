@@ -2,14 +2,14 @@
 
 
 
-const { ok, fail, CODES, handler } = require('./shared/response');
-const { db } = require('./shared/db');
-const { getOpenId, requireUser } = require('./shared/auth');
-const { isoNow, paginate } = require('./shared/time');
-const { chat, buildRagPrompt } = require('./shared/ai');
-const { searchKB, SUGGEST_QUESTIONS, FALLBACK_TEXT, hotlineLines } = require('./shared/kb/kb');
-const { overLimit, RULE } = require('./shared/ratelimit');
-const { detectRisk } = require('./shared/safety');
+const { ok, fail, CODES, handler } = require('./lib/response');
+const { db } = require('./lib/db');
+const { getOpenId, requireUser } = require('./lib/auth');
+const { isoNow, paginate } = require('./lib/time');
+const { chat, buildRagPrompt } = require('./lib/ai');
+const { searchKB, SUGGEST_QUESTIONS, FALLBACK_TEXT, hotlineLines } = require('./lib/kb/kb');
+const { overLimit, RULE } = require('./lib/ratelimit');
+const { detectRisk } = require('./lib/safety');
 
 const DISCLAIMER = 'AI 生成仅供参考';
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 会话 2 小时失效

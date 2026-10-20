@@ -76,8 +76,8 @@ const actionsOf = (name) => {
   return new Set([...src.matchAll(/case\s+'([a-zA-Z]+)'\s*:/g)].map((m) => m[1]));
 };
 
-/* ---------- 2.5 shared 副本新鲜度 ---------- */
-section('二·五、shared 副本新鲜度');
+/* ---------- 2.5 lib 副本新鲜度 ---------- */
+section('二·五、lib 副本新鲜度');
 const sharedDir = join(ROOT, cfRoot, 'shared');
 const fingerprint = (dir) => {
   const out = [];
@@ -99,19 +99,30 @@ if (!existsSync(sharedDir)) {
 } else {
   const src = fingerprint(sharedDir);
   const stale = cfDirs.filter((n) => {
-    const copy = join(ROOT, cfRoot, n, 'shared');
+    const copy = join(ROOT, cfRoot, n, 'lib');
     if (!existsSync(copy)) return true;
     return fingerprint(copy) !== src;
   });
-  if (stale.length === 0) ok('各函数目录的 shared 副本与真源一致');
-  else bad('shared 副本缺失或过期（上传后云端 require 会拿到旧代码或报错）', `${stale.join(' / ')} → 先跑 npm run build:cf`);
+  if (stale.length === 0) ok('各函数目录的 lib 副本与真源一致');
+  else bad('lib 副本缺失或过期（上传后云端 require 会拿到旧代码或报错）', `${stale.join(' / ')} → 先跑 npm run build:cf`);
 
-  /* ⚠ 云端包结构 = 函数目录自包含，shared/ 在函数包**内部**。
+  /* ⚠ 副本目录必须叫 lib，**不能叫 shared**：
+     微信云函数运行时会在 /var/user/shared/ 注入自己的 function.js（入口包装），
+     我们的 shared/ 与之同名 → 解压后被覆盖 → require('./shared/response') 报
+     Cannot find module（2026-10-20 线上实锤，报错栈里能看到 shared/function.js）。 */
+  const badShared = cfDirs.filter((n) => existsSync(join(ROOT, cfRoot, n, 'shared')));
+  if (badShared.length === 0) ok('没有函数目录残留 shared/ 副本（与运行时目录冲突）');
+  else bad('存在 shared/ 副本，会和云函数运行时的 shared/ 冲突，必须改名为 lib', badShared.join(' / '));
+
+  /* ⚠ 云端包结构 = 函数目录自包含，副本在函数包**内部**。
      若源码写成 '../shared/...'，本地能跑但上传后 MODULE_NOT_FOUND → 所有云调用 fail
      （前端统一表现为「网络异常」）。这是 2026-10-19 线上事故的根因，必须死守。 */
-  const wrongPath = cfDirs.filter((n) => read(join(cfRoot, n, 'index.js')).includes("'../shared/"));
-  if (wrongPath.length === 0) ok('云函数 require 路径与云端包结构一致（./shared/...）');
-  else bad('云函数里出现 ../shared/ 引用，上传后必崩（云端 shared 在函数包内部）', wrongPath.join(' / '));
+  const wrongPath = cfDirs.filter((n) => {
+    const src2 = read(join(cfRoot, n, 'index.js'));
+    return src2.includes("'../shared/") || src2.includes("'../lib/");
+  });
+  if (wrongPath.length === 0) ok('云函数 require 路径与云端包结构一致（./lib/...）');
+  else bad('云函数里出现 ../shared/ 或 ../lib/ 引用，上传后必崩（副本在函数包内部）', wrongPath.join(' / '));
 
   /* ⚠ 云函数超时：CLI 部署**不会**应用 config.json 的 timeout，云端默认 3s。
      wx-server-sdk 冷启动常要 2-4s → 首次调用必超时 → 前端统一弹「网络异常」。

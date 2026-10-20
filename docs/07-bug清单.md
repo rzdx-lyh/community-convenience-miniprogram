@@ -15,6 +15,7 @@
 | BUG-005 | 报修详情加载失败后白屏无重试 | P2 | 报修详情 | 新建 | TC-41 |
 | BUG-006 | AI 助手页双导航栏（json 漏配 custom） | P2 | AI 助手 | 新建 | TC-24 |
 | BUG-007 | 空分类下 hasMore 永不收敛，触底无限发空请求 | P3 | 分页工具 | 新建 | TC-47 |
+| **BUG-008** | **云函数线上 `Cannot find module 'response'`（部署版本与本地不一致）** | **P0** | **全部 8 个云函数** | **已修复（2026-10-20 重部署）** | 云调用冒烟 |
 
 ---
 
@@ -96,3 +97,54 @@
 - 2026-10-14 修复（P1×3）：BUG-001 删除 repair/list `onLoad` 多余 refresh；BUG-001/002 在 repair/list、circle、notice/list 三页 refresh 引入 `genId` 代际守卫，过期响应直接丢弃；BUG-003 通知详情弹层 `sheet` 的 `catchtap` 由 `onCloseDetail` 改为 `noop`（新增 noop 方法）。tsc --noEmit 通过、vitest 155/155 通过
 - 遗留：BUG-004~007（P2×3 / P3×1）不阻塞上线，入 backlog
 - 回归计划：修复后按影响面回归 TC-09/13/14/24/34/41/47 + 冒烟集（TC-01/06/13/19/24）
+
+---
+
+## BUG-008｜云函数线上报 `Cannot find module 'response'`（P0 · 2026-10-20）
+
+- 严重级：**P0**｜模块：全部 8 个云函数｜频率：必现｜发现方式：模拟器点「提交预约」
+- 现象：任何云调用失败，Console 报
+  ```
+  [tcb] cloud.worker 调用异常: cloud.callFunction:fail
+  errCode: -504002 functions execute fail
+  errMsg: Error: Cannot find module 'response'
+  Require stack:
+  - /var/user/index.js
+  at Object.<anonymous> (/var/user/index.js:2:15)
+  ```
+- 根因：**云端运行的 `index.js` 是旧版本**，写成裸模块名 `require('response')`；
+  本地早已改为 `require('./shared/response')`。旧包同时缺 `shared/` 目录 → 模块解析失败。
+  - 本地同目录 `require` 实测可正常加载（`exports` 为 object），故**不是代码缺陷**，是部署版本滞后。
+  - 报错路径 `/var/user/index.js:2` 也印证：当前本地 `index.js` 第 2 行是空行，第 5 行才是 require。
+- 修复（2026-10-20 13:30 完成）：
+  1. `node scripts/build-cf.mjs --clean`（重建 8 个函数目录下的 `shared/`，不动 node_modules）
+  2. `cli cloud functions deploy --env <env> --names <8 个函数> --project <根目录>`
+     **不加 `--remote-npm-install`**（否则依赖靠云端装，不可靠）
+  3. 结果：8 个函数全部 `success=true`、`filesCount=5846`、`packSize=6.7 MB`
+- 验证：
+  - `cli cloud functions download` 拉回云端产物 → `index.js` 第 5 行确为 `./shared/response`、
+    `shared/response.js` 存在
+  - 本地 `require('下载目录/index.js')` 成功，`exports.main` 为 function
+  - **8 个包全部 `filesCount=5846`**（同构），逐包抽查 `workorder` / `phonebook` 的 `shared/` 均为 16 文件
+
+- ⚠️ **部署有「中间态」，别在部署窗口内验收**（2026-10-20 13:51 二次报错即此原因）：
+  8 个包共 **53MB**，从开始部署到全部传完约需 **5–10 分钟**。期间：
+  - 已传完的函数：新版正常
+  - 未传完的函数：仍是旧包 → 报 `Cannot find module 'response'`（无路径前缀）
+  - 正在传的函数：新 `index.js` 已上、`shared/` 还没上 → 报 `Cannot find module './shared/response'`（**带路径前缀**）
+
+  **判据：看报错里的模块名有没有 `./shared/` 前缀** ——
+  无前缀 = 整包是旧版；有前缀 = 新代码已上但依赖目录缺失（正在传）。
+  两种都只需等部署完成，不是代码问题。
+  部署后必须等 CLI 打出 `√ deploy cloudfunctions` 与 filesCount 表格再用模拟器验收。
+- 预防：
+  - **改完 `cloudfunctions/**` 必须重新部署**，本地对 ≠ 云端对
+  - `scripts/cloud-preflight.mjs` 只能校验本地源码的 require 路径，
+    **校验不到「云端跑的是不是当前版本」**——部署后要抽查 filesCount 或用 download 核对
+
+### 同轮确认的遗留项（非本 BUG，但同批暴露）
+
+| 项 | 实测值 | 影响 |
+|---|---|---|
+| 云函数 `timeout` | **3s**（`config.json` 写的是 20，**CLI 部署不应用**） | `shared/ai.js` 超时 8s > 函数 3s → AI 必然降级，表现为「配了 Key 还是降级」 |
+| 云函数 runtime | `Nodejs16.13` | `ai.js` 用原生 `https.request`，不受影响；若将来改 `fetch` 会挂 |

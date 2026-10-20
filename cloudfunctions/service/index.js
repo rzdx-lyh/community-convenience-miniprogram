@@ -2,10 +2,10 @@
 
 
 
-const { ok, fail, CODES, handler } = require('./shared/response');
-const { db } = require('./shared/db');
-const { getOpenId, requireUser } = require('./shared/auth');
-const { isBlank } = require('./shared/time');
+const { ok, fail, CODES, handler } = require('./lib/response');
+const { db } = require('./lib/db');
+const { getOpenId, requireUser } = require('./lib/auth');
+const { isBlank } = require('./lib/time');
 
 const VALID_TARGET_TYPES = ['page', 'notice', 'circle', 'assistant', 'phone', 'toast'];
 

@@ -2,9 +2,9 @@
 
 
 
-const { fail, CODES, handler } = require('./shared/response');
-const { getOpenId } = require('./shared/auth');
-const { updateProfile } = require('./shared/profile');
+const { fail, CODES, handler } = require('./lib/response');
+const { getOpenId } = require('./lib/auth');
+const { updateProfile } = require('./lib/profile');
 
 exports.main = handler(async (event = {}) => {
   const action = (event && event.action) || '';

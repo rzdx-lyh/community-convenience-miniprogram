@@ -2,10 +2,10 @@
 
 
 
-const { ok, fail, CODES, handler } = require('./shared/response');
-const { db } = require('./shared/db');
-const { getOpenId, requireUser } = require('./shared/auth');
-const { isoNow, isActiveNow, isExpired, paginate, isBlank } = require('./shared/time');
+const { ok, fail, CODES, handler } = require('./lib/response');
+const { db } = require('./lib/db');
+const { getOpenId, requireUser } = require('./lib/auth');
+const { isoNow, isActiveNow, isExpired, paginate, isBlank } = require('./lib/time');
 
 const TYPES = ['notice', 'activity', 'urgent'];
 const LEVEL_WEIGHT = { critical: 3, high: 2, normal: 1 };

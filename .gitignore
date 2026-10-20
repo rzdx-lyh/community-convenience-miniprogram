@@ -6,10 +6,15 @@ dist/
 project.private.config.json
 miniprogram_npm/
 
-# ⚠ 云函数的 shared/ 副本【必须】入库 —— 微信开发者工具上传云函数时会按 .gitignore
-# 过滤文件，一旦忽略它们，上传包里就没有 shared/，运行时立刻
-# `Cannot find module './shared/response'`（2026-10-19 线上事故根因）。
+# ⚠ 云函数的 lib/ 副本【必须】入库 —— 微信开发者工具上传云函数时会按 .gitignore
+# 过滤文件，一旦忽略它们，上传包里就没有共享模块，运行时报
+# `Cannot find module './lib/response'`。
 # 它们由 `npm run build:cf` 从 cloudfunctions/shared/ 同步生成，直接提交即可。
+#
+# ⚠⚠ 副本目录**绝不能叫 shared**（2026-10-20 线上事故，第 3 次复发）：
+#   微信云函数运行时会在 /var/user/shared/ 注入自己的 function.js（入口包装），
+#   我们的 shared/ 与它同名 → 解压后被覆盖 → 共享模块全部消失。
+#   报错栈里能看到 "at /var/user/shared/function.js:8" 即为此症。
 
 # 小程序内 .js 均为 TS 编译产物（源码是 .ts）；
 # 微信开发者工具「新建页面」会生成空 Page({}) 模板顶替真实页面，同样不入库

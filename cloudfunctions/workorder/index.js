@@ -2,14 +2,14 @@
 
 
 
-const { ok, fail, CODES, handler } = require('./shared/response');
-const { db } = require('./shared/db');
-const { getOpenId, requireUser, requireStaff } = require('./shared/auth');
-const { isoNow, paginate } = require('./shared/time');
-const { checkText } = require('./shared/security');
-const { chat, buildSummaryPrompt } = require('./shared/ai');
-const { notifyWorkOrderDone } = require('./shared/subscribe');
-const { overLimit, RULE } = require('./shared/ratelimit');
+const { ok, fail, CODES, handler } = require('./lib/response');
+const { db } = require('./lib/db');
+const { getOpenId, requireUser, requireStaff } = require('./lib/auth');
+const { isoNow, paginate } = require('./lib/time');
+const { checkText } = require('./lib/security');
+const { chat, buildSummaryPrompt } = require('./lib/ai');
+const { notifyWorkOrderDone } = require('./lib/subscribe');
+const { overLimit, RULE } = require('./lib/ratelimit');
 
 const CATEGORIES = ['water', 'electric', 'door', 'public', 'other'];
 const FLOW = {

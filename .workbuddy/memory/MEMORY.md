@@ -35,7 +35,9 @@
 - **两条独立版本轨（2026-10-18 定）**：
   - **代码轨**：当前 **v1.1.0**（git 附注标签 `v1.1.0`，2026-10-19 升版并推送；上一版 `v1.0.1`）。版本唯一真源 = `miniprogram/config/env.ts` 的 `APP_VERSION`；`package.json` / `package-lock.json` 根包 / 8 个云函数包 / `README.md` / `CHANGELOG.md` 全部对齐；由 `tests/version.test.ts`（6 条）守护，源码里出现别的版本号即测试失败。
     - 升版清单：改 `env.ts` → `package.json` → `package-lock.json`（根包两处）→ 8 云函数包 → 源码注释（约 15 文件，`v1.0.1` → 新版本，**保留 CR 编号**）→ README → `tests/version.test.ts` 的 `EXPECTED`/`EXPECTED_SEMVER`/标题。
-  - **设计原型轨**：`docs/03-preview/demo.html` 当前 **v1.3.2**，与代码轨分开计数（原型领先代码是事实，不要压成一个号）。
+  - **设计原型轨**：`docs/03-preview/demo.html` 当前 **1.4.0「AI 入口与集群」**（2026-10-19 核实，
+    单文件 JS 模板原型，3628 行，`render()` 注册 22 业务页 + 2 登录页），与代码轨分开计数。
+    注释里写「1.4.0」**不要带 v 前缀**，否则 `tests/version.test.ts` 当成产品版本号。
   - 代码注释里的历史变更用 `CR-0xx` 编号溯源；归一后统一写作 `v1.1.0 / CR-019` 这种「当前版本 + 原始 CR」形式。
 
 ## ⚠️ 同名旧副本（容易混淆）
@@ -65,3 +67,21 @@
   改 Key 之前先按 `docs/26` 把超时改成 20s。原因码见 `docs/29` 的日志对照表。
 - 🔴 **备案风险**：代码里有「房屋租售（明码标价）/ 生鲜零售 / 缴费」，与「个人主体 + 工具>信息查询」
   类目可能冲突 → 审核或判经营性。提交审核前建议临时下线「房屋租售」。见 `docs/28`。
+
+## 样式与页面的两个生成物（CR-028，2026-10-19 起）
+- `miniprogram/styles/layout.wxss` ← `scripts/gen-layout-wxss.mjs`（**不要手改**）
+  原型 362 类 → 601 条 wxss。含原型 `:root` 变量、`.pgh--*` 6 套页头主题、
+  `.ic` 底座改名 `.ib`、HTML 标签选择器类名桥接。
+- `miniprogram/styles/icons.wxss` ← `scripts/gen-icons.mjs`（需 sharp，装在受管 workspace）
+  83 深色 + 26 白色。加白色版改 `WHITE_ICONS`。
+- 页面结构自检：`node scripts/check-pages.mjs`（四件套/非法标签/图标/未注册/死链）。
+- **改样式一律「改原型 → 重跑生成器」**，手改生成物下次就被覆盖。
+
+## 页面结构（32 页，app.json 全注册）
+- tabBar 4 项：`index`(首页) / `hall`(办事，**不再是 repair/list**) / `circle` / `profile`。
+- 圈子 5 子页：`circle/{post,topic,detail,digest,mine}`；服务 12 页含
+  `service/{book,booking,lease}`（新增）；`map` / `auth/{welcome,login}`。
+- `pages/service/book/index` 是 38 项服务的**统一预约页**（参数 `svc`/`opts`/`cat`），
+  `service-grid` 里 9 个预约类服务都指向它。
+- `pages/service/category` 是旧分类页，已被 `hall` 取代但仍注册（兜底），别随手删。
+- 全量待修清单见 `docs/31-页面重建交付与待修清单.md`。
