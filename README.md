@@ -6,7 +6,7 @@
 > **本包交付物 = 提示词与 skill 文件本身**（含调查问卷、工作流程、协作规则、页面要求模板）。
 > 代码、方案、设计等实际产出由使用者自行完成——skill 只定义"怎么问、怎么做、怎么交接"。
 >
-> 代码版本：**v1.1.0**（2026-10-19 升版，`package.json` / `package-lock.json` / 8 个云函数包 / 源码注释 / 本文件五处一致，由 `tests/version.test.ts` 守护）
+> 代码版本：**v1.2.0**（2026-10-19 升版，`package.json` / `package-lock.json` / 8 个云函数包 / 源码注释 / 本文件五处一致，由 `tests/version.test.ts` 守护）
 
 ---
 
@@ -16,7 +16,7 @@
 
 | 产物 | 版本 | 位置 | 怎么看 |
 |---|---|---|---|
-| 小程序代码 | **v1.1.0**（git tag） | `miniprogram/` + `cloudfunctions/` | 微信开发者工具导入仓库根目录 |
+| 小程序代码 | **v1.2.0**（git tag） | `miniprogram/` + `cloudfunctions/` | 微信开发者工具导入仓库根目录 |
 | 设计原型 | **v1.4.0** | `docs/03-preview/demo.html` | 浏览器直接打开，或看[在线预览](https://rzdx-lyh.github.io/community-convenience-miniprogram/) |
 | 设计文档 | — | `docs/` 共 38 篇 | [docs 目录](https://github.com/rzdx-lyh/community-convenience-miniprogram/tree/main/docs) |
 
@@ -94,7 +94,7 @@ npm run mock       # 可选：本地 mock 服务
 
 | 分支 | 用途 | 规则 |
 | --- | --- | --- |
-| `main` | 主分支（稳定可演示） | 受保护；只接受联调通过后的合并；合并后打 tag（当前 v1.1.0） |
+| `main` | 主分支（稳定可演示） | 受保护；只接受联调通过后的合并；合并后打 tag（当前 v1.2.0） |
 | `feature/frontend` | 前端开发分支 | 仅前端工程师提交 |
 | `feature/backend` | 后端开发分支 | 仅后端工程师提交 |
 

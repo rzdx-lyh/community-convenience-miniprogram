@@ -1,4 +1,4 @@
-/* 办事大厅（v1.1.0 / CR-019）· 全部取 Design Token v1.1 */
+/* 办事大厅（v1.2.0 / CR-019）· 全部取 Design Token v1.1 */
 .page {
   min-height: 100vh;
   padding-bottom: 160rpx;
@@ -229,7 +229,7 @@
   color: var(--text-3);
 }
 
-/* 筛选 Tab（v1.1.0：由整条白底栏改为页内 pill 组，与"分区"语义一致） */
+/* 筛选 Tab（v1.2.0：由整条白底栏改为页内 pill 组，与"分区"语义一致） */
 .tabs {
   display: flex;
   gap: var(--space-2);

@@ -5,7 +5,30 @@
 > 设计原型 `docs/03-preview/demo.html` 与 `docs/` 下的设计文档走**独立版本轨**，不在本文件记录。
 > 版本号唯一真源：`miniprogram/config/env.ts` 的 `APP_VERSION`，由 `tests/version.test.ts` 守护。
 
-## 未发布（Unreleased）
+## v1.2.0 — 2026-10-23 · 首启资料 + 文化便民活动 + 部署修复
+
+### 新增
+
+- **首启资料设置** `pages/auth/setup`：头像（chooseAvatar + 云存储）、昵称、当前位置（gcj02 + 拒绝授权引导）、协议勾选；完成前路由守卫拦截，完成后进首页
+- **文化便民活动页** `pages/service/activity`：每周义诊 / 邻里活动 / 长者手机课共用，6 个小功能卡 + 活动信息 + 报名弹层（走 `workorder:create`）
+- 首页定位复用 setup 缓存，避免重复授权
+- 通知页支持 `tag` / `title` 入口参数（含 URL 编码兜底解码）
+
+### 修复
+
+- 服务分类页 `findRawItem` / `countItems` 支持只含 `groups` 的分类数据，修复文化便民项点击无效
+- 首页标题被右侧定位胶囊挤成竖排
+- 文化入口 query 乱码导致标题 `%E6...` 与空列表
+- 云函数按“根目录平铺 + `--remote-npm-install`”重新整理部署产物
+
+### 测试
+
+- `npm run verify`：typecheck + lint + **340 条 / 25 文件**全绿
+- 页面 34 页 check-pages 通过
+
+---
+
+## 未发布（Unreleased，历史记录）
 
 > 这些改动发生在 v1.1.0 打标之后，**尚未升版**。等本批功能落齐后统一升 `v1.2.0`。
 

@@ -1,7 +1,7 @@
 /**
- * v1.1.0 · 版本号单一真源守卫
+ * v1.2.0 · 版本号单一真源守卫
  *
- * 约束：**代码侧只允许出现一个版本号 v1.1.0**。
+ * 约束：**代码侧只允许出现一个版本号 v1.2.0**。
  * 版本号分散在 4 类位置（源码注释 / package.json / 云函数包 / README），
  * 靠自觉同步一定会漂——这里把它变成一条能自动跑的断言。
  *
@@ -14,8 +14,8 @@ import { describe, expect, it } from 'vitest';
 import { APP_VERSION } from '../miniprogram/config/env';
 
 const ROOT = process.cwd();
-const EXPECTED = 'v1.1.0';
-const EXPECTED_SEMVER = '1.1.0';
+const EXPECTED = 'v1.2.0';
+const EXPECTED_SEMVER = '1.2.0';
 const SKIP_DIRS = new Set(['node_modules', 'miniprogram_npm', 'dist', 'coverage']);
 
 function readJsonVersion(rel: string): string {
@@ -38,8 +38,8 @@ function sources(dir: string, exts: readonly string[]): string[] {
   return out;
 }
 
-describe('版本号单一真源（v1.1.0）', () => {
-  it('env.ts 的 APP_VERSION 是 v1.1.0', () => {
+describe('版本号单一真源（v1.2.0）', () => {
+  it('env.ts 的 APP_VERSION 是 v1.2.0', () => {
     expect(APP_VERSION).toBe(EXPECTED);
   });
 
@@ -57,7 +57,7 @@ describe('版本号单一真源（v1.1.0）', () => {
     expect(lock.packages['']?.version).toBe(EXPECTED_SEMVER);
   });
 
-  it('全部云函数包的 version 都是 1.1.0', () => {
+  it('全部云函数包的 version 都是 1.2.0', () => {
     // shared/ 是共享代码目录，本身不是云函数包（且已 gitignore）
     const fns = readdirSync(join(ROOT, 'cloudfunctions')).filter(
       (n) =>

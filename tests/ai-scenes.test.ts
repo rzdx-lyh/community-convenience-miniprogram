@@ -105,7 +105,7 @@ describe('PAGE_AI', () => {
     const pages = Object.keys(PAGE_AI);
     expect(pages.length).toBe(25);
     [
-      // v1.1.0 既有
+      // v1.2.0 既有
       'hall', 'repair-create', 'repair-list', 'repair-detail', 'notice', 'phonebook', 'circle',
       // CR-026 新增的 6 个服务页
       'meal', 'guide', 'bill', 'record', 'tool', 'express',

@@ -1,4 +1,4 @@
-/** v1.1.0 / CR-019：办事大厅视图模型（入口卡 / 检索行 / 服务检索） */
+/** v1.2.0 / CR-019：办事大厅视图模型（入口卡 / 检索行 / 服务检索） */
 import { describe, expect, it } from 'vitest';
 import { LOCAL_SERVICE_CATEGORIES } from '../miniprogram/config/service-grid';
 import {
@@ -41,7 +41,7 @@ describe('searchHallRows · 本地服务检索', () => {
 
   it('口语词经别名命中目标服务（搜索 = 药品 / 漏水 / 体检）', () => {
     expect(namesOf('药品')).toContain('社区门诊挂号');
-    // 漏水属于管道问题，应命中维修类而不是缴费类（v1.1.0 起修正了这条语义）
+    // 漏水属于管道问题，应命中维修类而不是缴费类（v1.2.0 起修正了这条语义）
     expect(namesOf('漏水')).toContain('管道疏通');
     expect(namesOf('体检')).toContain('健康报告');
   });
