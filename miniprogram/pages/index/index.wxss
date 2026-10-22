@@ -6,6 +6,22 @@
 
 .hover-dim { opacity: .86; }
 
+/* 首页头部：标题必须横排，不能被右侧定位胶囊挤成一字一行；
+ * 标题与胶囊放不下时让定位胶囊换到第二行，而不是压缩标题。 */
+.hd .nm {
+  white-space: nowrap;
+  flex: none;
+}
+
+.hd .r1 {
+  flex-wrap: wrap;
+  row-gap: 12rpx;
+}
+
+.hd .r1 .lb {
+  margin-left: 0;
+}
+
 .sbox .s-ic { opacity: .55; }
 
 /* 快捷入口行下移（2026-10-22 用户微调）：全局 .qk margin-top 20rpx → 44rpx */
