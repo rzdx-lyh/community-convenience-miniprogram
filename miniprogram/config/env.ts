@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 全局环境配置（FE-0）
  * USE_MOCK 是全站唯一的 mock/真实双通道开关：true 走内存 mock，false 走云函数。
  */
@@ -35,7 +35,7 @@ export interface EnvConfig {
 }
 
 export const ENV: EnvConfig = {
-  USE_MOCK: true, // 2026-10-22 临时切回演示模式：云环境 openid 401 未解决（环境绑定待修），先保演示可用；修好后切回 false
+  USE_MOCK: false, // 2026-10-23 v1.2.0：云函数已按 --remote-npm-install 重部署，auth:whoami 通过，切真云
   // CR-017-c：默认 false（开发/自测时显示「演示数据模式」标识，演示当天置 true 隐藏）
   DEMO_MODE: false,
   CLOUD_ENV_ID: 'cloud1-d5g1xuxxf9eb5b758', // 用户提供（2026-10-14）
@@ -104,3 +104,4 @@ export const STORAGE_KEYS = {
   /** 最近一次授权定位（gcj02，含时间戳） */
   USER_LOCATION: 'ccfUserLocation',
 } as const;
+
