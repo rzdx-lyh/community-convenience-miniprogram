@@ -1,9 +1,18 @@
 <!--
-  办事大厅（v1.1.0 / CR-019：原「服务订单」改名并升格为聚合入口；TabBar 第 2 项）
+  我的报修（二级页：服务搜索 + 我的报修记录）
   结构：搜索 → 四类服务入口 → 我的报修记录
-  红线：本页是 Tab 页，搜索态只存在页面内，不通过 URL 传参。
+  红线：本页是二级页，只能使用 navigateTo / redirectTo。
 -->
 <view class="page {{elderMode ? 'care-mode' : ''}}">
+  <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
+    <text>08:42</text>
+    <text>●●● ▮</text>
+  </view>
+  <view class="nav">
+    <view class="bk" bindtap="goBack">‹</view>
+    <text>我的报修</text>
+  </view>
+
   <!-- ① 搜索 -->
   <view class="search">
     <view class="search__box">

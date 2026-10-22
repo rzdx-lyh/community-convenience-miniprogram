@@ -8,13 +8,16 @@
  * 密钥/环境 ID 一律来自环境变量，代码零明文。
  */
 let cloud = null;
+let cloudError = '';
 try {
   cloud = require('wx-server-sdk');
 } catch (e) {
+  cloudError = 'require_wx_server_sdk: ' + String((e && e.message) || e);
   cloud = null; // 本地 mock 模式：无 wx-server-sdk
 }
 
 if (cloud && process.env.CCF_FORCE_MOCK === '1') {
+  cloudError = 'forced_mock: CCF_FORCE_MOCK=1';
   console.log('[cloud] CCF_FORCE_MOCK=1，强制本地 mock 模式');
   cloud = null;
 }
@@ -25,10 +28,11 @@ if (cloud) {
     cloud.init({ env: process.env.TCB_ENV || cloud.DYNAMIC_CURRENT_ENV });
     cloudDb = cloud.database();
   } catch (e) {
+    cloudError = 'init_cloud: ' + String((e && e.message) || e);
     console.warn('[cloud] init 失败，降级 mock：', e && e.message);
     cloud = null;
     cloudDb = null;
   }
 }
 
-module.exports = { cloud, cloudDb, isCloud: !!cloudDb };
+module.exports = { cloud, cloudDb, isCloud: !!cloudDb, cloudError };

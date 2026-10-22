@@ -86,9 +86,9 @@ Page({
   },
 
   onPostTap(e: WechatMiniprogram.TouchEvent): void {
-    const topic = String((e.currentTarget.dataset as { topic?: string }).topic ?? '');
-    if (!topic) return;
-    wx.navigateTo({ url: `/pages/circle/topic/index?topic=${encodeURIComponent(topic)}` });
+    const id = String((e.currentTarget.dataset as { id?: string }).id ?? '');
+    if (!id) return;
+    wx.navigateTo({ url: `/pages/circle/detail/index?id=${encodeURIComponent(id)}` });
   },
 
   goBack(): void {

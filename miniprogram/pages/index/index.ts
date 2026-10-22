@@ -1,11 +1,30 @@
-/**
+﻿/**
  * 首页（按设计稿 pgHome v1.4 重建）
  * 结构：渐变头部（定位 + 搜索 + 4 快捷）→ 服务分类 4 专区卡 → 常用服务 → 附近服务 → AI 提醒 → 社区动态
  */
 import { LOCAL_SERVICE_CATEGORIES } from '../../config/service-grid';
+import { STORAGE_KEYS } from '../../config/env';
+import { store } from '../../store/global';
 import { navigateByTarget } from '../../utils/navigator';
+import { distanceMeters, formatDistance } from '../../utils/geo';
+import { isFreshLocation, type UserLocation } from '../../utils/onboarding';
 
 const info = wx.getWindowInfo();
+
+/**
+ * 胶囊按钮占位（2026-10-22）：navigationStyle:custom 下微信胶囊（··· | ◎）固定悬浮在右上角，
+ * 首页 .r1 行的定位胶囊 margin-left:auto 正好顶到它下面 → 两个胶囊重叠。
+ * 用 getMenuButtonBoundingClientRect 拿胶囊实际位置，给 .r1 留出右侧空间。
+ */
+function capsuleRightPad(): number {
+  try {
+    const rect = wx.getMenuButtonBoundingClientRect();
+    if (rect && rect.left > 0) return Math.round(info.windowWidth - rect.left + 8);
+  } catch {
+    /* 老基础库无此 API：退回固定留白 */
+  }
+  return 100;
+}
 
 /** 服务项 key → 图标名（icons.wxss 已存在） */
 const ICONS: Record<string, string> = {
@@ -57,9 +76,11 @@ let flatItems: ServiceItem[] = [];
 Page({
   data: {
     statusBarHeight: info.statusBarHeight,
+    /** .r1 右侧留白（px）：避开微信胶囊按钮 */
+    navRightPad: capsuleRightPad(),
     kw: '',
-    locState: 'ok',
-    locText: '阳光社区 · 3 号楼',
+    locState: 'idle',
+    locText: '点此定位',
 
     quick: [
       { i: 'wrench', t: '报修', k: 'repair' },
@@ -81,6 +102,19 @@ Page({
 
   onLoad() {
     this.buildData();
+    // setup 页刚拿到的定位优先复用，避免同一轮启动连续弹两次授权
+    const cached = store.get<UserLocation | null>(STORAGE_KEYS.USER_LOCATION, null);
+    if (cached && isFreshLocation(cached)) {
+      this.applyLocation(cached);
+      return;
+    }
+    this.onLocTap();
+  },
+
+  /** 把坐标转成「距社区中心」文案 */
+  applyLocation(loc: UserLocation): void {
+    const m = distanceMeters(loc, { latitude: 23.12894, longitude: 113.26411 });
+    this.setData({ locState: 'ok', locText: `已定位 · 距社区中心 ${formatDistance(m)}` });
   },
 
   buildData() {
@@ -128,7 +162,15 @@ Page({
     this.setData({ locState: 'locating', locText: '定位中…' });
     wx.getLocation({
       type: 'gcj02',
-      success: () => this.setData({ locState: 'ok', locText: '阳光社区 · 3 号楼' }),
+      success: (res) => {
+        const loc: UserLocation = {
+          latitude: res.latitude,
+          longitude: res.longitude,
+          ts: Date.now(),
+        };
+        store.set(STORAGE_KEYS.USER_LOCATION, loc);
+        this.applyLocation(loc);
+      },
       fail: () => this.setData({ locState: 'denied', locText: '未授权 · 点此开启' }),
     });
   },
@@ -144,7 +186,10 @@ Page({
       return;
     }
     if (k === 'reg') {
-      wx.navigateTo({ url: '/pages/phonebook/index?category=medical' });
+      // 挂号走统一预约页（与 service-grid 的 health_reg 一致），不再跳电话簿
+      wx.navigateTo({
+        url: `/pages/service/book/index?svc=${encodeURIComponent('社区门诊挂号')}&cat=health&opts=${encodeURIComponent('普通号|专家号')}`,
+      });
       return;
     }
     wx.navigateTo({ url: '/pages/service/meal/index' });
@@ -180,3 +225,4 @@ Page({
     wx.navigateTo({ url: `/pages/notice/list/index${suffix}` });
   },
 });
+

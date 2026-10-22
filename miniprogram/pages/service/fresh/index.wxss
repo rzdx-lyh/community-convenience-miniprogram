@@ -6,6 +6,12 @@
 .tab-note { padding: 14rpx 28rpx 0; font-size: 18rpx; color: var(--t3); }
 
 /* 商品卡徽标 / 价格 / 进度 */
+/* ⚠ 信息块类名是 .pib（不是 .ib）：全局 .ib 是图标底座（80rpx 方块 + flex），
+   撞名会把名称/规格压成一字一行的竖排（2026-10-21 真机错位根因）。
+   layout.wxss 里原型带来的 .skc .ib{padding...} 因改名而失效，这里在页面层补回。 */
+.skc .pib { padding: 16rpx 18rpx 18rpx; }
+.skc .pib .nm { font-size: 24rpx; font-weight: 700; }
+.skc .pib .ds { font-size: 17rpx; color: var(--t3); margin-top: 1px; }
 .skc .hot { z-index: 2; }
 .skc .pr-b { font-size: 28rpx; font-weight: 800; color: var(--red); font-family: ui-monospace, Menlo, monospace; }
 .skc .pr-i { font-style: normal; font-size: 18rpx; color: var(--t3); }

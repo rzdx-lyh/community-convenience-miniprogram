@@ -12,6 +12,19 @@ import { createWorkOrder } from '../../../services/workorder';
 import { store } from '../../../store/global';
 import { CATEGORY_LABELS } from '../../../utils/dict';
 import { track, trackPageView } from '../../../utils/logger';
+
+/* 自定义导航适配：状态栏高度 + 微信胶囊右侧避让（2026-10-22） */
+const winInfo = wx.getWindowInfo();
+
+function capsuleRightPad(): number {
+  try {
+    const rect = wx.getMenuButtonBoundingClientRect();
+    if (rect && rect.left > 0) return Math.round(winInfo.windowWidth - rect.left + 8);
+  } catch {
+    /* 老基础库无此 API */
+  }
+  return 100;
+}
 import { toast } from '../../../utils/ui';
 
 export interface CategoryOption {
@@ -33,7 +46,23 @@ export function normalizeCategory(input?: string): WorkOrder['category'] | '' {
 }
 
 Page({
+  /** 返回上一页；无上级（如从分享/扫码直接进入）时回首页 */
+  goBack(): void {
+    if (getCurrentPages().length > 1) {
+      wx.navigateBack();
+      return;
+    }
+    wx.switchTab({ url: '/pages/index/index' });
+  },
+
+  /** 回主页（2026-10-22 用户要求：报修页增加返回主页入口） */
+  goHome(): void {
+    wx.switchTab({ url: '/pages/index/index' });
+  },
+
   data: {
+    statusBarHeight: winInfo.statusBarHeight,
+    navRightPad: capsuleRightPad(),
     categories: CATEGORY_OPTIONS,
     category: '' as WorkOrder['category'] | '',
     title: '',
@@ -136,9 +165,9 @@ Page({
       track('workorder_create', { category, hasImages: images.length > 0 });
       wx.hideLoading();
       wx.showToast({ title: '提交成功', icon: 'success' });
-      // 详情页为二级页，直接回「办事大厅」的报修记录区看结果
+      // 详情页为二级页，提交后进入「我的报修」查看处理进度
       setTimeout(() => {
-        wx.switchTab({ url: '/pages/repair/list/index' });
+        wx.redirectTo({ url: '/pages/repair/list/index' });
       }, 800);
       void res;
     } catch {

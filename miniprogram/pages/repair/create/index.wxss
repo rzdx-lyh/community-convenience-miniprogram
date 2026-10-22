@@ -61,6 +61,14 @@
   font-size: var(--font-body);
   background: var(--card);
 }
+
+/* ⚠ 原生 <input> 默认高度很小，只加 padding 会把文字/placeholder 压到裁切
+   （2026-10-22 用户截图「如：卫生间水管漏水」上下截断）。
+   明确高度 + 只留左右内边距，原生组件会在高度内自动垂直居中。 */
+.input {
+  height: 88rpx;
+  padding: 0 var(--space-3);
+}
 .textarea {
   min-height: 160rpx;
 }
@@ -158,3 +166,19 @@
 .care-mode .cat {
   height: 96rpx;
 }
+
+/* 返回条 v2（2026-10-22）：弃用悬浮胶囊按钮，改用全站标准 .nav 栏——
+   ‹ 返回 + ⌂ 回主页 两个左置圆钮，标题居中，与其它页面视觉一致 */
+.homebtn {
+  position: absolute;
+  left: 92rpx;
+  top: 0;
+  height: 86rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 20rpx;
+  font-size: 34rpx;
+  color: var(--text-1);
+  font-weight: 600;
+}
+.tb-hv { opacity: 0.72; }

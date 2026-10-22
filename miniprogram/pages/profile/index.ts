@@ -3,6 +3,9 @@
  * 资料卡 + 数据统计 + 家庭与地址 + 我的服务 + 设置中心 + 帮助
  */
 import { STORAGE_KEYS } from '../../config/env';
+import { getProfile } from '../../services/auth';
+import { updateProfile } from '../../services/user';
+import { store } from '../../store/global';
 import { toast } from '../../utils/ui';
 
 const info = wx.getWindowInfo();
@@ -33,12 +36,14 @@ export function normalizeElderMode(value: unknown): boolean {
 Page({
   data: {
     statusBarHeight: info.statusBarHeight,
+    capsuleGap: 8,
 
     prof: {
-      name: '3 栋阿明',
-      sign: '爱帮邻居搭把手，有事喊我一声',
-      addr: '3 号楼 2 单元 502',
-      av: '明',
+      name: '社区用户',
+      sign: '正在同步社区账号',
+      addr: '未设置楼栋',
+      av: '邻',
+      avatarUrl: '',
     },
 
     stats: [
@@ -59,6 +64,7 @@ Page({
     ],
 
     services: [
+      { k: 'workorder', t: '我的报修', d: '提交记录 · 处理进度 · 完工反馈', v: '', icon: 'clipboard', tone: 'blue', url: '/pages/repair/list/index' },
       { k: 'book', t: '我的预约', d: '家政 / 助餐 / 助浴 / 改造登记', v: '3 条', icon: 'clipboard', tone: 'blue', url: '/pages/service/book/index' },
       { k: 'bill', t: '户号绑定', d: '水 / 电 / 燃气 · 代缴登记', v: '2 / 3', icon: 'bulb', tone: 'gold', url: '/pages/service/bill/index' },
       { k: 'record', t: '健康档案', d: '建档 · 测量记录 · 签约医生', v: '', icon: 'clipboard', tone: 'teal', url: '/pages/service/record/index' },
@@ -72,7 +78,55 @@ Page({
 
   onLoad() {
     const care = normalizeElderMode(wx.getStorageSync(STORAGE_KEYS.ELDER_MODE));
-    this.setData({ care });
+    let capsuleGap = 8;
+    try {
+      const menu = wx.getMenuButtonBoundingClientRect();
+      // 胶囊底部到状态栏底部的距离 + 8px 呼吸位；避免头像/昵称被右上角胶囊压住。
+      capsuleGap = Math.max(8, Math.ceil(menu.bottom - info.statusBarHeight + 8));
+    } catch {
+      capsuleGap = 8;
+    }
+    this.setData({ care, capsuleGap });
+  },
+
+  onShow() {
+    void this.loadProfile();
+  },
+
+  /** 用真实登录档案替换原型里的演示姓名/楼栋；失败时保留可用的匿名占位。 */
+  async loadProfile(): Promise<void> {
+    try {
+      const p = await getProfile();
+      const name = String(p.nickName || '').trim() || '社区用户';
+      const building = String(p.building || '').trim();
+      this.setData({
+        prof: {
+          name,
+          sign: `社区账号 · ${p.accountId}`,
+          addr: building || '未设置楼栋',
+          av: name.slice(0, 1),
+          avatarUrl: String(p.avatarUrl || ''),
+        },
+      });
+    } catch {
+      // 云端不可用（401/断网）时，仍展示首启设置保存的本地头像/昵称
+      const local = store.get<{ nickName?: string; avatarUrl?: string } | null>(
+        STORAGE_KEYS.SETUP_PROFILE,
+        null,
+      );
+      const name = String(local?.nickName || '').trim();
+      if (name) {
+        this.setData({
+          prof: {
+            ...this.data.prof,
+            name,
+            sign: '社区账号 · 本地资料',
+            av: name.slice(0, 1),
+            avatarUrl: String(local?.avatarUrl || ''),
+          },
+        });
+      }
+    }
   },
 
   /* ---------------------------- 交互 ---------------------------- */
@@ -113,22 +167,90 @@ Page({
   },
 
   onMemberAdd(): void {
-    toast('添加家庭成员正在开发中');
+    wx.showModal({
+      title: '添加家庭成员',
+      content: '家庭成员需由社区登记后开通。可先在社区电话簿联系物业服务中心办理。',
+      confirmText: '查看电话簿',
+      success: (res) => {
+        if (res.confirm) wx.navigateTo({ url: '/pages/phonebook/index' });
+      },
+    });
   },
 
   onMemberTap(): void {
-    toast('成员管理正在开发中');
+    wx.showModal({
+      title: '家庭成员',
+      content: '成员资料以社区登记信息为准；如需修改请联系物业服务中心。',
+      showCancel: false,
+      confirmText: '知道了',
+    });
   },
 
   onHelp(): void {
-    toast('帮助与反馈正在开发中');
+    wx.navigateTo({
+      url: '/pages/phonebook/index',
+      fail: () => toast('电话簿暂时打不开，请稍后再试'),
+    });
   },
 
   onAbout(): void {
-    toast('邻里小助手 1.4');
+    wx.showModal({
+      title: '邻里小助手',
+      content: '社区便民服务小程序 · 提供报修、通知、电话簿、办事指引与 AI 问答。',
+      showCancel: false,
+      confirmText: '知道了',
+    });
   },
 
   onMine(): void {
     wx.navigateTo({ url: '/pages/circle/mine/index' });
+  },
+
+  /** 换头像：选图 → 传云存储 → 更新资料（2026-10-22） */
+  onEditAvatar(): void {
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      sizeType: ['compressed'],
+      success: async (res) => {
+        const file = res.tempFiles && res.tempFiles[0];
+        if (!file || !file.tempFilePath) return;
+        try {
+          wx.showLoading({ title: '上传中…', mask: true });
+          const ext = (file.tempFilePath.match(/\.(\w+)$/) || [])[1] || 'jpg';
+          const cloudPath = `avatars/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+          const up = await wx.cloud.uploadFile({ cloudPath, filePath: file.tempFilePath });
+          await updateProfile({ avatarUrl: up.fileID });
+          this.setData({ 'prof.avatarUrl': up.fileID });
+          wx.hideLoading();
+          toast('头像已更新');
+        } catch {
+          wx.hideLoading();
+          toast('头像更新失败，请重试');
+        }
+      },
+    });
+  },
+
+  /** 改昵称：showModal editable 输入框（基础库 2.17.1+） */
+  onEditName(): void {
+    wx.showModal({
+      title: '修改昵称',
+      editable: true,
+      placeholderText: '请输入新昵称（20 字内）',
+      success: async (res) => {
+        if (!res.confirm) return;
+        const nickName = String(res.content || '').trim();
+        if (!nickName) return toast('昵称不能为空');
+        if (nickName.length > 20) return toast('昵称不超过 20 字');
+        try {
+          await updateProfile({ nickName });
+          this.setData({ 'prof.name': nickName, 'prof.av': nickName.slice(0, 1) });
+          toast('昵称已更新');
+        } catch {
+          toast('昵称更新失败，请重试');
+        }
+      },
+    });
   },
 });

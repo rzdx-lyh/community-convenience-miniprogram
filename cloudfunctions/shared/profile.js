@@ -23,6 +23,13 @@ async function updateProfile(openid, event = {}) {
     patch.nickName = n;
   }
 
+  if (event.avatarUrl !== undefined && event.avatarUrl !== null) {
+    const a = String(event.avatarUrl || '').trim();
+    if (a && !/^(cloud:\/\/|https?:\/\/)/.test(a)) bizErr(CODES.PARAM, '头像地址格式不正确');
+    if (a.length > 500) bizErr(CODES.PARAM, '头像地址过长');
+    patch.avatarUrl = a;
+  }
+
   if (event.phone !== undefined && event.phone !== null) {
     const p = String(event.phone || '').trim();
     if (p && !isValidPhone(p)) bizErr(CODES.PARAM, '手机号格式不正确');

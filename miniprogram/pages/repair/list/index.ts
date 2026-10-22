@@ -12,7 +12,7 @@
  *   配餐营养 / 费用户号 / 找地点 / 邻里互助 / 应急求助），点击直接用该场景的预置问题唤起问答面板。
  *   面板复用 components/ai-bar 的 bare 模式（只弹层、不画横条），避免同一套问答逻辑写两遍。
  *
- * 红线：本页是 Tab 页，`switchTab` 不支持 query —— 搜索态只存在页面内，不通过 URL 传递。
+ * 红线：本页是二级页，只能使用 navigateTo / redirectTo；搜索态只存在页面内，不通过 URL 传递。
  */
 import { findScene, HUB_SCENES, type AiScene } from '../../../config/ai-scenes';
 import { ENV, STORAGE_KEYS } from '../../../config/env';
@@ -83,6 +83,8 @@ interface AiBarHandle {
   openWith(input: { title?: string; presets?: string[] }): void;
 }
 
+const info = wx.getWindowInfo();
+
 const pager = createPager<WorkOrder>(async (page, pageSize) => {
   const res = await listWorkOrders({
     status: (currentStatus || undefined) as WorkOrder['status'] | undefined,
@@ -94,6 +96,7 @@ const pager = createPager<WorkOrder>(async (page, pageSize) => {
 
 Page({
   data: {
+    statusBarHeight: info.statusBarHeight,
     /** 四类服务入口 */
     categories: [] as HallCatVM[],
     /** 搜索关键词与命中结果 */
@@ -115,6 +118,14 @@ Page({
 
   /** 请求代际：每次 refresh 自增，过期响应直接丢弃，避免 onLoad/onShow 双触发与切 Tab 竞态导致数据重复/混杂（BUG-001/002） */
   genId: 0,
+
+  goBack(): void {
+    if (getCurrentPages().length > 1) {
+      wx.navigateBack();
+      return;
+    }
+    wx.switchTab({ url: '/pages/hall/index' });
+  },
 
   onLoad() {
     trackPageView('pages/repair/list/index');

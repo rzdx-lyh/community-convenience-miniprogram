@@ -1,15 +1,52 @@
 'use strict';
 
+/* ============================================================
+ * ⚠ 临时启动自检 v2（定位「lib 目录未生效」问题，定位后删除）
+ * v1 的 bug：第二句赋值覆盖了 bootErr.message，导致永远看不到真实报错。
+ * v2：完整保留 err.code/message/stack、__dirname、lib 与 response.js 的
+ *     stat（是否目录/权限位/大小），一次性把运行时真相带回来。
+ * ============================================================ */
+try {
+  require.resolve('./response');
+} catch (bootErr) {
+  let diag;
+  try {
+    const fs = require('fs');
+    const info = {
+      errStr: String(bootErr),
+      code: bootErr && bootErr.code,
+      msg: bootErr && bootErr.message,
+      stack: bootErr && bootErr.stack ? String(bootErr.stack).split('\n').slice(0, 4).join(' | ') : '',
+      dir: __dirname,
+      node: process.version,
+      root: fs.readdirSync(__dirname).slice(0, 20),
+    };
+    try {
+      const s = fs.statSync(__dirname + '/lib');
+      info.libStat = { isDir: s.isDirectory(), mode: (s.mode & 0o777).toString(8) };
+    } catch (e1) { info.libStat = 'ERR:' + (e1 && e1.message); }
+    try { info.libFiles = fs.readdirSync(__dirname + '/lib'); } catch (e2) { info.libFiles = 'ERR:' + (e2 && e2.message); }
+    try {
+      const s2 = fs.statSync(__dirname + '/lib/response.js');
+      info.respStat = { size: s2.size, mode: (s2.mode & 0o777).toString(8) };
+    } catch (e3) { info.respStat = 'ERR:' + (e3 && e3.message); }
+    diag = 'BOOTFAIL ' + JSON.stringify(info);
+  } catch (eDiag) {
+    diag = 'BOOTFAIL_DIAGFAIL ' + (eDiag && eDiag.message) + ' || orig=' + String(bootErr);
+  }
+  console.error('[boot-diag] ' + diag);
+  exports.main = async () => ({ code: 500, msg: diag.slice(0, 900), data: null });
+  return;
+}
 
-
-const { ok, fail, CODES, handler } = require('./lib/response');
-const { db } = require('./lib/db');
-const { getOpenId, requireUser, requireStaff } = require('./lib/auth');
-const { isoNow, paginate } = require('./lib/time');
-const { checkText } = require('./lib/security');
-const { chat, buildSummaryPrompt } = require('./lib/ai');
-const { notifyWorkOrderDone } = require('./lib/subscribe');
-const { overLimit, RULE } = require('./lib/ratelimit');
+const { ok, fail, CODES, handler } = require('./response');
+const { db } = require('./db');
+const { getOpenId, requireUser, requireStaff } = require('./auth');
+const { isoNow, paginate } = require('./time');
+const { checkText } = require('./security');
+const { chat, buildSummaryPrompt } = require('./ai');
+const { notifyWorkOrderDone } = require('./subscribe');
+const { overLimit, RULE } = require('./ratelimit');
 
 const CATEGORIES = ['water', 'electric', 'door', 'public', 'other'];
 const FLOW = {
@@ -167,7 +204,27 @@ async function handle(event) {
   return ok({ workorder: updated });
 }
 
+/* ============================================================
+ * ⚠ 临时自愈（定位线上 500，定位后删除）
+ * 云数据库集合若未创建，首次调用就地补建，避免 add 直接失败。
+ * ============================================================ */
+const { cloud: wxCloud, isCloud } = require('./cloud');
+let __ensuredCollections = false;
+async function ensureCollections() {
+  if (__ensuredCollections || !isCloud || !wxCloud) return;
+  __ensuredCollections = true;
+  for (const name of ['users', 'workorders']) {
+    try {
+      await wxCloud.database().createCollection(name);
+      console.log('[ensure] 已创建集合 ' + name);
+    } catch (e) {
+      // 已存在会抛错，忽略
+    }
+  }
+}
+
 exports.main = handler(async (event = {}) => {
+  await ensureCollections();
   const action = (event && event.action) || '';
   switch (action) {
     case 'create': return await create(event);

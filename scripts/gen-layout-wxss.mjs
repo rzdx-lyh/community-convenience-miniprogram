@@ -38,6 +38,11 @@ const DROP_CLASSES = new Set([
   'tmap', 'tmapfb', 'tmapbox',
   // 组件库预览的区块容器
   'kitbox', 'kitrow', 'kitsec',
+  // ⚠ AI 询问条（2026-10-22）：原型 .aibar 是 absolute 贴底悬浮条；小程序里 ai-bar 是
+  //   自定义组件且自带完整流内样式，组件开了 apply-shared 会吃进这些全局规则，
+  //   导致 AI 条 absolute 贴底、z-index:22 盖住页面底部操作条（真机实锤截图）。
+  //   原型的 .aibar/.aibar.up/.aibar .in/.aibar .ai/.aibar .tx/.aibar .go 全部丢弃。
+  'aibar',
 ]);
 // ⚠ 不要丢：dgrid（图片九宫格）、dev（设备卡）、care（关怀变量）、skel（骨架屏）
 //   它们出现在真实业务页里，曾被误判为预览专用导致页面布局塌陷。
@@ -241,28 +246,62 @@ const ADAPTER = `
  * 小程序适配层（生成器内联，非原型内容）
  * ============================================================ */
 
-/* 状态栏占位：原型固定 24px，真机刘海高度不同。
-   页面在最外层 .sbar / .nav / .pgh 上用内联 style="padding-top:{{statusBarHeight}}px"
-   覆盖；这里只给一个安全兜底，避免完全没有适配时被状态栏压住。 */
+/* 状态栏占位（真机适配，2026-10-21 修正）：
+   - 页面统一在 .sbar / .pgh / .hd 上用内联 style="padding-top:{{statusBarHeight}}px"
+     由 JS 拿到的精确值撑开刘海，这是唯一的高度来源；
+   - 这里**不再叠加** min-height / env(safe-area-inset-top)，避免双重 padding 在真机错位
+     （旧版 .sbar 同时有 min-height:48rpx + box-sizing:content-box，padding 叠在 min-height 上，
+      不同机型 statusBarHeight 不同 → 状态栏条忽高忽低、内容错位）。
+   - box-sizing 用 border-box：padding 计入元素高度，不额外撑高。
+   - env() 仅作兜底（无内联时才生效），且与内联不冲突。 */
 .sbar {
-  min-height: 48rpx;
+  box-sizing: border-box;
+  /* min-height 同时计入 env(safe-area-inset-top)：个别机型 statusBarHeight 略小于
+     真实状态栏高度，内容会顶进系统状态栏被图标压住（2026-10-22 用户截图实锤：
+     首页定位胶囊与灵动岛两侧图标重叠）。env 在非刘海屏为 0，无副作用。 */
+  min-height: calc(48rpx + env(safe-area-inset-top));
   padding-top: env(safe-area-inset-top);
-  box-sizing: content-box;
 }
 .pgh .sbar,
 .hd .sbar {
+  box-sizing: border-box;
   padding-top: env(safe-area-inset-top);
-  box-sizing: content-box;
+}
+
+/* 假状态栏内容隐藏（2026-10-21 真机错位反馈）：
+   项目是 navigationStyle:custom，系统真状态栏本来就显示；
+   原型自带的假时钟/信号条（08:42 · ●●● · 邻里小助手）会与之重复，
+   真机上是「两条状态栏 + 灵动岛压中间」的错位观感。
+   .sbar 仅保留 spacer 职责（padding-top 撑开状态栏高度），文字一律隐藏。
+   已核实 22 处 .sbar 内均为纯装饰文本，无交互内容（map 的定位状态在
+   下方「重新定位」按钮仍有入口）。 */
+.sbar text {
+  display: none;
 }
 
 /* fixed 底部操作条会盖住内容：页面根节点加 .page--fbar 自动留白 */
 .page--fbar {
-  padding-bottom: 200rpx;
+  padding-bottom: calc(200rpx + env(safe-area-inset-bottom));
 }
 
 /* 原生 tabBar 页面：底部无需再给固定条留白 */
 .page--tab {
   padding-bottom: 0;
+}
+
+/* 底部安全区（iPhone 全面屏 home indicator，2026-10-21 修正）：
+   fixed bottom:0 的元素若不补 env(safe-area-inset-bottom)，会被底部小黑条盖住或贴死，
+   真机表现为底部操作条/弹层错位。这里只改 padding-bottom（保留各自原有横向 padding），
+   内容留白由 .page--fbar 的 padding 承担。 */
+.footbar,
+.fbar {
+  padding-bottom: calc(18rpx + env(safe-area-inset-bottom));
+}
+.fab2 {
+  bottom: calc(132rpx + env(safe-area-inset-bottom));
+}
+.sheet {
+  padding-bottom: calc(36rpx + env(safe-area-inset-bottom));
 }
 
 /* 弹层默认不占位（显隐交给 wx:if），避免空节点参与布局 */
@@ -294,6 +333,18 @@ button.btn3::after {
 input.inp,
 textarea.ta {
   box-sizing: border-box;
+}
+
+/* 按钮文字居中（2026-10-22 用户截图：弹层「取消/提交借用登记」文字顶左上角）：
+   原型 .btn 按浏览器 <button> 默认居中设计；小程序里这些按钮多用 <view class="btn">
+   承载，view 无默认居中 → 这里统一补 flex 居中（.fbar .btn2 已自带，不冲突）。 */
+.btn,
+.btn2,
+.btn3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 /* 单行/多行截断工具（原型用 CSS 实现，小程序同样适用，此处仅补 -webkit 前缀） */

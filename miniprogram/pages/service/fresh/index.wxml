@@ -31,7 +31,8 @@
       <view wx:if="{{item.discount}}" class="hot">{{item.discount}}</view>
       <view wx:elif="{{item.isGroup}}" class="hot">拼单</view>
       <view class="im">{{item.emoji}}</view>
-      <view class="ib">
+      <!-- ⚠ 类名必须是 pib：全局 .ib 是图标底座（80rpx 方块 flex），撞名会把信息块压成竖排小方块 -->
+      <view class="pib">
         <view class="nm">{{item.name}}</view>
         <view class="ds">{{item.spec}}</view>
         <view class="pr">

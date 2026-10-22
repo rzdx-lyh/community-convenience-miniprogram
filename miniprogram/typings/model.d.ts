@@ -8,6 +8,8 @@ declare interface User {
   nickName?: string;
   /** 展示时一律脱敏；存储为 AES 密文 */
   phone?: string;
+  /** 头像（云存储 fileID 或 http 链接） */
+  avatarUrl?: string;
   /** v1.2 · 社区账号，服务端懒生成，必返回且永远有值 */
   accountId: string;
   role: 'resident' | 'property' | 'admin';

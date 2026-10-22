@@ -56,11 +56,9 @@
         </view>
         <view class="pgh-chip">0 元预约</view>
       </view>
-    </view>
-
-    <view class="body">
-      <!-- 步骤条 -->
-      <view class="stp">
+      <!-- 步骤条：对齐原型 pgBook（步骤条属于蓝头的一部分，放在 pgh 内）。
+           之前放在 .body 里，被全局 -72rpx 上拉把「要办哪项」标签顶到蓝白交界上（2026-10-22 截图）。 -->
+      <view class="stp stp--in-pgh">
         <block wx:for="{{steps}}" wx:key="n">
           <view wx:if="{{index}}" class="ln" />
           <view class="s {{item.cls}}" data-n="{{item.n}}" bindtap="onStep">
@@ -72,7 +70,9 @@
           </view>
         </block>
       </view>
+    </view>
 
+    <view class="body">
       <!-- 第 1 步：服务类型 -->
       <block wx:if="{{step === 1}}">
         <view class="lblw">

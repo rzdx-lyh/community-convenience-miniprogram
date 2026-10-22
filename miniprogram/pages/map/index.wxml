@@ -24,6 +24,7 @@
     </view>
 
     <map
+      id="tmap"
       class="tmap"
       latitude="{{latitude}}"
       longitude="{{longitude}}"

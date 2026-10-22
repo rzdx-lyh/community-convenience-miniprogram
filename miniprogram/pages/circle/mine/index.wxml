@@ -24,6 +24,7 @@
       wx:for="{{list}}"
       wx:key="id"
       class="post2"
+      data-id="{{item.id}}"
       data-topic="{{item.topic}}"
       bindtap="onPostTap"
     >

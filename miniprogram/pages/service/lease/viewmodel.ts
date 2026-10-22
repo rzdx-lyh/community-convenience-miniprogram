@@ -37,11 +37,14 @@ export interface HouseItem {
   /** 详情补充（不含任何资金代收表述） */
   detail: string;
   emoji: string;
+  /** 实拍图（本地打包资源，2026-10-22 起卡片图位用真实照片替代纯渐变） */
+  image: string;
 }
 
 export const HOUSES: HouseItem[] = [
   {
     id: 'h1',
+    image: '/pages/service/lease/img/house-1.jpg',
     title: '3 号楼 2 室 1 厅',
     desc: '68㎡ · 朝南 · 15 楼 · 已核验',
     deal: 'rent',
@@ -57,6 +60,7 @@ export const HOUSES: HouseItem[] = [
   },
   {
     id: 'h2',
+    image: '/pages/service/lease/img/house-2.jpg',
     title: '7 号楼 1 室 1 厅',
     desc: '42㎡ · 精装 · 6 楼 · 已核验',
     deal: 'rent',
@@ -72,6 +76,7 @@ export const HOUSES: HouseItem[] = [
   },
   {
     id: 'h3',
+    image: '/pages/service/lease/img/house-3.jpg',
     title: '1 号楼 3 室 2 厅',
     desc: '102㎡ · 南北通透 · 业主自挂',
     deal: 'rent',
@@ -87,6 +92,7 @@ export const HOUSES: HouseItem[] = [
   },
   {
     id: 'h4',
+    image: '/pages/service/lease/img/house-4.jpg',
     title: '5 号楼 2 室 2 厅 · 出售',
     desc: '89㎡ · 满五唯一 · 已核验',
     deal: 'sell',

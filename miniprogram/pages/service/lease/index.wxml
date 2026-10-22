@@ -45,13 +45,17 @@
       bindtap="onOpenHouse"
     >
       <view class="hph hph--{{index % 4}}">
+        <!-- 实拍图（2026-10-22）：本地打包资源；渐变底色保留作加载兜底 -->
+        <image class="hph-img" src="{{item.image}}" mode="aspectFill" lazy-load />
+        <view class="hph-shade"></view>
         <text class="hb">{{item.dealText}}</text>
         <view class="hp">{{item.priceText}}<text class="hp-i">{{item.unitText}}</text></view>
         <view class="hv">{{item.brief}}</view>
       </view>
       <view class="hinfo">
         <view class="ht">{{item.title}}</view>
-        <view class="hd">{{item.desc}}</view>
+        <!-- ⚠ 类名必须是 hds：全局 .hd 是渐变页头，撞名会把描述渲染成蓝色渐变色块 -->
+        <view class="hds">{{item.desc}}</view>
         <view class="htags">
           <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="htag">{{tag}}</text>
         </view>

@@ -157,3 +157,44 @@ page.care-mode,
   transform: scale(0.985);
   filter: brightness(0.94);
 }
+
+/* ===== 全局导航胶囊行（2026-10-22 用户要求）=====
+ * 微信原生白色胶囊固定在上方；页面导航行与胶囊同高，
+ * 右侧预留胶囊宽度，胶囊下沿画一条小白线，线下方才开始页面功能。
+ * 覆盖 .pgh 彩色页头、首页 .hd 资料行、我的页 .pf-row。
+ */
+.pgh .pgh-nav {
+  box-sizing: border-box;
+  height: 76rpx;
+  padding-right: 190rpx;
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.55);
+}
+
+.hd .r1 {
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.45);
+  padding-bottom: 16rpx;
+}
+
+.page .pf-row {
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.45);
+  padding-bottom: 16rpx;
+}
+
+/* 白底二级页导航（.nav）：同样在胶囊行下方给一条可见细线；
+ * 白底页头用浅灰线（白色线在白底上不可见），彩色页头仍用白线。
+ * 右侧操作位避让微信胶囊。 */
+.nav {
+  box-sizing: border-box;
+  border-bottom: 2rpx solid #DCE3ED;
+}
+
+.nav .rt {
+  right: 190rpx;
+}
+
+/* 白底导航行与胶囊同高（76rpx），分隔线正好落在胶囊下沿 */
+.nav,
+.nav .bk,
+.nav .rt {
+  height: 76rpx;
+}

@@ -2,14 +2,15 @@
 
 
 
-const { ok, fail, CODES, handler } = require('./lib/response');
-const { db } = require('./lib/db');
-const { getOpenId, requireUser } = require('./lib/auth');
-const { isoNow, paginate } = require('./lib/time');
-const { chat, buildRagPrompt } = require('./lib/ai');
-const { searchKB, SUGGEST_QUESTIONS, FALLBACK_TEXT, hotlineLines } = require('./lib/kb/kb');
-const { overLimit, RULE } = require('./lib/ratelimit');
-const { detectRisk } = require('./lib/safety');
+const { ok, fail, CODES, handler } = require('./response');
+const { db } = require('./db');
+const { getOpenId, requireUser } = require('./auth');
+const { isoNow, paginate } = require('./time');
+const { chat, buildRagPrompt } = require('./ai');
+const { searchWeb, toSourceLabels } = require('./websearch');
+const { searchKB, SUGGEST_QUESTIONS, FALLBACK_TEXT, hotlineLines } = require('./kb');
+const { overLimit, RULE } = require('./ratelimit');
+const { detectRisk } = require('./safety');
 
 const DISCLAIMER = 'AI 生成仅供参考';
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 会话 2 小时失效
@@ -65,8 +66,8 @@ async function latestSession(openid) {
 }
 
 /** 输出护栏：回答中的号码必须能在命中的知识库原文里找到，否则判为幻觉 */
-function outputGuard(answer, hits) {
-  const ctx = (hits || []).map((h) => h.content || '').join(' ');
+function outputGuard(answer, contexts) {
+  const ctx = (contexts || []).map((c) => String((c && c.content) || '')).join(' ');
   const nums = String(answer || '').match(/\d[\d-]{5,}/g) || [];
   const suspicious = nums.filter((n) => !ctx.includes(n));
   return { pass: suspicious.length === 0, suspicious };
@@ -129,24 +130,28 @@ async function ask(event) {
   const history = session && Array.isArray(session.turns) ? session.turns.slice() : [];
   const answerId = newAnswerId();
 
-  // ① 知识库检索（未命中 → 不调用大模型）
+  // ① 知识库 + 实时网页检索（两条上下文合并后交给模型）
   const hits = searchKB(question);
-  const sources = hits.map((h) => h.title);
+  const web = await searchWeb(question);
+  const webResults = web.results || [];
+  const webSources = toSourceLabels(webResults);
+  const kbSources = hits.map((h, i) => `[${webSources.length + i + 1}] ${h.title}`);
+  const sources = [...webSources, ...kbSources];
+  const hasContext = hits.length > 0 || webResults.length > 0;
 
   let answer = '';
   let degraded = true;
   let kbFallback = false;
+  let webFallback = false;
   // CR-027：把降级原因透出（no_key / timeout / network / http_xxx / kb_miss / risk / guard）
-  // 以前只有 degraded:true，排查只能靠猜；现在日志与出参都能直接定位。
-  let aiReason = 'kb_miss';
+  let aiReason = hasContext ? 'ok' : 'no_context';
 
-  if (!hits.length) {
-    // 降级②：未命中 → 兜底话术 + 便民电话
+  if (!hasContext) {
     answer = `${FALLBACK_TEXT}\n便民电话：${hotlineLines()}`;
-    aiReason = 'kb_miss';
-    console.log('[qa] 知识库未命中，直接兜底，不调用大模型');
+    aiReason = web.enabled ? `web_${web.reason}` : 'kb_miss';
+    console.log(`[qa] 知识库与网页均未命中，直接兜底：reason=${aiReason}`);
   } else {
-    const base = buildRagPrompt(hits, question);
+    const base = buildRagPrompt(hits, question, webResults);
     const messages = [
       base[0],
       ...history.slice(-MAX_TURNS).map((t) => ({
@@ -155,22 +160,33 @@ async function ask(event) {
       })),
       base[1],
     ];
-    const ai = await chat(messages, { maxTokens: 600 });
+    const ai = await chat(messages, { maxTokens: 650 });
     if (!ai.degraded) {
-      const guard = outputGuard(ai.content, hits);
+      const guard = outputGuard(ai.content, [...hits, ...webResults]);
       if (guard.pass) {
         answer = String(ai.content || '').slice(0, MAX_ANSWER_LEN);
         degraded = false;
-        aiReason = 'ok';
+        aiReason = webResults.length ? 'web_ok' : 'ok';
       } else {
-        // 输出护栏拦截（疑似编造号码/金额）→ 回落知识库原文
-        console.warn('[qa] 输出护栏拦截，回落知识库原文：', guard.suspicious.join(','));
-        answer = hits[0].content;
-        kbFallback = true;
+        console.warn('[qa] 输出护栏拦截，回落检索资料：', guard.suspicious.join(','));
+        answer = webResults.length
+          ? String(webResults[0].content || webResults[0].snippet || '').slice(0, MAX_ANSWER_LEN)
+          : hits[0].content;
+        kbFallback = !webResults.length;
+        webFallback = webResults.length > 0;
         aiReason = 'guard';
       }
+    } else if (webResults.length) {
+      // 大模型超时/不可用时，仍返回实时网页正文摘要，避免用户只看到“掉线”。
+      const lines = webResults.slice(0, 2).map((r, i) => {
+        const body = String(r.content || r.snippet || '').slice(0, 220);
+        return `${i + 1}. ${r.title}：${body}`;
+      });
+      answer = `根据实时网页检索：\n${lines.join('\n')}`.slice(0, MAX_ANSWER_LEN);
+      webFallback = true;
+      aiReason = `web_fallback_${ai.reason || 'unknown'}`;
     } else if (hits.length) {
-      // 降级①：模型不可用 → 直接回知识库原文（仍有用）
+      // 模型不可用 → 直接回知识库原文（仍有用）
       answer = hits[0].content;
       kbFallback = true;
       aiReason = ai.reason || 'unknown';
@@ -178,7 +194,7 @@ async function ask(event) {
   }
 
   if (degraded && !answer) answer = `${FALLBACK_TEXT}\n便民电话：${hotlineLines()}`;
-  if (!degraded || kbFallback) answer = `${answer}\n\n${DISCLAIMER}`;
+  if (!degraded || kbFallback || webFallback) answer = `${answer}\n\n${DISCLAIMER}`;
   answer = answer.slice(0, MAX_ANSWER_LEN + 20);
 
   // ③ 落会话（仅本人可读写；保留最近 3 轮）
@@ -201,10 +217,10 @@ async function ask(event) {
     await db.collection('qa_sessions').add({ data: Object.assign({ createdAt: now }, payload) }).catch(() => ({}));
   }
 
-  console.log(`[qa] ask degraded=${degraded} reason=${aiReason} hits=${hits.length} session=${sessionId}`);
+  console.log(`[qa] ask degraded=${degraded} reason=${aiReason} kb=${hits.length} web=${webResults.length} web_ms=${web.costMs} session=${sessionId}`);
   // _riskLevel='none' 为 CR-012 新增可选字段，未命中高风险时恒为 'none'（向后兼容）
   // _aiReason 为 CR-027 新增可选字段，纯向后兼容，零新增错误码
-  return ok({ answerId, sessionId, answer, sources, degraded, _riskLevel: 'none', _aiReason: aiReason });
+  return ok({ answerId, sessionId, answer, sources, degraded, _riskLevel: 'none', _aiReason: aiReason, _webCount: webResults.length });
 }
 
 /* ------------------------------ qa:history ------------------------------ */

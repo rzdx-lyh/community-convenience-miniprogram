@@ -163,7 +163,8 @@ Page({
 
   onPostTap(e: WechatMiniprogram.TouchEvent): void {
     const id = String(e.currentTarget.dataset.id ?? '');
-    wx.navigateTo({ url: `/pages/circle/topic/index?id=${id}` });
+    if (!id) return;
+    wx.navigateTo({ url: `/pages/circle/detail/index?id=${encodeURIComponent(id)}` });
   },
 
   /** 点赞只是本地演示态，不写云端 */

@@ -365,6 +365,9 @@
 
 /* ============ ①-a CR-024 · AI 助手集群（8 场景两列网格） ============ */
 .aig {
+  /* ⚠ 必须显式 display:block：layout.wxss 原型的 .aig 是 grid 两列，
+     不覆盖的话标题和卡片网格会被塞进左右两列、全部挤成竖排（2026-10-22 真机截图） */
+  display: block;
   padding: var(--space-3) var(--space-4) var(--space-2);
   background: var(--card);
   border-bottom: 2rpx solid var(--line);
@@ -389,13 +392,16 @@
 }
 
 .aig__grid {
-  display: flex;
-  flex-wrap: wrap;
+  /* 两列等宽：用 grid 而不是 flex+50%+gap，避免 gap 把第二张卡挤到下一行，
+     导致整列卡片都在左边、右边出现一大段空白（2026-10-22 真机截图）。 */
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-2);
 }
 
 .aigc {
-  width: calc(50% - var(--space-1));
+  width: auto;
+  min-width: 0;
   box-sizing: border-box;
   padding: var(--space-2) var(--space-3);
   background: var(--card);

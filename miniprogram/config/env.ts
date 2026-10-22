@@ -35,7 +35,7 @@ export interface EnvConfig {
 }
 
 export const ENV: EnvConfig = {
-  USE_MOCK: false, // CR-022 后置 false：已上云（8 云函数已部署 + 集合已建 + 种子已导）
+  USE_MOCK: true, // 2026-10-22 临时切回演示模式：云环境 openid 401 未解决（环境绑定待修），先保演示可用；修好后切回 false
   // CR-017-c：默认 false（开发/自测时显示「演示数据模式」标识，演示当天置 true 隐藏）
   DEMO_MODE: false,
   CLOUD_ENV_ID: 'cloud1-d5g1xuxxf9eb5b758', // 用户提供（2026-10-14）
@@ -97,4 +97,10 @@ export const STORAGE_KEYS = {
   TOOL_BORROWS: 'ccfToolBorrows',
   /** CR-026：快递代取代寄申请记录（本地存储） */
   EXPRESS_ORDERS: 'ccfExpressOrders',
+  /** 首启资料设置是否完成（头像/昵称/位置） */
+  SETUP_DONE: 'ccfSetupDone',
+  /** 首启设置的本地资料兜底（云端 401/断网时仍能显示） */
+  SETUP_PROFILE: 'ccfSetupProfile',
+  /** 最近一次授权定位（gcj02，含时间戳） */
+  USER_LOCATION: 'ccfUserLocation',
 } as const;

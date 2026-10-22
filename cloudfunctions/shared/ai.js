@@ -20,7 +20,7 @@ const DEFAULT_TIMEOUT_MS = 8000;
 const MODEL = 'deepseek-chat';
 
 /** 超时上限保护：即便配了很大的 AI_TIMEOUT_MS，也不让它超过 15s（留余地给函数自身开销） */
-const MAX_TIMEOUT_MS = 15000;
+const MAX_TIMEOUT_MS = 9000;
 
 function timeoutMs() {
   const raw = Number(process.env.AI_TIMEOUT_MS);
@@ -116,18 +116,29 @@ async function chat(messages, { temperature = 0.3, maxTokens = 800 } = {}) {
 }
 
 /** RAG 问答 Prompt：知识库上下文 + 反幻觉纪律 */
-function buildRagPrompt(hits, question) {
-  const context = (hits || []).map((h, i) => `[${i + 1}] ${h.title}\n${h.content}`).join('\n\n');
+function buildRagPrompt(hits, question, webResults = []) {
+  const webs = (webResults || []).map((r, i) => {
+    const body = String(r.content || r.snippet || '').slice(0, 1400);
+    return `[${i + 1}] ${r.title}\nURL: ${r.url}\n网页内容: ${body}`;
+  }).join('\n\n');
+  const kbOffset = (webResults || []).length;
+  const kb = (hits || []).map((h, i) => `[${kbOffset + i + 1}] ${h.title}\n${h.content}`).join('\n\n');
+  const today = new Date().toISOString().slice(0, 10);
   return [
     {
       role: 'system',
       content:
-        '你是社区便民小程序 AI 助手。回答必须基于知识库资料，不编造办事流程、电话、政策名称与金额；' +
-        '知识库无法回答时明确说明，并引导用户拨打便民电话或提交报修工单；回答 200 字内，语气亲切。',
+        `你是社区便民小程序 AI 助手。今天是 ${today}。你必须优先依据下面提供的网页检索资料和社区知识库回答；` +
+        '网页资料用于公开政策、办事指南和时效信息，社区知识库用于本社区内部信息。' +
+        '回答中凡是使用某条资料，就在对应句子后标注 [编号]；不要编造未提供的电话、金额、政策名称或办理条件。' +
+        '如果资料不足或互相冲突，要明确说明，并建议用户以官方最新公告为准或拨打便民电话。回答 350 字内，语气亲切。',
     },
     {
       role: 'user',
-      content: `知识库资料：\n${context || '（无匹配资料）'}\n\n用户问题：${question}`,
+      content:
+        `网页检索资料：\n${webs || '（无网页结果）'}\n\n` +
+        `社区知识库资料：\n${kb || '（无匹配资料）'}\n\n` +
+        `用户问题：${question}`,
     },
   ];
 }

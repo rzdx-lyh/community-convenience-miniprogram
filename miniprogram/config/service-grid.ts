@@ -204,8 +204,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '社区门诊挂号',
             desc: '免排队取号',
             targetType: 'page',
-            targetPath: '/pages/phonebook/index',
-            targetParams: { category: 'medical' },
+            targetPath: '/pages/service/book/index',
+            targetParams: { svc: '社区门诊挂号', cat: 'health', opts: '普通号|专家号' },
             sort: 1,
           },
           {
@@ -280,8 +280,8 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             key: 'elderly_meal',
             name: '助餐',
             desc: '可送餐上门',
-            targetType: 'notice',
-            targetParams: { type: 'activity', tag: '助餐' },
+            targetType: 'page',
+            targetPath: '/pages/service/meal/index',
             sort: 2,
           },
           {

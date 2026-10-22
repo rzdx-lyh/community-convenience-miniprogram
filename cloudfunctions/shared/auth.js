@@ -71,6 +71,7 @@ async function toProfile(user) {
     createdAt: user.createdAt || '',
     updatedAt: user.updatedAt || '',
   };
+  if (user.avatarUrl) profile.avatarUrl = user.avatarUrl;
   if (user.phone) profile.phone = maskPhone(decryptPhone(user.phone));
   return profile;
 }

@@ -54,6 +54,9 @@ function rawCall<T>(name: string, data: Record<string, unknown>, silent = false)
           resolve(body.data);
           return;
         }
+        // 业务/服务错误（code!==0）也要在 Console 留痕：云函数端的真实堆栈被 handler
+        // 收敛成 msg 返回，不打印的话前端只剩一句 toast，排查只能盲猜（2026-10-20 踩坑）。
+        console.warn(`[cloud] ${name} 返回错误：code=${body.code} msg=${body.msg}`);
         toastFor(body.code, body.msg);
         reject(new ApiError(body.code, body.msg));
       },

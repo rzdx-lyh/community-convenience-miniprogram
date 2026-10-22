@@ -140,6 +140,29 @@ function scanNav(dir) {
 scanNav(resolve(MP, 'pages'));
 for (const e of navErrors) errors.push(`跳转死链 ${e}（目标页未在 app.json.pages 注册，点击无反应）`);
 
+/* 6.5 导航方式：navigateTo 不能打开 Tab 页，switchTab 只能打开 Tab 页 */
+const tabPaths = new Set((appJson.tabBar?.list ?? []).map((it) => `/${it.pagePath}`));
+const modeErrors = new Set();
+function scanNavMode(dir) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = resolve(dir, entry.name);
+    if (entry.isDirectory()) { scanNavMode(full); continue; }
+    if (!entry.name.endsWith('.ts')) continue;
+    const text = readFileSync(full, 'utf8');
+    for (const m of text.matchAll(/wx\.(navigateTo|switchTab)\s*\(\s*\{\s*url\s*:\s*['"`](\/pages\/[^?'"`]+)['"`]/g)) {
+      const [, method, path] = m;
+      if (method === 'navigateTo' && tabPaths.has(path)) {
+        modeErrors.add(`${relative(MP, full)} → navigateTo 不能打开 Tab 页 ${path}`);
+      }
+      if (method === 'switchTab' && !tabPaths.has(path)) {
+        modeErrors.add(`${relative(MP, full)} → switchTab 只能打开 Tab 页 ${path}`);
+      }
+    }
+  }
+}
+scanNavMode(resolve(MP, 'pages'));
+for (const e of modeErrors) errors.push(`导航方式错误 ${e}`);
+
 /* 输出 */
 console.log('='.repeat(64));
 console.log(`页面校验 · 注册 ${pages.length} 页 · 磁盘 ${allPageDirs.length} 页`);

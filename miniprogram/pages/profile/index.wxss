@@ -7,12 +7,14 @@
 .hover-dim { opacity: .86; }
 
 /* 资料头：原型内联 padding-bottom:56px */
-.hd--prof { padding-bottom: 112rpx; }
+.hd--prof { padding-bottom: 40rpx; }
 
-.pf-row { display: flex; align-items: flex-start; gap: 22rpx; padding: 24rpx 0 8rpx; }
+.pf-row { display: flex; align-items: flex-start; gap: 22rpx; padding: 0 0 8rpx; }
 .pf-mid { flex: 1; min-width: 0; padding-top: 4rpx; }
 .pf-badges { display: flex; align-items: center; gap: 10rpx; margin-top: 14rpx; }
-.pf-share { display: flex; padding-top: 8rpx; opacity: .9; }
+
+/* 我的页不让统计卡压到蓝色资料头，避免统计文字骑在蓝白交界上 */
+.body.body--prof { margin-top: 0; padding-top: 24rpx; }
 
 /* 头像底色（原型内联 background） */
 .av1 { background: #1F5FD6; }
@@ -75,3 +77,13 @@
   line-height: 1.7;
 }
 .pfoot text { display: block; }
+
+/* 头像实图（2026-10-22）：铺满圆形头像框，替换首字占位 */
+.pfa-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}

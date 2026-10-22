@@ -13,7 +13,7 @@ import { track } from './logger';
 /** 已在 app.json 注册的 Tab 页（switchTab 专用） */
 const TAB_PAGES: string[] = [
   '/pages/index/index',
-  '/pages/repair/list/index',
+  '/pages/hall/index',
   '/pages/circle/index',
   '/pages/profile/index',
 ];

@@ -67,3 +67,28 @@
   color: var(--t2);
   line-height: 1.7;
 }
+
+/* ⚠ 房源描述类名是 .hds（不是 .hd）：全局 .hd 是渐变页头（蓝紫渐变+96rpx 底 padding），
+   撞名会把描述渲染成蓝色色块（2026-10-22 用户截图实锤）。
+   layout.wxss 原型带的 .hinfo .hd 因改名失效，这里在页面层补回同款排版。 */
+.hinfo .hds { font-size: 19rpx; color: var(--t3); margin-top: 6rpx; }
+
+/* 实拍图（2026-10-22）：铺满图位，渐变底色作加载兜底；压暗渐变保证白字可读 */
+.hph-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.hph-shade {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(10, 16, 32, 0.02) 35%, rgba(10, 16, 32, 0.38) 100%);
+}
+.hph .hb { z-index: 2; }
+.hph .hp,
+.hph .hv { position: relative; z-index: 2; }

@@ -1,0 +1,75 @@
+<!-- 首启资料设置：头像 + 昵称 + 当前位置 -->
+<view class="page setup">
+  <view class="setup-hd">
+    <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
+      <text>08:42</text>
+      <text>●●● ▮</text>
+    </view>
+    <view class="setup-nav">
+      <text class="setup-nav__t">完善资料</text>
+    </view>
+
+    <view class="setup-hero">
+      <button class="setup-ava" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image wx:if="{{avatarUrl}}" class="setup-ava__img" src="{{avatarUrl}}" mode="aspectFill" />
+        <text wx:else class="setup-ava__t">{{avatarText}}</text>
+        <view class="setup-ava__cam"><view class="ic ic-s ic-pencil icw" /></view>
+      </button>
+      <text class="setup-hero__t">设置头像和昵称</text>
+      <text class="setup-hero__s">让邻居和维修师傅认识你</text>
+    </view>
+  </view>
+
+  <view class="setup-body">
+    <view class="setup-card">
+      <view class="setup-field">
+        <text class="setup-lb">昵称</text>
+        <input
+          class="setup-input"
+          type="nickname"
+          value="{{nickName}}"
+          placeholder="请输入昵称"
+          placeholder-class="setup-ph"
+          maxlength="{{nickMax}}"
+          bindinput="onNickInput"
+          bindblur="onNickBlur"
+        />
+        <text class="setup-count">{{nickName.length}}/{{nickMax}}</text>
+      </view>
+
+      <view class="setup-field setup-field--col">
+        <view class="setup-lb-row">
+          <text class="setup-lb">当前位置</text>
+          <text class="setup-lb-tip">仅用于展示附近服务点</text>
+        </view>
+        <view class="setup-loc" hover-class="setup-loc--hover" bindtap="onRequestLocation">
+          <view class="ic ic-m ic-pin setup-loc__ic" />
+          <view class="setup-loc__body">
+            <text class="setup-loc__t">{{locText}}</text>
+            <text wx:if="{{locationText}}" class="setup-loc__s">{{locationText}}</text>
+          </view>
+          <text class="setup-loc__ar">›</text>
+        </view>
+      </view>
+
+      <view class="setup-agree" bindtap="onToggleAgree">
+        <view class="setup-box {{agreed ? 'is-on' : ''}}">
+          <text wx:if="{{agreed}}" class="setup-tick">✓</text>
+        </view>
+        <view class="setup-agree__t">
+          我已阅读并同意
+          <text class="setup-lnk" data-kind="user" catchtap="onOpenDoc">《用户协议》</text>
+          和
+          <text class="setup-lnk" data-kind="privacy" catchtap="onOpenDoc">《隐私政策》</text>
+        </view>
+      </view>
+
+      <button class="setup-submit {{busy ? 'is-busy' : ''}}" hover-class="setup-submit--hover" bindtap="onSubmit">
+        {{busy ? '正在保存…' : '开始使用'}}
+      </button>
+      <view class="setup-skip" bindtap="onSkip">暂不设置，先逛逛</view>
+    </view>
+
+    <view class="setup-foot">资料仅用于社区服务，不会展示给无关第三方</view>
+  </view>
+</view>

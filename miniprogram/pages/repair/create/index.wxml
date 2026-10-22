@@ -1,5 +1,14 @@
 <!-- 我要报修（FE-3）· 单页表单（老人友好，不做分步向导） -->
 <view class="page {{elderMode ? 'care-mode' : ''}}">
+  <!-- 标准导航栏（与全站 .nav 一致）：‹ 返回 + ⌂ 回主页 + 居中标题；
+       sbar 仅作状态栏占位（文字已被全局隐藏），padding-top 避开系统状态栏 -->
+  <view class="sbar" style="padding-top:{{statusBarHeight}}px"></view>
+  <view class="nav">
+    <view class="bk" hover-class="tb-hv" bindtap="goBack"><text>‹</text></view>
+    <view class="homebtn" hover-class="tb-hv" bindtap="goHome"><text>⌂</text></view>
+    <text>我要报修</text>
+  </view>
+
   <!-- 报修类型（单选，必选） -->
   <view class="block">
     <text class="block-title">报修类型 <text class="required">*</text></text>

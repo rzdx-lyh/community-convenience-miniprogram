@@ -18,6 +18,8 @@ declare interface UserUpdateProfileParams {
   elderMode?: boolean;
   /** v1.2（CR-009）：社区账号，格式 /^[a-z][a-z0-9_]{3,19}$/ */
   accountId?: string;
+  /** 头像（云存储 fileID cloud:// 或 http(s) 链接） */
+  avatarUrl?: string;
 }
 declare interface UserUpdateProfileResult {
   profile: User;
@@ -155,6 +157,10 @@ declare interface QaAskResult {
    * 前端据此切换降级引导文案；字段可选，老版本后端不返回时按 'none' 处理。
    */
   _riskLevel?: 'none' | 'medical' | 'legal' | 'emergency';
+  /** 服务端降级原因：web_ok / web_fallback_timeout / kb_miss 等，便于展示真实状态 */
+  _aiReason?: string;
+  /** 本次回答使用的实时网页来源数量 */
+  _webCount?: number;
 }
 declare interface QaHistoryParams {
   sessionId?: string;

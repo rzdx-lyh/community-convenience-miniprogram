@@ -39,13 +39,27 @@ function copyDir(src, dest) {
 
 const clean = process.argv.includes('--clean');
 resources.forEach((r) => {
-  // ⚠ 副本目录名必须是 lib，**不能叫 shared**：
-  //   微信云函数运行时会在 /var/user/shared/ 下注入自己的 function.js（入口包装），
-  //   我们的 shared/ 与之同名，解压后被覆盖 → 运行时 require('./shared/response')
-  //   报 Cannot find module（2026-10-20 线上实锤，报错栈里出现 shared/function.js）。
-  const target = path.join(CF_ROOT, r, 'lib');
-  if (clean && existsSync(target)) rmSync(target, { recursive: true, force: true });
-  copyDir(SHARED, target);
-  console.log(`已打包 shared/ → cloudfunctions/${r}/lib/`);
+  const fnDir = path.join(CF_ROOT, r);
+  // ⚠ 共享模块必须**平铺进函数根目录**，绝不能放进任何子目录（shared/lib/common 都试过，全挂）：
+  //   Windows 上的微信 CLI 打包 zip 时把条目路径写成反斜杠分隔（违反 ZIP 规范），
+  //   Linux 云端解压时把 `common\response.js` 摊平成**文件名里带反斜杠的散文件**——
+  //   云端根本没有 common/ 目录，require('./common/response') 必然 MODULE_NOT_FOUND
+  //   （2026-10-20 深夜 boot-diag v2 实锤：root 清单全是 `common\xxx.js` 带反斜杠条目）。
+  //   函数根目录的散文件（index.js 等）一直能正常加载，所以平铺是唯一可靠结构。
+  for (const legacy of ['shared', 'lib', 'common']) {
+    const legacyDir = path.join(fnDir, legacy);
+    if (existsSync(legacyDir)) rmSync(legacyDir, { recursive: true, force: true });
+  }
+  // 顶层 .js 直接平铺；kb.js / kb.json 从 shared/kb/ 拉到根目录（qa 以 require('./kb') 引用）
+  for (const entry of readdirSync(SHARED, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (entry.name === 'kb') continue; // kb 单独处理
+      throw new Error(`shared/ 下出现未知子目录 ${entry.name}，请确认平铺策略是否覆盖它`);
+    }
+    copyFileSync(path.join(SHARED, entry.name), path.join(fnDir, entry.name));
+  }
+  copyFileSync(path.join(SHARED, 'kb', 'kb.js'), path.join(fnDir, 'kb.js'));
+  copyFileSync(path.join(SHARED, 'kb', 'kb.json'), path.join(fnDir, 'kb.json'));
+  console.log(`已平铺 shared/ → cloudfunctions/${r}/（根目录散文件）`);
 });
 console.log(`完成：${resources.length} 个云函数（${resources.join(', ')}）。上传后可用 --clean 清理本地副本。`);

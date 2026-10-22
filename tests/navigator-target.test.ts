@@ -32,6 +32,18 @@ describe('resolveTarget · 6 种 targetType', () => {
     }
   });
 
+  it('page → hall 是 Tab 页，必须用 switchTab', () => {
+    const action = resolveTarget(item({ targetType: 'page', targetPath: '/pages/hall/index' }));
+    expect(action.kind).toBe('page');
+    if (action.kind === 'page') expect(action.useSwitchTab).toBe(true);
+  });
+
+  it('page → repair/list 是二级页，必须用 navigateTo', () => {
+    const action = resolveTarget(item({ targetType: 'page', targetPath: '/pages/repair/list/index' }));
+    expect(action.kind).toBe('page');
+    if (action.kind === 'page') expect(action.useSwitchTab).toBe(false);
+  });
+
   it('notice → 带 type/tag 跳通知列表', () => {
     const action = resolveTarget(
       item({ targetType: 'notice', targetParams: { type: 'activity', tag: '义诊' } }),

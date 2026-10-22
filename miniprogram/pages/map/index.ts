@@ -10,6 +10,7 @@
  */
 import { getStatusBarHeight } from '../../utils/device';
 import { toast } from '../../utils/ui';
+import { distanceMeters, walkMinutes, formatDistance } from '../../utils/geo';
 
 /** 社区中心（阳光社区 3 号楼）默认坐标，定位不可用时使用 */
 const DEFAULT_LAT = 23.12894;
@@ -251,27 +252,45 @@ Page({
     }
   },
 
-  /** 取当前定位（GCJ-02）；失败退回社区中心，不阻塞页面 */
+  /** 取当前定位（GCJ-02，高精度）；失败退回社区中心，不阻塞页面 */
   locate(): void {
     this.setData({ locState: 'locating' });
     wx.getLocation({
       type: 'gcj02',
+      // 真机高精度定位（基础库 2.9.0+，模拟器忽略此参数）
+      isHighAccuracy: true,
       success: (res: WechatMiniprogram.GetLocationSuccessCallbackResult) => {
-        this.setData({
-          latitude: res.latitude,
-          longitude: res.longitude,
-          locState: 'ok',
-        });
+        const here = { latitude: res.latitude, longitude: res.longitude };
+        this.applyLocation(here);
+        this.setData({ locState: 'ok' });
         toast('已定位到当前位置');
+        this.fitView(here);
       },
       fail: () => {
-        this.setData({
-          latitude: DEFAULT_LAT,
-          longitude: DEFAULT_LNG,
-          locState: 'denied',
-        });
+        this.applyLocation({ latitude: DEFAULT_LAT, longitude: DEFAULT_LNG });
+        this.setData({ locState: 'denied' });
       },
     });
+  },
+
+  /** 让视野同时包住「我的位置 + 所有点位」，避免点位漂到屏幕外看起来像定位错乱 */
+  fitView(here: { latitude: number; longitude: number }): void {
+    const ctx = wx.createMapContext('tmap', this);
+    const pts = [{ latitude: here.latitude, longitude: here.longitude }].concat(
+      this.data.points.map((p) => ({ latitude: p.latitude, longitude: p.longitude })),
+    );
+    ctx.includePoints({ points: pts, padding: [60, 60, 60, 60] });
+  },
+
+  /** 用真实位置重算：地图中心 + 各点位到「我」的实时距离（替换写死的 walk） */
+  applyLocation(here: { latitude: number; longitude: number }): void {
+    const points = this.data.points.map((p) => {
+      const m = distanceMeters(here, { latitude: p.latitude, longitude: p.longitude });
+      return { ...p, walk: formatDistance(m), walkMin: walkMinutes(m) };
+    });
+    // 按距离从近到远重排（「附近 X 个点位 · 按步行距离排序」与文案一致）
+    points.sort((a, b) => a.walkMin - b.walkMin);
+    this.setData({ latitude: here.latitude, longitude: here.longitude, points });
   },
 
   onRelocate(): void {
@@ -282,7 +301,14 @@ Page({
     const k = String((e.currentTarget.dataset as { k?: string }).k ?? 'all') as 'all' | PoiCat;
     if (k === this.data.cat) return;
     const points = filterPois(k);
-    this.setData({ cat: k, points, markers: toMarkers(points), selected: null });
+    // 分类切换后，按当前地图中心重算各点位实时距离（保持与定位后一致）
+    const here = { latitude: this.data.latitude, longitude: this.data.longitude };
+    const recalculated = points.map((p) => {
+      const m = distanceMeters(here, { latitude: p.latitude, longitude: p.longitude });
+      return { ...p, walk: formatDistance(m), walkMin: walkMinutes(m) };
+    });
+    recalculated.sort((a, b) => a.walkMin - b.walkMin);
+    this.setData({ cat: k, points: recalculated, markers: toMarkers(recalculated), selected: null });
   },
 
   onMarkerTap(e: WechatMiniprogram.TouchEvent): void {

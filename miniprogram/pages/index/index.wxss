@@ -8,6 +8,12 @@
 
 .sbox .s-ic { opacity: .55; }
 
+/* 快捷入口行下移（2026-10-22 用户微调）：全局 .qk margin-top 20rpx → 44rpx */
+.qk { margin-top: 44rpx; }
+
+/* 「服务分类」区块上移（2026-10-22 用户微调）：渐变头底部留白 96rpx → 72rpx */
+.hd { padding-bottom: 72rpx; }
+
 /* 原型用 HTML 标签选择器（b/p/span/div/li），WXML 里换成类名后补齐排版 */
 .st .b { font-size: 28rpx; font-weight: 800; flex: 1; }
 .st .em { font-style: normal; font-size: 19rpx; color: var(--t3); }

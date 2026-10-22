@@ -7,15 +7,16 @@
       <text>●●● ▮</text>
     </view>
 
-    <view class="pf-row">
-      <view class="pfa av1">
-        <text>{{prof.av}}</text>
+    <view class="pf-row" style="padding-top:{{capsuleGap}}px">
+      <view class="pfa av1" hover-class="hover-dim" bindtap="onEditAvatar">
+        <image wx:if="{{prof.avatarUrl}}" class="pfa-img" src="{{prof.avatarUrl}}" mode="aspectFill" />
+        <text wx:else>{{prof.av}}</text>
         <view class="cam"><view class="ic ic-s ic-pencil" /></view>
       </view>
       <view class="pf-mid">
         <view class="pnm">
           <text>{{prof.name}}</text>
-          <view class="ic ic-s ic-pencil ed" />
+          <view class="ic ic-s ic-pencil ed" bindtap="onEditName" />
         </view>
         <view class="psg">{{prof.sign}}</view>
         <view class="pf-badges">
@@ -25,15 +26,14 @@
           </view>
           <view class="pbadge">
             <view class="ic ic-s ic-check-c icw" />
-            <text>已实名</text>
+            <text>微信登录</text>
           </view>
         </view>
       </view>
-      <view class="pf-share"><view class="ic ic-m ic-share icw" /></view>
     </view>
   </view>
 
-  <view class="body">
+  <view class="body body--prof">
     <!-- 数据统计 -->
     <view class="pstats">
       <view
@@ -191,7 +191,7 @@
           <view class="pr" bindtap="onAbout">
             <view class="plb">
               <text class="t">关于小程序</text>
-              <text class="d">1.4 · 猎奇小分队</text>
+              <text class="d">1.4 · 邻里小助手</text>
             </view>
             <text class="ar">›</text>
           </view>
@@ -208,7 +208,7 @@
 
     <view class="pfoot">
       <text>1.4 · 社区便民</text>
-      <text>本页数据均为演示数据，不做真实存储</text>
+      <text>便民信息与服务记录以实际社区为准</text>
     </view>
   </view>
 </view>

@@ -14,6 +14,8 @@ interface IAppOption {
     capsuleRight: number;
     elderMode: boolean;
   };
+  /** 首启资料设置守卫：未完成时统一跳到 setup 页 */
+  redirectToSetupIfNeeded(): void;
 }
 
 App<IAppOption>({
@@ -36,5 +38,18 @@ App<IAppOption>({
     this.globalData.elderMode = store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false);
 
     // TODO(FE-8): 首启隐私弹窗（agreedPrivacy）— 隐私协议未同意前禁止调用任何隐私接口
+  },
+
+  onShow() {
+    this.redirectToSetupIfNeeded();
+  },
+
+  redirectToSetupIfNeeded() {
+    if (store.get<boolean>(STORAGE_KEYS.SETUP_DONE, false)) return;
+    const pages = getCurrentPages();
+    const current = pages.length > 0 ? pages[pages.length - 1].route : '';
+    if (current === 'pages/auth/setup/index') return;
+    // 首启/清缓存后：先让用户设置头像、昵称和位置，再进入服务页
+    wx.reLaunch({ url: '/pages/auth/setup/index' });
   },
 });

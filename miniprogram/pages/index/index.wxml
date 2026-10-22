@@ -7,9 +7,10 @@
       <text>●●● ▮</text>
     </view>
 
-    <view class="r1">
-      <view class="lg">猎</view>
-      <view class="nm">猎奇便民服务</view>
+    <!-- padding-right 避开右上角微信胶囊按钮（2026-10-22：定位胶囊与胶囊按钮重叠） -->
+    <view class="r1" style="padding-right:{{navRightPad}}px">
+      <view class="lg">邻</view>
+      <view class="nm">邻里小助手</view>
       <view class="lb {{locState}}" bindtap="onLocTap">
         <view wx:if="{{locState === 'locating'}}" class="lp" />
         <view wx:else class="ic ic-s ic-pin icw" />

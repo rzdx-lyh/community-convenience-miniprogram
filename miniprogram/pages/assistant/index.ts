@@ -25,7 +25,16 @@ import { confirm, toast } from '../../utils/ui';
 
 /** 归一化预设提问：去空白，超长按契约输入护栏上限 300 字截断 */
 export function normalizePresetQuestion(input?: string): string {
-  const value = String(input ?? '').trim();
+  let value = String(input ?? '').trim();
+  // ai-bar 跳转时对问题做了 encodeURIComponent，微信不保证自动解码 → 这里兜底解码一次。
+  // 只在「长得像被编码」时才解，避免用户提问本身含 % 被误伤；解失败保持原文。
+  if (/%[0-9A-Fa-f]{2}/.test(value)) {
+    try {
+      value = decodeURIComponent(value);
+    } catch {
+      /* 保留原文 */
+    }
+  }
   return value.length > 300 ? value.slice(0, 300) : value;
 }
 
@@ -150,7 +159,7 @@ export const FOLLOW_UPS: string[] = ['要带什么材料', '在哪办', '几点�
 
 const STEP_TEXTS: ThinkStep[] = [
   { t: '理解问题 · 识别服务意图', done: false },
-  { t: '检索社区知识库', done: false },
+  { t: '检索知识库与实时网页', done: false },
   { t: '组织回答并标注来源', done: false },
 ];
 
@@ -264,15 +273,7 @@ Page({
     });
     this.scrollBottom();
 
-    // ① 本地问答库：命中即出，保留一小段"思考"节奏
-    const local = lookupAnswer(q);
-    if (local) {
-      await this.playSteps(aiMsg.id, 130);
-      this.finish(aiMsg.id, local.text, local.cites, '', '本地知识库', t0);
-      return;
-    }
-
-    // ② 云函数（多轮上下文）
+    // ① 云端优先：知识库 + 实时网页 + 大模型；本地库只在云端失败时兜底
     const job = askQuestion({
       question: q,
       sessionId: this.data.sessionId || undefined,
@@ -282,12 +283,17 @@ Page({
     const res = await job;
 
     if (!res) {
-      // ③ 兜底：给下一步，不留「我不知道」
+      // ② 兜底：云端不可用时再查本地知识库，至少保证有可执行答复
+      const local = lookupAnswer(q);
+      if (local) {
+        this.finish(aiMsg.id, local.text, local.cites, '云端暂时不可用，以下为本地知识库兜底答复。', '本地知识库', t0);
+        return;
+      }
       this.finish(
         aiMsg.id,
         AI_FALLBACK_TEXT,
         [],
-        '免费模型通道暂时不可用，已用本地知识库作答；具体以社区公告与服务指南为准。',
+        '联网检索与模型通道暂时不可用，已用本地知识库作答；具体以社区公告与服务指南为准。',
         '本地知识库',
         t0,
       );
@@ -300,8 +306,17 @@ Page({
       this.setData({ sessionId });
     }
     const riskLevel = (res as { _riskLevel?: string })._riskLevel;
-    const tip = res.degraded ? toDegradedTip(riskLevel) : '';
-    this.finish(aiMsg.id, res.answer || AI_FALLBACK_TEXT, res.sources ?? [], tip, '社区 AI', t0);
+    const webCount = Number((res as { _webCount?: number })._webCount || 0);
+    // 有网页/知识库来源时说明已经拿到有效资料，不再显示“没查到”的误导提示。
+    const tip = res.degraded && !(res.sources && res.sources.length) ? toDegradedTip(riskLevel) : '';
+    this.finish(
+      aiMsg.id,
+      res.answer || AI_FALLBACK_TEXT,
+      res.sources ?? [],
+      tip,
+      webCount > 0 ? '联网检索' : '社区 AI',
+      t0,
+    );
   },
 
   /** 逐步点亮 `.think` 的三步（纯视觉节奏） */

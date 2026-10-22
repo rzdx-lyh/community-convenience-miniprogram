@@ -3,6 +3,17 @@
 .pgh-km { flex: 1; min-width: 0; padding-right: 150rpx; }
 .pgh-svc { font-size: 36rpx; font-weight: 800; line-height: 1.28; }
 
+/* 步骤条在蓝头内（对齐原型 pgBook，2026-10-22 从 .body 移入 .pgh）：
+   蓝底上把非当前步的灰色文字提亮一档，保证可读 */
+.stp--in-pgh { margin: 44rpx 24rpx 0; position: relative; z-index: 2; }
+.stp--in-pgh .tx { color: rgba(255, 255, 255, 0.75); }
+.stp--in-pgh .s.on .tx { color: #fff; }
+.stp--in-pgh .ln { background: rgba(255, 255, 255, 0.28); }
+
+/* body 不做全局 -72rpx 上拉：本页首个内容是表单标签（非卡片），
+   上拉会把「要办哪项」骑到蓝白交界上（2026-10-22 真机截图实锤） */
+.body { margin-top: 4rpx; }
+
 /* 原型用 b/span/h4/p 承载的文案，小程序统一换成 text，这里补齐排版 */
 .lblw { padding: 0 28rpx; }
 .lbl { margin: 24rpx 0 14rpx; }

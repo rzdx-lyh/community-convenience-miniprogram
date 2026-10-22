@@ -2,10 +2,10 @@
 
 
 
-const { ok, fail, CODES, handler } = require('./lib/response');
-const { db } = require('./lib/db');
-const { getOpenId } = require('./lib/auth');
-const { isBlank } = require('./lib/time');
+const { ok, fail, CODES, handler } = require('./response');
+const { db } = require('./db');
+const { getOpenId } = require('./auth');
+const { isBlank } = require('./time');
 
 const CATEGORIES = ['property', 'government', 'medical', 'life', 'emergency'];
 

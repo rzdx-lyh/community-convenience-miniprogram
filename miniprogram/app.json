@@ -6,6 +6,7 @@
     "pages/profile/index",
     "pages/auth/welcome/index",
     "pages/auth/login/index",
+    "pages/auth/setup/index",
     "pages/circle/post/index",
     "pages/circle/topic/index",
     "pages/circle/detail/index",
@@ -76,7 +77,7 @@
   "requiredPrivateInfos": ["getLocation"],
   "permission": {
     "scope.userLocation": {
-      "desc": "用于在地图上显示你附近的社区服务点（物业、卫生站、快递柜等）"
+      "desc": "用于首次设置定位并显示附近社区服务点"
     }
   },
   "sitemapLocation": "sitemap.json",

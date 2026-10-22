@@ -45,6 +45,19 @@ describe('normalizePresetQuestion · 预设提问（FE-13 只填充不发送）'
     expect(mod.normalizePresetQuestion('\n\t 停水通知在哪看 \n')).toBe('停水通知在哪看');
   });
 
+  it('URL 编码的预设问题解码一次（ai-bar encodeURIComponent 带入，2026-10-21 真机显示 %E5 乱码）', () => {
+    const encoded = encodeURIComponent('家里水管漏水怎么报修？');
+    expect(mod.normalizePresetQuestion(encoded)).toBe('家里水管漏水怎么报修？');
+  });
+
+  it('普通含 % 的中文不被误解码', () => {
+    expect(mod.normalizePresetQuestion('充电桩收费 5% 怎么算？')).toBe('充电桩收费 5% 怎么算？');
+  });
+
+  it('非法编码序列（孤立 %）不抛错，保留原文', () => {
+    expect(mod.normalizePresetQuestion('折扣 100% off')).toBe('折扣 100% off');
+  });
+
   it('超过 300 字截断到正好 300（契约输入护栏上限）', () => {
     const long = '问'.repeat(301);
     const out = mod.normalizePresetQuestion(long);
