@@ -200,11 +200,33 @@ export function buildDemoNotices(): Notice[] {
       location: '1 号楼',
       level: 'normal',
     },
+    {
+      _id: 'demo-6',
+      title: '长者手机课：微信挂号与防诈骗',
+      content:
+        '本周四 14:00 在社区活动室开课，教长辈用微信挂号、查报告、识别陌生链接和诈骗电话。建议带上手机，现场有志愿者一对一协助。',
+      type: 'activity',
+      status: 'published',
+      publishAt: hoursAgo(18),
+      location: '社区活动室',
+      signupDeadline: new Date(now + 2 * 24 * 3600 * 1000).toISOString(),
+    },
+    {
+      _id: 'demo-7',
+      title: '邻里手工坊：旧物改造周末场',
+      content: '本周日 15:00 在社区活动室做旧物改造，材料由社区提供，欢迎带上家里的旧布料和瓶罐参加。',
+      type: 'activity',
+      status: 'published',
+      publishAt: hoursAgo(30),
+      location: '社区活动室',
+    },
   ];
 }
 
 /** 当前筛选类型（模块级，供 pager fetcher 读取） */
 let currentType: Notice['type'] | undefined;
+/** 当前关键词筛选（活动入口：义诊/手机课等；空串=不过滤） */
+let currentTag = '';
 
 const pager = createPager<Notice>(async (page, pageSize) => {
   const params: NoticeListParams = { page, pageSize };
@@ -226,6 +248,8 @@ Page({
     clock: nowClock(),
     tabs: NOTICE_TABS,
     activeTab: 'all' as NoticeTabKey,
+    pageTitle: '消息通知',
+    activeTag: '',
     list: [] as NoticeVM[],
     expandedId: '',
     loading: false,
@@ -242,7 +266,11 @@ Page({
     const tab: NoticeTabKey =
       type === 'notice' || type === 'activity' || type === 'urgent' ? type : 'all';
     currentType = typeOfTab(tab);
-    this.setData({ activeTab: tab, clock: nowClock() });
+    // 文化便民入口：?tag=义诊&title=每周义诊；没有 tag 时 title 只作标题
+    currentTag = normalizeTag(options.tag);
+    const explicitTitle = String(options.title ?? '').trim();
+    const pageTitle = explicitTitle || (currentTag ? `${currentTag}活动` : '消息通知');
+    this.setData({ activeTab: tab, clock: nowClock(), pageTitle, activeTag: currentTag });
     void this.refresh();
   },
 
@@ -252,6 +280,7 @@ Page({
 
   onUnload() {
     currentType = undefined;
+    currentTag = '';
     pager.reset();
   },
 
@@ -273,9 +302,10 @@ Page({
 
   onTabTap(e: WechatMiniprogram.TouchEvent): void {
     const key = String((e.currentTarget.dataset as { key?: string }).key ?? 'all') as NoticeTabKey;
-    if (key === this.data.activeTab) return;
+    if (key === this.data.activeTab && !currentTag) return;
     currentType = typeOfTab(key);
-    this.setData({ activeTab: key, expandedId: '' });
+    currentTag = '';
+    this.setData({ activeTab: key, activeTag: '', pageTitle: '消息通知', expandedId: '' });
     pager.reset();
     void this.refresh();
   },
@@ -314,7 +344,9 @@ Page({
     try {
       const res = await pager.next();
       if (gen !== this.genId) return;
-      const filtered = (res.list ?? []).filter((n) => matchTab(n, this.data.activeTab));
+      const filtered = (res.list ?? []).filter(
+        (n) => matchTab(n, this.data.activeTab) && matchTag(n, currentTag),
+      );
       if (filtered.length === 0) {
         this.applyDemo();
       } else {
@@ -337,7 +369,9 @@ Page({
     this.setData({ loading: true });
     try {
       const res = await pager.next();
-      const added = (res.list ?? []).filter((n) => matchTab(n, this.data.activeTab)).map(toNoticeVM);
+      const added = (res.list ?? [])
+        .filter((n) => matchTab(n, this.data.activeTab) && matchTag(n, currentTag))
+        .map(toNoticeVM);
       this.setData({
         list: this.data.list.concat(added),
         hasMore: added.length > 0 && pager.hasMore(),
@@ -352,7 +386,13 @@ Page({
   applyDemo(): void {
     const list = buildDemoNotices()
       .filter((n) => matchTab(n, this.data.activeTab))
+      .filter((n) => matchTag(n, currentTag))
       .map(toNoticeVM);
-    this.setData({ list, demoMode: true, hasMore: false, loading: false });
+    this.setData({
+      list,
+      demoMode: list.length > 0,
+      hasMore: false,
+      loading: false,
+    });
   },
 });

@@ -51,6 +51,16 @@ describe('resolveTarget · 6 种 targetType', () => {
     expect(action).toEqual({ kind: 'notice', query: { type: 'activity', tag: '义诊' } });
   });
 
+  it('notice → 活动入口的 title 也会透传（文化便民页标题）', () => {
+    const action = resolveTarget(
+      item({ targetType: 'notice', targetParams: { type: 'activity', tag: '义诊', title: '每周义诊' } }),
+    );
+    expect(action).toEqual({
+      kind: 'notice',
+      query: { type: 'activity', tag: '义诊', title: '每周义诊' },
+    });
+  });
+
   it('circle → 写待消费筛选态', () => {
     const action = resolveTarget(item({ targetType: 'circle', targetParams: { type: 'road' } }));
     expect(action).toEqual({ kind: 'circle', filter: { type: 'road' } });

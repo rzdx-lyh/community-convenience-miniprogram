@@ -25,6 +25,8 @@ export const CIRCLE_PATH = '/pages/circle/index';
 export interface CircleFilter {
   type?: string;
   tag?: string;
+  /** 活动入口的页面标题，如「每周义诊」 */
+  title?: string;
 }
 
 export type NavAction =
@@ -50,8 +52,11 @@ export function resolveTarget(item?: ServiceItem | null): NavAction {
       if (!path) return { kind: 'none' };
       return { kind: 'page', path, query: params, useSwitchTab: TAB_PAGES.indexOf(path) >= 0 };
     }
-    case 'notice':
-      return { kind: 'notice', query: { type: params.type, tag: params.tag } };
+    case 'notice': {
+      const query: CircleFilter = { type: params.type, tag: params.tag };
+      if (params.title) query.title = params.title;
+      return { kind: 'notice', query };
+    }
     case 'circle':
       return { kind: 'circle', filter: { type: params.type, tag: params.tag } };
     case 'assistant':

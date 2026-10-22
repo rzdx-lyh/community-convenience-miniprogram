@@ -7,7 +7,7 @@
 
   <view class="nav nav--plain">
     <view class="bk" bindtap="goBack"><text>‹</text></view>
-    <text>消息通知</text>
+    <text>{{pageTitle}}</text>
     <view wx:if="{{demoMode}}" class="rt rt--muted">示例</view>
   </view>
 

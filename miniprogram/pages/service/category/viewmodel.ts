@@ -74,10 +74,18 @@ export function toGroupsVM(category?: ServiceCategory | null): GroupVM[] {
   }));
 }
 
+/** 分类下的全部服务项：优先 items；只有 groups 的旧/新数据则展平 groups */
+export function flattenItems(category?: ServiceCategory | null): ServiceItem[] {
+  if (!category) return [];
+  if ((category.items ?? []).length > 0) return category.items ?? [];
+  return (category.groups ?? []).reduce<ServiceItem[]>((acc, group) => {
+    return acc.concat(group.items ?? []);
+  }, []);
+}
+
 /** 统计某分类下的服务项数（页头「共 N 项服务」） */
 export function countItems(category?: ServiceCategory | null): number {
-  if (!category) return 0;
-  return (category.items ?? []).length;
+  return flattenItems(category).length;
 }
 
 /** 按 key 找分类；找不到回退第一个（接口少返一类时不至于白屏） */
@@ -92,7 +100,7 @@ export function findRawItem(
   key: string,
 ): ServiceItem | undefined {
   if (!category) return undefined;
-  return (category.items ?? []).find((i) => i.key === key);
+  return flattenItems(category).find((i) => i.key === key);
 }
 
 /** 预约提交文案：结构化拼装，便于客服一眼看清需求（纯函数，可单测） */

@@ -213,7 +213,7 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '义诊活动',
             desc: '本周六 9:00',
             targetType: 'notice',
-            targetParams: { type: 'activity', tag: '义诊' },
+            targetParams: { type: 'activity', tag: '义诊', title: '义诊活动' },
             sort: 2,
           },
           {
@@ -432,7 +432,7 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '每周义诊',
             desc: '固定排期',
             targetType: 'notice',
-            targetParams: { type: 'activity', tag: '义诊' },
+            targetParams: { type: 'activity', tag: '义诊', title: '每周义诊' },
             sort: 1,
           },
           {
@@ -449,7 +449,7 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '邻里活动',
             desc: '本周活动',
             targetType: 'notice',
-            targetParams: { type: 'activity' },
+            targetParams: { type: 'activity', title: '邻里活动' },
             sort: 3,
           },
           {
@@ -475,7 +475,7 @@ export const LOCAL_SERVICE_CATEGORIES: ServiceCategory[] = withFlattenedItems([
             name: '长者手机课',
             desc: '基础/进阶',
             targetType: 'notice',
-            targetParams: { type: 'activity', tag: '手机课' },
+            targetParams: { type: 'activity', tag: '手机课', title: '长者手机课' },
             sort: 6,
           },
         ],

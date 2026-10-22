@@ -224,4 +224,35 @@ describe('findRawItem · 回查原始项', () => {
     expect(findRawItem(LOCAL_SERVICE_CATEGORIES[0], 'nope')).toBeUndefined();
     expect(findRawItem(undefined, 'house_clean')).toBeUndefined();
   });
+
+  it('只有 groups、items 为空的数据也能回查到文化便民项', () => {
+    const culture = LOCAL_SERVICE_CATEGORIES.find((c) => c.key === 'culture');
+    expect(findRawItem(culture, 'culture_weekly')?.name).toBe('每周义诊');
+    expect(findRawItem(culture, 'culture_phone')?.targetParams?.tag).toBe('手机课');
+    expect(countItems(culture)).toBe(culture?.groups?.[0]?.items.length);
+
+    const legacy = {
+      _id: 'legacy',
+      key: 'culture',
+      title: '旧分类',
+      subtitle: '',
+      icon: '',
+      iconTheme: 'warm',
+      sort: 1,
+      status: 'online',
+      items: [],
+      groups: [
+        {
+          key: 'g',
+          name: '板块',
+          render: 'grid',
+          sort: 1,
+          items: [{ key: 'legacy_item', name: '旧活动', sort: 1, targetType: 'notice' }],
+        },
+      ],
+    } as unknown as ServiceCategory;
+    expect(findRawItem(legacy, 'legacy_item')?.name).toBe('旧活动');
+    expect(countItems(legacy)).toBe(1);
+  });
+
 });
