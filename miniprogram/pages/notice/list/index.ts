@@ -12,6 +12,7 @@ import { getNoticeDetail, listNotices } from '../../../services/notice';
 import { getStatusBarHeight } from '../../../utils/device';
 import { parseDate, toRelativeTime, toShortDateTime } from '../../../utils/format';
 import { createPager } from '../../../utils/pagination';
+import { decodeQueryValue } from '../../../utils/query';
 
 /** Tab key：前 3 个对应服务端 type，road/water 为本地关键词筛选 */
 export type NoticeTabKey = 'all' | 'notice' | 'activity' | 'urgent' | 'road' | 'water';
@@ -262,13 +263,13 @@ Page({
 
   onLoad(options: Record<string, string | undefined>) {
     // 兼容旧入参：?type=notice|activity|urgent
-    const type = String(options.type ?? '').toLowerCase();
+    const type = decodeQueryValue(options.type).toLowerCase();
     const tab: NoticeTabKey =
       type === 'notice' || type === 'activity' || type === 'urgent' ? type : 'all';
     currentType = typeOfTab(tab);
-    // 文化便民入口：?tag=义诊&title=每周义诊；没有 tag 时 title 只作标题
-    currentTag = normalizeTag(options.tag);
-    const explicitTitle = String(options.title ?? '').trim();
+    // 文化便民入口：?tag=义诊&title=每周义诊；options 可能仍是 %XX，必须兜底解码
+    currentTag = normalizeTag(decodeQueryValue(options.tag));
+    const explicitTitle = decodeQueryValue(options.title);
     const pageTitle = explicitTitle || (currentTag ? `${currentTag}活动` : '消息通知');
     this.setData({ activeTab: tab, clock: nowClock(), pageTitle, activeTag: currentTag });
     void this.refresh();
