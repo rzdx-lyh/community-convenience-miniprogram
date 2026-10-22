@@ -228,7 +228,8 @@ describe('findRawItem · 回查原始项', () => {
   it('只有 groups、items 为空的数据也能回查到文化便民项', () => {
     const culture = LOCAL_SERVICE_CATEGORIES.find((c) => c.key === 'culture');
     expect(findRawItem(culture, 'culture_weekly')?.name).toBe('每周义诊');
-    expect(findRawItem(culture, 'culture_phone')?.targetParams?.tag).toBe('手机课');
+    expect(findRawItem(culture, 'culture_phone')?.targetPath).toBe('/pages/service/activity/index');
+    expect(findRawItem(culture, 'culture_phone')?.targetParams?.type).toBe('phone');
     expect(countItems(culture)).toBe(culture?.groups?.[0]?.items.length);
 
     const legacy = {

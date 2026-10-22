@@ -1,0 +1,112 @@
+<!-- 文化便民活动 · 每周义诊 / 邻里活动 / 长者手机课 -->
+<view class="page">
+  <view class="pgh pgh--teal">
+    <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
+      <text>08:42</text>
+      <text>●●● ▮</text>
+    </view>
+    <view class="pgh-nav">
+      <view class="pgh-bk" bindtap="goBack">‹</view>
+      <text class="pgh-t">{{cfg.title}}</text>
+    </view>
+
+    <view class="act-hero">
+      <view class="act-badge">{{cfg.badge}}</view>
+      <view class="act-sub">{{cfg.subtitle}}</view>
+      <view class="act-meta">
+        <view class="act-meta__i"><view class="ic ic-s ic-calendar act-wicon" /><text>{{cfg.date}}</text></view>
+        <view class="act-meta__i"><view class="ic ic-s icw ic-pin" /><text>{{cfg.place}}</text></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="body">
+    <!-- 小功能入口 -->
+    <view class="grp">
+      <view class="gh">
+        <text class="gh__b">本期服务</text>
+        <text class="gh__p">点卡片查看说明</text>
+      </view>
+      <view class="act-grid">
+        <view
+          wx:for="{{cfg.features}}"
+          wx:key="name"
+          class="act-feature"
+          hover-class="act-feature--hover"
+          data-name="{{item.name}}"
+          bindtap="onFeatureTap"
+        >
+          <view class="act-feature__ic"><view class="ic ic-m ic-{{item.icon}}" /></view>
+          <text class="act-feature__n">{{item.name}}</text>
+          <text class="act-feature__d">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 活动信息 -->
+    <view class="grp">
+      <view class="gh"><text class="gh__b">活动信息</text></view>
+      <view class="grp__bd">
+        <view class="kv"><text class="kv__k">时间</text><text class="kv__v">{{cfg.date}}</text></view>
+        <view class="kv"><text class="kv__k">地点</text><text class="kv__v">{{cfg.place}}</text></view>
+        <view class="kv"><text class="kv__k">对象</text><text class="kv__v">{{cfg.target}}</text></view>
+        <view class="act-signup" hover-class="act-signup--hover" bindtap="onSignup">
+          <text class="act-signup__t">立即报名</text>
+          <text class="act-signup__s">留下房号/联系方式，社区电话确认 ›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 注意事项 -->
+    <view class="grp">
+      <view class="gh"><text class="gh__b">注意事项</text></view>
+      <view class="grp__bd">
+        <view wx:for="{{cfg.notes}}" wx:key="*this" class="act-note">
+          <text class="act-note__dot">·</text>
+          <text class="act-note__t">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="tip">
+      本页只做活动介绍与报名登记，不收款、不提供医疗诊断；义诊指标问题请以医生意见为准，紧急情况拨打 120。
+    </view>
+    <view class="gap" />
+  </view>
+
+  <!-- 报名弹层 -->
+  <view wx:if="{{showForm}}" class="mask show" bindtap="onClose" />
+  <view wx:if="{{showForm}}" class="sheet show">
+    <view class="sh-h">报名 · {{cfg.title}}</view>
+    <view class="sh-sub">{{cfg.date}} · {{cfg.place}}</view>
+
+    <view class="sh-body">
+      <view class="lbl">参加项目</view>
+      <view class="chips">
+        <view
+          wx:for="{{cfg.options}}"
+          wx:key="*this"
+          class="chip {{option === item ? 'on' : ''}}"
+          data-v="{{item}}"
+          bindtap="onPickOption"
+        >{{item}}</view>
+      </view>
+
+      <view class="lbl">房号 <text class="lbl__em">选填，便于上门/通知</text></view>
+      <input class="inp" value="{{room}}" placeholder="如 3 号楼 2 单元 502" bindinput="onRoom" />
+
+      <view class="lbl">联系方式 <text class="lbl__em">选填</text></view>
+      <input class="inp" value="{{contact}}" placeholder="手机号 / 微信" bindinput="onContact" />
+
+      <view class="lbl">备注 <text class="lbl__em">选填</text></view>
+      <textarea class="ta" value="{{note}}" placeholder="需要志愿者协助、带家人等" bindinput="onNote" maxlength="120" />
+
+      <view class="acts">
+        <view class="btn3" bindtap="onClose">取消</view>
+        <view class="btn3 solid {{submitting ? 'busy' : ''}}" bindtap="onSubmit">
+          {{submitting ? '提交中…' : '提交报名'}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

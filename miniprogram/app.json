@@ -27,6 +27,7 @@
     "pages/service/fresh/index",
     "pages/service/health/index",
     "pages/service/culture/index",
+    "pages/service/activity/index",
     "pages/service/property/index",
     "pages/service/lease/index",
     "pages/service/category/index",
