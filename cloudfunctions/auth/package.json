@@ -1,6 +1,6 @@
 {
   "name": "ccf-auth",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "社区便民 · auth 资源云函数（actions: login / updateProfile；契约见 contracts/api-contract.md）",
   "main": "index.js",

@@ -2,13 +2,13 @@
 <view class="page">
   <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
     <text>社区地图</text>
-    <text class="sbar__sig">{{locState === 'ok' ? '已定位' : locState === 'locating' ? '定位中' : '未授权'}}</text>
+    <text class="sbar__sig">{{spotName || '社区位置'}}</text>
   </view>
 
   <view class="nav">
     <view class="bk" bindtap="goBack"><text>‹</text></view>
     <text>社区地图</text>
-    <view class="rt" bindtap="onRelocate">{{locState === 'ok' ? '重新定位' : '定位'}}</view>
+    <view class="rt" bindtap="onPickSpot">{{spotName ? '切换位置' : '选择位置'}}</view>
   </view>
 
   <!-- 地图卡：分类条 + 原生地图 + 图例 -->
@@ -30,7 +30,6 @@
       longitude="{{longitude}}"
       scale="{{scale}}"
       markers="{{markers}}"
-      show-location
       enable-zoom
       enable-scroll
       bindmarkertap="onMarkerTap"
@@ -40,14 +39,12 @@
       <view class="lg"><view class="lgd" style="background:#1F5FD6"></view><text>服务点</text></view>
       <view class="lg"><view class="lgd" style="background:#0E7C6B"></view><text>便民设备</text></view>
       <view class="lg"><view class="lgd" style="background:#A86A05"></view><text>生活配套</text></view>
-      <view class="lg"><view class="lgd" style="background:#C9302C"></view><text>我的位置</text></view>
     </view>
   </view>
 
-  <view wx:if="{{locState === 'denied'}}" class="tip">
-    未获取到定位权限，已显示社区中心位置。可在右上角「定位」重试，或到「设置 → 位置信息」开启授权。
+  <view class="tip">
+    位置为手动选择的社区点位（{{spotName || '社区中心'}}），不读取手机定位；距离按该点位计算。
   </view>
-  <view wx:if="{{locState === 'locating'}}" class="tip blue">正在获取当前位置…</view>
 
   <!-- 选中点位详情（替代原型底部弹层） -->
   <view wx:if="{{selected}}" class="blk mapd">
@@ -100,6 +97,6 @@
 
   <view class="aifoot">
     坐标采用 GCJ-02 火星坐标系，底图由微信原生地图提供。
-    <text class="aifoot__n">位置仅用于就近匹配，不保存轨迹、不对其他居民展示。</text>
+    <text class="aifoot__n">社区位置为手动选择，仅用于就近排序，不读取手机定位、不保存轨迹、不对其他居民展示。</text>
   </view>
 </view>

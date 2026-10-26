@@ -1,7 +1,7 @@
 <!-- 生鲜零售 · 提示条 → 频道 tab → 商品双列 → 购物车 → 预订 -->
 <view class="page page--fbar">
   <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
-    <text>邻里小助手</text>
+    <text>邻里百事通小助手</text>
     <text>● ● ●</text>
   </view>
   <view class="nav">

@@ -1,18 +1,20 @@
 /**
- * 首启资料设置页（2026-10-22）
+ * 首启资料设置页（2026-10-22 · v1.2.1 调整）
  *
- * 进入小程序第一件事：设置头像、昵称，并请求当前位置；
+ * 进入小程序第一件事：设置头像、昵称，并选择自己在社区内的位置点；
  * 完成后写入本地标志 → 首页。云端 updateProfile 失败时仍保留本地资料，不阻断服务。
+ *
+ * v1.2.1：微信 `wx.getLocation` 接口申请被驳回，本页改为**手动选择社区位置点**
+ * （见 `config/community.ts`），不再读取手机定位，因此也不需要位置授权弹窗。
  */
 import { STORAGE_KEYS } from '../../../config/env';
+import { COMMUNITY_SPOTS, resolveSpot, spotPickerLabels, spotToLocation } from '../../../config/community';
 import { getProfile, login } from '../../../services/auth';
 import { updateProfile } from '../../../services/user';
 import { store } from '../../../store/global';
-import { distanceMeters, formatDistance } from '../../../utils/geo';
 import {
   avatarText,
-  formatCoords,
-  isFreshLocation,
+  isUsableLocation,
   isValidNickName,
   normalizeNickName,
   NICKNAME_MAX,
@@ -21,7 +23,6 @@ import {
 import { toast } from '../../../utils/ui';
 
 const info = wx.getWindowInfo();
-const COMMUNITY_CENTER = { latitude: 23.12894, longitude: 113.26411 };
 
 interface ChooseAvatarEvent {
   detail: { avatarUrl: string };
@@ -37,9 +38,9 @@ Page({
     nickMax: NICKNAME_MAX,
     agreed: false,
     busy: false,
-    locState: 'idle' as 'idle' | 'locating' | 'ok' | 'denied',
-    locText: '点击获取当前位置',
-    locationText: '',
+    /** 社区位置点文案（如「3 号楼 · 社区中心 · 默认位置」） */
+    locText: '',
+    locDesc: '',
   },
 
   onLoad() {
@@ -62,15 +63,14 @@ Page({
     const avatarUrl = String(local?.avatarUrl || cached?.avatarUrl || '');
 
     const cachedLoc = store.get<UserLocation | null>(STORAGE_KEYS.USER_LOCATION, null);
-    const locReady = isFreshLocation(cachedLoc);
+    const spot = resolveSpot(isUsableLocation(cachedLoc) ? cachedLoc : null);
     this.setData({
       agreed,
       nickName,
       avatarUrl,
       avatarText: avatarText(nickName),
-      locState: locReady ? 'ok' : 'idle',
-      locText: locReady ? '已定位 · 点击刷新' : '点击获取当前位置',
-      locationText: locReady && cachedLoc ? formatCoords(cachedLoc.latitude, cachedLoc.longitude) : '',
+      locText: `${spot.name} · ${spot.desc}`,
+      locDesc: `${COMMUNITY_SPOTS.length} 个可选位置 · 点击更换`,
     });
   },
 
@@ -92,47 +92,18 @@ Page({
     this.setData({ nickName: value, avatarText: avatarText(value) });
   },
 
-  /* ---------------------------- 位置授权 ---------------------------- */
+  /* -------------------- 社区位置（手选，不读取手机定位） -------------------- */
 
-  onRequestLocation(): void {
-    if (!this.data.agreed) {
-      toast('请先勾选并同意《用户协议》和《隐私政策》');
-      return;
-    }
-    if (this.data.locState === 'locating') return;
-    this.setData({ locState: 'locating', locText: '定位中…' });
-
-    wx.getLocation({
-      type: 'gcj02',
+  onPickSpot(): void {
+    wx.showActionSheet({
+      itemList: spotPickerLabels(),
       success: (res) => {
-        const loc: UserLocation = {
-          latitude: res.latitude,
-          longitude: res.longitude,
-          ts: Date.now(),
-        };
-        store.set(STORAGE_KEYS.USER_LOCATION, loc);
-        const meters = distanceMeters(loc, COMMUNITY_CENTER);
+        const spot = COMMUNITY_SPOTS[res.tapIndex];
+        if (!spot) return;
+        store.set(STORAGE_KEYS.USER_LOCATION, spotToLocation(spot));
         this.setData({
-          locState: 'ok',
-          locText: `已定位 · 距社区中心 ${formatDistance(meters)}`,
-          locationText: formatCoords(loc.latitude, loc.longitude),
-        });
-      },
-      fail: () => {
-        this.setData({ locState: 'denied', locText: '未授权 · 点此重新授权' });
-        wx.showModal({
-          title: '需要位置权限',
-          content: '用于显示你附近的物业、卫生站、快递柜等服务点；不保存移动轨迹。',
-          confirmText: '去设置',
-          cancelText: '暂不开启',
-          success: (r) => {
-            if (!r.confirm) return;
-            wx.openSetting({
-              success: (setting) => {
-                if (setting.authSetting['scope.userLocation']) this.onRequestLocation();
-              },
-            });
-          },
+          locText: `${spot.name} · ${spot.desc}`,
+          locDesc: `${COMMUNITY_SPOTS.length} 个可选位置 · 点击更换`,
         });
       },
     });
@@ -152,7 +123,7 @@ Page({
       title: kind === 'privacy' ? '隐私政策' : '用户协议',
       content:
         kind === 'privacy'
-          ? '仅收集办事必需信息：头像、昵称、楼栋房号、联系方式。位置只用于展示附近服务点，不保存移动轨迹，不向第三方共享。'
+          ? '仅收集办事必需信息：头像、昵称、楼栋房号、联系方式。社区位置由你在本页手动选择（楼栋/出入口），仅用于就近排序附近服务点；不读取手机定位、不保存轨迹、不向第三方共享。'
           : '本小程序只提供社区服务的信息发布与预约登记，不收款、不担保交易、不提供医疗诊断；实际服务由社区与入驻师傅线下履约。',
       showCancel: false,
       confirmText: '我知道了',

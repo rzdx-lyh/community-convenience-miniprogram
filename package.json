@@ -1,6 +1,6 @@
 {
   "name": "community-convenience-miniprogram",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "公共服务 · 社区便民微信小程序（原生 + TypeScript，AI 问答 + 报修工单）",
   "scripts": {

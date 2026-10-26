@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 全局环境配置（FE-0）
  * USE_MOCK 是全站唯一的 mock/真实双通道开关：true 走内存 mock，false 走云函数。
  */
@@ -35,7 +35,7 @@ export interface EnvConfig {
 }
 
 export const ENV: EnvConfig = {
-  USE_MOCK: false, // 2026-10-23 v1.2.0：云函数已按 --remote-npm-install 重部署，auth:whoami 通过，切真云
+  USE_MOCK: false, // 2026-10-23 真云重部署后切换（v1.2.1 未变）
   // CR-017-c：默认 false（开发/自测时显示「演示数据模式」标识，演示当天置 true 隐藏）
   DEMO_MODE: false,
   CLOUD_ENV_ID: 'cloud1-d5g1xuxxf9eb5b758', // 用户提供（2026-10-14）
@@ -67,13 +67,13 @@ export function shouldShowMockBanner(useMock: boolean, demoMode: boolean): boole
 }
 
 /**
- * 应用版本（唯一真源，v1.2.0）。
+ * 应用版本（唯一真源，v1.2.1）。
  *
  * 与 `package.json`、`cloudfunctions` 下各包的 `package.json`、`README.md` 三处保持一致；
- * `tests/version.test.ts` 会断言四者相等，并在源码里扫出任何非 v1.2.0 的版本字样。
+ * `tests/version.test.ts` 会断言四者相等，并在源码里扫出任何非 v1.2.1 的版本字样。
  * 改版本只改这里 + 那三处清单，不要在注释里散落硬编码。
  */
-export const APP_VERSION = 'v1.2.0';
+export const APP_VERSION = 'v1.2.1';
 
 /** storage 键名集中管理，避免各处硬编码字符串 */
 export const STORAGE_KEYS = {
@@ -97,11 +97,11 @@ export const STORAGE_KEYS = {
   TOOL_BORROWS: 'ccfToolBorrows',
   /** CR-026：快递代取代寄申请记录（本地存储） */
   EXPRESS_ORDERS: 'ccfExpressOrders',
-  /** 首启资料设置是否完成（头像/昵称/位置） */
+  /** 首启资料设置是否完成（头像/昵称/社区位置） */
   SETUP_DONE: 'ccfSetupDone',
   /** 首启设置的本地资料兜底（云端 401/断网时仍能显示） */
   SETUP_PROFILE: 'ccfSetupProfile',
-  /** 最近一次授权定位（gcj02，含时间戳） */
+  /** 最近一次选择的社区位置（gcj02 + 时间戳；v1.2.1 起为手动选点，不读取手机定位） */
   USER_LOCATION: 'ccfUserLocation',
 } as const;
 

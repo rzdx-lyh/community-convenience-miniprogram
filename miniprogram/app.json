@@ -39,7 +39,7 @@
     "navigationStyle": "custom",
     "navigationBarBackgroundColor": "#F3F5F9",
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "社区便民",
+    "navigationBarTitleText": "邻里百事通小助手",
     "backgroundColor": "#F3F5F9",
     "backgroundTextStyle": "dark"
   },
@@ -74,12 +74,6 @@
         "selectedIconPath": "assets/tabbar/profile-on.png"
       }
     ]
-  },
-  "requiredPrivateInfos": ["getLocation"],
-  "permission": {
-    "scope.userLocation": {
-      "desc": "用于首次设置定位并显示附近社区服务点"
-    }
   },
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"

@@ -4,7 +4,7 @@
   <block wx:if="{{!ready}}">
     <view class="pgh pgh--green" style="padding-top:{{statusBarHeight}}px">
       <view class="sbar light">
-        <text>邻里小助手</text>
+        <text>邻里百事通小助手</text>
         <text>参考值 · 非处方</text>
       </view>
       <view class="pgh-nav">
@@ -81,7 +81,7 @@
   <block wx:else>
     <view class="pgh pgh--green" style="padding-top:{{statusBarHeight}}px">
       <view class="sbar light">
-        <text>邻里小助手</text>
+        <text>邻里百事通小助手</text>
         <text>参考值 · 非处方</text>
       </view>
       <view class="pgh-nav">

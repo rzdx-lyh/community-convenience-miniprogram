@@ -2,19 +2,29 @@
  * 社区地图（CR-028 新建 · 对照 demo.html pgMap）
  *
  * 关键差异（见施工契约 §八-3）：原型用腾讯位置服务 GL JS（DOM/Canvas），
- * 小程序无 DOM，改为**原生 `<map>` 组件 + wx.getLocation({type:'gcj02'})**：
+ * 小程序无 DOM，改为**原生 `<map>` 组件**：
  *   - 坐标保持 GCJ-02，markers 用本地 PNG 圆点（pin-svc / pin-tool / pin-life）；
- *   - 定位失败（未授权 / app.json 未声明 requiredPrivateInfos）时退回社区中心坐标，
- *     用 `.tip` 说明，页面结构照常渲染；
+ *   - v1.2.1：`wx.getLocation` 接口申请被驳回，页面不再读取手机定位；
+ *     起点改为用户手动选择的社区位置点（`config/community.ts`），未选时回社区中心；
  *   - 分类切换只筛点位，不重建地图实例。
  */
 import { getStatusBarHeight } from '../../utils/device';
 import { toast } from '../../utils/ui';
 import { distanceMeters, walkMinutes, formatDistance } from '../../utils/geo';
+import { STORAGE_KEYS } from '../../config/env';
+import {
+  COMMUNITY,
+  COMMUNITY_SPOTS,
+  resolveSpot,
+  spotPickerLabels,
+  spotToLocation,
+} from '../../config/community';
+import { store } from '../../store/global';
+import { isUsableLocation, type UserLocation } from '../../utils/onboarding';
 
-/** 社区中心（阳光社区 3 号楼）默认坐标，定位不可用时使用 */
-const DEFAULT_LAT = 23.12894;
-const DEFAULT_LNG = 113.26411;
+/** 社区中心（阳光社区 3 号楼）坐标：无缓存 / 未选位置时使用 */
+const DEFAULT_LAT = COMMUNITY.center.latitude;
+const DEFAULT_LNG = COMMUNITY.center.longitude;
 
 export type PoiCat = 'svc' | 'tool' | 'life';
 
@@ -236,12 +246,18 @@ Page({
     latitude: DEFAULT_LAT,
     longitude: DEFAULT_LNG,
     scale: 17,
-    locState: 'locating' as 'locating' | 'ok' | 'denied',
+    /** 当前所选社区位置点名称（如「3 号楼」） */
+    spotName: '',
     selected: null as Poi | null,
   },
 
   onLoad() {
-    this.locate();
+    // v1.2.1：不再调用定位接口，起点 = 用户手选的社区位置点（无则社区中心）
+    const saved = store.get<UserLocation | null>(STORAGE_KEYS.USER_LOCATION, null);
+    const spot = resolveSpot(isUsableLocation(saved) ? saved : null);
+    const here = { latitude: spot.latitude, longitude: spot.longitude };
+    this.applyLocation(here, spot.name);
+    wx.nextTick(() => this.fitView(here));
   },
 
   goBack(): void {
@@ -252,23 +268,18 @@ Page({
     }
   },
 
-  /** 取当前定位（GCJ-02，高精度）；失败退回社区中心，不阻塞页面 */
-  locate(): void {
-    this.setData({ locState: 'locating' });
-    wx.getLocation({
-      type: 'gcj02',
-      // 真机高精度定位（基础库 2.9.0+，模拟器忽略此参数）
-      isHighAccuracy: true,
-      success: (res: WechatMiniprogram.GetLocationSuccessCallbackResult) => {
-        const here = { latitude: res.latitude, longitude: res.longitude };
-        this.applyLocation(here);
-        this.setData({ locState: 'ok' });
-        toast('已定位到当前位置');
+  /** 选择社区位置点（v1.2.1：替代 wx.getLocation，不读取手机定位） */
+  onPickSpot(): void {
+    wx.showActionSheet({
+      itemList: spotPickerLabels(),
+      success: (res) => {
+        const spot = COMMUNITY_SPOTS[res.tapIndex];
+        if (!spot) return;
+        store.set(STORAGE_KEYS.USER_LOCATION, spotToLocation(spot));
+        const here = { latitude: spot.latitude, longitude: spot.longitude };
+        this.applyLocation(here, spot.name);
         this.fitView(here);
-      },
-      fail: () => {
-        this.applyLocation({ latitude: DEFAULT_LAT, longitude: DEFAULT_LNG });
-        this.setData({ locState: 'denied' });
+        toast(`已切换到 ${spot.name}`);
       },
     });
   },
@@ -282,19 +293,16 @@ Page({
     ctx.includePoints({ points: pts, padding: [60, 60, 60, 60] });
   },
 
-  /** 用真实位置重算：地图中心 + 各点位到「我」的实时距离（替换写死的 walk） */
-  applyLocation(here: { latitude: number; longitude: number }): void {
+  /** 用所选社区位置重算：地图中心 + 各点位到「我」的距离/步行时间 */
+  applyLocation(here: { latitude: number; longitude: number }, spotName?: string): void {
+    const name = spotName ?? this.data.spotName;
     const points = this.data.points.map((p) => {
       const m = distanceMeters(here, { latitude: p.latitude, longitude: p.longitude });
       return { ...p, walk: formatDistance(m), walkMin: walkMinutes(m) };
     });
     // 按距离从近到远重排（「附近 X 个点位 · 按步行距离排序」与文案一致）
     points.sort((a, b) => a.walkMin - b.walkMin);
-    this.setData({ latitude: here.latitude, longitude: here.longitude, points });
-  },
-
-  onRelocate(): void {
-    this.locate();
+    this.setData({ latitude: here.latitude, longitude: here.longitude, points, spotName: name });
   },
 
   onCatTap(e: WechatMiniprogram.TouchEvent): void {

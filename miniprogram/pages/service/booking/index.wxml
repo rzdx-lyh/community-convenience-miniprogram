@@ -3,7 +3,7 @@
   <!-- 取号成功 -->
   <block wx:if="{{taken}}">
     <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
-      <text>邻里小助手</text>
+      <text>邻里百事通小助手</text>
       <text>社区门诊</text>
     </view>
     <view class="nav">
@@ -28,7 +28,7 @@
   <!-- 取号流程 -->
   <block wx:else>
     <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
-      <text>邻里小助手</text>
+      <text>邻里百事通小助手</text>
       <text>社区门诊</text>
     </view>
     <view class="nav">

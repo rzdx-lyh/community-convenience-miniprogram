@@ -195,7 +195,7 @@ Page({
 
   onAbout(): void {
     wx.showModal({
-      title: '邻里小助手',
+      title: '邻里百事通小助手',
       content: '社区便民服务小程序 · 提供报修、通知、电话簿、办事指引与 AI 问答。',
       showCancel: false,
       confirmText: '知道了',

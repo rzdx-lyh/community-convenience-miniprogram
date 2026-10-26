@@ -7,7 +7,7 @@
 
   <view class="au-hero">
     <view class="au-logo">邻</view>
-    <view class="au-nm">邻里小助手</view>
+    <view class="au-nm">邻里百事通小助手</view>
     <view class="au-sb">阳光社区 · 报修缴费挂号，一个入口办完</view>
     <view class="au-pts">
       <view><text class="n">38</text><text class="l">项服务</text></view>
@@ -46,5 +46,5 @@
     </view>
   </view>
 
-  <view class="au-foot">v1.2.0 · 阳光社区 · 演示原型，不产生真实账号</view>
+  <view class="au-foot">v1.2.1 · 阳光社区 · 演示原型，不产生真实账号</view>
 </view>

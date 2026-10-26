@@ -10,10 +10,9 @@
     <!-- padding-right 避开右上角微信胶囊按钮（2026-10-22：定位胶囊与胶囊按钮重叠） -->
     <view class="r1" style="padding-right:{{navRightPad}}px">
       <view class="lg">邻</view>
-      <view class="nm">邻里小助手</view>
+      <view class="nm">邻里百事通小助手</view>
       <view class="lb {{locState}}" bindtap="onLocTap">
-        <view wx:if="{{locState === 'locating'}}" class="lp" />
-        <view wx:else class="ic ic-s ic-pin icw" />
+        <view class="ic ic-s ic-pin icw" />
         <text class="tx">{{locText}}</text>
         <text class="ch">›</text>
       </view>
@@ -99,15 +98,15 @@
     <view class="sec">
       <view class="st">
         <text class="b">附近服务</text>
-        <text class="em">按实时定位排序</text>
+        <text class="em">按所选位置排序</text>
         <text class="more" data-url="/pages/map/index" bindtap="onGo">地图 ›</text>
       </view>
       <view class="card card--pad">
         <view class="row" data-url="/pages/map/index" bindtap="onGo" hover-class="hover-dim">
           <view class="k k-blue"><view class="ic ic-m ic-map" /></view>
           <view class="m">
-            <text class="m-t">社区地图 · 8 个点位</text>
-            <text class="m-s">最近 60 m · 共享雨伞 1 号楼大厅</text>
+            <text class="m-t">社区地图 · 9 个点位</text>
+            <text class="m-s">点左上角位置可切换楼栋 · 距离按所选位置算</text>
           </view>
           <text class="ar">›</text>
         </view>

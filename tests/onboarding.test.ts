@@ -3,6 +3,7 @@ import {
   avatarText,
   formatCoords,
   isFreshLocation,
+  isUsableLocation,
   isValidNickName,
   normalizeNickName,
   NICKNAME_MAX,
@@ -37,5 +38,12 @@ describe('onboarding · 首启资料设置（2026-10-22）', () => {
     expect(isFreshLocation({ latitude: 23, longitude: 113, ts: now - 60_000 }, now)).toBe(true);
     expect(isFreshLocation({ latitude: 23, longitude: 113, ts: now - 11 * 60_000 }, now)).toBe(false);
     expect(isFreshLocation(null, now)).toBe(false);
+  });
+
+  it('社区位置点（手选）不按时间过期，只校验坐标', () => {
+    expect(isUsableLocation({ latitude: 23, longitude: 113, ts: 1 })).toBe(true);
+    expect(isUsableLocation({ latitude: 23, longitude: 113, ts: 0 })).toBe(true);
+    expect(isUsableLocation({ latitude: Number.NaN, longitude: 113, ts: 1 })).toBe(false);
+    expect(isUsableLocation(null)).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-/** v1.2.0 / CR-019：首页「社区动态」视图模型 */
+/** v1.2.1 / CR-019：首页「社区动态」视图模型 */
 import { describe, expect, it } from 'vitest';
 import { FEED_LIMIT, FEED_TYPE_LABELS, toFeedVM } from '../miniprogram/pages/index/viewmodel';
 

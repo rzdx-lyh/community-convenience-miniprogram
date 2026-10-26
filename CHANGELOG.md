@@ -5,6 +5,40 @@
 > 设计原型 `docs/03-preview/demo.html` 与 `docs/` 下的设计文档走**独立版本轨**，不在本文件记录。
 > 版本号唯一真源：`miniprogram/config/env.ts` 的 `APP_VERSION`，由 `tests/version.test.ts` 守护。
 
+## v1.2.1 — 2026-10-26 · 定位接口替换（wx.getLocation 申请被驳回）
+
+### 变更
+
+- **移除 `wx.getLocation`**：微信「接口申请审核结果」不通过（2026-10-24，理由：使用场景未符合
+  `wx.getLocation`（获取当前的地理位置、速度）接口的开放范围）。代码不再调用任何定位接口，
+  `app.json` 删除 `requiredPrivateInfos:["getLocation"]` 与 `permission.scope.userLocation`。
+- **新增「社区位置手选」**：`miniprogram/config/community.ts` 定义社区中心 + 6 个位置点
+  （3/1/2 号楼、南门岗亭、西门、社区食堂）；首启页、首页定位胶囊、社区地图三处改为
+  `wx.showActionSheet` 选择，结果持久化到 `STORAGE_KEYS.USER_LOCATION`。
+- **距离仍按真实坐标算**：社区地图 9 个服务点的距离/步行分钟数改为按所选位置点 Haversine 实算、
+  按近远排序；移除 `<map show-location>`，不再显示/读取系统定位点。
+- **隐私文案同步**：首启 / 欢迎 / 登录三处由「读取一次位置」改为「手动选择社区位置，
+  仅用于就近排序，不读取手机定位、不保存轨迹」。
+- 版本号 v1.2.0 → **v1.2.1**（`env.ts` / `package.json` / `package-lock.json` / 8 个云函数包 / README 五处一致）。
+- **名称统一**：UI 品牌位 / 导航标题 / 分享标题与 `docs/32/34/35/36` 全部统一为备案名称
+  「**邻里百事通小助手**」（原「邻里小助手」）。
+
+### 测试
+
+- 新增 `tests/community.test.ts`（7 条）：位置点数据、默认点、最近点、旧缓存兼容、选择器上限；
+- 新增 `tests/location-policy.test.ts`（3 条）：源码无 `wx.getLocation` 调用、`app.json` 无定位声明、
+  地图无 `show-location`（防回归）；
+- `tests/onboarding.test.ts` 补「手选位置不按时间过期」用例；
+- `npm run verify`：typecheck + lint + **351 条 / 27 文件**全绿；
+  `node scripts/check-pages.mjs`：34 页注册齐全、0 ERROR / 0 WARN。
+
+### 待办（上线前）
+
+- 小程序后台「用户隐私保护指引」去掉「位置信息」，只保留 openid / 相册（见 `docs/37` §4）；
+- 重新上传体验版 v1.2.1，真机回归首页位置胶囊 / 首启位置选择 / 地图距离排序。
+
+---
+
 ## v1.2.0 — 2026-10-23 · 首启资料 + 文化便民活动 + 部署修复
 
 ### 新增

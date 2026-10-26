@@ -1,13 +1,13 @@
-﻿/**
+/**
  * 首页（按设计稿 pgHome v1.4 重建）
  * 结构：渐变头部（定位 + 搜索 + 4 快捷）→ 服务分类 4 专区卡 → 常用服务 → 附近服务 → AI 提醒 → 社区动态
  */
 import { LOCAL_SERVICE_CATEGORIES } from '../../config/service-grid';
 import { STORAGE_KEYS } from '../../config/env';
+import { COMMUNITY, COMMUNITY_SPOTS, resolveSpot, spotPickerLabels, spotToLocation, type CommunitySpot } from '../../config/community';
 import { store } from '../../store/global';
 import { navigateByTarget } from '../../utils/navigator';
-import { distanceMeters, formatDistance } from '../../utils/geo';
-import { isFreshLocation, type UserLocation } from '../../utils/onboarding';
+import { isUsableLocation, type UserLocation } from '../../utils/onboarding';
 
 const info = wx.getWindowInfo();
 
@@ -79,8 +79,8 @@ Page({
     /** .r1 右侧留白（px）：避开微信胶囊按钮 */
     navRightPad: capsuleRightPad(),
     kw: '',
-    locState: 'idle',
-    locText: '点此定位',
+    locState: 'ok',
+    locText: '阳光社区 · 3 号楼',
 
     quick: [
       { i: 'wrench', t: '报修', k: 'repair' },
@@ -102,19 +102,16 @@ Page({
 
   onLoad() {
     this.buildData();
-    // setup 页刚拿到的定位优先复用，避免同一轮启动连续弹两次授权
+    // v1.2.1：wx.getLocation 接口被驳回后改为「社区位置手选」，不再读取手机定位
     const cached = store.get<UserLocation | null>(STORAGE_KEYS.USER_LOCATION, null);
-    if (cached && isFreshLocation(cached)) {
-      this.applyLocation(cached);
-      return;
-    }
-    this.onLocTap();
+    const spot = resolveSpot(isUsableLocation(cached) ? cached : null);
+    this.applySpot(spot, false);
   },
 
-  /** 把坐标转成「距社区中心」文案 */
-  applyLocation(loc: UserLocation): void {
-    const m = distanceMeters(loc, { latitude: 23.12894, longitude: 113.26411 });
-    this.setData({ locState: 'ok', locText: `已定位 · 距社区中心 ${formatDistance(m)}` });
+  /** 应用所选社区位置点（persist=true 时写入本地缓存） */
+  applySpot(spot: CommunitySpot, persist = true): void {
+    if (persist) store.set(STORAGE_KEYS.USER_LOCATION, spotToLocation(spot));
+    this.setData({ locState: 'ok', locText: `${COMMUNITY.name} · ${spot.name}` });
   },
 
   buildData() {
@@ -157,21 +154,14 @@ Page({
     wx.switchTab({ url: '/pages/hall/index' });
   },
 
+  /** 选择社区内位置（楼栋/出入口）；不读取手机定位 */
   onLocTap(): void {
-    if (this.data.locState === 'locating') return;
-    this.setData({ locState: 'locating', locText: '定位中…' });
-    wx.getLocation({
-      type: 'gcj02',
+    wx.showActionSheet({
+      itemList: spotPickerLabels(),
       success: (res) => {
-        const loc: UserLocation = {
-          latitude: res.latitude,
-          longitude: res.longitude,
-          ts: Date.now(),
-        };
-        store.set(STORAGE_KEYS.USER_LOCATION, loc);
-        this.applyLocation(loc);
+        const spot = COMMUNITY_SPOTS[res.tapIndex];
+        if (spot) this.applySpot(spot);
       },
-      fail: () => this.setData({ locState: 'denied', locText: '未授权 · 点此开启' }),
     });
   },
 

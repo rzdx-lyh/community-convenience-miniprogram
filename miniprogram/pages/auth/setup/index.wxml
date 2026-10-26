@@ -1,4 +1,4 @@
-<!-- 首启资料设置：头像 + 昵称 + 当前位置 -->
+<!-- 首启资料设置：头像 + 昵称 + 所在位置（社区位置手选，不读取手机定位） -->
 <view class="page setup">
   <view class="setup-hd">
     <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
@@ -39,14 +39,14 @@
 
       <view class="setup-field setup-field--col">
         <view class="setup-lb-row">
-          <text class="setup-lb">当前位置</text>
-          <text class="setup-lb-tip">仅用于展示附近服务点</text>
+          <text class="setup-lb">所在位置</text>
+          <text class="setup-lb-tip">手动选择 · 不读取定位</text>
         </view>
-        <view class="setup-loc" hover-class="setup-loc--hover" bindtap="onRequestLocation">
+        <view class="setup-loc" hover-class="setup-loc--hover" bindtap="onPickSpot">
           <view class="ic ic-m ic-pin setup-loc__ic" />
           <view class="setup-loc__body">
             <text class="setup-loc__t">{{locText}}</text>
-            <text wx:if="{{locationText}}" class="setup-loc__s">{{locationText}}</text>
+            <text wx:if="{{locDesc}}" class="setup-loc__s">{{locDesc}}</text>
           </view>
           <text class="setup-loc__ar">›</text>
         </view>

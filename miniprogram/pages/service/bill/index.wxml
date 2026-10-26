@@ -2,7 +2,7 @@
 <view class="page">
   <view class="pgh pgh--gold">
     <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
-      <text>邻里小助手</text>
+      <text>邻里百事通小助手</text>
       <text>● ● ●</text>
     </view>
     <view class="pgh-nav">
