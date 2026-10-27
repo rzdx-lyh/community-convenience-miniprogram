@@ -1,7 +1,14 @@
 <!-- 物业延伸（CR-027）· 外卖代收 / 流浪动物 / 房屋租售 -->
 <view class="page">
   <view class="top">
-    <view class="top__t">物业延伸</view>
+    <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
+      <text>邻里百事通小助手</text>
+      <text>● ● ●</text>
+    </view>
+    <view class="top__row">
+      <view class="top__t">物业延伸</view>
+      <view class="top__home" bindtap="onHome">返回首页</view>
+    </view>
     <view class="top__s">物业与业主共治 · 社区只做信息登记</view>
   </view>
 

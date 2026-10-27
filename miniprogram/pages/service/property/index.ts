@@ -9,6 +9,7 @@
 import { createWorkOrder } from '../../../services/workorder';
 import { track, trackPageView } from '../../../utils/logger';
 import { toast } from '../../../utils/ui';
+import { getStatusBarHeight } from '../../../utils/device';
 import {
   LEASE_ITEMS,
   PROPERTY_TABS,
@@ -26,6 +27,7 @@ import {
 
 Page({
   data: {
+    statusBarHeight: getStatusBarHeight(),
     tabs: PROPERTY_TABS,
     tab: 'takeout' as PropertyTab,
     tabNote: PROPERTY_TABS[0].note,
@@ -72,6 +74,12 @@ Page({
   render(): void {
     const meta = PROPERTY_TABS.find((t) => t.key === this.data.tab) ?? PROPERTY_TABS[0];
     this.setData({ tabNote: meta.note });
+  },
+
+  /** 返回首页（TabBar 页需用 switchTab，三个子频道共用此入口） */
+  onHome(): void {
+    track('btn_click', { page: 'property', target: 'home' });
+    wx.switchTab({ url: '/pages/index/index' });
   },
 
   onSwitchTab(e: WechatMiniprogram.TouchEvent): void {
