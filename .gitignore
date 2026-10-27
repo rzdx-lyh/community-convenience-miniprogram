@@ -40,3 +40,6 @@ scripts/seed/
 .workbuddy/cfcheck*/
 .workbuddy/isocheck/
 .workbuddy/iconcheck/
+
+# devtools 误把 miniprogram 子目录当项目根时自动生成的配置
+miniprogram/project.config.json
