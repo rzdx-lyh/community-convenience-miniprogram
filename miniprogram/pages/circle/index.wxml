@@ -1,5 +1,5 @@
 <!-- 社区圈子（设计稿 pgCircle v1.4） -->
-<view class="page circle-page">
+<view class="page circle-page {{careMode ? 'care-mode' : ''}}">
   <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
     <text>08:42</text>
     <text>●●● ▮</text>

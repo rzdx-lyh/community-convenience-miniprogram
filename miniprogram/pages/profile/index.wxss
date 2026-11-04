@@ -24,23 +24,23 @@
 /* 数据统计（原型 .pstats .c b / span） */
 .pstats .c .n {
   display: block;
-  font-size: 38rpx;
+  font-size: calc(38rpx * var(--care-scale, 1));
   font-weight: 800;
   color: var(--blue);
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
-.pstats .c .l { display: block; font-size: 18rpx; color: var(--t3); margin-top: 6rpx; }
+.pstats .c .l { display: block; font-size: calc(18rpx * var(--care-scale, 1)); color: var(--t3); margin-top: 6rpx; }
 
 /* 原型 HTML 标签选择器（b / em / span）改为类名后补排版 */
-.st .b { font-size: 28rpx; font-weight: 800; flex: 1; }
-.st .em { font-style: normal; font-size: 19rpx; color: var(--t3); }
+.st .b { font-size: calc(28rpx * var(--care-scale, 1)); font-weight: 800; flex: 1; }
+.st .em { font-style: normal; font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); }
 
 .card--memb { padding-bottom: 12rpx; }
 .card--pad { padding: 0 24rpx; }
 
 .memb .mb .mb-n {
-  font-size: 19rpx;
+  font-size: calc(19rpx * var(--care-scale, 1));
   color: var(--t2);
   white-space: nowrap;
   max-width: 112rpx;
@@ -50,11 +50,11 @@
 
 .addr-list { padding: 4rpx 24rpx 0; }
 
-.row .m-t { font-size: 25rpx; font-weight: 700; display: block; }
-.row .m-s { font-size: 19rpx; color: var(--t3); display: block; margin-top: 4rpx; }
+.row .m-t { font-size: calc(25rpx * var(--care-scale, 1)); font-weight: 700; display: block; }
+.row .m-s { font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); display: block; margin-top: 4rpx; }
 
 .v-def { color: var(--blue); font-weight: 700; }
-.v-set { color: var(--blue); font-size: 19rpx; }
+.v-set { color: var(--blue); font-size: calc(19rpx * var(--care-scale, 1)); }
 
 /* 行内图标底色 */
 .k-blue { background: #EAF1FE; }
@@ -71,7 +71,7 @@
 
 .pfoot {
   text-align: center;
-  font-size: 19rpx;
+  font-size: calc(19rpx * var(--care-scale, 1));
   color: var(--t3);
   padding: 32rpx 24rpx 44rpx;
   line-height: 1.7;

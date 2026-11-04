@@ -1,5 +1,5 @@
 <!-- 引导页 · 品牌介绍 → 登录 -->
-<view class="page authp">
+<view class="page authp {{careMode ? 'care-mode' : ''}}">
   <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
     <text>08:42</text>
     <text>●●● ▮</text>

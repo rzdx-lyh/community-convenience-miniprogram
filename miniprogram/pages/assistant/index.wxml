@@ -1,5 +1,5 @@
 <!-- AI 助手（CR-028 · 对照 demo.html pgAi 重建） -->
-<view class="page page--chat">
+<view class="page page--chat {{careMode ? 'care-mode' : ''}}">
   <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
     <text>AI 助手</text>
     <text class="sbar__sig">{{busy ? '思考中' : '在线'}}</text>

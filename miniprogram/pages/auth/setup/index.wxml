@@ -1,5 +1,5 @@
 <!-- 首启资料设置：头像 + 昵称 + 所在位置（社区位置手选，不读取手机定位） -->
-<view class="page setup">
+<view class="page setup {{careMode ? 'care-mode' : ''}}">
   <view class="setup-hd">
     <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
       <text>08:42</text>

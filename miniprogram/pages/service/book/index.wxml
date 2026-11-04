@@ -1,5 +1,5 @@
 <!-- 通用预约（CR-028）· 服务类型 → 时间 → 地址 → 提交收据 -->
-<view class="page {{done ? '' : 'page--fbar'}}">
+<view class="page {{done ? '' : 'page--fbar'}} {{careMode ? 'care-mode' : ''}}">
   <!-- 提交成功：凭证 + 时间轴 -->
   <block wx:if="{{done}}">
     <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">

@@ -10,11 +10,11 @@
   display: block;
 }
 .au-pts .n {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--care-scale, 1));
   font-weight: 800;
 }
 .au-pts .l {
-  font-size: 17rpx;
+  font-size: calc(17rpx * var(--care-scale, 1));
   opacity: 0.8;
 }
 
@@ -38,7 +38,7 @@
   display: block;
 }
 .au-alt .em {
-  font-size: 17rpx;
+  font-size: calc(17rpx * var(--care-scale, 1));
   color: var(--t3);
   margin-top: 4rpx;
 }
@@ -61,7 +61,7 @@
 }
 .ckb .tick {
   color: #fff;
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--care-scale, 1));
   font-weight: 800;
   line-height: 1;
 }
@@ -80,7 +80,7 @@
 
 .skip {
   text-align: center;
-  font-size: 21rpx;
+  font-size: calc(21rpx * var(--care-scale, 1));
   color: var(--t2);
   padding: 26rpx 0 0;
 }

@@ -1,5 +1,5 @@
 <!-- 登录页 · 微信一键登录 + 协议勾选（未勾选禁用） -->
-<view class="page authp">
+<view class="page authp {{careMode ? 'care-mode' : ''}}">
   <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
     <text>08:42</text>
     <text>●●● ▮</text>

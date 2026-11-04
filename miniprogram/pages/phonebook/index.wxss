@@ -1,34 +1,34 @@
 /* 电话簿补充样式 */
 .pgh--blue{--h1:#2E6BE0;--h2:#153F9B}
 .ph{display:flex;align-items:center;gap:22rpx;margin-top:22rpx;position:relative;z-index:2}
-.ph__t{font-size:42rpx;font-weight:800}
-.ph__s{font-size:19rpx;opacity:.86;margin-top:8rpx}
+.ph__t{font-size: calc(42rpx * var(--care-scale, 1));font-weight:800}
+.ph__s{font-size: calc(19rpx * var(--care-scale, 1));opacity:.86;margin-top:8rpx}
 .psearch{margin-top:26rpx;position:relative;z-index:2}
 .gph{color:#98A2B3}
 .ecard{margin:0 24rpx;border-radius:22rpx;padding:22rpx 24rpx;background:linear-gradient(135deg,#E4573D,#B92F1D);color:#fff;box-shadow:0 10rpx 28rpx rgba(185,47,29,.24)}
 .ecard__h{display:flex;align-items:center;gap:10rpx}
-.ecard__t{font-size:25rpx;font-weight:800}
-.ecard__s{margin-left:auto;font-size:17rpx;opacity:.82}
+.ecard__t{font-size: calc(25rpx * var(--care-scale, 1));font-weight:800}
+.ecard__s{margin-left:auto;font-size: calc(17rpx * var(--care-scale, 1));opacity:.82}
 .ecard__g{display:flex;gap:14rpx;margin-top:16rpx}
 .ec{flex:1;height:96rpx;border-radius:16rpx;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);display:flex;flex-direction:column;align-items:center;justify-content:center}
 .ec--hover{background:rgba(255,255,255,.28)}
-.ec__n{font-size:36rpx;font-weight:800;letter-spacing:1rpx;line-height:1.1}
-.ec__l{font-size:17rpx;opacity:.86;margin-top:2rpx}
+.ec__n{font-size: calc(36rpx * var(--care-scale, 1));font-weight:800;letter-spacing:1rpx;line-height:1.1}
+.ec__l{font-size: calc(17rpx * var(--care-scale, 1));opacity:.86;margin-top:2rpx}
 .tabs-card{padding:16rpx 20rpx}
 .phone-tabs{flex-wrap:nowrap;overflow-x:auto}
 .phone-tabs .chip{flex:none}
 .pbl{padding:4rpx 24rpx 12rpx}
-.gh__b{font-size:25rpx;font-weight:800;display:flex;align-items:center;gap:12rpx}
+.gh__b{font-size: calc(25rpx * var(--care-scale, 1));font-weight:800;display:flex;align-items:center;gap:12rpx}
 .gh__b::before{content:'';width:5rpx;height:22rpx;border-radius:4rpx;background:var(--blue);flex:none}
-.gh__p{display:block;margin-top:8rpx;font-size:19rpx;color:var(--t3);line-height:1.4}
+.gh__p{display:block;margin-top:8rpx;font-size: calc(19rpx * var(--care-scale, 1));color:var(--t3);line-height:1.4}
 .pbc{padding:16rpx 0}
 .pbc--hover{background:#FAFBFC}
 .pbc .acell-i{width:52rpx;height:52rpx;border-radius:14rpx;background:var(--blue-l);color:var(--blue)}
-.pbc .acell-d{font-size:18rpx;line-height:1.4}
-.pbc__n{font-size:25rpx;font-weight:700}
+.pbc .acell-d{font-size: calc(18rpx * var(--care-scale, 1));line-height:1.4}
+.pbc__n{font-size: calc(25rpx * var(--care-scale, 1));font-weight:700}
 .pbc__r{flex:none;text-align:right;margin-left:12rpx}
-.pbc__num{display:block;font-size:25rpx;font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
-.pbc__call{display:inline-block;margin-top:5rpx;padding:2rpx 12rpx;border-radius:198rpx;background:var(--blue-l);color:var(--blue);font-size:16rpx;font-weight:700}
+.pbc__num{display:block;font-size: calc(25rpx * var(--care-scale, 1));font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
+.pbc__call{display:inline-block;margin-top:5rpx;padding:2rpx 12rpx;border-radius:198rpx;background:var(--blue-l);color:var(--blue);font-size: calc(16rpx * var(--care-scale, 1));font-weight:700}
 .grp--em .gh__b::before{background:var(--red)}
 .grp--em .pbc__num{color:var(--red)}
 .grp--em .pbc .acell-i{background:var(--red-l);color:var(--red)}

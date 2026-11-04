@@ -74,10 +74,12 @@ Page({
     notice: { wo: true, out: true, act: false } as Record<string, boolean>,
     font: 'std',
     care: false,
+    /** 由 app.ts 的 Page 钩子按 storage 注入；此处显式声明便于 setData 类型检查 */
+    careMode: false,
   },
 
   onLoad() {
-    const care = normalizeElderMode(wx.getStorageSync(STORAGE_KEYS.ELDER_MODE));
+    const care = normalizeElderMode(store.peek<boolean>(STORAGE_KEYS.ELDER_MODE, false));
     let capsuleGap = 8;
     try {
       const menu = wx.getMenuButtonBoundingClientRect();
@@ -90,6 +92,9 @@ Page({
   },
 
   onShow() {
+    // 从其他页面返回时同步最新开关，避免 profile 与全局状态不一致
+    const care = normalizeElderMode(store.peek<boolean>(STORAGE_KEYS.ELDER_MODE, false));
+    if (care !== this.data.care) this.setData({ care });
     void this.loadProfile();
   },
 
@@ -141,11 +146,11 @@ Page({
     if (url) wx.navigateTo({ url });
   },
 
-  /** 关怀模式：只落本地存储，由主控在 app 层决定字号 */
+  /** 关怀模式：写入 store（持久化 + 通知 app），页面根节点立即切换 .care-mode */
   onCare(): void {
     const care = !this.data.care;
-    this.setData({ care });
-    wx.setStorageSync(STORAGE_KEYS.ELDER_MODE, care);
+    this.setData({ care, careMode: care });
+    store.set(STORAGE_KEYS.ELDER_MODE, care);
     toast(care ? '关怀模式已开启' : '关怀模式已关闭');
   },
 

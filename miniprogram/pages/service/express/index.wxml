@@ -1,5 +1,5 @@
 <!-- 快递代取 · 彩色页头 → 在库包裹 → 驿站 / 规则 → 我的申请 → 预约 -->
-<view class="page page--fbar">
+<view class="page page--fbar {{careMode ? 'care-mode' : ''}}">
   <view class="pgh pgh--teal">
     <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
       <text>邻里百事通小助手</text>

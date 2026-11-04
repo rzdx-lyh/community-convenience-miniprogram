@@ -1,5 +1,5 @@
 <!-- 社区门诊取号（CR-028）· 科室 → 医生 → 时段 → 取号凭证 -->
-<view class="page">
+<view class="page {{careMode ? 'care-mode' : ''}}">
   <!-- 取号成功 -->
   <block wx:if="{{taken}}">
     <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">

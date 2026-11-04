@@ -10,11 +10,11 @@
   display: block;
 }
 .au-pts .n {
-  font-size: 32rpx;
+  font-size: calc(32rpx * var(--care-scale, 1));
   font-weight: 800;
 }
 .au-pts .l {
-  font-size: 17rpx;
+  font-size: calc(17rpx * var(--care-scale, 1));
   opacity: 0.8;
 }
 
@@ -60,14 +60,14 @@
 }
 .feat__n {
   display: block;
-  font-size: 25rpx;
+  font-size: calc(25rpx * var(--care-scale, 1));
   font-weight: 800;
   color: var(--t1);
 }
 .feat__d {
   display: block;
   margin-top: 4rpx;
-  font-size: 19rpx;
+  font-size: calc(19rpx * var(--care-scale, 1));
   color: var(--t3);
   line-height: 1.5;
 }
@@ -80,7 +80,7 @@
   filter: brightness(0.95);
 }
 .au-btn .ar {
-  font-size: 34rpx;
+  font-size: calc(34rpx * var(--care-scale, 1));
   opacity: 0.8;
 }
 .lnk {

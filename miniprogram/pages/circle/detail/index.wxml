@@ -3,7 +3,7 @@
   对照 docs/03-preview/demo.html pgPost（1861-1912）实现。
   ⚠ 原型用 <br> 换行的地方已拆成独立 <view>，WXML 不支持 <br>。
 -->
-<view class="page page--fbar">
+<view class="page page--fbar {{careMode ? 'care-mode' : ''}}">
   <view class="sbar" style="padding-top:{{statusBarHeight}}px">
     <text>08:42</text>
     <text>●●● ▮</text>
@@ -80,7 +80,7 @@
 
   <!-- ===== 评论区 ===== -->
   <view class="cmt">
-    <view style="font-size:25rpx;font-weight:800">评论 {{comments.length}}</view>
+    <view style="font-size:calc(25rpx * var(--care-scale, 1));font-weight:800">评论 {{comments.length}}</view>
 
     <block wx:if="{{comments.length > 0}}">
       <view
@@ -96,22 +96,22 @@
             <text style="font-weight:800">{{item.who}}</text>
             <text wx:if="{{item.official}}" class="p-v">官方</text>
           </view>
-          <view style="font-size:21rpx;line-height:1.55;margin-top:2rpx">
+          <view style="font-size:calc(21rpx * var(--care-scale, 1));line-height:1.55;margin-top:2rpx">
             <text wx:if="{{item.replyTo}}" class="rt2">@{{item.replyTo}} </text>
             <text>{{item.text}}</text>
           </view>
-          <view style="font-size:17rpx;color:#98A2B3;font-style:normal">{{item.meta}}</view>
+          <view style="font-size:calc(17rpx * var(--care-scale, 1));color:#98A2B3;font-style:normal">{{item.meta}}</view>
         </view>
       </view>
     </block>
-    <view wx:else style="font-size:21rpx;color:#98A2B3;padding:20rpx 0">还没有评论，来说第一句</view>
+    <view wx:else style="font-size:calc(21rpx * var(--care-scale, 1));color:#98A2B3;padding:20rpx 0">还没有评论，来说第一句</view>
 
-    <view style="text-align:center;font-size:19rpx;color:#98A2B3;padding:20rpx 0 4rpx">— 点任意评论可 @ 对方回复 —</view>
+    <view style="text-align:center;font-size:calc(19rpx * var(--care-scale, 1));color:#98A2B3;padding:20rpx 0 4rpx">— 点任意评论可 @ 对方回复 —</view>
   </view>
 
   <!-- ===== 相关动态 ===== -->
   <view wx:if="{{related.length > 0}}" class="oc" style="margin:20rpx 24rpx 0;background:#fff;border-radius:22rpx;padding:24rpx">
-    <view style="display:flex;align-items:center;gap:8rpx;font-weight:800;font-size:25rpx">
+    <view style="display:flex;align-items:center;gap:8rpx;font-weight:800;font-size:calc(25rpx * var(--care-scale, 1))">
       <view class="ic ic-s ic-pin"></view>
       <text>相关动态</text>
     </view>
@@ -124,8 +124,8 @@
     >
       <view class="n">{{item.avatar}}</view>
       <view>
-        <view style="font-weight:700;font-size:23rpx;line-height:1.4">{{item.text}}</view>
-        <view style="font-size:19rpx;color:#98A2B3;margin-top:4rpx">{{item.who}} · {{item.topic}} · 赞 {{item.likes}}</view>
+        <view style="font-weight:700;font-size:calc(23rpx * var(--care-scale, 1));line-height:1.4">{{item.text}}</view>
+        <view style="font-size:calc(19rpx * var(--care-scale, 1));color:#98A2B3;margin-top:4rpx">{{item.who}} · {{item.topic}} · 赞 {{item.likes}}</view>
       </view>
     </view>
   </view>

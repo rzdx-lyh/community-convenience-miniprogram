@@ -47,7 +47,7 @@
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.06);
   color: var(--text-2);
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--care-scale, 1));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,7 +85,7 @@
   height: 72rpx;
   border-radius: var(--radius-m);
   background: var(--brand-light);
-  font-size: 36rpx;
+  font-size: calc(36rpx * var(--care-scale, 1));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,7 +178,7 @@
 }
 
 .cat__icon {
-  font-size: 48rpx;
+  font-size: calc(48rpx * var(--care-scale, 1));
   line-height: 1;
   flex: none;
 }
@@ -199,7 +199,7 @@
 
 .cat__sub {
   margin-top: 4rpx;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--care-scale, 1));
   color: var(--text-3);
   overflow: hidden;
   white-space: nowrap;

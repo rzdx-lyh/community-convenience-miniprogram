@@ -4,7 +4,22 @@
  */
 import { ENV, STORAGE_KEYS } from './config/env';
 import { store } from './store/global';
+import { installCarePageHook, isCareModeEnabled } from './utils/care';
 import { getCapsuleSafeWidth, getStatusBarHeight } from './utils/device';
+
+/**
+ * 关怀模式注入（2026-11-04）
+ * 微信没有全局页面样式 API；在 Page 注册阶段统一注入 careMode，
+ * 并在每次 onShow 重读 storage，保证从「我的」切到任意页面立即生效。
+ * 页面根节点配合 {{careMode ? 'care-mode' : ''}}。
+ */
+const pageScope = globalThis as unknown as {
+  Page?: (options: Record<string, any>) => unknown;
+};
+const basePage = pageScope.Page;
+if (typeof basePage === 'function') {
+  pageScope.Page = installCarePageHook(basePage) as typeof pageScope.Page;
+}
 
 interface IAppOption {
   globalData: {
@@ -35,7 +50,12 @@ App<IAppOption>({
 
     this.globalData.statusBarHeight = getStatusBarHeight();
     this.globalData.capsuleRight = getCapsuleSafeWidth();
-    this.globalData.elderMode = store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false);
+    this.globalData.elderMode = isCareModeEnabled();
+
+    // 开关怀模式后同步 app.globalData（profile 页通过 store.set 写入）
+    store.subscribe((key, value) => {
+      if (key === STORAGE_KEYS.ELDER_MODE) this.globalData.elderMode = value === true;
+    });
 
     // TODO(FE-8): 首启隐私弹窗（agreedPrivacy）— 隐私协议未同意前禁止调用任何隐私接口
   },

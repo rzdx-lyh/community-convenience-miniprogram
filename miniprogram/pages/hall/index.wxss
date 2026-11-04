@@ -13,16 +13,16 @@
 .sbox .s-ic { opacity: .55; }
 
 /* 原型用 HTML 标签选择器（b/p），换成类名后补排版 */
-.st .b { font-size: 28rpx; font-weight: 800; flex: 1; }
-.st .em { font-style: normal; font-size: 19rpx; color: var(--t3); }
+.st .b { font-size: calc(28rpx * var(--care-scale, 1)); font-weight: 800; flex: 1; }
+.st .em { font-style: normal; font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); }
 
-.gh .b { font-size: 25rpx; font-weight: 800; display: flex; align-items: center; gap: 12rpx; }
+.gh .b { font-size: calc(25rpx * var(--care-scale, 1)); font-weight: 800; display: flex; align-items: center; gap: 12rpx; }
 .gh-bar { width: 5rpx; height: 22rpx; border-radius: 4rpx; background: var(--blue); flex: none; }
-.gh .p { display: block; margin-top: 8rpx; font-size: 19rpx; color: var(--t3); line-height: 1.4; }
+.gh .p { display: block; margin-top: 8rpx; font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); line-height: 1.4; }
 
 /* AI 集群卡文案 */
-.aigc .h .b { font-size: 23rpx; font-weight: 800; }
-.aigc .p { display: block; font-size: 18rpx; color: var(--t3); line-height: 1.5; }
+.aigc .h .b { font-size: calc(23rpx * var(--care-scale, 1)); font-weight: 800; }
+.aigc .p { display: block; font-size: calc(18rpx * var(--care-scale, 1)); color: var(--t3); line-height: 1.5; }
 
 /* 场景图标底色（原型为内联 color，这里用色板类） */
 .tone-blue { background: #EAF1FE; }

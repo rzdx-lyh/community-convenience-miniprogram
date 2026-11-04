@@ -1,5 +1,5 @@
 <!-- 办事指南 · 分类 + 搜索 → 事项卡 → 详情（材料/流程/地点/时限） -->
-<view class="page">
+<view class="page {{careMode ? 'care-mode' : ''}}">
   <view class="pgh pgh--blue" style="padding-top:{{statusBarHeight}}px">
     <view class="pgh-nav">
       <view class="pgh-bk" bindtap="goBack">‹</view>

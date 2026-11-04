@@ -1,5 +1,5 @@
 <!-- 首页（设计稿 pgHome v1.4） -->
-<view class="page page--tab">
+<view class="page page--tab {{careMode ? 'care-mode' : ''}}">
   <!-- 渐变头部 -->
   <view class="hd">
     <view class="sbar light" style="padding-top:{{statusBarHeight}}px">

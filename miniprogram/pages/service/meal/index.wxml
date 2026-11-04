@@ -1,5 +1,5 @@
 <!-- 智慧配餐（CR-028）· 目标设置 → 一周三餐 → 营养达成 → 食材清单 → 预约助餐 -->
-<view class="page page--fbar">
+<view class="page page--fbar {{careMode ? 'care-mode' : ''}}">
   <!-- 设置页 -->
   <block wx:if="{{!ready}}">
     <view class="pgh pgh--green" style="padding-top:{{statusBarHeight}}px">

@@ -1,5 +1,5 @@
 <!-- 文化便民活动 · 每周义诊 / 邻里活动 / 长者手机课 -->
-<view class="page">
+<view class="page {{careMode ? 'care-mode' : ''}}">
   <view class="pgh pgh--teal">
     <view class="sbar light" style="padding-top:{{statusBarHeight}}px">
       <text>08:42</text>

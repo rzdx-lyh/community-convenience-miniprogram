@@ -19,8 +19,8 @@
   align-items: center;
   justify-content: center;
 }
-.doc-n { display: block; font-size: 25rpx; font-weight: 700; }
-.doc-t { display: block; font-size: 19rpx; color: var(--t3); margin-top: 4rpx; }
+.doc-n { display: block; font-size: calc(25rpx * var(--care-scale, 1)); font-weight: 700; }
+.doc-t { display: block; font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); margin-top: 4rpx; }
 .doc-on {
   display: flex;
   align-items: center;
@@ -30,10 +30,10 @@
 }
 
 .sgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14rpx; }
-.slot-chip { justify-content: center; padding: 0 6rpx; font-size: 21rpx; }
+.slot-chip { justify-content: center; padding: 0 6rpx; font-size: calc(21rpx * var(--care-scale, 1)); }
 .slot-chip.off { opacity: 0.45; }
 
 .btn.is-dis { background: #B9C6DD; color: #fff; }
 
-.rcpt .rc-t { display: block; margin-top: 20rpx; font-size: 29rpx; font-weight: 800; }
-.rcpt .rc-p { display: block; margin-top: 10rpx; font-size: 20rpx; color: var(--t3); line-height: 1.6; }
+.rcpt .rc-t { display: block; margin-top: 20rpx; font-size: calc(29rpx * var(--care-scale, 1)); font-weight: 800; }
+.rcpt .rc-p { display: block; margin-top: 10rpx; font-size: calc(20rpx * var(--care-scale, 1)); color: var(--t3); line-height: 1.6; }

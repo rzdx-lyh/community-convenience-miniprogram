@@ -1,7 +1,7 @@
 /* 社区通知 · 原型类之外的最小补充（原型类见 styles/layout.wxss） */
 
 .sbar__sig {
-  font-size: 17rpx;
+  font-size: calc(17rpx * var(--care-scale, 1));
   letter-spacing: 1rpx;
   color: var(--t3);
 }
@@ -17,7 +17,7 @@
 
 /* 6 个 tab 平分：原型 24rpx 在 750rpx 下偏挤，降到 22rpx */
 .tb .t {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--care-scale, 1));
 }
 
 .nt .h .tag {
@@ -26,12 +26,12 @@
 
 .nt__ago {
   margin-left: auto;
-  font-size: 18rpx;
+  font-size: calc(18rpx * var(--care-scale, 1));
   color: var(--t3);
 }
 
 .nt .tt {
-  font-size: 26rpx;
+  font-size: calc(26rpx * var(--care-scale, 1));
 }
 
 /* 展开后的全文 */
@@ -42,7 +42,7 @@
 }
 
 .bd--full {
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--care-scale, 1));
   line-height: 1.72;
   color: var(--t2);
   white-space: pre-wrap;
@@ -59,7 +59,7 @@
   display: flex;
   align-items: center;
   gap: 8rpx;
-  font-size: 19rpx;
+  font-size: calc(19rpx * var(--care-scale, 1));
   color: var(--t3);
 }
 
@@ -67,13 +67,13 @@
   width: 28rpx;
   height: 28rpx;
   border-radius: 0;
-  font-size: 22rpx;
+  font-size: calc(22rpx * var(--care-scale, 1));
   color: var(--t3);
 }
 
 .nt__fold {
   margin-top: 12rpx;
-  font-size: 19rpx;
+  font-size: calc(19rpx * var(--care-scale, 1));
   font-weight: 700;
   color: var(--blue);
 }
@@ -89,14 +89,14 @@
 }
 
 .empty__t {
-  font-size: 24rpx;
+  font-size: calc(24rpx * var(--care-scale, 1));
   color: var(--t2);
   font-weight: 700;
 }
 
 .empty__s {
   margin-top: 6rpx;
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--care-scale, 1));
   color: var(--t3);
 }
 

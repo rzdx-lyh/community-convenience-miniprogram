@@ -31,8 +31,8 @@
 .hd { padding-bottom: 72rpx; }
 
 /* 原型用 HTML 标签选择器（b/p/span/div/li），WXML 里换成类名后补齐排版 */
-.st .b { font-size: 28rpx; font-weight: 800; flex: 1; }
-.st .em { font-style: normal; font-size: 19rpx; color: var(--t3); }
+.st .b { font-size: calc(28rpx * var(--care-scale, 1)); font-weight: 800; flex: 1; }
+.st .em { font-style: normal; font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); }
 
 /* 头部快捷项（原型 .qk div） */
 .qk .qk-i {
@@ -45,15 +45,15 @@
   align-items: center;
   justify-content: center;
   gap: 8rpx;
-  font-size: 20rpx;
+  font-size: calc(20rpx * var(--care-scale, 1));
 }
 
 /* 服务分类卡文案 */
-.zqc .b { font-size: 27rpx; font-weight: 800; display: block; letter-spacing: .4rpx; }
+.zqc .b { font-size: calc(27rpx * var(--care-scale, 1)); font-weight: 800; display: block; letter-spacing: .4rpx; }
 .zqc .p {
   display: block;
   margin-top: 6rpx;
-  font-size: 19rpx;
+  font-size: calc(19rpx * var(--care-scale, 1));
   opacity: .85;
   line-height: 1.35;
   padding-right: 28rpx;
@@ -61,8 +61,8 @@
 
 .card--pad { padding: 0 24rpx; }
 
-.row .m-t { font-size: 25rpx; font-weight: 700; display: block; }
-.row .m-s { font-size: 19rpx; color: var(--t3); display: block; margin-top: 4rpx; }
+.row .m-t { font-size: calc(25rpx * var(--care-scale, 1)); font-weight: 700; display: block; }
+.row .m-s { font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); display: block; margin-top: 4rpx; }
 
 /* 行内图标底色（原型内联 style，改为修饰类） */
 .k-blue { background: #EAF1FE; }
@@ -71,7 +71,7 @@
 .k-gold { background: #FDF3E1; }
 .k-gray { background: #F1F4F9; }
 
-.v-teal { color: #0B6146; font-size: 19rpx; }
+.v-teal { color: #0B6146; font-size: calc(19rpx * var(--care-scale, 1)); }
 
 /* 宫格图标底色 */
 .th-blue .ic { background-color: #EAF1FE; }

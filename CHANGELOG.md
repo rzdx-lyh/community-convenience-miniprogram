@@ -5,6 +5,27 @@
 > 设计原型 `docs/03-preview/demo.html` 与 `docs/` 下的设计文档走**独立版本轨**，不在本文件记录。
 > 版本号唯一真源：`miniprogram/config/env.ts` 的 `APP_VERSION`，由 `tests/version.test.ts` 守护。
 
+## 未发布 — 2026-11-04 · 关怀模式全站生效修复
+
+### 修复
+
+- **「我的」页开关改为 `store.set`**：之前只写 `wx.setStorageSync`，app 全局状态和其他页面都不会刷新；
+  现在写入 `elderMode` 存储 + 通知订阅者，并同步 `app.globalData.elderMode`。
+- **全站注入 `careMode`**：新增 `utils/care.ts`，在 `app.ts` 注册 `Page` 时统一注入 `careMode` 数据，
+  并在每次 `onShow` 重读 storage；从「我的」切到首页/办事/圈子/任意二级页都会立即生效。
+- **所有页面根节点绑定 `.care-mode`**：30 个页面 WXML 根节点补 `{{careMode ? 'care-mode' : ''}}`；
+  「我的」保留 `care`、「报修」保留 `elderMode` 的既有绑定。
+- **字号真正放大 1.25 倍**：全站 34 个 WXSS、667 处 `font-size: Nrpx` 改为
+  `calc(Nrpx * var(--care-scale, 1))`；`page` 默认 `--care-scale: 1`，`.care-mode` 覆盖为 `1.25`。
+  不再依赖未落地的 token 变量，硬编码字号也能放大。
+- **栅格重排**：首页服务分类 `.zq` 两列 → 一列、常用服务 `.g4` 四列 → 两列、快捷入口 `.qk` 自动换行；
+  避免放大后文字溢出/横向拖动。
+
+### 测试
+
+- 新增 `tests/care-mode.test.ts`（4 条）：storage 读取、默认关闭、`careRootClass`、Page 注入与 onShow 刷新；
+- `npm run verify`：typecheck + lint + 351 条既有测试全部通过（新增后 355 条）。
+
 ## v1.2.1 — 2026-10-26 · 定位接口替换（wx.getLocation 申请被驳回）
 
 ### 变更
