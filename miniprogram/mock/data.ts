@@ -461,10 +461,25 @@ export const mockHandlers: Record<string, Handler> = {
   },
 
   /* ---------- workorder ---------- */
-  'workorder:create': (data) => ({
-    id: `w_mock_${Date.now()}`,
-    aiSummary: `（mock）${String(data.title ?? '')}：已生成智能摘要，等待物业受理。`,
-  }),
+  'workorder:create': (data) => {
+    // mock 通道也把新工单写进内存数组，保证「居民提交 → 管理端看到」演示闭环
+    const now = new Date().toISOString();
+    const title = String(data.title ?? '居民报修');
+    const wo: WorkOrder = {
+      _id: `w_mock_${Date.now()}`,
+      _openid: 'o_mock_openid_001',
+      title,
+      description: String(data.description ?? ''),
+      category: String(data.category ?? 'other') as WorkOrder['category'],
+      images: Array.isArray(data.images) ? (data.images as string[]) : [],
+      status: 'pending',
+      aiSummary: `${title}：已生成智能摘要，等待物业受理。`,
+      createdAt: now,
+      updatedAt: now,
+    };
+    MOCK_WORKORDERS.unshift(wo);
+    return { id: wo._id, aiSummary: wo.aiSummary };
+  },
   'workorder:list': (data) => {
     // CR-017-c：原实现忽略 status，导致订单页四个 Tab 都返回同一批 3 条
     // （切「已完成」会看到「处理中」的单子，演示时一眼穿帮）。按契约入参补状态过滤。
