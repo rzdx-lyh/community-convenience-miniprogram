@@ -43,3 +43,11 @@ scripts/seed/
 
 # devtools 误把 miniprogram 子目录当项目根时自动生成的配置
 miniprogram/project.config.json
+# 生成物：二维码、上传信息与交付打包材料不入库
+/preview-info.json
+/upload-info.json
+/*预览二维码*.png
+/*二维码*.png
+/*预览信息*.json
+/*上传信息*.json
+/交付材料/
