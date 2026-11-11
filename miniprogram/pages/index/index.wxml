@@ -18,6 +18,12 @@
       </view>
     </view>
 
+    <view class="hero-copy">
+      <text class="hero-copy__k">NEIGHBORHOOD PULSE</text>
+      <text class="hero-copy__t">今天，社区想为你做点什么？</text>
+      <text class="hero-copy__d">AI 管家 · 服务地图 · 三端协同</text>
+    </view>
+
     <view class="sbox">
       <view class="ic ic-s ic-search s-ic" />
       <input

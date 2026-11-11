@@ -85,3 +85,34 @@
   height: 100%;
   border-radius: 50%;
 }
+
+/* ===== 我的页 · 暖纸社区视觉 ===== */
+.hd--prof {
+  position: relative;
+  overflow: hidden;
+  background: var(--brand-gradient);
+  border-radius: 0 0 38rpx 38rpx;
+  box-shadow: 0 18rpx 40rpx rgba(23, 58, 94, .18);
+}
+.hd--prof::after {
+  content: '';
+  position: absolute;
+  width: 260rpx;
+  height: 260rpx;
+  right: -100rpx;
+  top: -130rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+}
+.pf-row { position: relative; z-index: 1; }
+.pfa { box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, .16); }
+.pbadge { background: rgba(255, 255, 255, .15); border: 1rpx solid rgba(255, 255, 255, .18); }
+.pstats { margin: 0 24rpx; border: 1rpx solid rgba(89, 74, 58, .08); border-radius: 26rpx; background: var(--card); box-shadow: var(--shadow-card); overflow: hidden; }
+.pstats .c .n { color: var(--accent-warm); }
+.k-blue,
+.tone-blue { background: var(--brand-light); }
+.tone-gold { background: var(--accent-warm-light); }
+.tone-teal { background: var(--green-light); }
+.pset .pr { border-bottom-color: var(--line); }
+.pset .pr:last-child { border-bottom: 0; }
+.pfoot { color: var(--text-3); }

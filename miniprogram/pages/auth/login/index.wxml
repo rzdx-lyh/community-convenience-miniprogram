@@ -6,13 +6,23 @@
   </view>
 
   <view class="au-hero">
-    <view class="au-logo">邻</view>
-    <view class="au-nm">邻里百事通小助手</view>
-    <view class="au-sb">阳光社区 · 报修缴费挂号，一个入口办完</view>
+    <view class="hero-brand">
+      <view class="au-logo">邻</view>
+      <view class="hero-brand__m">
+        <text class="hero-kicker">COMMUNITY SERVICE</text>
+        <text class="au-nm">邻里百事通</text>
+      </view>
+    </view>
+    <view class="au-sb">社区里的每一件小事，都有 AI 管家接着办</view>
+    <view class="hero-tags">
+      <text class="hero-tag">AI Agent</text>
+      <text class="hero-tag">三端协同</text>
+      <text class="hero-tag">适老友好</text>
+    </view>
     <view class="au-pts">
       <view><text class="n">38</text><text class="l">项服务</text></view>
-      <view><text class="n">8</text><text class="l">个板块</text></view>
-      <view><text class="n">24h</text><text class="l">自助办理</text></view>
+      <view><text class="n">12</text><text class="l">个社区点位</text></view>
+      <view><text class="n">24h</text><text class="l">随时可办</text></view>
     </view>
   </view>
 
@@ -25,8 +35,11 @@
       bindtap="onPortalTap"
       hover-class="portal-tab--hover"
     >
-      <text class="portal-tab__n">{{item.label}}</text>
-      <text class="portal-tab__d">{{item.desc}}</text>
+      <view class="portal-tab__body">
+        <text class="portal-tab__n">{{item.label}}</text>
+        <text class="portal-tab__d">{{item.desc}}</text>
+      </view>
+      <text class="portal-tab__arrow">→</text>
     </view>
   </view>
 

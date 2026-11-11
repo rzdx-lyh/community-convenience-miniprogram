@@ -182,3 +182,78 @@
   min-height: 76rpx;
   font-size: var(--font-sub);
 }
+
+/* ===== AI 管家 · 暖纸 Agent 视觉 ===== */
+.page--chat {
+  background-color: var(--bg);
+  background-image: radial-gradient(circle at 10% 4%, rgba(196, 106, 46, .10), transparent 28%), radial-gradient(circle at 100% 10%, rgba(36, 92, 115, .10), transparent 30%);
+}
+.nav--plain { background: rgba(255, 252, 245, .92); }
+.aichat { padding: 24rpx; }
+.wel {
+  position: relative;
+  overflow: hidden;
+  padding: 30rpx;
+  border-radius: 30rpx;
+  border: 1rpx solid rgba(89, 74, 58, .10);
+  background: linear-gradient(155deg, #FFFCF5 0%, #F7EFE2 100%);
+  box-shadow: 0 16rpx 38rpx rgba(46, 54, 64, .09);
+}
+.wel::before {
+  content: '';
+  position: absolute;
+  width: 220rpx;
+  height: 220rpx;
+  border-radius: 50%;
+  right: -90rpx;
+  top: -110rpx;
+  background: rgba(196, 106, 46, .10);
+}
+.wel__t { font-size: 31rpx; color: var(--text-1); }
+.wel__t .ic { background-color: var(--accent-warm-light); color: var(--accent-warm); }
+.wel__d { position: relative; z-index: 1; font-size: 22rpx; line-height: 1.7; color: var(--text-2); }
+.sug view {
+  min-height: 56rpx;
+  padding: 8rpx 18rpx;
+  border-color: rgba(89, 74, 58, .12);
+  background: #FFFDF8;
+  color: var(--brand);
+  font-weight: 700;
+  box-shadow: 0 4rpx 12rpx rgba(46, 54, 64, .04);
+}
+.msg.a .bub {
+  background: var(--card);
+  border: 1rpx solid rgba(89, 74, 58, .09);
+  border-radius: 8rpx 24rpx 24rpx 24rpx;
+  box-shadow: 0 10rpx 26rpx rgba(46, 54, 64, .07);
+}
+.msg.u .bub {
+  background: var(--brand);
+  border-radius: 24rpx 8rpx 24rpx 24rpx;
+  box-shadow: 0 10rpx 24rpx rgba(23, 58, 94, .16);
+}
+.mtag__b { background: var(--accent-warm-light); color: var(--accent-warm); }
+.think {
+  padding: 14rpx 16rpx;
+  border-left: 5rpx solid var(--accent-warm);
+  border-radius: 0 14rpx 14rpx 0;
+  background: #F8F2E8;
+}
+.cites .cite { background: #EFF3F2; color: var(--brand); }
+.cites .cite .ic { color: var(--brand); }
+.agent-action {
+  min-height: 64rpx;
+  padding: 0 20rpx;
+  border-radius: 999rpx;
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 6rpx 16rpx rgba(23, 58, 94, .16);
+}
+.aiask {
+  border-top: 1rpx solid rgba(89, 74, 58, .10);
+  background: rgba(255, 252, 245, .96);
+  box-shadow: 0 -10rpx 30rpx rgba(46, 54, 64, .06);
+}
+.aiask input { background: #F5EFE5; border: 1rpx solid rgba(89, 74, 58, .08); }
+.aiask .send { background: var(--brand); }
+.aifoot { background: transparent; }

@@ -274,7 +274,7 @@ const walkEnv = (dir) => {
       return;
     }
     if (!n.endsWith('.js')) return;
-    [...read(rel).matchAll(/process\.env\.([A-Z0-9_]+)/g)].forEach((m) => envVars.add(m[1]));
+    [...read(rel).matchAll(/(?:process\.env|env)\.([A-Z0-9_]+)/g)].forEach((m) => envVars.add(m[1]));
   });
 };
 walkEnv(cfRoot);

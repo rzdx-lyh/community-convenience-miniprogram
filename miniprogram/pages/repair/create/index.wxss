@@ -357,3 +357,26 @@
   line-height: 1.5;
 }
 .care-mode .ai-img-btn { min-height: 96rpx; }
+
+/* ===== 报修页 · 暖纸社区视觉 ===== */
+.page { background-color: var(--bg); background-image: radial-gradient(circle at 8% 0%, rgba(196, 106, 46, .08), transparent 30%); }
+.block {
+  margin: 20rpx 24rpx 0;
+  padding: 26rpx;
+  border-radius: 26rpx;
+  border: 1rpx solid rgba(89, 74, 58, .08);
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+}
+.block-title { font-size: 28rpx; color: var(--text-1); font-weight: 900; }
+.cat { border-color: rgba(89, 74, 58, .14); background: #FFFDF8; color: var(--text-2); }
+.cat-on { border-color: var(--brand); background: var(--brand); color: #fff; box-shadow: 0 8rpx 18rpx rgba(23, 58, 94, .16); }
+.input,
+.textarea { border-color: var(--line); background: #FFFDF8; border-radius: 18rpx; }
+.loc-card { border-color: var(--line); background: #FFFDF8; }
+.loc-btn--main { background: var(--accent-warm-light); border-color: var(--accent-warm); color: var(--accent-warm); }
+.ai-img-btn { background: var(--accent-warm-light); border-color: rgba(196, 106, 46, .28); color: var(--accent-warm); }
+.ai-result { background: #FBF5EA; border-left-color: var(--accent-warm); }
+.ai-result__badge { background: var(--accent-warm); }
+.submit { background: var(--brand); box-shadow: 0 10rpx 24rpx rgba(23, 58, 94, .18); }
+.footer { background: transparent; }

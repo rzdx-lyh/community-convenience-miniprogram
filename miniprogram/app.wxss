@@ -13,41 +13,41 @@
  *   页面层不应出现色值——若发现页面里写死了颜色，应改用 token。
  * ============================================================ */
 
-/* ===== Design Token v1.5（政务蓝 · 对齐设计原型） ===== */
+/* ===== Design Token v2.0（暖纸社区 · 深青蓝 / 陶土橙） ===== */
 page {
   /* 品牌色（政务蓝：主色 / 亮色 / 按下色 / 浅底 / 渐变） */
-  --brand: #1F5FD6;
-  --brand-mid: #3B7DEE;
-  --brand-press: #153F9B;
-  --brand-light: #EAF1FE;
-  --brand-gradient: linear-gradient(160deg, #3B7DEE 0%, #1F5FD6 52%, #153F9B 100%);
+  --brand: #173A5E;
+  --brand-mid: #2E6B78;
+  --brand-press: #102A44;
+  --brand-light: #E8F0F2;
+  --brand-gradient: linear-gradient(145deg, #173A5E 0%, #245C73 62%, #B85C38 135%);
   /* 辅助色（金：缴费类；青：健康/设备类；靛：圈子/工具类） */
-  --accent-warm: #A86A05;
-  --accent-warm-light: #FDF3E1;
-  --green: #0E7C6B;
-  --green-light: #E6F5F2;
-  --indigo: #4B45B8;
-  --indigo-light: #EDECFB;
+  --accent-warm: #C46A2E;
+  --accent-warm-light: #F8E8D8;
+  --green: #147D70;
+  --green-light: #E4F3EE;
+  --indigo: #4A4E86;
+  --indigo-light: #EEEAF6;
   /* 中性色（冷灰，替代原暖米色） */
-  --bg: #F3F5F9;
-  --card: #FFFFFF;
-  --text-1: #12203A;
-  --text-2: #4A5A73;
-  --text-3: #8593A8;
-  --line: #E6EBF2;
-  --mask: rgba(10, 15, 25, 0.45);
+  --bg: #F6F1E7;
+  --card: #FFFCF5;
+  --text-1: #1C2B38;
+  --text-2: #5B6874;
+  --text-3: #8A949D;
+  --line: #E4DCCF;
+  --mask: rgba(20, 28, 36, 0.52);
   /* 功能色 */
-  --success: #0E7C6B;
-  --warning: #A86A05;
-  --info: #1F5FD6;
-  --processing: #7A5AF8;
-  --error: #C9302C;
+  --success: #147D70;
+  --warning: #B06B21;
+  --info: #245C73;
+  --processing: #5A5C9A;
+  --error: #C34A36;
   --disabled: #A3ADBB;
   /* 紧急模块 */
-  --urgent: #C9302C;
-  --urgent-press: #A32E22;
-  --urgent-bg: #FDECEA;
-  --urgent-line: #E0532F;
+  --urgent: #C34A36;
+  --urgent-press: #A73D2B;
+  --urgent-bg: #FAE8E3;
+  --urgent-line: #D96D55;
   /* 字号阶梯（常规） */
   --font-hero: 48rpx;
   --font-title: 40rpx;
@@ -65,14 +65,14 @@ page {
   --space-5: 48rpx;
   --space-6: 64rpx;
   /* 圆角 */
-  --radius-s: 8rpx;
-  --radius-m: 16rpx;
-  --radius-l: 24rpx;
+  --radius-s: 10rpx;
+  --radius-m: 18rpx;
+  --radius-l: 28rpx;
   --radius-full: 999rpx;
   /* 阴影 */
-  --shadow-card: 0 4rpx 16rpx rgba(43, 43, 43, 0.06);
-  --shadow-urgent: 0 4rpx 16rpx rgba(192, 57, 43, 0.18);
-  --shadow-float: 0 8rpx 24rpx rgba(31, 95, 214, 0.28);
+  --shadow-card: 0 10rpx 30rpx rgba(46, 54, 64, 0.08);
+  --shadow-urgent: 0 8rpx 24rpx rgba(195, 74, 54, 0.18);
+  --shadow-float: 0 12rpx 32rpx rgba(23, 58, 94, 0.24);
   --shadow-modal: 0 16rpx 48rpx rgba(0, 0, 0, 0.12);
   /* 层级 */
   --z-content: 0;
@@ -82,6 +82,20 @@ page {
   --z-modal: 1000;
   --z-toast: 2000;
 
+  /* 兼容旧布局变量：统一映射到暖纸社区色板 */
+  --blue: var(--brand);
+  --blue-d: var(--brand-press);
+  --blue-l: var(--brand-light);
+  --red: var(--urgent);
+  --red-l: var(--urgent-bg);
+  --gold: var(--accent-warm);
+  --gold-l: var(--accent-warm-light);
+  --teal: var(--green);
+  --teal-l: var(--green-light);
+  --t1: var(--text-1);
+  --t2: var(--text-2);
+  --t3: var(--text-3);
+  --sh: var(--shadow-card);
   /* ----- 旧占位变量别名（迁移对照 design-tokens §⑧，页面替换完成后删除） ----- */
   --color-primary: var(--brand);
   --color-primary-light: var(--brand-light);
@@ -102,7 +116,8 @@ page {
   --font-xl: var(--font-title);
   --font-xxl: var(--font-hero);
 
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: radial-gradient(circle at 8% 0%, rgba(196, 106, 46, .08), transparent 28%), radial-gradient(circle at 100% 12%, rgba(36, 92, 115, .09), transparent 30%);
   color: var(--text-1);
   font-size: var(--font-body);
   line-height: 1.4;
@@ -139,8 +154,17 @@ page.care-mode,
 
 .u-card {
   background: var(--card);
+  border: 1rpx solid rgba(89, 74, 58, 0.08);
   border-radius: var(--radius-l);
   box-shadow: var(--shadow-card);
+}
+
+.u-eyebrow {
+  font-size: var(--font-cap);
+  letter-spacing: 3rpx;
+  color: var(--accent-warm);
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 /* ===== 按压态工具类（CR-028）=====

@@ -238,3 +238,67 @@
 .care-mode .pmeta {
   align-items: flex-start;
 }
+
+/* ===== 地图页 · 暖纸社区视觉 ===== */
+.view-switch {
+  background: #ECE4D7;
+  border: 1rpx solid rgba(89, 74, 58, .08);
+}
+.view-switch__item { color: var(--text-2); }
+.view-switch__item.on {
+  color: var(--brand);
+  background: #FFFDF8;
+  box-shadow: 0 6rpx 16rpx rgba(46, 54, 64, .08);
+}
+.mapcard {
+  margin: 20rpx 24rpx 0;
+  border-radius: 30rpx;
+  border: 1rpx solid rgba(89, 74, 58, .10);
+  box-shadow: 0 16rpx 38rpx rgba(46, 54, 64, .10);
+  overflow: hidden;
+  background: var(--card);
+}
+.mapbar { background: #FFFDF8; border-bottom: 1rpx solid var(--line); }
+.mapbar .mc {
+  background: #F4EEE4;
+  box-shadow: none;
+  color: var(--text-2);
+}
+.mapbar .mc.on {
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 6rpx 14rpx rgba(23, 58, 94, .18);
+}
+.maplegend { background: #FFFDF8; border-top: 1rpx solid var(--line); }
+.map-actions { background: #FFFDF8; }
+.map-action {
+  border-color: rgba(89, 74, 58, .14);
+  color: var(--text-2);
+  background: #FFFDF8;
+}
+.map-action--main {
+  border-color: var(--brand);
+  color: #fff;
+  background: var(--brand);
+  box-shadow: 0 8rpx 18rpx rgba(23, 58, 94, .16);
+}
+.tip {
+  margin: 18rpx 28rpx;
+  padding: 16rpx 18rpx;
+  border-radius: 16rpx;
+  background: rgba(255, 252, 245, .72);
+  border: 1rpx dashed var(--line);
+  color: var(--text-3);
+}
+.poi {
+  border: 1rpx solid rgba(89, 74, 58, .08);
+  box-shadow: var(--shadow-card);
+}
+.poi .pi { border-bottom-color: var(--line); }
+.mapd {
+  border: 1rpx solid rgba(89, 74, 58, .08);
+  box-shadow: var(--shadow-card);
+}
+.mapd__btn { background: var(--brand); }
+.pstatus--ok { background: var(--green-light); }
+.pstatus--busy { background: var(--accent-warm-light); color: var(--accent-warm); }

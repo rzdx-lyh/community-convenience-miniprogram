@@ -15,3 +15,11 @@
 .care-mode .rw-quota { flex-direction: column; align-items: flex-start; }
 .care-mode .rw-quota__tip { text-align: left; }
 .care-mode .rw-action { min-height: 100rpx; }
+
+/* 赛事版维修工作台视觉统一 */
+.page.repair-wb { background-color: var(--bg); background-image: radial-gradient(circle at 90% 0%, rgba(36, 92, 115, .10), transparent 32%); }
+.rw-head { background: linear-gradient(145deg, #173A5E, #147D70 78%, #245C73); box-shadow: 0 18rpx 40rpx rgba(23, 58, 94, .18); }
+.rw-quota { border: 1rpx solid rgba(89, 74, 58, .08); box-shadow: var(--shadow-card); }
+.rw-quota__n { color: var(--green); }
+.rw-note { background: #EAF2EE; border-left: 6rpx solid var(--green); }
+.rw-action { border-color: rgba(89, 74, 58, .12); background: #FFFDF8; }

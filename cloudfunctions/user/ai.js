@@ -17,7 +17,17 @@
 const https = require('https');
 
 const DEFAULT_TIMEOUT_MS = 8000;
-const MODEL = 'deepseek-chat';
+const DEFAULT_ENDPOINT = 'https://api.deepseek.com/chat/completions';
+const DEFAULT_MODEL = 'deepseek-chat';
+
+/** 通用 OpenAI 兼容配置；AI_API_KEY 优先覆盖 DeepSeek 旧变量。 */
+function resolveAiConfig(env = process.env) {
+  return {
+    apiKey: env.AI_API_KEY || env.DEEPSEEK_API_KEY || '',
+    endpoint: env.AI_API_URL || DEFAULT_ENDPOINT,
+    model: env.AI_MODEL || DEFAULT_MODEL,
+  };
+}
 
 /** 超时上限保护：即便配了很大的 AI_TIMEOUT_MS，也不让它超过 15s（留余地给函数自身开销） */
 const MAX_TIMEOUT_MS = 9000;
@@ -33,17 +43,18 @@ function timeoutMs() {
  *  reason: ok | no_key | timeout | network | http_<code> | bad_json | empty
  */
 async function chat(messages, { temperature = 0.3, maxTokens = 800 } = {}) {
-  const key = process.env.DEEPSEEK_API_KEY;
+  const config = resolveAiConfig(process.env);
+  const key = config.apiKey;
   if (!key) {
     // 这是最常见的一种降级：不是模型坏了，是没配 Key
-    console.warn('[ai] degraded: no_key —— 未配置 DEEPSEEK_API_KEY，直接降级');
+    console.warn('[ai] degraded: no_key —— 未配置 AI_API_KEY / DEEPSEEK_API_KEY，直接降级');
     return { degraded: true, content: '', reason: 'no_key' };
   }
 
   const startedAt = Date.now();
   const timeout = timeoutMs();
   const payload = JSON.stringify({
-    model: MODEL,
+    model: config.model,
     messages,
     temperature,
     max_tokens: maxTokens,
@@ -57,10 +68,11 @@ async function chat(messages, { temperature = 0.3, maxTokens = 800 } = {}) {
       settled = true;
       resolve(r);
     };
+    const endpoint = new URL(config.endpoint);
     const req = https.request(
       {
-        host: 'api.deepseek.com',
-        path: '/chat/completions',
+        host: endpoint.hostname,
+        path: endpoint.pathname + endpoint.search,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -154,4 +166,4 @@ function buildSummaryPrompt(title, description) {
   ];
 }
 
-module.exports = { chat, buildRagPrompt, buildSummaryPrompt };
+module.exports = { chat, buildRagPrompt, buildSummaryPrompt, resolveAiConfig };

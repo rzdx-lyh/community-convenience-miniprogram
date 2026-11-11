@@ -15,3 +15,11 @@
 .wb-action--danger { color: var(--urgent); border-color: var(--urgent-line); }
 .care-mode .wb-grid { grid-template-columns: 1fr; }
 .care-mode .wb-action { min-height: 100rpx; }
+
+/* 赛事版工作台视觉统一 */
+.page.workbench { background-color: var(--bg); background-image: radial-gradient(circle at 10% 0%, rgba(196, 106, 46, .08), transparent 30%); }
+.wb-head { background: var(--brand-gradient); box-shadow: 0 18rpx 40rpx rgba(23, 58, 94, .18); }
+.wb-card { border: 1rpx solid rgba(89, 74, 58, .08); box-shadow: var(--shadow-card); }
+.wb-card__n { color: var(--accent-warm); }
+.wb-note { background: #F4EEE4; border-left: 6rpx solid var(--accent-warm); }
+.wb-action { border-color: rgba(89, 74, 58, .12); background: #FFFDF8; }
