@@ -88,7 +88,7 @@
         <view class="ls__d">{{item.meta}}</view>
         <view class="ls__btn" data-id="{{item.id}}" bindtap="onAskLease">联系看房</view>
       </view>
-      <view class="btn" bindtap="onPublish">我是业主，发布房源</view>
+      <view class="btn">房源信息由社区审核发布</view>
     </view>
   </block>
 

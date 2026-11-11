@@ -8,7 +8,7 @@
     <view class="pgh-nav">
       <text class="pgh-bk" bindtap="goBack">‹</text>
       <text class="pgh-t">房屋租售</text>
-      <text class="pgh-rt" bindtap="onOpenWant">求租登记</text>
+      <text class="pgh-rt">社区审核发布</text>
     </view>
     <view class="pgh-k">
       <view>
@@ -19,7 +19,7 @@
         <view>全部业主直挂 · 社区已核验</view>
         <view>不做中介撮合、不收佣金</view>
       </view>
-      <view class="pgh-chip" bindtap="onOpenPost">我要发布 ›</view>
+      <view class="pgh-chip">信息由社区审核</view>
     </view>
   </view>
 

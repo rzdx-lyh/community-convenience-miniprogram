@@ -65,12 +65,6 @@
         "selectedIconPath": "assets/tabbar/hall-on.png"
       },
       {
-        "pagePath": "pages/circle/index",
-        "text": "圈子",
-        "iconPath": "assets/tabbar/circle.png",
-        "selectedIconPath": "assets/tabbar/circle-on.png"
-      },
-      {
         "pagePath": "pages/profile/index",
         "text": "我的",
         "iconPath": "assets/tabbar/profile.png",
