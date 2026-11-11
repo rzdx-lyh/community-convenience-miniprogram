@@ -205,6 +205,14 @@ async function detail(event) {
   const res = await db.collection('workorders').doc(id).get().catch(() => ({ data: null }));
   const wo = res.data;
   if (!wo) return fail(CODES.NOT_FOUND, '工单不存在');
+
+  // 双击/重试幂等：同一动作已落到目标状态时直接返回成功，不再报非法流转。
+  if (wo.status === to) {
+    if (operator.portalMode === 'maintenance' && wo.assignee && wo.assignee !== operator.id) {
+      return fail(CODES.FORBIDDEN, '该工单已由其他维修人员接单');
+    }
+    return ok({ workorder: wo, idempotent: true });
+  }
   if (user.role === 'resident' && wo._openid !== openid) return fail(CODES.FORBIDDEN, '无权查看该工单');
   return ok({ workorder: wo });
 }
@@ -220,6 +228,14 @@ async function cancel(event) {
   const res = await db.collection('workorders').doc(id).get().catch(() => ({ data: null }));
   const wo = res.data;
   if (!wo) return fail(CODES.NOT_FOUND, '工单不存在');
+
+  // 双击/重试幂等：同一动作已落到目标状态时直接返回成功，不再报非法流转。
+  if (wo.status === to) {
+    if (operator.portalMode === 'maintenance' && wo.assignee && wo.assignee !== operator.id) {
+      return fail(CODES.FORBIDDEN, '该工单已由其他维修人员接单');
+    }
+    return ok({ workorder: wo, idempotent: true });
+  }
   if (wo._openid !== openid) return fail(CODES.FORBIDDEN, '无权操作该工单');
   if (wo.status !== 'pending') return fail(CODES.PARAM, '当前状态不可取消');
 
@@ -268,6 +284,14 @@ async function handle(event) {
   const res = await db.collection('workorders').doc(id).get().catch(() => ({ data: null }));
   const wo = res.data;
   if (!wo) return fail(CODES.NOT_FOUND, '工单不存在');
+
+  // 双击/重试幂等：同一动作已落到目标状态时直接返回成功，不再报非法流转。
+  if (wo.status === to) {
+    if (operator.portalMode === 'maintenance' && wo.assignee && wo.assignee !== operator.id) {
+      return fail(CODES.FORBIDDEN, '该工单已由其他维修人员接单');
+    }
+    return ok({ workorder: wo, idempotent: true });
+  }
   if (!FLOW[wo.status] || !FLOW[wo.status].includes(to)) {
     return fail(CODES.PARAM, `状态流转不合法：${wo.status}→${to}`);
   }

@@ -102,7 +102,9 @@ async function rawCallWithColdStartRetry<T>(
     const apiErr = err instanceof ApiError ? err : null;
     if (!apiErr || !isTimeoutError(apiErr.message)) {
       console.error(`[cloud] ${name} 调用失败：`, apiErr?.message ?? err);
-      wx.showToast({ title: '网络异常，请检查网络后重试', icon: 'none' });
+      if (!apiErr || apiErr.code === -1) {
+        wx.showToast({ title: '网络异常，请检查网络后重试', icon: 'none' });
+      }
       throw err;
     }
     return rawCall<T>(name, data);

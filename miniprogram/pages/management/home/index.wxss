@@ -227,3 +227,4 @@
 .care-mode .wb-order__cover { width: 100%; height: 240rpx; }
 .care-mode .order-detail__images { grid-template-columns: 1fr 1fr; }
 .care-mode .wb-account { flex-direction: column; }
+.is-busy { opacity: .58; pointer-events: none; }

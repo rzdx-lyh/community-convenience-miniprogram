@@ -70,7 +70,7 @@
       </view>
       <view class="rw-card__foot">
         <view class="rw-link" data-id="{{item._id}}" catchtap="onOpenLocation">导航到位置</view>
-        <view class="rw-primary" data-id="{{item._id}}" data-kind="assign" catchtap="onHandleOrder">立即接单</view>
+        <view class="rw-primary {{handlingId === item._id ? 'is-busy' : ''}}" data-id="{{item._id}}" data-kind="assign" catchtap="onHandleOrder">{{handlingId === item._id ? '处理中…' : '立即接单'}}</view>
       </view>
     </view>
   </view>
@@ -101,7 +101,7 @@
       </view>
       <view class="rw-card__foot">
         <view class="rw-link" data-id="{{item._id}}" catchtap="onOpenLocation">导航</view>
-        <view wx:if="{{item.actionKind}}" class="rw-primary rw-primary--{{item.statusTone}}" data-id="{{item._id}}" data-kind="{{item.actionKind}}" catchtap="onHandleOrder">{{item.actionLabel}}</view>
+        <view wx:if="{{item.actionKind}}" class="rw-primary rw-primary--{{item.statusTone}} {{handlingId === item._id ? 'is-busy' : ''}}" data-id="{{item._id}}" data-kind="{{item.actionKind}}" catchtap="onHandleOrder">{{handlingId === item._id ? '处理中…' : item.actionLabel}}</view>
         <view wx:else class="rw-done">已完成</view>
       </view>
     </view>
@@ -136,7 +136,7 @@
       </scroll-view>
       <view class="rw-sheet__foot">
         <view class="rw-sheet__ghost" data-id="{{selectedOrder._id}}" bindtap="onOpenLocation">导航</view>
-        <view wx:if="{{selectedOrder.actionKind}}" class="rw-sheet__primary" data-id="{{selectedOrder._id}}" data-kind="{{selectedOrder.actionKind}}" bindtap="onHandleOrder">{{selectedOrder.actionLabel}}</view>
+        <view wx:if="{{selectedOrder.actionKind}}" class="rw-sheet__primary {{handlingId === selectedOrder._id ? 'is-busy' : ''}}" data-id="{{selectedOrder._id}}" data-kind="{{selectedOrder.actionKind}}" bindtap="onHandleOrder">{{handlingId === selectedOrder._id ? '处理中…' : selectedOrder.actionLabel}}</view>
       </view>
     </view>
   </view>

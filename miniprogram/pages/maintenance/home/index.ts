@@ -41,6 +41,7 @@ Page({
     queue: [] as StaffOrderVM[],
     mine: [] as StaffOrderVM[],
     selectedOrder: null as StaffOrderVM | null,
+    handlingId: '',
     loadingList: false,
     loadError: '',
   },
@@ -144,6 +145,7 @@ Page({
   },
 
   async onHandleOrder(e: WechatMiniprogram.TouchEvent): Promise<void> {
+    if (this.data.handlingId) return;
     const id = String((e.currentTarget.dataset as { id?: string }).id || '');
     const kind = String((e.currentTarget.dataset as { kind?: string }).kind || '') as 'assign' | 'process' | 'done';
     if (!id || !kind) return;
@@ -154,6 +156,7 @@ Page({
     const label = kind === 'assign' ? '接单' : kind === 'process' ? '开始处理' : '确认完工';
     const ok = await confirm(label, `确定执行“${label}”吗？`);
     if (!ok) return;
+    this.setData({ handlingId: id });
     try {
       await handleWorkOrder({ id, action: kind, handleAction: kind, note: kind === 'done' ? '维修人员已在工作台确认完工' : undefined });
       toast(`${label}成功`);
@@ -161,6 +164,8 @@ Page({
       await this.loadOrders();
     } catch {
       /* request 层已提示 */
+    } finally {
+      this.setData({ handlingId: '' });
     }
   },
 

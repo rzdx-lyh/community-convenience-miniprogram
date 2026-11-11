@@ -77,6 +77,7 @@ Page({
     searchImage: '',
     imageAnalysis: null as WorkOrderImageAnalysis | null,
     selectedOrder: null as StaffOrderVM | null,
+    handlingId: '',
     selectedService: null as StaffServiceModuleVM | null,
     loadingList: false,
     loadError: '',
@@ -252,12 +253,14 @@ Page({
   },
 
   async onQuickHandle(e: WechatMiniprogram.TouchEvent): Promise<void> {
+    if (this.data.handlingId) return;
     const id = String((e.currentTarget.dataset as { id?: string }).id || '');
     const kind = String((e.currentTarget.dataset as { kind?: string }).kind || '') as 'assign' | 'process' | 'done';
     if (!id || !kind) return;
-    const label = kind === 'assign' ? '受理接单' : kind === 'process' ? '开始处理' : '确认完工';
+    const label = kind === 'assign' ? '受理派单' : kind === 'process' ? '开始处理' : '确认完工';
     const ok = await confirm(label, `确定要执行“${label}”吗？状态更新后居民端会同步看到。`);
     if (!ok) return;
+    this.setData({ handlingId: id });
     try {
       await handleWorkOrder({ id, action: kind, handleAction: kind });
       toast(`${label}成功`);
@@ -265,6 +268,8 @@ Page({
       await this.loadWorkorders();
     } catch {
       /* request 层已提示 */
+    } finally {
+      this.setData({ handlingId: '' });
     }
   },
 

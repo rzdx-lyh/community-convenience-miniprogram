@@ -95,6 +95,24 @@ describe('工作人员工单接口', () => {
     expect(data.workorder.assignee).toBe('');
     expect(data.workorder.assigneeRole).toBe('management');
   });
+  it('重复接单不会报 assigned→assigned，按幂等成功处理', async () => {
+    const session = await staffAuth.createStaffSession(staff, 'maintenance', {});
+    const first = await workorder.main({
+      action: 'handle',
+      handleAction: 'assign',
+      id: 'wo-1',
+      token: session.token,
+    });
+    expect(first.code).toBe(0);
+    const second = await workorder.main({
+      action: 'handle',
+      handleAction: 'assign',
+      id: 'wo-1',
+      token: session.token,
+    });
+    expect(second.code).toBe(0);
+    expect((second.data as { idempotent?: boolean }).idempotent).toBe(true);
+  });
   it('维修人员可以用 staff token 接单，处理人写入会话账号', async () => {
     const session = await staffAuth.createStaffSession(staff, 'maintenance', {});
     const result = await workorder.main({

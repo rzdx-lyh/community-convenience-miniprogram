@@ -125,7 +125,7 @@
         </view>
         <view class="wb-order__bottom">
           <text class="wb-order__source">{{item.sourceLabel}}</text>
-          <view wx:if="{{item.actionKind}}" class="wb-order__action" data-id="{{item._id}}" data-kind="{{item.actionKind}}" catchtap="onQuickHandle">{{item.actionLabel}}</view>
+          <view wx:if="{{item.actionKind}}" class="wb-order__action {{handlingId === item._id ? 'is-busy' : ''}}" data-id="{{item._id}}" data-kind="{{item.actionKind}}" catchtap="onQuickHandle">{{handlingId === item._id ? '处理中…' : item.actionLabel}}</view>
           <view wx:else class="wb-order__detail">查看详情 ›</view>
         </view>
       </view>
@@ -184,7 +184,7 @@
       </scroll-view>
       <view class="order-detail__foot">
         <view class="order-detail__ghost" bindtap="onCloseOrder">关闭</view>
-        <view wx:if="{{selectedOrder.actionKind}}" class="order-detail__primary" data-id="{{selectedOrder._id}}" data-kind="{{selectedOrder.actionKind}}" bindtap="onQuickHandle">{{selectedOrder.actionLabel}}</view>
+        <view wx:if="{{selectedOrder.actionKind}}" class="order-detail__primary {{handlingId === selectedOrder._id ? 'is-busy' : ''}}" data-id="{{selectedOrder._id}}" data-kind="{{selectedOrder.actionKind}}" bindtap="onQuickHandle">{{handlingId === selectedOrder._id ? '处理中…' : selectedOrder.actionLabel}}</view>
       </view>
     </view>
   </view>

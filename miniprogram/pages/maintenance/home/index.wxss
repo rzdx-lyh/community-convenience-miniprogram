@@ -117,3 +117,4 @@
 .care-mode .rw-online { align-self: flex-start; }
 .care-mode .rw-card__cover { width: 100%; height: 240rpx; }
 .care-mode .rw-sheet__images { grid-template-columns: 1fr 1fr; }
+.is-busy { opacity: .58; pointer-events: none; }
