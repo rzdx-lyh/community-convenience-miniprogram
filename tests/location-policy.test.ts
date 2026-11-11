@@ -3,7 +3,7 @@ import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 /**
- * 定位策略守卫（v1.2.6）：
+ * 定位策略守卫（v1.2.7）：
  *   1) wx.getLocation 只允许出现在统一封装 utils/location.ts；
  *   2) app.json 必须声明 getLocation 隐私接口；
  *   3) 地图页不得启用 show-location 连续定位。
@@ -23,7 +23,7 @@ function walk(dir: string, exts: string[]): string[] {
   return out;
 }
 
-describe('定位接口策略（v1.2.6）', () => {
+describe('定位接口策略（v1.2.7）', () => {
   it('wx.getLocation 只允许出现在统一 location 封装中', () => {
     const offenders: string[] = [];
     for (const file of walk(MP, ['.ts', '.js', '.wxml'])) {

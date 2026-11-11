@@ -142,6 +142,32 @@ async function list(event) {
   return ok({ list: pageList, total });
 }
 
+/* ----------------------- workorder:staffList ------------------------ */
+/**
+ * 三端工作人员工单池：管理端看全量，维修端看“待接单 + 自己名下”。
+ * 会话角色由服务端复核，前端只传 token。
+ */
+async function staffList(event) {
+  const token = String(event.token || '').trim();
+  if (!token) return fail(CODES.AUTH, '工作人员登录已失效，请重新登录');
+  const { staff, session } = await requireStaffSession(token);
+
+  const res = await db.collection('workorders').orderBy('createdAt', 'desc').limit(200).get();
+  let rows = (res.data || []).slice().sort((a, b) =>
+    String(b.createdAt || '').localeCompare(String(a.createdAt || '')),
+  );
+
+  if (session.portalMode === 'maintenance') {
+    rows = rows.filter((wo) =>
+      wo.status === 'pending' || (wo.status === 'assigned' && !wo.assignee) || wo.assignee === staff._id || wo.assignee === staff.username,
+    );
+  }
+  if (event.status) rows = rows.filter((wo) => wo.status === String(event.status));
+
+  const { list: pageList, total } = paginate(rows, event.page, event.pageSize);
+  return ok({ list: pageList, total, scope: session.portalMode });
+}
+
 /* ---------------------- workorder:managementList ---------------------- */
 /**
  * 管理端工单列表（物业/管理员/超级管理员）。
@@ -202,9 +228,30 @@ async function cancel(event) {
 }
 
 /* --------------------------- workorder:handle --------------------------- */
-async function handle(event) {
+async function resolveWorkorderOperator(event) {
+  const token = String(event.token || '').trim();
+  if (token) {
+    const { staff, session } = await requireStaffSession(token);
+    return {
+      id: staff._id,
+      name: staff.displayName || staff.username || '工作人员',
+      role: staff.role,
+      portalMode: session.portalMode,
+    };
+  }
+  // 兼容旧版“居民身份 + property/admin role”的调用方式
   const openid = getOpenId();
-  const staff = await requireStaff(openid); // 403 无权限
+  const user = await requireStaff(openid); // 403 无权限
+  return {
+    id: openid,
+    name: user.nickName || '物业工作人员',
+    role: user.role,
+    portalMode: 'management',
+  };
+}
+
+async function handle(event) {
+  const operator = await resolveWorkorderOperator(event);
 
   const id = String(event.id || '').trim();
   // 【已裁决 · CR-011】契约侧定稿业务参数名为 handleAction（新增可选参数，非破坏性），
@@ -225,9 +272,21 @@ async function handle(event) {
     return fail(CODES.PARAM, `状态流转不合法：${wo.status}→${to}`);
   }
 
+  if (operator.portalMode === 'management' && bizAction !== 'assign') {
+    return fail(CODES.FORBIDDEN, '管理端仅负责受理派单，处理动作请在维修端完成');
+  }
+  if (operator.portalMode === 'maintenance' && operator.role === 'maintenance') {
+    if (bizAction !== 'assign' && wo.assignee && wo.assignee !== operator.id) {
+      return fail(CODES.FORBIDDEN, '该工单已由其他维修人员接单');
+    }
+  }
+
+  const managementDispatch = operator.portalMode === 'management' && bizAction === 'assign';
   const patch = {
     status: to,
-    assignee: openid,
+    assignee: managementDispatch ? '' : operator.id,
+    assigneeName: managementDispatch ? '' : operator.name,
+    assigneeRole: managementDispatch ? 'management' : operator.role,
     updatedAt: isoNow(),
   };
   if (event.note !== undefined && event.note !== null) patch.handleNote = String(event.note).slice(0, 200);
@@ -241,14 +300,19 @@ async function handle(event) {
     await notifyWorkOrderDone(wo._openid, { title: wo.title, status: 'done', id })
       .catch(() => ({ sent: false }));
   }
-  console.log(`[workorder] handle id=${id} ${wo.status}→${to} by ***${String(openid).slice(-4)} role=${staff.role}`);
+  console.log(`[workorder] handle id=${id} ${wo.status}→${to} by ${operator.portalMode}:${operator.name} role=${operator.role}`);
   return ok({ workorder: updated });
 }
 
 /* ------------------------- workorder:analyzeImage ------------------------ */
 async function analyzeImage(event) {
-  const openid = getOpenId();
-  await requireUser(openid);
+  const token = String(event.token || '').trim();
+  if (token) {
+    await requireStaffSession(token);
+  } else {
+    const openid = getOpenId();
+    await requireUser(openid);
+  }
   const fileID = String(event.fileID || '').trim();
   if (!fileID) return fail(CODES.PARAM, '缺少图片 fileID');
 
@@ -293,6 +357,7 @@ exports.main = handler(async (event = {}) => {
     case 'create': return await create(event);
     case 'list': return await list(event);
     case 'managementList': return await managementList(event);
+    case 'staffList': return await staffList(event);
     case 'detail': return await detail(event);
     case 'cancel': return await cancel(event);
     case 'handle': return await handle(event);

@@ -1,25 +1,143 @@
-<view class="page repair-wb {{careMode ? 'care-mode' : ''}}">
-  <view class="rw-head">
-    <view class="rw-kicker">维修端</view>
-    <view class="rw-title">抢单与处理工作台</view>
-    <view class="rw-user" wx:if="{{profile}}">{{profile.displayName}} · {{roleLabel}}</view>
-    <view class="rw-loading" wx:if="{{loading}}">正在校验登录态…</view>
-  </view>
-
-  <view class="rw-quota">
-    <view>
-      <view class="rw-quota__n">{{activeCount}} / {{limit}}</view>
-      <view class="rw-quota__l">当前处理中名额</view>
+<view class="page repair-wb {{careMode ? 'care-mode' : ''}}" style="padding-top: {{statusBarHeight}}px">
+  <view class="rw-hero">
+    <view class="rw-hero__top">
+      <view class="rw-brand">
+        <view class="rw-brand__mark">修</view>
+        <view class="rw-brand__copy">
+          <text class="rw-kicker">FIELD SERVICE</text>
+          <text class="rw-title">{{headline}}</text>
+        </view>
+      </view>
+      <view class="rw-online {{online ? 'on' : ''}}" bindtap="onToggleOnline">
+        <view class="rw-online__dot"></view>
+        <text>{{online ? '接单中' : '已暂停'}}</text>
+      </view>
     </view>
-    <view class="rw-quota__tip">全部分类合计最多 3 单</view>
+
+    <view class="rw-greeting">{{greeting}}，{{profile ? profile.displayName : '维修人员'}}</view>
+    <view class="rw-subline">{{roleLabel || '正在校验身份'}} · 当前可处理 {{stats.active}} 单</view>
+    <view wx:if="{{skillTags.length}}" class="rw-skills">
+      <text wx:for="{{skillTags}}" wx:key="*this" class="rw-skill">{{item}}</text>
+    </view>
+    <view wx:if="{{loading}}" class="rw-loading">正在校验维修账号…</view>
   </view>
 
-  <view class="rw-note">
-    维修人员账号与会话已接通。抢单池、我的工单、完工照片、释放申请将在下一步接入。
+  <view class="rw-stats">
+    <view class="rw-stat">
+      <text class="rw-stat__n">{{stats.pending}}</text>
+      <text class="rw-stat__l">待接单</text>
+    </view>
+    <view class="rw-stat">
+      <text class="rw-stat__n rw-stat__n--green">{{stats.active}}</text>
+      <text class="rw-stat__l">进行中</text>
+    </view>
+    <view class="rw-stat">
+      <text class="rw-stat__n rw-stat__n--warm">{{stats.done}}</text>
+      <text class="rw-stat__l">已完工</text>
+    </view>
   </view>
 
-  <view class="rw-actions">
-    <view class="rw-action" bindtap="onBackResident">返回居民端</view>
-    <view class="rw-action rw-action--danger" bindtap="onLogout">退出维修账号</view>
+  <view class="rw-section-head">
+    <view><text class="rw-section-kicker">OPEN JOBS</text><text class="rw-section-title">抢单大厅</text></view>
+    <text class="rw-section-note">{{queue.length}} 单待接</text>
+  </view>
+
+  <view wx:if="{{!online}}" class="rw-offline">
+    <view class="ic ic-m ic-bell"></view>
+    <view><text>已暂停接单</text><text>开启接单后才能从抢单大厅领取新工单。</text></view>
+  </view>
+
+  <view wx:if="{{loadingList}}" class="rw-empty">正在同步工单池…</view>
+  <view wx:elif="{{loadError}}" class="rw-empty">{{loadError}}</view>
+  <view wx:elif="{{!queue.length}}" class="rw-empty">
+    <view class="rw-empty__icon"><view class="ic ic-l ic-wrench"></view></view>
+    <text class="rw-empty__t">暂时没有新工单</text>
+    <text class="rw-empty__d">居民提交报修后会自动进入这里。</text>
+  </view>
+  <view wx:else class="rw-list">
+    <view wx:for="{{queue}}" wx:key="_id" class="rw-card rw-card--queue" data-id="{{item._id}}" bindtap="onOpenOrder">
+      <view class="rw-card__top">
+        <view class="rw-status rw-status--pending">待接单</view>
+        <text class="rw-card__time">{{item.createdAtText}}</text>
+      </view>
+      <view class="rw-card__main">
+        <view class="rw-card__copy">
+          <text class="rw-card__title">{{item.title}}</text>
+          <text class="rw-card__desc">{{item.aiSummary || item.description}}</text>
+          <view class="rw-card__meta"><text>{{item.categoryLabel}}</text><text>·</text><text>{{item.locationName}}</text><text wx:if="{{item.imageCount}}">· {{item.imageCount}} 图</text></view>
+        </view>
+        <image wx:if="{{item.cover}}" class="rw-card__cover" src="{{item.cover}}" mode="aspectFill" data-id="{{item._id}}" data-index="0" catchtap="onPreviewImage" />
+      </view>
+      <view class="rw-card__foot">
+        <view class="rw-link" data-id="{{item._id}}" catchtap="onOpenLocation">导航到位置</view>
+        <view class="rw-primary" data-id="{{item._id}}" data-kind="assign" catchtap="onHandleOrder">立即接单</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="rw-section-head rw-section-head--mine">
+    <view><text class="rw-section-kicker">MY JOBS</text><text class="rw-section-title">我的工单</text></view>
+    <text class="rw-section-note">{{mine.length}} 单</text>
+  </view>
+
+  <view wx:if="{{!mine.length}}" class="rw-empty">
+    <view class="rw-empty__icon"><view class="ic ic-l ic-check"></view></view>
+    <text class="rw-empty__t">还没有接手工单</text>
+    <text class="rw-empty__d">从抢单大厅领取一单，处理进度会同步给居民端。</text>
+  </view>
+  <view wx:else class="rw-list">
+    <view wx:for="{{mine}}" wx:key="_id" class="rw-card" data-id="{{item._id}}" bindtap="onOpenOrder">
+      <view class="rw-card__top">
+        <view class="rw-status rw-status--{{item.statusTone}}">{{item.statusLabel}}</view>
+        <text class="rw-card__time">{{item.createdAtText}}</text>
+      </view>
+      <view class="rw-card__main">
+        <view class="rw-card__copy">
+          <text class="rw-card__title">{{item.title}}</text>
+          <text class="rw-card__desc">{{item.aiSummary || item.description}}</text>
+          <view class="rw-card__meta"><text>{{item.categoryLabel}}</text><text>·</text><text>{{item.locationName}}</text></view>
+        </view>
+        <image wx:if="{{item.cover}}" class="rw-card__cover" src="{{item.cover}}" mode="aspectFill" data-id="{{item._id}}" data-index="0" catchtap="onPreviewImage" />
+      </view>
+      <view class="rw-card__foot">
+        <view class="rw-link" data-id="{{item._id}}" catchtap="onOpenLocation">导航</view>
+        <view wx:if="{{item.actionKind}}" class="rw-primary rw-primary--{{item.statusTone}}" data-id="{{item._id}}" data-kind="{{item.actionKind}}" catchtap="onHandleOrder">{{item.actionLabel}}</view>
+        <view wx:else class="rw-done">已完成</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="rw-account">
+    <view class="rw-account__btn" bindtap="onBackResident">返回居民端</view>
+    <view class="rw-account__btn rw-account__btn--danger" bindtap="onLogout">退出维修账号</view>
+  </view>
+
+  <view wx:if="{{selectedOrder}}" class="rw-mask">
+    <view class="rw-sheet">
+      <view class="rw-sheet__head">
+        <view><text class="rw-sheet__k">{{selectedOrder.sourceLabel}}</text><text class="rw-sheet__t">{{selectedOrder.title}}</text></view>
+        <view class="rw-sheet__close" bindtap="onCloseOrder">×</view>
+      </view>
+      <view class="rw-sheet__badges">
+        <text class="rw-status rw-status--{{selectedOrder.statusTone}}">{{selectedOrder.statusLabel}}</text>
+        <text class="rw-badge">{{selectedOrder.categoryLabel}}</text>
+        <text class="rw-badge">{{selectedOrder.locationName}}</text>
+      </view>
+      <scroll-view class="rw-sheet__scroll" scroll-y>
+        <text class="rw-sheet__desc">{{selectedOrder.description}}</text>
+        <view wx:if="{{selectedOrder.images.length}}" class="rw-sheet__images">
+          <image wx:for="{{selectedOrder.images}}" wx:key="*this" class="rw-sheet__img" src="{{item}}" mode="aspectFill" data-id="{{selectedOrder._id}}" data-index="{{index}}" bindtap="onPreviewImage" />
+        </view>
+        <view class="rw-sheet__facts">
+          <view><text>提交时间</text><text>{{selectedOrder.createdAtText}}</text></view>
+          <view><text>居民位置</text><text>{{selectedOrder.locationName}}</text></view>
+          <view wx:if="{{selectedOrder.handleNote}}"><text>处理备注</text><text>{{selectedOrder.handleNote}}</text></view>
+        </view>
+      </scroll-view>
+      <view class="rw-sheet__foot">
+        <view class="rw-sheet__ghost" data-id="{{selectedOrder._id}}" bindtap="onOpenLocation">导航</view>
+        <view wx:if="{{selectedOrder.actionKind}}" class="rw-sheet__primary" data-id="{{selectedOrder._id}}" data-kind="{{selectedOrder.actionKind}}" bindtap="onHandleOrder">{{selectedOrder.actionLabel}}</view>
+      </view>
+    </view>
   </view>
 </view>

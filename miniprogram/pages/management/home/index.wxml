@@ -1,53 +1,191 @@
-<view class="page workbench {{careMode ? 'care-mode' : ''}}">
-  <view class="wb-head">
-    <view class="wb-kicker">管理端</view>
-    <view class="wb-title">社区服务工作台</view>
-    <view class="wb-user" wx:if="{{profile}}">{{profile.displayName}} · {{roleLabel}}</view>
-    <view class="wb-loading" wx:if="{{loading}}">正在校验登录态…</view>
-  </view>
-
-  <view class="wb-grid">
-    <view wx:for="{{cards}}" wx:key="k" class="wb-card">
-      <view class="wb-card__n">{{item.n}}</view>
-      <view class="wb-card__t">{{item.t}}</view>
-      <view class="wb-card__d">{{item.d}}</view>
-    </view>
-  </view>
-
-  <view class="wb-sec">
-    <view class="wb-sec__h">
-      <text>最近工单</text>
-      <text class="wb-sec__n">{{total}} 条</text>
-    </view>
-    <view class="wb-empty" wx:if="{{loadingList}}">正在加载工单…</view>
-    <view class="wb-empty" wx:elif="{{loadError}}">{{loadError}}</view>
-    <view class="wb-empty" wx:elif="{{!list.length}}">还没有工单。居民提交报修后，会实时出现在这里。</view>
-    <view wx:else class="wb-list">
-      <view
-        class="wb-item"
-        wx:for="{{list}}"
-        wx:key="_id"
-        data-index="{{index}}"
-        bindtap="onItem"
-        hover-class="wb-item--hover"
-      >
-        <view class="wb-item__top">
-          <text class="wb-item__t">{{item.title}}</text>
-          <text class="wb-item__s">{{item.statusLabel}}</text>
+<view class="page workbench {{careMode ? 'care-mode' : ''}}" style="padding-top: {{statusBarHeight}}px">
+  <view class="wb-hero">
+    <view class="wb-hero__top">
+      <view class="wb-brand">
+        <view class="wb-brand__mark">邻</view>
+        <view class="wb-brand__copy">
+          <text class="wb-kicker">NEIGHBORHOOD OPS</text>
+          <text class="wb-title">{{headline}}</text>
         </view>
-        <view class="wb-item__d">{{item.aiSummary || item.description}}</view>
-        <view class="wb-item__m">{{item.createdAtText}} · {{item.categoryLabel}} · 居民报修</view>
+      </view>
+      <view class="wb-live"><view class="wb-live__dot"></view><text>在线</text></view>
+    </view>
+
+    <view class="wb-greeting">{{greeting}}，{{profile ? profile.displayName : '工作人员'}}</view>
+    <view class="wb-subline">{{roleLabel || '正在校验身份'}} · {{serviceTotal}} 项居民服务已接入</view>
+
+    <view class="wb-hero__actions">
+      <view class="wb-hero__btn" data-action="services" bindtap="onQuickAction">
+        <view class="ic ic-s icw ic-file"></view><text>服务目录</text>
+      </view>
+      <view class="wb-hero__btn wb-hero__btn--accent" data-action="imageSearch" bindtap="onQuickAction">
+        <view class="ic ic-s icw ic-sparkles"></view><text>照片找报修</text>
       </view>
     </view>
+
+    <view wx:if="{{loading}}" class="wb-loading">正在校验工作人员登录态…</view>
   </view>
 
-  <view class="wb-note">
-    工单数据来自云数据库 workorders 集合；居民端新提交的报修会按状态实时统计在这里。
-    放单、验收、最终确认等流转操作将在下一实施步骤接入。
+  <view class="wb-body">
+    <view class="wb-section-head">
+      <view><text class="wb-section-kicker">TODAY</text><text class="wb-section-title">工单态势</text></view>
+      <text class="wb-section-note">共 {{orders.length}} 单</text>
+    </view>
+
+    <view class="wb-kpis">
+      <view wx:for="{{kpis}}" wx:key="key" class="wb-kpi wb-kpi--{{item.tone}}">
+        <view class="wb-kpi__value">{{item.count}}</view>
+        <view class="wb-kpi__label">{{item.label}}</view>
+        <view class="wb-kpi__hint">{{item.hint}}</view>
+      </view>
+    </view>
+
+    <view class="wb-quick">
+      <view wx:for="{{quickActions}}" wx:key="key" class="wb-quick__item" data-action="{{item.key}}" bindtap="onQuickAction" hover-class="wb-quick__item--hover">
+        <view class="wb-quick__icon wb-quick__icon--{{item.tone}}"><view class="ic ic-m ic-{{item.icon}}"></view></view>
+        <view class="wb-quick__copy"><text class="wb-quick__label">{{item.label}}</text><text class="wb-quick__desc">{{item.desc}}</text></view>
+        <text class="wb-quick__arrow">›</text>
+      </view>
+    </view>
+
+    <view class="wb-section-head wb-section-head--service">
+      <view><text class="wb-section-kicker">RESIDENT SERVICES</text><text class="wb-section-title">居民服务全景</text></view>
+      <text class="wb-section-note">4 类 · {{serviceTotal}} 项</text>
+    </view>
+
+    <view class="wb-services">
+      <view wx:for="{{serviceModules}}" wx:key="key" class="wb-service wb-service--{{item.tone}}" data-key="{{item.key}}" bindtap="onOpenServiceModule" hover-class="wb-service--hover">
+        <view class="wb-service__top">
+          <view class="wb-service__icon"><view class="ic ic-m ic-{{item.icon}}"></view></view>
+          <text class="wb-service__count">{{item.count}} 项</text>
+        </view>
+        <text class="wb-service__title">{{item.title}}</text>
+        <text class="wb-service__desc">{{item.subtitle}}</text>
+        <view class="wb-service__samples">
+          <text wx:for="{{item.samples}}" wx:key="*this" class="wb-service__tag">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="wb-section-head wb-section-head--work">
+      <view><text class="wb-section-kicker">WORK ORDERS</text><text class="wb-section-title">报修工作台</text></view>
+      <text class="wb-section-note">当前 {{viewOrders.length}} 条</text>
+    </view>
+
+    <view class="wb-tools">
+      <view class="wb-search">
+        <view class="ic ic-s ic-search wb-search__ic"></view>
+        <input class="wb-search__input" value="{{query}}" placeholder="搜标题、地址、摘要" bindinput="onSearchInput" confirm-type="search" />
+        <text wx:if="{{query}}" class="wb-search__clear" bindtap="onClearSearch">×</text>
+      </view>
+      <view class="wb-photo-btn {{searchingImage ? 'is-busy' : ''}}" bindtap="onPickSearchImage">
+        <view class="ic ic-m ic-sparkles"></view>
+        <text>{{searchingImage ? '识别中' : '拍照找单'}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{searchImage}}" class="wb-image-search">
+      <image class="wb-image-search__img" src="{{searchImage}}" mode="aspectFill" bindtap="onPreviewSearchImage" />
+      <view class="wb-image-search__body">
+        <text class="wb-image-search__k">图片寻单</text>
+        <text class="wb-image-search__t">{{imageAnalysis ? imageAnalysis.title : '图片已上传，等待识别'}}</text>
+        <text class="wb-image-search__d">{{imageAnalysis ? imageAnalysis.description : '识别完成后会优先筛出同类报修'}}</text>
+      </view>
+      <text class="wb-image-search__close" bindtap="onClearSearchImage">×</text>
+    </view>
+
+    <scroll-view class="wb-filters" scroll-x enhanced show-scrollbar="{{false}}">
+      <view wx:for="{{statusFilters}}" wx:key="key" class="wb-filter {{activeStatus === item.key ? 'on' : ''}}" data-status="{{item.key}}" bindtap="onStatusFilter">
+        <text>{{item.label}}</text><text class="wb-filter__n">{{item.count}}</text>
+      </view>
+    </scroll-view>
+
+    <view wx:if="{{loadingList}}" class="wb-empty">正在同步工单…</view>
+    <view wx:elif="{{loadError}}" class="wb-empty">{{loadError}}</view>
+    <view wx:elif="{{!viewOrders.length}}" class="wb-empty">
+      <view class="wb-empty__ic"><view class="ic ic-l ic-wrench"></view></view>
+      <text class="wb-empty__t">没有符合条件的工单</text>
+      <text class="wb-empty__d">调整筛选条件，或从居民端提交一条新报修。</text>
+    </view>
+    <view wx:else class="wb-order-list">
+      <view wx:for="{{viewOrders}}" wx:key="_id" class="wb-order" data-id="{{item._id}}" bindtap="onOpenOrder" hover-class="wb-order--hover">
+        <view class="wb-order__top">
+          <view class="wb-order__status wb-order__status--{{item.statusTone}}">{{item.statusLabel}}</view>
+          <text class="wb-order__time">{{item.createdAtText}}</text>
+        </view>
+        <view class="wb-order__main">
+          <view class="wb-order__copy">
+            <text class="wb-order__title">{{item.title}}</text>
+            <text class="wb-order__desc">{{item.aiSummary || item.description}}</text>
+            <view class="wb-order__meta">
+              <text>{{item.categoryLabel}}</text><text>·</text><text>{{item.locationName}}</text><text wx:if="{{item.imageCount}}">· {{item.imageCount}} 图</text>
+            </view>
+          </view>
+          <image wx:if="{{item.cover}}" class="wb-order__cover" src="{{item.cover}}" mode="aspectFill" data-id="{{item._id}}" data-index="0" catchtap="onPreviewOrderImage" />
+        </view>
+        <view class="wb-order__bottom">
+          <text class="wb-order__source">{{item.sourceLabel}}</text>
+          <view wx:if="{{item.actionKind}}" class="wb-order__action" data-id="{{item._id}}" data-kind="{{item.actionKind}}" catchtap="onQuickHandle">{{item.actionLabel}}</view>
+          <view wx:else class="wb-order__detail">查看详情 ›</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="wb-account">
+      <view class="wb-account__btn" bindtap="onBackResident">返回居民端</view>
+      <view class="wb-account__btn wb-account__btn--danger" bindtap="onLogout">退出账号</view>
+    </view>
   </view>
 
-  <view class="wb-actions">
-    <view class="wb-action" bindtap="onBackResident">返回居民端</view>
-    <view class="wb-action wb-action--danger" bindtap="onLogout">退出工作人员账号</view>
+  <view wx:if="{{selectedService}}" class="staff-mask">
+    <view class="staff-sheet">
+      <view class="staff-sheet__head">
+        <view><text class="staff-sheet__k">服务模块</text><text class="staff-sheet__t">{{selectedService.title}}</text></view>
+        <view class="staff-sheet__close" bindtap="onCloseServiceModule">×</view>
+      </view>
+      <view class="staff-sheet__summary">{{selectedService.groupCount}} 个板块 · {{selectedService.count}} 项服务</view>
+      <scroll-view class="staff-sheet__scroll" scroll-y>
+        <view wx:for="{{selectedService.groups}}" wx:key="key" wx:for-item="group" class="svc-group">
+          <view class="svc-group__h"><text>{{group.name}}</text><text>{{group.items.length}} 项</text></view>
+          <text wx:if="{{group.note}}" class="svc-group__note">{{group.note}}</text>
+          <view class="svc-group__items">
+            <view wx:for="{{group.items}}" wx:key="key" wx:for-item="svc" class="svc-item">
+              <view class="svc-item__dot"></view>
+              <view><text class="svc-item__n">{{svc.name}}</text><text class="svc-item__d">{{svc.desc}}</text></view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view wx:if="{{selectedOrder}}" class="staff-mask">
+    <view class="staff-sheet staff-sheet--order">
+      <view class="staff-sheet__head">
+        <view><text class="staff-sheet__k">{{selectedOrder.sourceLabel}}</text><text class="staff-sheet__t">{{selectedOrder.title}}</text></view>
+        <view class="staff-sheet__close" bindtap="onCloseOrder">×</view>
+      </view>
+      <view class="order-detail__badges">
+        <text class="wb-order__status wb-order__status--{{selectedOrder.statusTone}}">{{selectedOrder.statusLabel}}</text>
+        <text class="order-detail__badge">{{selectedOrder.categoryLabel}}</text>
+        <text class="order-detail__badge">{{selectedOrder.locationName}}</text>
+      </view>
+      <scroll-view class="staff-sheet__scroll" scroll-y>
+        <text class="order-detail__desc">{{selectedOrder.description}}</text>
+        <view wx:if="{{selectedOrder.images.length}}" class="order-detail__images">
+          <image wx:for="{{selectedOrder.images}}" wx:key="*this" class="order-detail__img" src="{{item}}" mode="aspectFill" data-id="{{selectedOrder._id}}" data-index="{{index}}" bindtap="onPreviewOrderImage" />
+        </view>
+        <view class="order-detail__facts">
+          <view><text>提交时间</text><text>{{selectedOrder.createdAtText}}</text></view>
+          <view><text>处理人员</text><text>{{selectedOrder.assigneeName || '待分配'}}</text></view>
+          <view wx:if="{{selectedOrder.aiSummary}}"><text>AI 摘要</text><text>{{selectedOrder.aiSummary}}</text></view>
+          <view wx:if="{{selectedOrder.handleNote}}"><text>处理备注</text><text>{{selectedOrder.handleNote}}</text></view>
+        </view>
+      </scroll-view>
+      <view class="order-detail__foot">
+        <view class="order-detail__ghost" bindtap="onCloseOrder">关闭</view>
+        <view wx:if="{{selectedOrder.actionKind}}" class="order-detail__primary" data-id="{{selectedOrder._id}}" data-kind="{{selectedOrder.actionKind}}" bindtap="onQuickHandle">{{selectedOrder.actionLabel}}</view>
+      </view>
+    </view>
   </view>
 </view>

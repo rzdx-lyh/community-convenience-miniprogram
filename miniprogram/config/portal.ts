@@ -1,8 +1,8 @@
 /** 三端入口与角色路由（纯函数，便于单测与页面复用） */
 export const PORTAL_TABS: Array<{ key: PortalMode; label: string; desc: string }> = [
-  { key: 'resident', label: '居民 / 家长', desc: '报修、预约与社区服务' },
-  { key: 'management', label: '管理端', desc: '物业、管理员与超级管理员' },
-  { key: 'maintenance', label: '维修端', desc: '抢单与处理工单' },
+  { key: 'resident', label: '居民 / 家长', desc: 'AI 管家 · 38 项服务 · 一键报修' },
+  { key: 'management', label: '管理端', desc: '物业运营 · 工单调度 · 服务全景' },
+  { key: 'maintenance', label: '维修端', desc: '抢单 · 上门处理 · 完工同步' },
 ];
 
 const MANAGEMENT_ROLES: StaffRole[] = ['property', 'admin', 'super_admin'];

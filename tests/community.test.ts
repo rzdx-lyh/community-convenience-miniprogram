@@ -13,10 +13,10 @@ import {
 import { distanceMeters } from '../miniprogram/utils/geo';
 
 /**
- * v1.2.6：`wx.getLocation` 接口申请被驳回后，社区位置改为「手动选点」。
+ * v1.2.7：`wx.getLocation` 接口申请被驳回后，社区位置改为「手动选点」。
  * 这些用例守住配置数据与恢复逻辑，避免删接口时把地图/首页的距离算错。
  */
-describe('community · 社区位置点（v1.2.6 替代 wx.getLocation）', () => {
+describe('community · 社区位置点（v1.2.7 替代 wx.getLocation）', () => {
   it('位置点 key 唯一，默认点存在', () => {
     const keys = COMMUNITY_SPOTS.map((s) => s.key);
     expect(new Set(keys).size).toBe(keys.length);

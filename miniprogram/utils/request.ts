@@ -114,7 +114,7 @@ async function rawCallWithRelogin<T>(name: string, data: Record<string, unknown>
   try {
     return await rawCallWithColdStartRetry<T>(name, data);
   } catch (err) {
-    if (err instanceof ApiError && err.code === 401 && name !== 'auth:login' && !name.startsWith('auth:staff')) {
+    if (err instanceof ApiError && err.code === 401 && !data.token && name !== 'auth:login' && !name.startsWith('auth:staff')) {
       try {
         await login();
       } catch {

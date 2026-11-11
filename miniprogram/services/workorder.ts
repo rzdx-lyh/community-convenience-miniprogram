@@ -10,6 +10,19 @@ export function analyzeWorkOrderImage(params: WorkOrderAnalyzeImageParams): Prom
   return call<WorkOrderAnalyzeImageResult>('workorder:analyzeImage', params as unknown as Record<string, unknown>);
 }
 
+export function analyzeStaffWorkOrderImage(fileID: string): Promise<WorkOrderAnalyzeImageResult> {
+  return call<WorkOrderAnalyzeImageResult>('workorder:analyzeImage', {
+    fileID,
+    token: getStaffToken(),
+  });
+}
+
+export function listStaffWorkOrders(params: WorkOrderListParams = {}): Promise<WorkOrderListResult> {
+  return call<WorkOrderListResult>('workorder:staffList', {
+    ...params,
+    token: getStaffToken(),
+  } as unknown as Record<string, unknown>);
+}
 export function listWorkOrders(params: WorkOrderListParams = {}): Promise<WorkOrderListResult> {
   return call<WorkOrderListResult>('workorder:list', params as unknown as Record<string, unknown>);
 }
@@ -43,6 +56,7 @@ export function handleWorkOrder(params: WorkOrderHandleParams): Promise<WorkOrde
   const payload: Record<string, unknown> = {
     id: params.id,
     handleAction: params.handleAction ?? params.action,
+    token: getStaffToken(),
   };
   if (params.note !== undefined) payload.note = params.note;
   return call<WorkOrderHandleResult>('workorder:handle', payload);
