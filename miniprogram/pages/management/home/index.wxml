@@ -14,8 +14,36 @@
     </view>
   </view>
 
+  <view class="wb-sec">
+    <view class="wb-sec__h">
+      <text>最近工单</text>
+      <text class="wb-sec__n">{{total}} 条</text>
+    </view>
+    <view class="wb-empty" wx:if="{{loadingList}}">正在加载工单…</view>
+    <view class="wb-empty" wx:elif="{{loadError}}">{{loadError}}</view>
+    <view class="wb-empty" wx:elif="{{!list.length}}">还没有工单。居民提交报修后，会实时出现在这里。</view>
+    <view wx:else class="wb-list">
+      <view
+        class="wb-item"
+        wx:for="{{list}}"
+        wx:key="_id"
+        data-index="{{index}}"
+        bindtap="onItem"
+        hover-class="wb-item--hover"
+      >
+        <view class="wb-item__top">
+          <text class="wb-item__t">{{item.title}}</text>
+          <text class="wb-item__s">{{item.statusLabel}}</text>
+        </view>
+        <view class="wb-item__d">{{item.aiSummary || item.description}}</view>
+        <view class="wb-item__m">{{item.createdAtText}} · {{item.categoryLabel}} · 居民报修</view>
+      </view>
+    </view>
+  </view>
+
   <view class="wb-note">
-    工作人员账号与会话已接通。工单放单、验收、最终确认和居民反馈将在下一实施步骤接入。
+    工单数据来自云数据库 workorders 集合；居民端新提交的报修会按状态实时统计在这里。
+    放单、验收、最终确认等流转操作将在下一实施步骤接入。
   </view>
 
   <view class="wb-actions">

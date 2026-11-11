@@ -42,6 +42,7 @@ try {
 const { ok, fail, CODES, handler } = require('./response');
 const { db } = require('./db');
 const { getOpenId, requireUser, requireStaff } = require('./auth');
+const { requireStaffSession } = require('./staffAuth');
 const { isoNow, paginate } = require('./time');
 const { checkText } = require('./security');
 const { chat, buildSummaryPrompt } = require('./ai');
@@ -127,6 +128,32 @@ async function list(event) {
 
   const where = {};
   if (user.role === 'resident') where._openid = openid; // 居民仅见本人
+  if (event.status) where.status = String(event.status);
+
+  const query = db.collection('workorders');
+  const res = await (Object.keys(where).length ? query.where(where) : query)
+    .orderBy('createdAt', 'desc')
+    .limit(200)
+    .get()
+    .catch(() => ({ data: [] }));
+
+  const rows = (res.data || []).slice().sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+  const { list: pageList, total } = paginate(rows, event.page, event.pageSize);
+  return ok({ list: pageList, total });
+}
+
+/* ---------------------- workorder:managementList ---------------------- */
+/**
+ * 管理端工单列表（物业/管理员/超级管理员）。
+ * 工作人员会话与居民 openid 登录态相互独立，必须用 staffToken 校验；
+ * 不接受前端传 role/portalMode，服务端从 staff_sessions + staff_accounts 重新读取。
+ */
+async function managementList(event) {
+  const token = String(event.token || '').trim();
+  if (!token) return fail(CODES.AUTH, '工作人员登录已失效，请重新登录');
+  await requireStaffSession(token, { portalMode: 'management' });
+
+  const where = {};
   if (event.status) where.status = String(event.status);
 
   const query = db.collection('workorders');
@@ -265,6 +292,7 @@ exports.main = handler(async (event = {}) => {
   switch (action) {
     case 'create': return await create(event);
     case 'list': return await list(event);
+    case 'managementList': return await managementList(event);
     case 'detail': return await detail(event);
     case 'cancel': return await cancel(event);
     case 'handle': return await handle(event);

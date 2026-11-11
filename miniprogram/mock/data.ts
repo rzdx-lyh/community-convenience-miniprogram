@@ -472,6 +472,11 @@ export const mockHandlers: Record<string, Handler> = {
     const list = status ? MOCK_WORKORDERS.filter((w) => w.status === status) : MOCK_WORKORDERS;
     return paginate<WorkOrder>(list, data);
   },
+  'workorder:managementList': (data) => {
+    const status = data.status as WorkOrder['status'] | undefined;
+    const list = status ? MOCK_WORKORDERS.filter((w) => w.status === status) : MOCK_WORKORDERS;
+    return paginate<WorkOrder>(list, data);
+  },
   'workorder:detail': (data) => ({
     workorder: MOCK_WORKORDERS.find((w) => w._id === String(data.id ?? '')) ?? MOCK_WORKORDERS[0],
   }),

@@ -1,5 +1,6 @@
 /** workorder 资源服务（契约 workorder:create / list / detail / cancel / handle） */
 import { call } from '../utils/request';
+import { getStaffToken } from './staff';
 
 export function createWorkOrder(params: WorkOrderCreateParams): Promise<WorkOrderCreateResult> {
   return call<WorkOrderCreateResult>('workorder:create', params as unknown as Record<string, unknown>);
@@ -11,6 +12,17 @@ export function analyzeWorkOrderImage(params: WorkOrderAnalyzeImageParams): Prom
 
 export function listWorkOrders(params: WorkOrderListParams = {}): Promise<WorkOrderListResult> {
   return call<WorkOrderListResult>('workorder:list', params as unknown as Record<string, unknown>);
+}
+
+/**
+ * 管理端工单列表（物业/管理员）。
+ * 工作人员会话与居民 openid 分离，必须显式带 staffToken 给云函数校验。
+ */
+export function listManagementWorkOrders(params: WorkOrderListParams = {}): Promise<WorkOrderListResult> {
+  return call<WorkOrderListResult>('workorder:managementList', {
+    ...params,
+    token: getStaffToken(),
+  } as unknown as Record<string, unknown>);
 }
 
 export function getWorkOrderDetail(params: WorkOrderDetailParams): Promise<WorkOrderDetailResult> {
