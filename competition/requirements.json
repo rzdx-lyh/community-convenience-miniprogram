@@ -1,46 +1,47 @@
 {
   "competition": "2026第九届传智杯全国大学生数智创新与 AI 应用大赛",
-  "track": "AI WEB网页开发挑战赛",
-  "trackId": 10037,
+  "track": "AI微信小程序开发挑战赛",
+  "trackId": 10038,
   "competitionId": 10003,
   "deadline": "2026-11-18",
   "teamSize": { "min": 1, "max": 3, "sameSchool": true },
   "advisers": { "max": 2 },
-  "requiredForm": "AI Native Web application",
+  "requiredForm": "WeChat Mini Program with deep AI integration",
+  "themes": [
+    "AI赋能校园生活",
+    "AI赋能数字生活",
+    "AI赋能产业服务",
+    "AI赋能文旅服务",
+    "AI赋能公共服务"
+  ],
   "submission": {
-    "repository": {
-      "platform": ["GitHub", "Gitee"],
-      "visibility": "Public or review access",
-      "requirements": ["clean code", "comments", "README", "full git history", "env template", "dependency list"]
-    },
-    "video": { "duration": "5-8 minutes", "format": "MP4", "resolution": ">=1080p", "language": "Mandarin" },
-    "technicalDocument": { "format": "PDF", "maxPages": 30, "sections": ["overview", "requirements", "architecture", "AI solution", "implementation", "testing", "deployment", "future"] }
+    "format": "ZIP",
+    "suggestedMaxMB": 300,
+    "naming": "第九届传智杯-AI小程序赛道-作品名称",
+    "contains": ["source code", "demo video", "project document", "experience guide", "test account", "experience QR screenshot"],
+    "bonus": ["experience version configured", "published mini program", "review or launch evidence"]
   },
+  "documentSections": [
+    "项目说明",
+    "小程序与AI能力说明",
+    "创新点说明",
+    "技术实现",
+    "成果展示",
+    "历史说明",
+    "落地规划"
+  ],
   "scoring": [
-    { "id": "ai-llm", "dimension": "AI技术深度", "item": "大模型集成质量", "weight": 8 },
-    { "id": "ai-agent", "dimension": "AI技术深度", "item": "Agent/工作流设计", "weight": 8 },
-    { "id": "ai-rag", "dimension": "AI技术深度", "item": "RAG技术应用", "weight": 6 },
-    { "id": "ai-multimodal", "dimension": "AI技术深度", "item": "多模态能力", "weight": 5 },
-    { "id": "ai-safety", "dimension": "AI技术深度", "item": "AI安全与可控性", "weight": 4 },
-    { "id": "ai-tools", "dimension": "AI技术深度", "item": "MCP/工具集成", "weight": 4 },
-    { "id": "innovation-topic", "dimension": "创新性", "item": "选题创新", "weight": 10 },
-    { "id": "innovation-tech", "dimension": "创新性", "item": "技术方案创新", "weight": 8 },
-    { "id": "innovation-ux", "dimension": "创新性", "item": "交互模式创新", "weight": 7 },
-    { "id": "frontend-code", "dimension": "前端工程质量", "item": "前端代码质量", "weight": 4 },
-    { "id": "frontend-architecture", "dimension": "前端工程质量", "item": "组件化与架构设计", "weight": 3 },
-    { "id": "frontend-performance", "dimension": "前端工程质量", "item": "前端性能优化", "weight": 3 },
-    { "id": "practicality-real", "dimension": "实用性", "item": "场景真实性", "weight": 5 },
-    { "id": "practicality-solution", "dimension": "实用性", "item": "解决方案有效性", "weight": 5 },
-    { "id": "ux-visual", "dimension": "用户体验", "item": "UI设计与视觉表现", "weight": 4 },
-    { "id": "ux-interaction", "dimension": "用户体验", "item": "前端交互体验", "weight": 3 },
-    { "id": "ux-ai", "dimension": "用户体验", "item": "AI交互体验", "weight": 3 },
-    { "id": "value-social", "dimension": "社会价值与商业潜力", "item": "社会价值", "weight": 5 },
-    { "id": "value-business", "dimension": "社会价值与商业潜力", "item": "商业潜力", "weight": 5 }
+    { "id": "tech", "dimension": "技术实现", "weight": 25, "standard": "合理使用小程序与微信生态能力，前后端协同、工程、性能与稳定性达标" },
+    { "id": "ai", "dimension": "AI能力融合", "weight": 20, "standard": "大模型、Agent、RAG、AI工作流或多模态能力在业务流程中真实发挥作用" },
+    { "id": "innovation", "dimension": "创新设计", "weight": 20, "standard": "AI、场景、产品、技术、商业模式、用户体验六维创新" },
+    { "id": "business", "dimension": "场景落地与商业闭环", "weight": 15, "standard": "真实场景、明确用户、转化路径、运营机制与可持续增长" },
+    { "id": "experience", "dimension": "产品体验与用户增长设计", "weight": 10, "standard": "用户路径、交互、传播、留存与运营设计" },
+    { "id": "completeness", "dimension": "完整性与材料质量", "weight": 10, "standard": "稳定演示、材料完整、创新与价值可验证" }
   ],
   "currentProject": {
     "form": "WeChat Mini Program",
-    "webCompatible": false,
-    "aiCapabilities": ["knowledge-base retrieval", "optional LLM fallback", "risk safety rules"],
-    "missing": ["Web frontend", "Agent workflow", "vector RAG", "multimodal AI", "MCP/function calling", "streaming generative UI", "public web deployment"]
+    "formMatches": true,
+    "strengths": ["community public service", "three portals", "map", "repair workflow", "elder care mode", "cloud functions"],
+    "gaps": ["complete AI Agent workflow", "vector RAG with citations", "multimodal image analysis", "AI linkage across core flows", "growth and operations evidence", "competition material package"]
   }
 }
