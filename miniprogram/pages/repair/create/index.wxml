@@ -116,6 +116,25 @@
     </view>
   </view>
 
+  <!-- AI 识图：上传首张照片后自动识别类别、描述与安全提示 -->
+  <view class="block">
+    <text class="block-title">AI 识图辅助</text>
+    <view class="ai-img-btn {{aiAnalyzing ? 'off' : ''}}" bindtap="onAnalyzeImage">
+      <view class="ic ic-s ic-sparkles"></view>
+      <text>{{aiAnalyzing ? 'AI 正在识别…' : '识别首张现场照片'}}</text>
+    </view>
+    <view wx:if="{{aiAnalysis}}" class="ai-result">
+      <view class="ai-result__head">
+        <text class="ai-result__badge">AI</text>
+        <text>识别置信度 {{aiAnalysis.confidence * 100}}%</text>
+      </view>
+      <text class="ai-result__title">{{aiAnalysis.title}}</text>
+      <text class="ai-result__desc">{{aiAnalysis.description}}</text>
+      <text class="ai-result__tip">{{aiAnalysis.safetyTip}}</text>
+    </view>
+    <view wx:if="{{aiReason}}" class="ai-reason">{{aiReason}}</view>
+  </view>
+
   <!-- 提交 -->
   <view class="footer">
     <view class="submit {{submitting ? 'submit-off' : ''}}" bindtap="onSubmit">
@@ -124,3 +143,4 @@
     <text class="tip">提交后 AI 会自动生成工单摘要，方便物业快速处理</text>
   </view>
 </view>
+

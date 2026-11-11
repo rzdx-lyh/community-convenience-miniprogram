@@ -5,6 +5,10 @@ export function askQuestion(params: QaAskParams): Promise<QaAskResult> {
   return call<QaAskResult>('qa:ask', params as unknown as Record<string, unknown>);
 }
 
+export function agentAsk(params: QaAskParams): Promise<QaAskResult> {
+  return call<QaAskResult>('qa:agent', params as unknown as Record<string, unknown>);
+}
+
 export function getQaHistory(params: QaHistoryParams = {}): Promise<QaHistoryResult> {
   return call<QaHistoryResult>('qa:history', params as unknown as Record<string, unknown>);
 }
@@ -20,3 +24,4 @@ export function feedbackQa(params: QaFeedbackParams): Promise<QaFeedbackResult> 
 export function getSuggestions(): Promise<QaSuggestResult> {
   return call<QaSuggestResult>('qa:suggest', {});
 }
+

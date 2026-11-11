@@ -17,7 +17,8 @@
  */
 import { AI_FALLBACK_TEXT, lookupAnswer } from '../../config/ai-scenes';
 import { ENV, STORAGE_KEYS } from '../../config/env';
-import { askQuestion, clearQaHistory, getSuggestions } from '../../services/qa';
+import { agentAsk, clearQaHistory, getSuggestions } from '../../services/qa';
+import type { UserLocation } from '../../utils/onboarding';
 import { store } from '../../store/global';
 import { getStatusBarHeight } from '../../utils/device';
 import { toShortDateTime } from '../../utils/format';
@@ -60,6 +61,7 @@ export interface ChatMsg extends BubbleVM {
   steps: ThinkStep[];
   msText: string;
   badge: string;
+  actions: Array<{ type: string; label: string; url: string }>;
 }
 
 interface ThinkStep {
@@ -159,7 +161,7 @@ export const FOLLOW_UPS: string[] = ['要带什么材料', '在哪办', '几点�
 
 const STEP_TEXTS: ThinkStep[] = [
   { t: '理解问题 · 识别服务意图', done: false },
-  { t: '检索知识库与实时网页', done: false },
+  { t: '规划任务并调用社区工具', done: false },
   { t: '组织回答并标注来源', done: false },
 ];
 
@@ -256,13 +258,15 @@ Page({
       steps: [],
       msText: '',
       badge: '',
+      actions: [],
     };
     const aiMsg: ChatMsg = {
       ...buildAiBubble('', [], false, ''),
       pending: true,
       steps: freshSteps(),
       msText: '',
-      badge: '社区 AI',
+      badge: '社区 AI · Agent',
+      actions: [],
     };
     this.pendingId = aiMsg.id;
     this.setData({
@@ -273,10 +277,11 @@ Page({
     });
     this.scrollBottom();
 
-    // ① 云端优先：知识库 + 实时网页 + 大模型；本地库只在云端失败时兜底
-    const job = askQuestion({
+    const cached = store.get<UserLocation | null>(STORAGE_KEYS.USER_LOCATION, null);
+    const job = agentAsk({
       question: q,
       sessionId: this.data.sessionId || undefined,
+      location: cached ? { latitude: cached.latitude, longitude: cached.longitude } : undefined,
     }).catch(() => null);
 
     await this.playSteps(aiMsg.id, 220);
@@ -307,15 +312,16 @@ Page({
     }
     const riskLevel = (res as { _riskLevel?: string })._riskLevel;
     const webCount = Number((res as { _webCount?: number })._webCount || 0);
-    // 有网页/知识库来源时说明已经拿到有效资料，不再显示“没查到”的误导提示。
     const tip = res.degraded && !(res.sources && res.sources.length) ? toDegradedTip(riskLevel) : '';
+    const agent = res._agent;
     this.finish(
       aiMsg.id,
       res.answer || AI_FALLBACK_TEXT,
       res.sources ?? [],
       tip,
-      webCount > 0 ? '联网检索' : '社区 AI',
+      agent?.label ? `Agent · ${agent.label}` : webCount > 0 ? '联网检索' : '社区 AI',
       t0,
+      agent?.actions ?? [],
     );
   },
 
@@ -339,6 +345,7 @@ Page({
     degradedTip: string,
     badge: string,
     t0: number,
+    actions: Array<{ type: string; label: string; url: string }> = [],
   ): void {
     if (id !== this.pendingId) return;
     const msText = toMsText(Date.now() - t0);
@@ -353,12 +360,20 @@ Page({
             badge,
             pending: false,
             msText,
+            actions,
             steps: m.steps.map((s) => ({ ...s, done: true })),
           }
         : m,
     );
     this.setData({ msgs, busy: false });
     this.scrollBottom();
+  },
+
+  /** Agent 下一步操作 */
+  onAgentAction(e: WechatMiniprogram.TouchEvent): void {
+    const url = String((e.currentTarget.dataset as { url?: string }).url ?? '');
+    if (!url) return;
+    wx.navigateTo({ url, fail: () => wx.switchTab({ url: '/pages/index/index' }) });
   },
 
   scrollBottom(): void {
@@ -394,3 +409,6 @@ Page({
     toast('已清空');
   },
 });
+
+
+

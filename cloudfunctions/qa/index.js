@@ -11,6 +11,7 @@ const { searchWeb, toSourceLabels } = require('./websearch');
 const { searchKB, SUGGEST_QUESTIONS, FALLBACK_TEXT, hotlineLines } = require('./kb');
 const { overLimit, RULE } = require('./ratelimit');
 const { detectRisk } = require('./safety');
+const { runAgent } = require('./agent');
 
 const DISCLAIMER = 'AI 生成仅供参考';
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 会话 2 小时失效
@@ -223,6 +224,81 @@ async function ask(event) {
   return ok({ answerId, sessionId, answer, sources, degraded, _riskLevel: 'none', _aiReason: aiReason, _webCount: webResults.length });
 }
 
+/* ------------------------------- qa:agent ------------------------------- */
+async function agentAsk(event) {
+  const openid = getOpenId();
+  await requireUser(openid);
+  const question = String(event.question || '').trim();
+  if (!question) return fail(CODES.PARAM, '问题不能为空');
+  if (question.length > 300) return fail(CODES.PARAM, '问题不超过 300 字');
+  if (INJECTION_RE.test(question)) return fail(CODES.PARAM, '问题包含不合规内容，请换个说法');
+
+  const risk = detectRisk(question);
+  if (risk) return await ask(event);
+
+  if (overLimit(`qa:agent:${openid}`, RULE.QA_ASK.limit, RULE.QA_ASK.windowMs)) {
+    return fail(CODES.RATE, '提问太频繁，请稍后再试');
+  }
+
+  const sessionId = String(event.sessionId || '').trim() || newSessionId();
+  const session = await loadSession(openid, sessionId);
+  const history = session && Array.isArray(session.turns) ? session.turns.slice() : [];
+  const answerId = newAnswerId();
+  const agent = await runAgent({ question, openid, location: event.location });
+
+  let answer = agent.fallbackAnswer;
+  let degraded = true;
+  let aiReason = 'agent_fallback';
+  const ai = await chat(
+    [agent.messages[0], ...history.slice(-4).map((t) => ({ role: t.role === 'assistant' ? 'assistant' : 'user', content: String(t.content || '').slice(0, 300) })), agent.messages[1]],
+    { maxTokens: 520 },
+  );
+  if (!ai.degraded && ai.content) {
+    const contexts = agent.results.reduce((acc, r) => acc.concat(r.items || []), []);
+    const guard = outputGuard(ai.content, contexts);
+    if (guard.pass) {
+      answer = String(ai.content).slice(0, MAX_ANSWER_LEN);
+      degraded = false;
+      aiReason = 'agent_ok';
+    } else {
+      aiReason = 'agent_guard';
+    }
+  } else {
+    aiReason = ai.reason || 'agent_fallback';
+  }
+  if (degraded) answer = `${answer}\n\n${DISCLAIMER}`;
+
+  const now = isoNow();
+  const turns = trimTurns([
+    ...history,
+    { role: 'user', content: question.slice(0, 300), createdAt: now },
+    { role: 'assistant', content: answer.slice(0, 300), createdAt: now, answerId, sources: agent.sources, degraded },
+  ]);
+  const payload = {
+    _openid: openid,
+    sessionId,
+    turns,
+    turnCount: (session && session.turnCount ? session.turnCount : 0) + 1,
+    updatedAt: now,
+  };
+  if (session) {
+    await db.collection('qa_sessions').doc(session._id).update({ data: payload }).catch(() => ({ stats: { updated: 0 } }));
+  } else {
+    await db.collection('qa_sessions').add({ data: Object.assign({ createdAt: now }, payload) }).catch(() => ({}));
+  }
+
+  return ok({
+    answerId,
+    sessionId,
+    answer,
+    sources: agent.sources,
+    degraded,
+    _riskLevel: 'none',
+    _aiReason: aiReason,
+    _agent: { intent: agent.plan.intent, label: agent.plan.label, tools: agent.toolsUsed, actions: agent.actions },
+  });
+}
+
 /* ------------------------------ qa:history ------------------------------ */
 async function history(event) {
   const openid = getOpenId();
@@ -267,6 +343,7 @@ exports.main = handler(async (event = {}) => {
   const action = (event && event.action) || '';
   switch (action) {
     case 'ask': return await ask(event);
+    case 'agent': return await agentAsk(event);
     case 'history': return await history(event);
     case 'clear': return await clear(event);
     case 'feedback': return await feedback(event);
@@ -274,3 +351,4 @@ exports.main = handler(async (event = {}) => {
     default: return fail(CODES.PARAM, '未知的 action');
   }
 });
+

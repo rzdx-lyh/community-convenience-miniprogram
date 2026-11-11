@@ -5,6 +5,10 @@ export function createWorkOrder(params: WorkOrderCreateParams): Promise<WorkOrde
   return call<WorkOrderCreateResult>('workorder:create', params as unknown as Record<string, unknown>);
 }
 
+export function analyzeWorkOrderImage(params: WorkOrderAnalyzeImageParams): Promise<WorkOrderAnalyzeImageResult> {
+  return call<WorkOrderAnalyzeImageResult>('workorder:analyzeImage', params as unknown as Record<string, unknown>);
+}
+
 export function listWorkOrders(params: WorkOrderListParams = {}): Promise<WorkOrderListResult> {
   return call<WorkOrderListResult>('workorder:list', params as unknown as Record<string, unknown>);
 }
@@ -31,3 +35,4 @@ export function handleWorkOrder(params: WorkOrderHandleParams): Promise<WorkOrde
   if (params.note !== undefined) payload.note = params.note;
   return call<WorkOrderHandleResult>('workorder:handle', payload);
 }
+

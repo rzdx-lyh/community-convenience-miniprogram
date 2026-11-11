@@ -7,7 +7,7 @@
  */
 import { ENV, STORAGE_KEYS } from '../../../config/env';
 import { COMMUNITY_SPOTS, resolveSpot, spotToLocation, type CommunitySpot } from '../../../config/community';
-import { createWorkOrder } from '../../../services/workorder';
+import { analyzeWorkOrderImage, createWorkOrder } from '../../../services/workorder';
 import { store } from '../../../store/global';
 import { CATEGORY_LABELS } from '../../../utils/dict';
 import { track, trackPageView } from '../../../utils/logger';
@@ -114,6 +114,9 @@ Page({
     description: '',
     images: [] as string[],
     maxImages: ENV.MAX_IMAGES,
+    aiAnalyzing: false,
+    aiAnalysis: null as WorkOrderImageAnalysis | null,
+    aiReason: '',
     submitting: false,
     elderMode: false,
 
@@ -130,7 +133,15 @@ Page({
 
   onLoad(options: Record<string, string | undefined>) {
     trackPageView('pages/repair/create/index');
-    this.setData({ elderMode: store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false) });
+    const decode = (value?: string): string => {
+      const raw = String(value || '');
+      try { return decodeURIComponent(raw); } catch { return raw; }
+    };
+    this.setData({
+      elderMode: store.get<boolean>(STORAGE_KEYS.ELDER_MODE, false),
+      title: decode(options.title).slice(0, 30),
+      description: decode(options.description).slice(0, 200),
+    });
     this.applySpot(defaultRepairSpot());
     const preset = normalizeCategory(options.category);
     if (preset) this.setData({ category: preset });
@@ -223,6 +234,47 @@ Page({
     this.setData({ images });
   },
 
+  /** 上传首张现场照片并调用多模态云函数识别，失败不阻断人工填写 */
+  async onAnalyzeImage(): Promise<void> {
+    if (this.data.aiAnalyzing) return;
+    if (this.data.images.length === 0) {
+      toast('请先拍摄或选择现场照片');
+      return;
+    }
+    this.setData({ aiAnalyzing: true, aiReason: '' });
+    wx.showLoading({ title: 'AI 识图中…', mask: true });
+    try {
+      const ids = await this.uploadImages([this.data.images[0]]);
+      if (!ids[0]) {
+        this.setData({ aiReason: '图片上传失败，请检查网络后重试' });
+        return;
+      }
+      const res = await analyzeWorkOrderImage({ fileID: ids[0] });
+      if (res.analysis) {
+        this.setData({
+          category: res.analysis.category,
+          title: this.data.title || res.analysis.title,
+          description: this.data.description || res.analysis.description,
+          aiAnalysis: res.analysis,
+          aiReason: '',
+        });
+        toast('AI 已填充报修信息');
+      } else {
+        const tips: Record<string, string> = {
+          no_key: '未配置视觉模型，请手动填写报修信息',
+          timeout: '识图超时，请手动填写或重试',
+          network: '网络异常，请手动填写',
+        };
+        this.setData({ aiReason: tips[res.reason] || '暂时无法识图，请手动填写' });
+      }
+    } catch {
+      this.setData({ aiReason: 'AI 识图失败，请手动填写' });
+    } finally {
+      wx.hideLoading();
+      this.setData({ aiAnalyzing: false });
+    }
+  },
+
   /** 本地路径 → 云存储 fileID；失败返回空数组（不阻断提交） */
   async uploadImages(paths: string[]): Promise<string[]> {
     if (paths.length === 0) return [];
@@ -288,3 +340,7 @@ Page({
     }
   },
 });
+
+
+
+

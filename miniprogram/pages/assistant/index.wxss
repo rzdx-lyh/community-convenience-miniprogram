@@ -159,3 +159,26 @@
   font-weight: 700;
 }
 .care-mode .aiask .voice--planned { min-height: 88rpx; }
+
+/* Agent 工具产出的下一步操作 */
+.agent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 14rpx;
+}
+.agent-action {
+  min-height: 64rpx;
+  padding: 0 18rpx;
+  border-radius: 999rpx;
+  background: var(--brand);
+  color: #fff;
+  font-size: calc(20rpx * var(--care-scale, 1));
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+.care-mode .agent-action {
+  min-height: 76rpx;
+  font-size: var(--font-sub);
+}

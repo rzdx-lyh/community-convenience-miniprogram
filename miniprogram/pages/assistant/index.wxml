@@ -19,7 +19,7 @@
         <text>我是社区 AI 管家</text>
       </view>
       <view class="wel__d">
-        能查办事材料、指路找点位、解释健康指标。回答会标注来源；涉及医疗只做提示，不替代医生诊断。
+        我是 Agent 型社区管家：会先规划任务、调用知识库/地图/工单/电话簿工具，再给出可执行下一步。回答会标注来源，医疗与法律问题自动转安全提示。
       </view>
       <view class="sug">
         <view
@@ -66,6 +66,19 @@
           <!-- 降级 / 安全提示 -->
           <view wx:if="{{item.degradedTip}}" class="warn2">{{item.degradedTip}}</view>
 
+          <!-- Agent 下一步操作 -->
+          <view wx:if="{{item.actions.length > 0}}" class="agent-actions">
+            <view
+              wx:for="{{item.actions}}"
+              wx:for-item="a"
+              wx:key="url"
+              class="agent-action"
+              data-url="{{a.url}}"
+              bindtap="onAgentAction"
+              hover-class="hv"
+            >{{a.label}} ›</view>
+          </view>
+
           <!-- 追问 -->
           <view wx:if="{{!item.pending}}" class="sug">
             <view
@@ -103,3 +116,4 @@
     </view>
   </view>
 </view>
+

@@ -45,6 +45,7 @@ const { getOpenId, requireUser, requireStaff } = require('./auth');
 const { isoNow, paginate } = require('./time');
 const { checkText } = require('./security');
 const { chat, buildSummaryPrompt } = require('./ai');
+const { analyzeRepairImage } = require('./vision');
 const { notifyWorkOrderDone } = require('./subscribe');
 const { overLimit, RULE } = require('./ratelimit');
 
@@ -217,6 +218,28 @@ async function handle(event) {
   return ok({ workorder: updated });
 }
 
+/* ------------------------- workorder:analyzeImage ------------------------ */
+async function analyzeImage(event) {
+  const openid = getOpenId();
+  await requireUser(openid);
+  const fileID = String(event.fileID || '').trim();
+  if (!fileID) return fail(CODES.PARAM, '缺少图片 fileID');
+
+  let imageUrl = fileID;
+  if (fileID.indexOf('cloud://') === 0) {
+    try {
+      const temp = await wxCloud.getTempFileURL({ fileList: [fileID] });
+      const item = temp.fileList && temp.fileList[0];
+      imageUrl = (item && item.tempFileURL) || '';
+    } catch {
+      imageUrl = '';
+    }
+  }
+  if (!imageUrl) return fail(CODES.PARAM, '图片地址无效，请重新上传');
+  const result = await analyzeRepairImage(imageUrl);
+  return ok({ degraded: result.degraded, reason: result.reason, analysis: result.analysis });
+}
+
 /* ============================================================
  * ⚠ 临时自愈（定位线上 500，定位后删除）
  * 云数据库集合若未创建，首次调用就地补建，避免 add 直接失败。
@@ -245,6 +268,7 @@ exports.main = handler(async (event = {}) => {
     case 'detail': return await detail(event);
     case 'cancel': return await cancel(event);
     case 'handle': return await handle(event);
+    case 'analyzeImage': return await analyzeImage(event);
     // 兼容「调度字段被业务 action 覆盖」的写法（见 handle 内注释 ③）
     case 'assign':
     case 'process':
@@ -253,3 +277,4 @@ exports.main = handler(async (event = {}) => {
     default: return fail(CODES.PARAM, '未知的 action');
   }
 });
+

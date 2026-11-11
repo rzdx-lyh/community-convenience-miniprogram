@@ -77,6 +77,22 @@ declare interface WorkOrderCreateParams {
   images?: string[];
   location?: WorkOrder['location'];
 }
+declare interface WorkOrderAnalyzeImageParams {
+  fileID: string;
+}
+declare interface WorkOrderImageAnalysis {
+  category: WorkOrder['category'];
+  title: string;
+  description: string;
+  urgency: 'high' | 'medium' | 'low';
+  safetyTip: string;
+  confidence: number;
+}
+declare interface WorkOrderAnalyzeImageResult {
+  degraded: boolean;
+  reason: string;
+  analysis: WorkOrderImageAnalysis | null;
+}
 declare interface WorkOrderCreateResult {
   id: string;
   aiSummary: string;
@@ -189,6 +205,8 @@ declare interface QaAskParams {
   question: string;
   elderMode?: boolean;
   sessionId?: string;
+  /** 当前手选/实时位置，用于附近服务工具 */
+  location?: { latitude: number; longitude: number };
 }
 declare interface QaAskResult {
   answerId: string;
@@ -206,6 +224,13 @@ declare interface QaAskResult {
   _aiReason?: string;
   /** 本次回答使用的实时网页来源数量 */
   _webCount?: number;
+  /** Agent 规划、工具调用与下一步操作 */
+  _agent?: {
+    intent: string;
+    label: string;
+    tools: Array<{ name: string; status: string }>;
+    actions: Array<{ type: string; label: string; url: string }>;
+  };
 }
 declare interface QaHistoryParams {
   sessionId?: string;
@@ -236,3 +261,5 @@ declare interface QaSuggestParams {
 declare interface QaSuggestResult {
   questions: string[];
 }
+
+
