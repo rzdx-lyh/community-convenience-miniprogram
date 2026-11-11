@@ -63,32 +63,32 @@ const META: Record<string, TopicMeta> = {
 
 const POSTS: TopicPost[] = [
   {
-    id: 'p1', topic: '路况实况', who: '物业服务', unit: '官方账号', time: '5 小时前', color: '#1F5FD6', av: '物',
+    id: 'p1', topic: '路况实况', who: '物业服务', unit: '官方账号', time: '5 小时前', color: '#173A5E', av: '物',
     text: '2 号门今天开始道路检修，预计两天。早高峰建议走东门，电动车请绕行南门坡道，注意减速。',
     imgs: ['🚧', '🛣'], tag: '#道路施工', likes: 42, comments: 2, official: true, pin: true,
   },
   {
-    id: 'p6', topic: '路况实况', who: '2 栋赵哥', unit: '2 号楼 3 单元', time: '1 天前', color: '#0E7C6B', av: '赵',
+    id: 'p6', topic: '路况实况', who: '2 栋赵哥', unit: '2 号楼 3 单元', time: '1 天前', color: '#147D70', av: '赵',
     text: '西门口那条路昨晚已经修好了，现在走路不用绕，给物业点个赞，从反馈到修好只用了三天。',
     imgs: ['✅', '🛤', '🌇'], tag: '#路况反馈', likes: 55, comments: 1,
   },
   {
-    id: 'p3', topic: '邻里求助', who: '1 栋陈叔', unit: '1 号楼 1 单元', time: '1 天前', color: '#A86A05', av: '陈',
+    id: 'p3', topic: '邻里求助', who: '1 栋陈叔', unit: '1 号楼 1 单元', time: '1 天前', color: '#C46A2E', av: '陈',
     text: '家里换灯泡差个高一点的梯子，谁家有能借一下？下午就还，谢谢邻居们。',
     imgs: [], tag: '#邻里互助', likes: 12, comments: 2,
   },
   {
-    id: 'p7', topic: '闲置转让', who: '3 栋阿明', unit: '3 号楼 1 单元', time: '6 小时前', color: '#4B45B8', av: '明',
+    id: 'p7', topic: '闲置转让', who: '3 栋阿明', unit: '3 号楼 1 单元', time: '6 小时前', color: '#4A4E86', av: '明',
     text: '孩子长高了骑不了，儿童自行车 16 寸，刹车和轮胎都好，送打气筒。楼下自提。',
     imgs: ['🚲', '🛞'], tag: '#闲置转让', likes: 9, comments: 0,
   },
   {
-    id: 'p8', topic: '活动召集', who: '5 栋刘老师', unit: '5 号楼 2 单元', time: '1 天前', color: '#0E7C6B', av: '刘',
+    id: 'p8', topic: '活动召集', who: '5 栋刘老师', unit: '5 号楼 2 单元', time: '1 天前', color: '#147D70', av: '刘',
     text: '想在社区活动室办个周末读书会，第一次先聊聊各自的读书习惯，带一本最近在看的书就行，人不多也能聊。',
     imgs: ['📖'], tag: '#活动召集', likes: 18, comments: 1,
   },
   {
-    id: 'p9', topic: '养宠交流', who: '3 栋阿明', unit: '3 号楼 2 单元', time: '3 小时前', color: '#0E7C6B', av: '明',
+    id: 'p9', topic: '养宠交流', who: '3 栋阿明', unit: '3 号楼 2 单元', time: '3 小时前', color: '#147D70', av: '明',
     text: '东侧围墙那块空地光照好，物业说可以申请做共享小菜园，我打算去问一下流程，有想一起弄的邻居吗？',
     imgs: ['🌱'], tag: '#邻里共建', likes: 23, comments: 1,
   },

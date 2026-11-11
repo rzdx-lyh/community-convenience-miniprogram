@@ -56,14 +56,14 @@
   align-items: center;
   justify-content: center;
 }
-.fb-btn.is-dis { background: #DCE3EC; color: #9AA6B6; }
+.fb-btn.is-dis { background: #EEE8DD; color: #9AA6B6; }
 
 /* 预订弹层 */
 .sheet { max-height: 84vh; overflow-y: auto; }
 .sh-hd { font-size: calc(28rpx * var(--care-scale, 1)); font-weight: 800; text-align: center; }
 .sh-sub { margin-top: 8rpx; font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); text-align: center; }
-.olist { margin-top: 18rpx; border-top: 1px solid #F1F4F9; }
-.orow { display: flex; align-items: center; gap: 14rpx; padding: 16rpx 0; border-bottom: 1px solid #F6F8FB; font-size: calc(22rpx * var(--care-scale, 1)); }
+.olist { margin-top: 18rpx; border-top: 1px solid #EEE8DD; }
+.orow { display: flex; align-items: center; gap: 14rpx; padding: 16rpx 0; border-bottom: 1px solid #FBF7EF; font-size: calc(22rpx * var(--care-scale, 1)); }
 .on { flex: 1; min-width: 0; font-weight: 700; }
 .os { margin-left: 8rpx; font-size: calc(17rpx * var(--care-scale, 1)); font-weight: 400; color: var(--t3); }
 .oc { color: var(--t2); font-size: calc(20rpx * var(--care-scale, 1)); }
@@ -71,6 +71,6 @@
 .ototal { display: flex; justify-content: space-between; align-items: baseline; padding: 18rpx 0 4rpx; font-size: calc(21rpx * var(--care-scale, 1)); color: var(--t2); }
 .ot { font-size: calc(30rpx * var(--care-scale, 1)); font-weight: 800; color: var(--red); font-family: ui-monospace, Menlo, monospace; }
 .lbl .em { margin-left: auto; font-size: calc(18rpx * var(--care-scale, 1)); font-weight: 400; color: var(--t3); font-style: normal; }
-.pay-note { margin-top: 18rpx; padding: 14rpx 18rpx; background: var(--gold-l); border-radius: 14rpx; font-size: calc(18rpx * var(--care-scale, 1)); color: #8A5A00; line-height: 1.6; }
+.pay-note { margin-top: 18rpx; padding: 14rpx 18rpx; background: var(--gold-l); border-radius: 14rpx; font-size: calc(18rpx * var(--care-scale, 1)); color: #9A531F; line-height: 1.6; }
 .sh-btns { display: flex; gap: 16rpx; margin-top: 22rpx; }
 .sh-btns .btn { flex: 1; width: auto; height: 80rpx; font-size: calc(26rpx * var(--care-scale, 1)); }

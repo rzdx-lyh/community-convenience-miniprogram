@@ -4,7 +4,6 @@
   display: flex;
   flex-direction: column;
   background-color: var(--bg);
-  background-image: radial-gradient(circle at 8% 0%, rgba(196, 106, 46, .10), transparent 30%), radial-gradient(circle at 100% 10%, rgba(36, 92, 115, .12), transparent 34%);
 }
 
 .au-hero {
@@ -80,7 +79,7 @@
 .staff-input { width: 100%; min-height: 54rpx; font-size: 25rpx; color: var(--text-1); box-sizing: border-box; }
 
 .ckb { margin-top: 22rpx; align-items: flex-start; }
-.ckb .box { width: 32rpx; height: 32rpx; border-radius: 9rpx; border: 3rpx solid #CFC6B8; background: #fff; flex: none; margin-top: 2rpx; display: flex; align-items: center; justify-content: center; }
+.ckb .box { width: 32rpx; height: 32rpx; border-radius: 9rpx; border: 3rpx solid #CFC6B8; background: var(--card); flex: none; margin-top: 2rpx; display: flex; align-items: center; justify-content: center; }
 .ckb.on .box { background: var(--accent-warm); border-color: var(--accent-warm); }
 .ckb .tick { color: #fff; font-size: 20rpx; font-weight: 900; line-height: 1; }
 .ckb__t { flex: 1; min-width: 0; font-size: 20rpx; line-height: 1.55; color: var(--text-2); }

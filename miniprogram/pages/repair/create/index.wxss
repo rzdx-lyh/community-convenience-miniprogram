@@ -187,7 +187,7 @@
 .loc-card {
   border: 2rpx solid var(--line);
   border-radius: var(--radius-m);
-  background: #fff;
+  background: var(--card);
   overflow: hidden;
 }
 .loc-main {
@@ -238,7 +238,7 @@
   border: 2rpx solid var(--line);
   border-radius: var(--radius-m);
   overflow: hidden;
-  background: #fff;
+  background: var(--card);
 }
 .spot-map { width: 100%; height: 420rpx; display: block; }
 .spot-list { padding: 4rpx 20rpx; }
@@ -302,7 +302,7 @@
   border-radius: var(--radius-m);
   background: var(--brand-light);
   color: var(--brand);
-  border: 2rpx solid rgba(31, 95, 214, .24);
+  border: 2rpx solid rgba(23,58,94, .24);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -315,7 +315,7 @@
   margin-top: 16rpx;
   padding: 20rpx;
   border-radius: var(--radius-m);
-  background: #F7FAFF;
+  background: #FBF7EF;
   border-left: 6rpx solid var(--brand);
 }
 .ai-result__head {
@@ -359,7 +359,7 @@
 .care-mode .ai-img-btn { min-height: 96rpx; }
 
 /* ===== 报修页 · 暖纸社区视觉 ===== */
-.page { background-color: var(--bg); background-image: radial-gradient(circle at 8% 0%, rgba(196, 106, 46, .08), transparent 30%); }
+.page { background-color: var(--bg); }
 .block {
   margin: 20rpx 24rpx 0;
   padding: 26rpx;

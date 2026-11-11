@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "物业延伸",
-  "navigationBarBackgroundColor": "#F3F5F9",
+  "navigationBarBackgroundColor": "#F6F1E7",
   "navigationBarTextStyle": "black",
   "usingComponents": {
     "ai-bar": "../../../components/ai-bar/index"

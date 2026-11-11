@@ -35,7 +35,7 @@ export const HUB_SCENES: AiScene[] = [
     name: '办事指南',
     desc: '材料、流程、要跑几趟',
     icon: 'file',
-    color: '#1F5FD6',
+    color: '#173A5E',
     questions: ['办居住证要带什么？', '高龄补贴怎么申请？', '办完多久能拿到？'],
   },
   {
@@ -43,7 +43,7 @@ export const HUB_SCENES: AiScene[] = [
     name: '报修与进度',
     desc: '派单到哪了、多久上门',
     icon: 'wrench',
-    color: '#C9302C',
+    color: '#C34A36',
     questions: ['我的报修派单了吗？', '师傅大概几点到？', '修完不满意怎么办？'],
   },
   {
@@ -51,7 +51,7 @@ export const HUB_SCENES: AiScene[] = [
     name: '健康咨询',
     desc: '指标怎么看、疫苗与义诊',
     icon: 'stetho',
-    color: '#0E7C6B',
+    color: '#147D70',
     questions: ['血压 145/92 要紧吗？', '本周有义诊吗？', '疫苗怎么预约？'],
   },
   {
@@ -59,7 +59,7 @@ export const HUB_SCENES: AiScene[] = [
     name: '配餐与营养',
     desc: '今天吃什么、忌口能不能吃',
     icon: 'bowl',
-    color: '#0B6146',
+    color: '#0F625B',
     questions: ['控糖的一天怎么吃？', '尿酸高能吃豆腐吗？', '老人牙口不好怎么配？'],
   },
   {
@@ -67,7 +67,7 @@ export const HUB_SCENES: AiScene[] = [
     name: '费用与户号',
     desc: '水电气怎么算、怎么绑户号',
     icon: 'bulb',
-    color: '#A86A05',
+    color: '#C46A2E',
     questions: ['这个月水费为什么涨了？', '户号在哪查？', '欠费多久会停？'],
   },
   {
@@ -75,7 +75,7 @@ export const HUB_SCENES: AiScene[] = [
     name: '找地点',
     desc: '雨伞、充电宝、快递点在哪',
     icon: 'pin',
-    color: '#4B45B8',
+    color: '#4A4E86',
     questions: ['最近的共享雨伞在哪？', '快递柜在几号楼？', '充电宝哪里能还？'],
   },
   {
@@ -83,7 +83,7 @@ export const HUB_SCENES: AiScene[] = [
     name: '邻里互助',
     desc: '发帖、借东西、处理纠纷',
     icon: 'users',
-    color: '#0E8F9E',
+    color: '#147D70',
     questions: ['闲置怎么发比较快出手？', '楼上噪音怎么沟通？', '拼单怎么发起？'],
   },
   {
@@ -91,7 +91,7 @@ export const HUB_SCENES: AiScene[] = [
     name: '应急求助',
     desc: '停水漏水、急病、独居老人',
     icon: 'warn',
-    color: '#C9302C',
+    color: '#C34A36',
     questions: ['家里漏水先找谁？', '突然停水怎么办？', '独居老人有事怎么求助？'],
   },
 ];

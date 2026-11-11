@@ -8,8 +8,8 @@
 
 .nav--flat { border-bottom: 0; }
 
-.hall-search { background: #fff; padding: 0 24rpx 20rpx; }
-.sbox--flat { background: #F2F5FA; border: 1px solid var(--line); }
+.hall-search { background: var(--card); padding: 0 24rpx 20rpx; }
+.sbox--flat { background: #F4EFE6; border: 1px solid var(--line); }
 .sbox .s-ic { opacity: .55; }
 
 /* 原型用 HTML 标签选择器（b/p），换成类名后补排版 */
@@ -25,19 +25,19 @@
 .aigc .p { display: block; font-size: calc(18rpx * var(--care-scale, 1)); color: var(--t3); line-height: 1.5; }
 
 /* 场景图标底色（原型为内联 color，这里用色板类） */
-.tone-blue { background: #EAF1FE; }
-.tone-red { background: #FDECEB; }
-.tone-teal { background: #E6F5F2; }
+.tone-blue { background: #E8F0F2; }
+.tone-red { background: #FAE8E3; }
+.tone-teal { background: #E4F3EE; }
 .tone-green { background: #E8F6EF; }
-.tone-gold { background: #FDF3E1; }
-.tone-indigo { background: #EDECFB; }
+.tone-gold { background: #F8E8D8; }
+.tone-indigo { background: #EEEAF6; }
 .tone-cyan { background: #E4F5F8; }
 
 /* 宫格图标底色（按分类主题） */
-.th-blue .ic { background-color: #EAF1FE; }
-.th-teal .ic { background-color: #E6F5F2; }
-.th-gold .ic { background-color: #FDF3E1; }
-.th-indigo .ic { background-color: #EDECFB; }
+.th-blue .ic { background-color: #E8F0F2; }
+.th-teal .ic { background-color: #E4F3EE; }
+.th-gold .ic { background-color: #F8E8D8; }
+.th-indigo .ic { background-color: #EEEAF6; }
 
 /* 板块宫格内图标略小，四列才不挤 */
 .grp .gi .ic { width: 72rpx; height: 72rpx; }

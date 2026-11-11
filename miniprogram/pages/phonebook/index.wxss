@@ -1,10 +1,10 @@
 /* 电话簿补充样式 */
-.pgh--blue{--h1:#2E6BE0;--h2:#153F9B}
+.pgh--blue{--h1:#245C73;--h2:#102A44}
 .ph{display:flex;align-items:center;gap:22rpx;margin-top:22rpx;position:relative;z-index:2}
 .ph__t{font-size: calc(42rpx * var(--care-scale, 1));font-weight:800}
 .ph__s{font-size: calc(19rpx * var(--care-scale, 1));opacity:.86;margin-top:8rpx}
 .psearch{margin-top:26rpx;position:relative;z-index:2}
-.gph{color:#98A2B3}
+.gph{color:#8A949D}
 .ecard{margin:0 24rpx;border-radius:22rpx;padding:22rpx 24rpx;background:linear-gradient(135deg,#E4573D,#B92F1D);color:#fff;box-shadow:0 10rpx 28rpx rgba(185,47,29,.24)}
 .ecard__h{display:flex;align-items:center;gap:10rpx}
 .ecard__t{font-size: calc(25rpx * var(--care-scale, 1));font-weight:800}

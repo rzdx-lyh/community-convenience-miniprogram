@@ -40,9 +40,9 @@ const PEOPLE = [
 ];
 
 const SLOT_META: Record<Slot, { label: string; color: string; emoji: string }> = {
-  b: { label: '早餐', color: '#1F5FD6', emoji: '🌅' },
-  l: { label: '午餐', color: '#0E7C6B', emoji: '🍚' },
-  d: { label: '晚餐', color: '#A86A05', emoji: '🍲' },
+  b: { label: '早餐', color: '#173A5E', emoji: '🌅' },
+  l: { label: '午餐', color: '#147D70', emoji: '🍚' },
+  d: { label: '晚餐', color: '#C46A2E', emoji: '🍲' },
 };
 
 interface SlotVM {

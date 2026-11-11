@@ -76,7 +76,7 @@ export function buildSpotMarkers(spots: CommunitySpot[]): SpotMarker[] {
     anchor: { x: 0.5, y: 0.5 },
     callout: {
       content: spot.name,
-      color: '#14181F',
+      color: '#1C2B38',
       fontSize: 12,
       borderRadius: 8,
       padding: 6,

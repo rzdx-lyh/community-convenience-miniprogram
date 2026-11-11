@@ -23,7 +23,7 @@
   align-items: flex-start;
   gap: 18rpx;
   padding: 18rpx 0;
-  border-bottom: 1px solid #EFF1F4;
+  border-bottom: 1px solid #EEE8DD;
 }
 .feat:last-of-type {
   border-bottom: 0;
@@ -39,20 +39,20 @@
   flex: none;
 }
 .fi--blue {
-  background: #EAF1FE;
-  color: #1F5FD6;
+  background: #E8F0F2;
+  color: #173A5E;
 }
 .fi--teal {
-  background: #E6F5F2;
-  color: #0E7C6B;
+  background: #E4F3EE;
+  color: #147D70;
 }
 .fi--gold {
-  background: #FDF3E1;
-  color: #A86A05;
+  background: #F8E8D8;
+  color: #C46A2E;
 }
 .fi--indigo {
-  background: #EDECFB;
-  color: #4B45B8;
+  background: #EEEAF6;
+  color: #4A4E86;
 }
 .feat__b {
   flex: 1;

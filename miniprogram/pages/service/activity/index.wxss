@@ -126,7 +126,7 @@
   padding: 22rpx 24rpx;
   border-radius: var(--radius-m);
   background: var(--brand-light);
-  border: 2rpx solid #D6E4FF;
+  border: 2rpx solid #D8D0C3;
 }
 
 .act-signup--hover { opacity: .86; }

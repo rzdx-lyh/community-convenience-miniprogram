@@ -65,19 +65,19 @@
 .row .m-s { font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); display: block; margin-top: 4rpx; }
 
 /* 行内图标底色（原型内联 style，改为修饰类） */
-.k-blue { background: #EAF1FE; }
-.k-indigo { background: #EDEAFE; }
+.k-blue { background: #E8F0F2; }
+.k-indigo { background: #EEEAF6; }
 .k-teal { background: #E8F6EF; }
-.k-gold { background: #FDF3E1; }
-.k-gray { background: #F1F4F9; }
+.k-gold { background: #F8E8D8; }
+.k-gray { background: #EEE8DD; }
 
-.v-teal { color: #0B6146; font-size: calc(19rpx * var(--care-scale, 1)); }
+.v-teal { color: #0F625B; font-size: calc(19rpx * var(--care-scale, 1)); }
 
 /* 宫格图标底色 */
-.th-blue .ic { background-color: #EAF1FE; }
-.th-teal .ic { background-color: #E6F5F2; }
-.th-gold .ic { background-color: #FDF3E1; }
-.th-indigo .ic { background-color: #EDECFB; }
+.th-blue .ic { background-color: #E8F0F2; }
+.th-teal .ic { background-color: #E4F3EE; }
+.th-gold .ic { background-color: #F8E8D8; }
+.th-indigo .ic { background-color: #EEEAF6; }
 
 .sec--last { margin-bottom: 16rpx; padding-bottom: 24rpx; }
 
@@ -138,8 +138,8 @@
   font-size: calc(17rpx * var(--care-scale, 1));
   font-weight: 700;
 }
-.pstatus--ok { color: #0B6146; background: #E6F5F2; }
-.pstatus--busy { color: #8A5700; background: #FDF3E1; }
+.pstatus--ok { color: #0F625B; background: #E4F3EE; }
+.pstatus--busy { color: #9A531F; background: #F8E8D8; }
 .pstatus--off { color: #7A8596; background: #EEF1F5; }
 
 .care-mode .care-entry {

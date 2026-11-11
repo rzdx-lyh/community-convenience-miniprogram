@@ -65,62 +65,62 @@ function place(input: Omit<CommunityPlace, 'bg'>): CommunityPlace {
 export const COMMUNITY_PLACES: CommunityPlace[] = [
   place({
     id: 'p1', mid: 1, name: '社区物业服务中心', desc: '1 号楼 1 层 · 报修/缴费/门禁',
-    cat: 'svc', icon: 'building', color: '#1F5FD6', latitude: 23.12916, longitude: 113.26386,
+    cat: 'svc', icon: 'building', color: '#173A5E', latitude: 23.12916, longitude: 113.26386,
     open: '8:30-18:00', status: 'open',
   }),
   place({
     id: 'p2', mid: 2, name: '社区卫生服务站', desc: '西门旁 · 全科/慢病/疫苗',
-    cat: 'svc', icon: 'stetho', color: '#1F5FD6', latitude: 23.12841, longitude: 113.26472,
+    cat: 'svc', icon: 'stetho', color: '#173A5E', latitude: 23.12841, longitude: 113.26472,
     open: '8:00-21:00', status: 'open',
   }),
   place({
     id: 'p3', mid: 3, name: '社区活动室', desc: '2 号楼 2 层 · 图书角/四点半课堂',
-    cat: 'svc', icon: 'users', color: '#1F5FD6', latitude: 23.12888, longitude: 113.2632,
+    cat: 'svc', icon: 'users', color: '#173A5E', latitude: 23.12888, longitude: 113.2632,
     open: '9:00-21:00', status: 'open',
   }),
   place({
     id: 'p4', mid: 4, name: '共享雨伞 · 1 号楼大厅', desc: '可借 6 把 · 24 小时可还',
-    cat: 'tool', icon: 'umbrella', color: '#0E7C6B', latitude: 23.12933, longitude: 113.26452,
+    cat: 'tool', icon: 'umbrella', color: '#147D70', latitude: 23.12933, longitude: 113.26452,
     open: '24 小时', status: 'busy',
   }),
   place({
     id: 'p5', mid: 5, name: '共享充电宝 · 南门岗亭', desc: '可借 12 个 · 通借通还',
-    cat: 'tool', icon: 'battery', color: '#0E7C6B', latitude: 23.12872, longitude: 113.26362,
+    cat: 'tool', icon: 'battery', color: '#147D70', latitude: 23.12872, longitude: 113.26362,
     open: '24 小时', status: 'open',
   }),
   place({
     id: 'p6', mid: 6, name: '快递柜 · 1 号楼架空层', desc: '丰巢柜 · 大件请到驿站',
-    cat: 'tool', icon: 'package', color: '#0E7C6B', latitude: 23.1291, longitude: 113.2643,
+    cat: 'tool', icon: 'package', color: '#147D70', latitude: 23.1291, longitude: 113.2643,
     open: '24 小时', status: 'open',
   }),
   place({
     id: 'p7', mid: 7, name: '生鲜自提 · 1 号楼驿站', desc: '次日自提点 · 生鲜冷链',
-    cat: 'tool', icon: 'basket', color: '#0E7C6B', latitude: 23.12895, longitude: 113.26505,
+    cat: 'tool', icon: 'basket', color: '#147D70', latitude: 23.12895, longitude: 113.26505,
     open: '6:00-21:00', status: 'busy',
   }),
   place({
     id: 'p8', mid: 8, name: '垃圾分类点 · 2 号楼东侧', desc: '四分类投放 · 误时投放至南门',
-    cat: 'life', icon: 'sprout', color: '#A86A05', latitude: 23.1286, longitude: 113.2642,
+    cat: 'life', icon: 'sprout', color: '#C46A2E', latitude: 23.1286, longitude: 113.2642,
     open: '6:00-22:00', status: 'open',
   }),
   place({
     id: 'p9', mid: 9, name: '老年助餐点 · 社区食堂', desc: '午餐 11:00 / 晚餐 17:00 配送',
-    cat: 'life', icon: 'bowl', color: '#A86A05', latitude: 23.1295, longitude: 113.2641,
+    cat: 'life', icon: 'bowl', color: '#C46A2E', latitude: 23.1295, longitude: 113.2641,
     open: '11:00-18:30', status: 'open',
   }),
   place({
     id: 'p10', mid: 10, name: 'AED · 物业服务中心', desc: '自动体外除颤器 · 1 号楼服务台',
-    cat: 'emergency', icon: 'heart', color: '#C9302C', latitude: 23.12918, longitude: 113.2639,
+    cat: 'emergency', icon: 'heart', color: '#C34A36', latitude: 23.12918, longitude: 113.2639,
     open: '24 小时', status: 'open',
   }),
   place({
     id: 'p11', mid: 11, name: '微型消防站 · 南门', desc: '灭火器 / 消防水带 / 应急工具',
-    cat: 'emergency', icon: 'flame', color: '#C9302C', latitude: 23.1287, longitude: 113.2636,
+    cat: 'emergency', icon: 'flame', color: '#C34A36', latitude: 23.1287, longitude: 113.2636,
     open: '24 小时', status: 'open',
   }),
   place({
     id: 'p12', mid: 12, name: '应急避难场所 · 社区广场', desc: '紧急集合点 · 听从现场引导',
-    cat: 'emergency', icon: 'warn', color: '#C9302C', latitude: 23.12878, longitude: 113.26448,
+    cat: 'emergency', icon: 'warn', color: '#C34A36', latitude: 23.12878, longitude: 113.26448,
     open: '24 小时', status: 'open',
   }),
 ];

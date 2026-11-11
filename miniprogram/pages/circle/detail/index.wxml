@@ -1,6 +1,6 @@
 <!--
   社区圈子 · 动态详情（CR-028）
-  对照 docs/03-preview/demo.html pgPost（1861-1912）实现。
+  按社区圈子详情页的既有设计语义实现。
   ⚠ 原型用 <br> 换行的地方已拆成独立 <view>，WXML 不支持 <br>。
 -->
 <view class="page page--fbar {{careMode ? 'care-mode' : ''}}">
@@ -100,13 +100,13 @@
             <text wx:if="{{item.replyTo}}" class="rt2">@{{item.replyTo}} </text>
             <text>{{item.text}}</text>
           </view>
-          <view style="font-size:calc(17rpx * var(--care-scale, 1));color:#98A2B3;font-style:normal">{{item.meta}}</view>
+          <view style="font-size:calc(17rpx * var(--care-scale, 1));color:#8A949D;font-style:normal">{{item.meta}}</view>
         </view>
       </view>
     </block>
-    <view wx:else style="font-size:calc(21rpx * var(--care-scale, 1));color:#98A2B3;padding:20rpx 0">还没有评论，来说第一句</view>
+    <view wx:else style="font-size:calc(21rpx * var(--care-scale, 1));color:#8A949D;padding:20rpx 0">还没有评论，来说第一句</view>
 
-    <view style="text-align:center;font-size:calc(19rpx * var(--care-scale, 1));color:#98A2B3;padding:20rpx 0 4rpx">— 点任意评论可 @ 对方回复 —</view>
+    <view style="text-align:center;font-size:calc(19rpx * var(--care-scale, 1));color:#8A949D;padding:20rpx 0 4rpx">— 点任意评论可 @ 对方回复 —</view>
   </view>
 
   <!-- ===== 相关动态 ===== -->
@@ -125,7 +125,7 @@
       <view class="n">{{item.avatar}}</view>
       <view>
         <view style="font-weight:700;font-size:calc(23rpx * var(--care-scale, 1));line-height:1.4">{{item.text}}</view>
-        <view style="font-size:calc(19rpx * var(--care-scale, 1));color:#98A2B3;margin-top:4rpx">{{item.who}} · {{item.topic}} · 赞 {{item.likes}}</view>
+        <view style="font-size:calc(19rpx * var(--care-scale, 1));color:#8A949D;margin-top:4rpx">{{item.who}} · {{item.topic}} · 赞 {{item.likes}}</view>
       </view>
     </view>
   </view>

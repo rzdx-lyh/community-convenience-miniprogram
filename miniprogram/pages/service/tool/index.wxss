@@ -1,16 +1,16 @@
 /* 共享设备 · 页面补充样式（原型类之外只补这些） */
-.pgh--teal { --h1: #12A08A; --h2: #0A6153; }
+.pgh--teal { --h1: #147D70; --h2: #0A6153; }
 .pgh-num .unit { margin-left: 6rpx; font-size: calc(24rpx * var(--care-scale, 1)); font-weight: 600; opacity: .8; }
-.tint-teal { background: #E6F5F2; color: #0E7C6B; }
-.tint-gold { background: #FDF3E1; color: #A86A05; }
-.tint-blue { background: #EAF1FE; color: #1F5FD6; }
-.tint-indigo { background: #EDECFB; color: #4B45B8; }
+.tint-teal { background: #E4F3EE; color: #147D70; }
+.tint-gold { background: #F8E8D8; color: #C46A2E; }
+.tint-blue { background: #E8F0F2; color: #173A5E; }
+.tint-indigo { background: #EEEAF6; color: #4A4E86; }
 .hover-dim { opacity: .86; }
 
 /* 借用状态卡 */
 .dev {
   margin: 0 24rpx 20rpx;
-  background: #fff;
+  background: var(--card);
   border-radius: 24rpx;
   box-shadow: var(--sh);
   padding: 34rpx 24rpx 28rpx;
@@ -24,9 +24,9 @@
   height: 220rpx;
   border-radius: 50%;
   position: relative;
-  background: conic-gradient(#12A08A 0 100%);
+  background: conic-gradient(#147D70 0 100%);
 }
-.dev-ring.is-on { background: conic-gradient(#12A08A 0 62%, #EDF1F7 62% 100%); }
+.dev-ring.is-on { background: conic-gradient(#147D70 0 62%, #EEE8DD 62% 100%); }
 .dev-ring::after {
   content: '';
   position: absolute;
@@ -35,7 +35,7 @@
   bottom: 18rpx;
   left: 18rpx;
   border-radius: 50%;
-  background: #fff;
+  background: var(--card);
 }
 .rc {
   position: absolute;
@@ -65,7 +65,7 @@
 .dh-em { margin-left: auto; font-size: calc(18rpx * var(--care-scale, 1)); color: var(--t3); font-style: normal; }
 
 /* 借还记录 */
-.rec { display: flex; align-items: center; gap: 14rpx; padding: 16rpx 0; border-bottom: 1px solid #F1F4F9; }
+.rec { display: flex; align-items: center; gap: 14rpx; padding: 16rpx 0; border-bottom: 1px solid #EEE8DD; }
 .rec:last-child { border-bottom: 0; }
 .rec-l { flex: 1; min-width: 0; }
 .rec-n { display: flex; align-items: center; gap: 10rpx; font-size: calc(23rpx * var(--care-scale, 1)); font-weight: 700; }

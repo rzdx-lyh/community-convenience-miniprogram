@@ -1,7 +1,7 @@
 {
   "navigationStyle": "custom",
   "navigationBarTitleText": "智慧配餐",
-  "navigationBarBackgroundColor": "#1FA97A",
-  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#F6F1E7",
+  "navigationBarTextStyle": "black",
   "usingComponents": {}
 }

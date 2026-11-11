@@ -1,7 +1,7 @@
 /* 快递代取 · 页面补充样式（券/规则/弹层沿用原型类） */
-.pgh--teal { --h1: #12A08A; --h2: #0A6153; }
+.pgh--teal { --h1: #147D70; --h2: #0A6153; }
 .pgh-num .unit { margin-left: 6rpx; font-size: calc(24rpx * var(--care-scale, 1)); font-weight: 600; opacity: .8; }
-.tint-teal { background: #E6F5F2; color: #0E7C6B; }
+.tint-teal { background: #E4F3EE; color: #147D70; }
 .tk-tag { margin-left: auto; }
 .dh-b { font-size: calc(25rpx * var(--care-scale, 1)); font-weight: 800; }
 .dh-em { margin-left: auto; font-size: calc(18rpx * var(--care-scale, 1)); color: var(--t3); font-style: normal; }
@@ -13,7 +13,7 @@
   align-items: baseline;
   gap: 16rpx;
   padding: 10rpx 0;
-  border-bottom: 1px solid #F6F8FB;
+  border-bottom: 1px solid #FBF7EF;
   font-size: calc(21rpx * var(--care-scale, 1));
 }
 .rule-row:last-child { border-bottom: 0; }
@@ -26,7 +26,7 @@
 .st .st-e { font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); }
 .ord {
   margin: 0 24rpx 16rpx;
-  background: #fff;
+  background: var(--card);
   border-radius: 20rpx;
   box-shadow: var(--sh);
   padding: 22rpx 24rpx;

@@ -13,8 +13,8 @@
   width: 68rpx;
   height: 68rpx;
   border-radius: 18rpx;
-  background: #E6F5F2;
-  color: #0E7C6B;
+  background: #E4F3EE;
+  color: #147D70;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,7 +33,7 @@
 .slot-chip { justify-content: center; padding: 0 6rpx; font-size: calc(21rpx * var(--care-scale, 1)); }
 .slot-chip.off { opacity: 0.45; }
 
-.btn.is-dis { background: #B9C6DD; color: #fff; }
+.btn.is-dis { background: #CFC6B8; color: #fff; }
 
 .rcpt .rc-t { display: block; margin-top: 20rpx; font-size: calc(29rpx * var(--care-scale, 1)); font-weight: 800; }
 .rcpt .rc-p { display: block; margin-top: 10rpx; font-size: calc(20rpx * var(--care-scale, 1)); color: var(--t3); line-height: 1.6; }

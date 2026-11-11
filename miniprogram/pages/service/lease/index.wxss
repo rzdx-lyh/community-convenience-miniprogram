@@ -1,22 +1,22 @@
 /* 房屋租售 · 页面补充样式（房源卡沿用 .hcard/.hph/.hinfo 原型类） */
-.pgh--indigo { --h1: #5B54C9; --h2: #322C88; }
+.pgh--indigo { --h1: #4A4E86; --h2: #34385F; }
 .pgh-num .unit { margin-left: 6rpx; font-size: calc(24rpx * var(--care-scale, 1)); font-weight: 600; opacity: .8; }
 .hover-dim { opacity: .86; }
 
 .seg--filter { margin-bottom: 20rpx; }
 
 /* 房源封面渐变（原型为 4 组内联渐变，这里改成修饰类） */
-.hph--0 { background: linear-gradient(120deg, #C7D8F6, #8FB0E8); }
+.hph--0 { background: linear-gradient(120deg, #D8D0C3, #8A949D); }
 .hph--1 { background: linear-gradient(120deg, #CFE7E0, #8FC7BA); }
-.hph--2 { background: linear-gradient(120deg, #E8DCF6, #B9A0E3); }
+.hph--2 { background: linear-gradient(120deg, #EEEAF6, #8A82A8); }
 .hph--3 { background: linear-gradient(120deg, #F6E2C8, #E0B57F); }
 .hp-i { font-style: normal; font-size: calc(20rpx * var(--care-scale, 1)); font-weight: 600; opacity: .9; }
 
 /* 原型 .htags span 针对 HTML 标签，这里用 text 重写 */
 .htags .htag {
   font-size: calc(17rpx * var(--care-scale, 1));
-  background: #F1F5FD;
-  color: #4A5D78;
+  background: #F1EDE4;
+  color: #5B6874;
   padding: 4rpx 12rpx;
   border-radius: 8rpx;
   margin-right: 10rpx;
@@ -47,7 +47,7 @@
   width: 96rpx;
   height: 96rpx;
   border-radius: 24rpx;
-  background: linear-gradient(120deg, #E8DCF6, #B9A0E3);
+  background: linear-gradient(120deg, #EEEAF6, #8A82A8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,7 +61,7 @@
 .dt-detail {
   margin-top: 18rpx;
   padding: 18rpx 20rpx;
-  background: #F7F9FD;
+  background: #FBF7EF;
   border-radius: 16rpx;
   font-size: calc(21rpx * var(--care-scale, 1));
   color: var(--t2);

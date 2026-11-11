@@ -1,5 +1,5 @@
 /* 智慧配餐（CR-028）· 补充投影色与 text 节点排版 */
-.pgh--green { --h1: #1FA97A; --h2: #0B6146; }
+.pgh--green { --h1: #147D70; --h2: #0F625B; }
 .pgh-km { flex: 1; min-width: 0; }
 .pgh-svc { font-size: calc(34rpx * var(--care-scale, 1)); font-weight: 800; line-height: 1.28; }
 .pgh-main { flex: none; }
@@ -21,7 +21,7 @@
 /* 营养达成：原型 mring 依赖内联 CSS 变量，改为数值 + 线性条 */
 .nut { display: flex; align-items: center; gap: 22rpx; }
 .nut-l { width: 150rpx; flex: none; text-align: center; }
-.nut-p { display: block; font-size: calc(42rpx * var(--care-scale, 1)); font-weight: 800; color: #1FA97A; letter-spacing: -1rpx; }
+.nut-p { display: block; font-size: calc(42rpx * var(--care-scale, 1)); font-weight: 800; color: #147D70; letter-spacing: -1rpx; }
 .nut-s { display: block; font-size: calc(17rpx * var(--care-scale, 1)); color: var(--t3); margin-top: 2rpx; }
 .nut-tr { height: 8rpx; margin-top: 10rpx; }
 .nbl .nbr-k { font-style: normal; width: 52rpx; flex: none; color: var(--t3); font-size: calc(19rpx * var(--care-scale, 1)); }
@@ -44,7 +44,7 @@
   font-size: calc(21rpx * var(--care-scale, 1));
   color: var(--t2);
 }
-.dish .dac view + view { border-left: 1px solid #F2F5FA; }
+.dish .dac view + view { border-left: 1px solid #F4EFE6; }
 .dish .dac view.on { color: var(--gold); font-weight: 800; }
 .meal-note {
   margin: 0 28rpx 6rpx;
@@ -79,14 +79,14 @@
   padding: 14rpx 18rpx;
   border-radius: 12rpx;
   background: var(--gold-l);
-  color: #8A5A00;
+  color: #9A531F;
   font-size: calc(18rpx * var(--care-scale, 1));
 }
 .sht-btn {
   margin-top: 22rpx;
   height: 80rpx;
   border-radius: 18rpx;
-  background: #F2F5FA;
+  background: #F4EFE6;
   color: var(--t2);
   font-size: calc(25rpx * var(--care-scale, 1));
   display: flex;
@@ -101,7 +101,7 @@
   flex: 1;
   height: 80rpx;
   border-radius: 18rpx;
-  background: #F2F5FA;
+  background: #F4EFE6;
   color: var(--t2);
   font-size: calc(25rpx * var(--care-scale, 1));
   display: flex;

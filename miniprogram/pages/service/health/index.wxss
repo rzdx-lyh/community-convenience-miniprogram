@@ -16,8 +16,8 @@
 .kv{display:flex;gap:14rpx;padding:8rpx 0;font-size: calc(21rpx * var(--care-scale, 1));line-height:1.55}
 .kv__k{width:68rpx;flex:none;color:var(--t3)}
 .kv__v{flex:1;color:var(--t2)}
-.hint{display:flex;align-items:flex-start;gap:8rpx;margin-top:8rpx;padding:12rpx 14rpx;border-radius:12rpx;background:var(--gold-l);font-size: calc(18rpx * var(--care-scale, 1));color:#8A5A00;line-height:1.55}
-.hint .ic{flex:none;color:#A86A05}
+.hint{display:flex;align-items:flex-start;gap:8rpx;margin-top:8rpx;padding:12rpx 14rpx;border-radius:12rpx;background:var(--gold-l);font-size: calc(18rpx * var(--care-scale, 1));color:#9A531F;line-height:1.55}
+.hint .ic{flex:none;color:#C46A2E}
 .acts{margin-top:18rpx}
 .acts .btn3{width:100%;height:80rpx}
 .step{display:flex;align-items:flex-start;gap:14rpx;padding:10rpx 0}

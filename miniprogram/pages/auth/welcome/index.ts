@@ -4,6 +4,8 @@
  * 首次进入的品牌介绍：能力点 → 开始使用 → 登录页。
  * 不做真实鉴权，所有入口都允许跳过先逛。
  */
+import { APP_VERSION } from '../../../config/env';
+
 const info = wx.getWindowInfo();
 
 export {};
@@ -11,6 +13,7 @@ export {};
 Page({
   data: {
     statusBarHeight: info.statusBarHeight,
+    appVersion: APP_VERSION,
     feats: [
       { i: 'wrench', c: 'blue', n: '报修与紧急求助', d: '水电门窗、公共设施，110/119/120 一键直达' },
       { i: 'calendar', c: 'teal', n: '预约与办事指南', d: '门诊取号、疫苗登记、政务材料一次带齐' },

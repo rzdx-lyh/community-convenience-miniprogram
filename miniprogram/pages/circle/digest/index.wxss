@@ -4,7 +4,7 @@
   padding: 26rpx 24rpx;
   border-radius: 22rpx;
   color: #fff;
-  background: linear-gradient(118deg, #1F5FD6, #3C7BEA);
+  background: linear-gradient(118deg, #173A5E, #2E6B78);
 }
 .hero__t { display: flex; align-items: center; gap: 10rpx; font-size: calc(28rpx * var(--care-scale, 1)); font-weight: 800; }
 .hero__s { margin-top: 10rpx; font-size: calc(19rpx * var(--care-scale, 1)); line-height: 1.55; opacity: .9; }
@@ -15,7 +15,7 @@
 .oi__b { flex: 1; min-width: 0; }
 .oi__t { display: flex; align-items: center; gap: 10rpx; font-size: calc(23rpx * var(--care-scale, 1)); font-weight: 800; line-height: 1.45; }
 .oi__d { display: block; margin-top: 6rpx; font-size: calc(20rpx * var(--care-scale, 1)); color: var(--t2); line-height: 1.5; }
-.oi__s { display: block; margin-top: 2rpx; font-size: calc(18rpx * var(--care-scale, 1)); color: #B0BAC8; line-height: 1.5; }
-.n--light { background: #EEF3FB; color: #1F5FD6; font-size: calc(26rpx * var(--care-scale, 1)); font-weight: 400; }
-.ar { flex: none; align-self: center; font-size: calc(28rpx * var(--care-scale, 1)); color: #98A2B3; }
+.oi__s { display: block; margin-top: 2rpx; font-size: calc(18rpx * var(--care-scale, 1)); color: #A3ADBB; line-height: 1.5; }
+.n--light { background: #E8F0F2; color: #173A5E; font-size: calc(26rpx * var(--care-scale, 1)); font-weight: 400; }
+.ar { flex: none; align-self: center; font-size: calc(28rpx * var(--care-scale, 1)); color: #8A949D; }
 .note { margin: 20rpx 24rpx 14rpx; font-size: calc(19rpx * var(--care-scale, 1)); color: var(--t3); line-height: 1.65; }

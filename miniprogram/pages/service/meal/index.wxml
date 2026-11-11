@@ -108,22 +108,22 @@
         <view class="nut-l">
           <text class="nut-p">{{percent}}%</text>
           <text class="nut-s">热量达成</text>
-          <view class="bar nut-tr"><view class="bar-in" style="width:{{kcalBar}};background:#1FA97A" /></view>
+          <view class="bar nut-tr"><view class="bar-in" style="width:{{kcalBar}};background:#147D70" /></view>
         </view>
         <view class="nbl">
           <view class="nbr">
             <text class="nbr-k">蛋白</text>
-            <view class="bar"><view class="bar-in" style="width:{{barP}};background:#1F5FD6" /></view>
+            <view class="bar"><view class="bar-in" style="width:{{barP}};background:#173A5E" /></view>
             <text class="nbr-v">{{sum.p}} / {{targets.p}} g</text>
           </view>
           <view class="nbr">
             <text class="nbr-k">碳水</text>
-            <view class="bar"><view class="bar-in" style="width:{{barC}};background:#F2A93B" /></view>
+            <view class="bar"><view class="bar-in" style="width:{{barC}};background:#C46A2E" /></view>
             <text class="nbr-v">{{sum.c}} / {{targets.c}} g</text>
           </view>
           <view class="nbr">
             <text class="nbr-k">脂肪</text>
-            <view class="bar"><view class="bar-in" style="width:{{barF}};background:#C9302C" /></view>
+            <view class="bar"><view class="bar-in" style="width:{{barF}};background:#C34A36" /></view>
             <text class="nbr-v">{{sum.f}} / {{targets.f}} g</text>
           </view>
         </view>

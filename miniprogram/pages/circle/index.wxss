@@ -13,15 +13,15 @@
   width: 68rpx;
   height: 68rpx;
   border-radius: 18rpx;
-  background: #DCE8FA;
+  background: #D8D0C3;
   display: flex;
   align-items: center;
   justify-content: center;
   flex: none;
 }
 .cbar .cb-b { flex: 1; min-width: 0; }
-.cbar .cb-b .t { display: block; font-size: calc(25rpx * var(--care-scale, 1)); font-weight: 800; color: #16407F; }
-.cbar .cb-b .s { display: block; font-size: calc(19rpx * var(--care-scale, 1)); color: #5A7096; margin-top: 4rpx; }
+.cbar .cb-b .t { display: block; font-size: calc(25rpx * var(--care-scale, 1)); font-weight: 800; color: #173A5E; }
+.cbar .cb-b .s { display: block; font-size: calc(19rpx * var(--care-scale, 1)); color: #5B6874; margin-top: 4rpx; }
 
 /* AI 摘要（原型 b / i / ul / li 换成 view + 类名） */
 .aidig .d-top { display: flex; align-items: center; gap: 8rpx; font-size: calc(25rpx * var(--care-scale, 1)); font-weight: 800; position: relative; }
@@ -57,14 +57,14 @@
 
 /* 帖子动作条（原型 .p-act div） */
 .p-act .a { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8rpx; font-size: calc(22rpx * var(--care-scale, 1)); color: var(--t2); padding: 6rpx 0; border-radius: 12rpx; }
-.p-act .a.on { color: #C9302C; font-weight: 700; }
+.p-act .a.on { color: #C34A36; font-weight: 700; }
 
 /* 帖子扩展信息行（价格 / 时间 / 状态） */
 .p-x {
   margin-top: 16rpx;
   font-size: calc(20rpx * var(--care-scale, 1));
-  color: #4A5D78;
-  background: #F4F7FC;
+  color: #5B6874;
+  background: #FBF7EF;
   border-radius: 12rpx;
   padding: 10rpx 16rpx;
   line-height: 1.5;

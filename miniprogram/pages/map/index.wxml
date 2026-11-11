@@ -46,10 +46,10 @@
       ></map>
 
       <view class="maplegend">
-        <view class="lg"><view class="lgd" style="background:#1F5FD6"></view><text>办事服务</text></view>
-        <view class="lg"><view class="lgd" style="background:#0E7C6B"></view><text>便民设备</text></view>
-        <view class="lg"><view class="lgd" style="background:#A86A05"></view><text>生活配套</text></view>
-        <view class="lg"><view class="lgd" style="background:#C9302C"></view><text>应急设施</text></view>
+        <view class="lg"><view class="lgd" style="background:#173A5E"></view><text>办事服务</text></view>
+        <view class="lg"><view class="lgd" style="background:#147D70"></view><text>便民设备</text></view>
+        <view class="lg"><view class="lgd" style="background:#C46A2E"></view><text>生活配套</text></view>
+        <view class="lg"><view class="lgd" style="background:#C34A36"></view><text>应急设施</text></view>
       </view>
 
       <view class="map-actions">

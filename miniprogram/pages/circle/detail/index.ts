@@ -1,7 +1,7 @@
 /**
  * 社区圈子 · 动态详情（CR-028）
  *
- * 对照设计稿 docs/03-preview/demo.html 的 pgPost（第 1861-1912 行）1:1 实现。
+ * 按社区圈子详情页的既有设计语义重建。
  * 设计稿里这一页是帖子详情 + 评论 + 相关动态 + 吸底评论输入条。
  *
  * 数据：本地演示数据（与原型 POSTS 同口径）。接服务层时把 POST / COMMENTS
@@ -53,11 +53,11 @@ const POST: PostDetail = {
   id: 'p1',
   who: '7 栋小李',
   avatar: '李',
-  avatarColor: '#0E7C6B',
+  avatarColor: '#147D70',
   unit: '7 号楼',
   time: '12 分钟前',
   text: '楼下 3 单元门口的充电桩今天下午突然没电了，有两辆电动车还插着。已经跟物业报修了，师傅说明天上午来。提醒大家先别去充，免得白等。',
-  images: ['#EEF3FB', '#DCE8FA'],
+  images: ['#E8F0F2', '#D8D0C3'],
   topic: '路况实况',
   type: 'road',
   typeLabel: '路况',
@@ -75,14 +75,14 @@ const COMMENTS: PostComment[] = [
     who: '物业服务',
     avatar: '物',
     official: true,
-    color: '#1F5FD6',
+    color: '#173A5E',
     text: '已收到，师傅明天 9:00 前到场处理，恢复后会在这条下面回复。',
     meta: '8 分钟前',
   },
   {
     who: '3 栋阿明',
     avatar: '阿',
-    color: '#7C8BA1',
+    color: '#8A949D',
     text: '谢谢提醒，我刚准备下楼推车过去，幸亏看到这条。',
     meta: '6 分钟前',
     replyTo: '7 栋小李',
@@ -90,7 +90,7 @@ const COMMENTS: PostComment[] = [
   {
     who: '5 栋王阿姨',
     avatar: '王',
-    color: '#7C8BA1',
+    color: '#8A949D',
     text: '另一侧 4 单元的桩还能用吗？老人腿脚不方便，跑远一趟很费劲。',
     meta: '3 分钟前',
   },
@@ -191,7 +191,7 @@ Page({
     const next = (this.data.comments as PostComment[]).concat({
       who: '我',
       avatar: '我',
-      color: '#1F5FD6',
+      color: '#173A5E',
       text,
       meta: '刚刚',
       replyTo: replyTo || undefined,

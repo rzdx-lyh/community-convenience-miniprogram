@@ -16,8 +16,8 @@
   gap: var(--space-1);
   padding: 0 var(--space-3);
   min-height: calc(80rpx * var(--care-scale, 1));
-  background: linear-gradient(120deg, var(--brand-light) 0%, #F3F0FE 100%);
-  border: 2rpx solid rgba(31, 95, 214, 0.16);
+  background: linear-gradient(120deg, var(--brand-light) 0%, #EEEAF6 100%);
+  border: 2rpx solid rgba(23,58,94, 0.16);
   border-radius: var(--radius-m);
 }
 

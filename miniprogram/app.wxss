@@ -1,12 +1,12 @@
-/* 矢量图标系统（CR-025 · 生成物，见 scripts/gen-icons.mjs）
-   布局类体系（CR-028 · 生成物，见 scripts/gen-layout-wxss.mjs）
+/* 图标与通用布局样式（随最终工程固定）
+   设计源已归档，当前产物直接在最终工程维护
    必须在最顶部：@import 只允许出现在文件开头 */
 @import "./styles/icons.wxss";
 @import "./styles/layout.wxss";
 
 /* ============================================================
  * app.wxss · 全局样式与 Design Token
- * 来源：设计原型（政务蓝版，与 docs/03-preview/demo.html 取值一致）
+ * 来源：暖纸社区视觉规范
  * 硬规则：组件/页面样式一律 var(--token)，禁止硬编码色值与字号。
  *
  * ⚠ 从「清新绿 v1.1」升级而来：只改本文件的 token 即可整体换肤，
@@ -15,7 +15,7 @@
 
 /* ===== Design Token v2.0（暖纸社区 · 深青蓝 / 陶土橙） ===== */
 page {
-  /* 品牌色（政务蓝：主色 / 亮色 / 按下色 / 浅底 / 渐变） */
+  /* 品牌色（深青蓝：主色 / 亮色 / 按下色 / 浅底 / 渐变） */
   --brand: #173A5E;
   --brand-mid: #2E6B78;
   --brand-press: #102A44;
@@ -28,7 +28,7 @@ page {
   --green-light: #E4F3EE;
   --indigo: #4A4E86;
   --indigo-light: #EEEAF6;
-  /* 中性色（冷灰，替代原暖米色） */
+  /* 中性色（暖纸底 / 暖白卡片） */
   --bg: #F6F1E7;
   --card: #FFFCF5;
   --text-1: #1C2B38;
@@ -83,6 +83,8 @@ page {
   --z-toast: 2000;
 
   /* 兼容旧布局变量：统一映射到暖纸社区色板 */
+  --h1: var(--brand-mid);
+  --h2: var(--brand-press);
   --blue: var(--brand);
   --blue-d: var(--brand-press);
   --blue-l: var(--brand-light);
@@ -92,6 +94,7 @@ page {
   --gold-l: var(--accent-warm-light);
   --teal: var(--green);
   --teal-l: var(--green-light);
+  --indigo-l: var(--indigo-light);
   --t1: var(--text-1);
   --t2: var(--text-2);
   --t3: var(--text-3);
@@ -117,7 +120,6 @@ page {
   --font-xxl: var(--font-hero);
 
   background-color: var(--bg);
-  background-image: radial-gradient(circle at 8% 0%, rgba(196, 106, 46, .08), transparent 28%), radial-gradient(circle at 100% 12%, rgba(36, 92, 115, .09), transparent 30%);
   color: var(--text-1);
   font-size: var(--font-body);
   line-height: 1.4;
@@ -176,7 +178,7 @@ page.care-mode,
 }
 
 .u-hover-bg {
-  background: #f3f6fc;
+  background: #F4EFE6;
 }
 
 .u-hover-scale {
@@ -211,7 +213,7 @@ page.care-mode,
  * 右侧操作位避让微信胶囊。 */
 .nav {
   box-sizing: border-box;
-  border-bottom: 2rpx solid #DCE3ED;
+  border-bottom: 2rpx solid #D8D0C3;
 }
 
 .nav .rt {

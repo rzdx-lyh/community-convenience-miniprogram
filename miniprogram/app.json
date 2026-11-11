@@ -40,17 +40,17 @@
   ],
   "window": {
     "navigationStyle": "custom",
-    "navigationBarBackgroundColor": "#F3F5F9",
+    "navigationBarBackgroundColor": "#F6F1E7",
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "邻里百事通小助手",
-    "backgroundColor": "#F3F5F9",
+    "backgroundColor": "#F6F1E7",
     "backgroundTextStyle": "dark"
   },
   "tabBar": {
-    "color": "#8593A8",
-    "selectedColor": "#1F5FD6",
-    "backgroundColor": "#FFFFFF",
-    "borderStyle": "white",
+    "color": "#8A949D",
+    "selectedColor": "#C46A2E",
+    "backgroundColor": "#FFFCF5",
+    "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/index/index",

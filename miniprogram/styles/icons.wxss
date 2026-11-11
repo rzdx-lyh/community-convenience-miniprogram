@@ -1,7 +1,7 @@
 /* ============================================================
- * icons.wxss · 矢量图标系统（CR-025 · 由 scripts/gen-icons.mjs 生成）
- * 来源：docs/03-preview/demo.html 的内联 SVG symbol sprite（83 枚）
- * ⚠ 本文件是**生成物**，不要手改；改图标请改原型后重跑生成器。
+ * icons.wxss · 矢量图标系统（最终工程内置）
+ * 图标已栅格化并内联为 base64 PNG，避免依赖外部资源。
+ * 本文件随最终工程固定维护。
  *
  * 用法：<view class="ic ic-m ic-home" />     （深色，浅底）
  *       <view class="ic ic-m icw ic-home" /> （白色，彩色/深底）

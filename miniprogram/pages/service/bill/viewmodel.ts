@@ -20,9 +20,9 @@ export interface BillKindMeta {
 }
 
 export const BILL_KINDS: BillKindMeta[] = [
-  { key: 'water', name: '水费', unit: '吨', hint: '水费单左上角 8~10 位', color: '#1F5FD6' },
-  { key: 'electric', name: '电费', unit: '度', hint: '电费卡或缴费单上的户号', color: '#A86A05' },
-  { key: 'gas', name: '燃气', unit: '立方米', hint: '燃气表箱贴纸上的编号', color: '#0E7C6B' },
+  { key: 'water', name: '水费', unit: '吨', hint: '水费单左上角 8~10 位', color: '#173A5E' },
+  { key: 'electric', name: '电费', unit: '度', hint: '电费卡或缴费单上的户号', color: '#C46A2E' },
+  { key: 'gas', name: '燃气', unit: '立方米', hint: '燃气表箱贴纸上的编号', color: '#147D70' },
 ];
 
 /** 阶梯水价（社区公示口径）：0-20 吨 2.6，21-30 吨 3.9，30 吨以上 5.2；污水处理费按总用量 1.1/吨 */

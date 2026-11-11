@@ -1,5 +1,5 @@
 /* 通用预约（CR-028）· 仅补充原型没有的投影色与文本节点样式 */
-.pgh--blue { --h1: #2E6BE0; --h2: #153F9B; }
+.pgh--blue { --h1: #245C73; --h2: #102A44; }
 .pgh-km { flex: 1; min-width: 0; padding-right: 150rpx; }
 .pgh-svc { font-size: calc(36rpx * var(--care-scale, 1)); font-weight: 800; line-height: 1.28; }
 
@@ -51,7 +51,7 @@
   flex: none;
   padding: 0 40rpx;
 }
-.fbar .btn2.is-dis { background: #DCE3EC; color: #9AA6B6; box-shadow: none; }
+.fbar .btn2.is-dis { background: #EEE8DD; color: #9AA6B6; box-shadow: none; }
 
 /* 服务说明弹层：避开 .sheet 内 position:fixed 的原型偏差 */
 .sht-h { font-size: calc(28rpx * var(--care-scale, 1)); font-weight: 800; text-align: center; margin-bottom: 18rpx; }
@@ -61,14 +61,14 @@
   padding: 14rpx 18rpx;
   border-radius: 12rpx;
   background: var(--gold-l);
-  color: #8A5A00;
+  color: #9A531F;
   font-size: calc(19rpx * var(--care-scale, 1));
 }
 .sht-btn {
   margin-top: 22rpx;
   height: 80rpx;
   border-radius: 18rpx;
-  background: #F2F5FA;
+  background: #F4EFE6;
   color: var(--t2);
   font-size: calc(25rpx * var(--care-scale, 1));
   display: flex;

@@ -61,11 +61,11 @@
 }
 .tag-assigned {
   background: #e8f1f7;
-  color: #3a7ca5;
+  color: #2E6B78;
 }
 .tag-processing {
-  background: #f0ebf8;
-  color: #7a5bb8;
+  background: #EEEAF6;
+  color: #4A4E86;
 }
 .tag-done,
 .tag-closed {

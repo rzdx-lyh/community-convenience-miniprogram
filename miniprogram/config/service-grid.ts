@@ -2,7 +2,7 @@
  * 四类服务分类 · 本地兜底常量（FE-11 · 白屏兜底）
  *
  * 契约 §service:list：接口为空或调用失败时，前端回退本文件。
- * 结构：4 类 / 8 板块 / 38 项（与设计原型 docs/03-preview/demo.html 的 CATS 逐项对齐，名称一致）。
+ * 结构：4 类 / 8 板块 / 38 项（与早期设计稿的 CATS 逐项对齐，名称一致）。
  *
  * 路由约定（不新增 targetType，零新增动作）：
  *   - 需预约登记的服务：targetType=page → `/pages/service/book/index?svc=<服务名>&opts=<类型|类型>`，

@@ -105,7 +105,7 @@
   box-sizing: border-box;
   background: var(--card);
   border-radius: 16rpx;
-  box-shadow: 0 2rpx 8rpx rgba(43, 43, 43, 0.06);
+  box-shadow: 0 2rpx 8rpx rgba(46,54,64, 0.06);
 }
 
 .gi:active {

@@ -1,23 +1,23 @@
 .page.repair-wb { min-height: 100vh; background: var(--bg); padding: 28rpx; box-sizing: border-box; }
-.rw-head { background: linear-gradient(145deg, #0E7C6B, #075347); color: #fff; border-radius: 26rpx; padding: 34rpx 30rpx; }
+.rw-head { background: linear-gradient(145deg, #147D70, #0B4F49); color: #fff; border-radius: 26rpx; padding: 34rpx 30rpx; }
 .rw-kicker { font-size: var(--font-cap); opacity: .82; }
 .rw-title { margin-top: 8rpx; font-size: var(--font-title); font-weight: 800; }
 .rw-user { margin-top: 14rpx; font-size: var(--font-sub); opacity: .9; }
 .rw-loading { margin-top: 14rpx; font-size: var(--font-cap); }
-.rw-quota { margin-top: 24rpx; background: #fff; border-radius: 20rpx; padding: 24rpx; box-shadow: var(--shadow-card); display: flex; align-items: center; justify-content: space-between; gap: 18rpx; }
+.rw-quota { margin-top: 24rpx; background: var(--card); border-radius: 20rpx; padding: 24rpx; box-shadow: var(--shadow-card); display: flex; align-items: center; justify-content: space-between; gap: 18rpx; }
 .rw-quota__n { font-size: var(--font-title); font-weight: 800; color: var(--green); }
 .rw-quota__l { margin-top: 4rpx; font-size: var(--font-cap); color: var(--text-2); }
 .rw-quota__tip { font-size: var(--font-cap); color: var(--text-3); text-align: right; }
 .rw-note { margin-top: 24rpx; padding: 22rpx; border-radius: 18rpx; background: var(--green-light); color: var(--text-2); font-size: var(--font-sub); line-height: 1.65; }
 .rw-actions { margin-top: 24rpx; display: flex; flex-direction: column; gap: 14rpx; }
-.rw-action { min-height: 88rpx; border-radius: var(--radius-full); border: 2rpx solid var(--line); background: #fff; color: var(--text-1); font-size: var(--font-sub); font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.rw-action { min-height: 88rpx; border-radius: var(--radius-full); border: 2rpx solid var(--line); background: var(--card); color: var(--text-1); font-size: var(--font-sub); font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .rw-action--danger { color: var(--urgent); border-color: var(--urgent-line); }
 .care-mode .rw-quota { flex-direction: column; align-items: flex-start; }
 .care-mode .rw-quota__tip { text-align: left; }
 .care-mode .rw-action { min-height: 100rpx; }
 
 /* 赛事版维修工作台视觉统一 */
-.page.repair-wb { background-color: var(--bg); background-image: radial-gradient(circle at 90% 0%, rgba(36, 92, 115, .10), transparent 32%); }
+.page.repair-wb { background-color: var(--bg); }
 .rw-head { background: linear-gradient(145deg, #173A5E, #147D70 78%, #245C73); box-shadow: 0 18rpx 40rpx rgba(23, 58, 94, .18); }
 .rw-quota { border: 1rpx solid rgba(89, 74, 58, .08); box-shadow: var(--shadow-card); }
 .rw-quota__n { color: var(--green); }

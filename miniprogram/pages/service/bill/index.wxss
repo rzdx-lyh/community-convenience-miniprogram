@@ -1,9 +1,9 @@
 /* 缴费代办 · 页面补充样式（原型类之外只补这些） */
-.pgh--gold { --h1: #F2A93B; --h2: #A85A08; }
+.pgh--gold { --h1: #C46A2E; --h2: #8C4F19; }
 .pgh-num .cur { font-size: calc(28rpx * var(--care-scale, 1)); font-weight: 700; opacity: .92; margin-right: 4rpx; }
-.tint-teal { background: #E6F5F2; color: #0E7C6B; }
-.tint-gold { background: #FDF3E1; color: #A86A05; }
-.tint-blue { background: #EAF1FE; color: #1F5FD6; }
+.tint-teal { background: #E4F3EE; color: #147D70; }
+.tint-gold { background: #F8E8D8; color: #C46A2E; }
+.tint-blue { background: #E8F0F2; color: #173A5E; }
 .hover-dim { opacity: .86; }
 
 .sc .sa .b {
@@ -27,7 +27,7 @@
   padding: 12rpx 0;
   font-size: calc(21rpx * var(--care-scale, 1));
   color: var(--t2);
-  border-bottom: 1px solid #F3F6FA;
+  border-bottom: 1px solid #F4EFE6;
 }
 .calc-l { flex: 1; min-width: 0; }
 .calc-m { color: var(--t3); font-size: calc(19rpx * var(--care-scale, 1)); }

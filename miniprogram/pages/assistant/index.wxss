@@ -17,7 +17,7 @@
 .wel {
   margin-bottom: 22rpx;
   padding: 24rpx;
-  background: #fff;
+  background: var(--card);
   border-radius: 22rpx;
   box-shadow: var(--sh);
 }
@@ -53,7 +53,7 @@
 .sug view {
   font-size: calc(19rpx * var(--care-scale, 1));
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--card);
   color: var(--blue);
   padding: 6rpx 16rpx;
   border-radius: 198rpx;
@@ -68,7 +68,7 @@
 }
 
 .think view.done {
-  color: #5A6472;
+  color: #5B6874;
 }
 
 .mtag__b {
@@ -93,8 +93,8 @@
   align-items: center;
   gap: 6rpx;
   font-size: calc(17rpx * var(--care-scale, 1));
-  background: #F1F5FD;
-  color: #4A5D78;
+  background: #F1EDE4;
+  color: #5B6874;
   padding: 4rpx 12rpx;
   border-radius: 8rpx;
 }
@@ -104,7 +104,7 @@
   height: 24rpx;
   border-radius: 0;
   font-size: calc(18rpx * var(--care-scale, 1));
-  color: #4A5D78;
+  color: #5B6874;
 }
 
 /* 输入区：固定底部，长会话不把输入框推走 */
@@ -114,7 +114,7 @@
   right: 0;
   bottom: 0;
   padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
-  background: #fff;
+  background: var(--card);
 }
 
 .aiask .voice .ic {
@@ -186,7 +186,6 @@
 /* ===== AI 管家 · 暖纸 Agent 视觉 ===== */
 .page--chat {
   background-color: var(--bg);
-  background-image: radial-gradient(circle at 10% 4%, rgba(196, 106, 46, .10), transparent 28%), radial-gradient(circle at 100% 10%, rgba(36, 92, 115, .10), transparent 30%);
 }
 .nav--plain { background: rgba(255, 252, 245, .92); }
 .aichat { padding: 24rpx; }

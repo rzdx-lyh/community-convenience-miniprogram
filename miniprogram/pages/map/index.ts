@@ -72,7 +72,7 @@ export function toMarkers(list: CommunityPlace[]): PoiMarker[] {
     anchor: { x: 0.5, y: 0.5 },
     callout: {
       content: p.name,
-      color: '#14181F',
+      color: '#1C2B38',
       fontSize: 11,
       borderRadius: 6,
       padding: 5,

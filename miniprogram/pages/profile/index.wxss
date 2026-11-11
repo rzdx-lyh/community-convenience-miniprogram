@@ -17,9 +17,9 @@
 .body.body--prof { margin-top: 0; padding-top: 24rpx; }
 
 /* 头像底色（原型内联 background） */
-.av1 { background: #1F5FD6; }
-.a2 { background: #0E7C6B; }
-.a3 { background: #A86A05; }
+.av1 { background: #173A5E; }
+.a2 { background: #147D70; }
+.a3 { background: #C46A2E; }
 
 /* 数据统计（原型 .pstats .c b / span） */
 .pstats .c .n {
@@ -57,11 +57,11 @@
 .v-set { color: var(--blue); font-size: calc(19rpx * var(--care-scale, 1)); }
 
 /* 行内图标底色 */
-.k-blue { background: #EAF1FE; }
-.k-gray { background: #F1F4F9; }
-.tone-blue { background: #EAF1FE; }
-.tone-gold { background: #FDF3E1; }
-.tone-teal { background: #E6F5F2; }
+.k-blue { background: #E8F0F2; }
+.k-gray { background: #EEE8DD; }
+.tone-blue { background: #E8F0F2; }
+.tone-gold { background: #F8E8D8; }
+.tone-teal { background: #E4F3EE; }
 
 /* 设置项文案（.t/.d 已是类选择器，补 display） */
 .pset .pr .plb .t { display: block; }
