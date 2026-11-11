@@ -1,0 +1,46 @@
+{
+  "competition": "2026第九届传智杯全国大学生数智创新与 AI 应用大赛",
+  "track": "AI WEB网页开发挑战赛",
+  "trackId": 10037,
+  "competitionId": 10003,
+  "deadline": "2026-11-18",
+  "teamSize": { "min": 1, "max": 3, "sameSchool": true },
+  "advisers": { "max": 2 },
+  "requiredForm": "AI Native Web application",
+  "submission": {
+    "repository": {
+      "platform": ["GitHub", "Gitee"],
+      "visibility": "Public or review access",
+      "requirements": ["clean code", "comments", "README", "full git history", "env template", "dependency list"]
+    },
+    "video": { "duration": "5-8 minutes", "format": "MP4", "resolution": ">=1080p", "language": "Mandarin" },
+    "technicalDocument": { "format": "PDF", "maxPages": 30, "sections": ["overview", "requirements", "architecture", "AI solution", "implementation", "testing", "deployment", "future"] }
+  },
+  "scoring": [
+    { "id": "ai-llm", "dimension": "AI技术深度", "item": "大模型集成质量", "weight": 8 },
+    { "id": "ai-agent", "dimension": "AI技术深度", "item": "Agent/工作流设计", "weight": 8 },
+    { "id": "ai-rag", "dimension": "AI技术深度", "item": "RAG技术应用", "weight": 6 },
+    { "id": "ai-multimodal", "dimension": "AI技术深度", "item": "多模态能力", "weight": 5 },
+    { "id": "ai-safety", "dimension": "AI技术深度", "item": "AI安全与可控性", "weight": 4 },
+    { "id": "ai-tools", "dimension": "AI技术深度", "item": "MCP/工具集成", "weight": 4 },
+    { "id": "innovation-topic", "dimension": "创新性", "item": "选题创新", "weight": 10 },
+    { "id": "innovation-tech", "dimension": "创新性", "item": "技术方案创新", "weight": 8 },
+    { "id": "innovation-ux", "dimension": "创新性", "item": "交互模式创新", "weight": 7 },
+    { "id": "frontend-code", "dimension": "前端工程质量", "item": "前端代码质量", "weight": 4 },
+    { "id": "frontend-architecture", "dimension": "前端工程质量", "item": "组件化与架构设计", "weight": 3 },
+    { "id": "frontend-performance", "dimension": "前端工程质量", "item": "前端性能优化", "weight": 3 },
+    { "id": "practicality-real", "dimension": "实用性", "item": "场景真实性", "weight": 5 },
+    { "id": "practicality-solution", "dimension": "实用性", "item": "解决方案有效性", "weight": 5 },
+    { "id": "ux-visual", "dimension": "用户体验", "item": "UI设计与视觉表现", "weight": 4 },
+    { "id": "ux-interaction", "dimension": "用户体验", "item": "前端交互体验", "weight": 3 },
+    { "id": "ux-ai", "dimension": "用户体验", "item": "AI交互体验", "weight": 3 },
+    { "id": "value-social", "dimension": "社会价值与商业潜力", "item": "社会价值", "weight": 5 },
+    { "id": "value-business", "dimension": "社会价值与商业潜力", "item": "商业潜力", "weight": 5 }
+  ],
+  "currentProject": {
+    "form": "WeChat Mini Program",
+    "webCompatible": false,
+    "aiCapabilities": ["knowledge-base retrieval", "optional LLM fallback", "risk safety rules"],
+    "missing": ["Web frontend", "Agent workflow", "vector RAG", "multimodal AI", "MCP/function calling", "streaming generative UI", "public web deployment"]
+  }
+}
