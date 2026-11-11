@@ -340,6 +340,62 @@ export const mockHandlers: Record<string, Handler> = {
   /* ---------- auth ---------- */
   'auth:login': () => ({ profile: MOCK_USER }),
 
+  /* ---------- staff auth（仅 mock 通道） ---------- */
+  'auth:staffLogin': (data) => {
+    const username = String(data.username || '').trim().toLowerCase();
+    const portalMode = String(data.portalMode || '');
+    if (!username || !String(data.password || '')) throw new Error('请输入工作人员账号和密码');
+    const isRepair = username.includes('repair');
+    if ((portalMode === 'maintenance') !== isRepair) throw new Error('账号角色与登录端不匹配');
+    const profile: StaffProfile = {
+      _id: isRepair ? 'staff-repair01' : 'staff-admin01',
+      username,
+      displayName: isRepair ? '维修师傅老张' : '社区管理员',
+      role: isRepair ? 'maintenance' : 'admin',
+      skills: isRepair ? ['water', 'electric', 'door', 'public', 'other'] : [],
+      portalMode: isRepair ? 'maintenance' : 'management',
+      mustChangePassword: false,
+      lastLoginAt: new Date().toISOString(),
+    };
+    return {
+      token: 'mock-staff-token-' + username,
+      expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
+      profile,
+    };
+  },
+  'auth:staffSession': (data) => {
+    const token = String(data.token || '');
+    if (!token.startsWith('mock-staff-token-')) throw new Error('工作人员登录已失效');
+    const username = token.replace('mock-staff-token-', '');
+    const isRepair = username.includes('repair');
+    const profile: StaffProfile = {
+      _id: isRepair ? 'staff-repair01' : 'staff-admin01',
+      username,
+      displayName: isRepair ? '维修师傅老张' : '社区管理员',
+      role: isRepair ? 'maintenance' : 'admin',
+      skills: isRepair ? ['water', 'electric', 'door', 'public', 'other'] : [],
+      portalMode: isRepair ? 'maintenance' : 'management',
+      mustChangePassword: false,
+      lastLoginAt: new Date().toISOString(),
+    };
+    return { profile, expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString() };
+  },
+  'auth:staffLogout': () => ({ ok: true }),
+  'auth:staffChangePassword': (data) => ({
+    token: String(data.token || 'mock-staff-token'),
+    expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
+    profile: {
+      _id: 'staff-admin01',
+      username: 'admin01',
+      displayName: '社区管理员',
+      role: 'admin',
+      skills: [],
+      portalMode: 'management',
+      mustChangePassword: false,
+      lastLoginAt: new Date().toISOString(),
+    } as StaffProfile,
+  }),
+
   /* ---------- user ---------- */
   'user:updateProfile': (data) => ({
     profile: { ...MOCK_USER, ...(data as Partial<User>), updatedAt: new Date().toISOString() },

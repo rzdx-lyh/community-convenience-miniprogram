@@ -17,7 +17,7 @@
 
 | 集合 | 用途 | 关键索引 | 版本 |
 | --- | --- | --- | --- |
-| `users` | 用户档案与角色 | openid（唯一）、**accountId（唯一）**、role | v1.1 → v1.2 |
+| `users` | 居民档案与角色 | openid（唯一）、**accountId（唯一）**、role | v1.1 → v1.2 |`r`n| **`staff_accounts`** | **工作人员与维修人员账号** | **username（唯一）、role、status** | **v1.2.4 新增** |`r`n| **`staff_sessions`** | **工作人员会话** | **tokenHash、staffId、expiresAt** | **v1.2.4 新增** |
 | `workorders` | 报修工单 | status、createdAt、_openid | v1.1 |
 | `notices` | 社区通知/公告/**紧急通知** | status、publishAt、**type、**level、startAt、endAt** | v1.2 扩展 |
 | `phonebook` | 便民电话簿 | category、sort | v1.1 |
@@ -45,6 +45,46 @@
 > **索引变更**：新增 `accountId` **唯一索引**（`users` 唯一性校验靠它，不能只靠应用层查询，否则并发下会撞号）。
 > **懒迁移**：`accountId` 为空的历史文档在读取时由服务端补齐（见契约 CR-009），无需执行迁移脚本。
 
+## staff_accounts
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| _id | string | 自动 | 账号 ID |
+| username | string | 是 | 登录账号，唯一索引 |
+| displayName | string | 是 | 显示姓名 |
+| phone | string | 否 | 工作人员手机号，受控展示 |
+| passwordHash | string | 是 | scrypt 密码哈希 |
+| passwordSalt | string | 是 | 随机盐值 |
+| hashAlgorithm | string | 是 | 固定为 `scrypt` |
+| role | string | 是 | `property/admin/super_admin/maintenance` |
+| status | string | 是 | `active/disabled` |
+| skills | string[] | 否 | 维修人员技能分类 |
+| communityId | string | 是 | 当前社区 ID |
+| mustChangePassword | boolean | 是 | 首登是否强制改密 |
+| failedCount | number | 是 | 连续失败次数 |
+| lockUntil | string | 否 | 锁定截止时间 |
+| lastLoginAt | string | 否 | 最后登录时间 |
+| createdBy | string | 否 | 创建人 |
+| createdAt | string | 是 | 创建时间 |
+| updatedAt | string | 是 | 更新时间 |
+
+> 密码只保存 scrypt 哈希，禁止保存明文。首个超级管理员通过 `npm run seed:staff` 生成账号哈希文件后导入。
+
+## staff_sessions
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| _id | string | 自动 | 会话 ID |
+| tokenHash | string | 是 | 会话令牌 SHA-256 哈希 |
+| staffId | string | 是 | 工作人员 ID |
+| portalMode | string | 是 | `management/maintenance` |
+| role | string | 是 | 登录时角色快照 |
+| device | object | 否 | 设备摘要 |
+| expiresAt | string | 是 | 过期时间 |
+| lastActiveAt | string | 是 | 最后活动时间 |
+| revokedAt | string | 否 | 主动注销时间 |
+| createdAt | string | 是 | 创建时间 |
+
 ## workorders
 | 字段 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
@@ -54,6 +94,7 @@
 | description | string | 是 | 问题描述（≤500 字） |
 | category | string | 是 | `water`/`electric`/`door`/`public`/`other`（水电/门禁/公共设施/其他） |
 | images | string[] | 否 | 云存储 fileID 列表（≤6） |
+| location | object | 否 | 居民主动选择的社区点位 { name, latitude, longitude }；不保存轨迹 |
 | status | string | 是 | `pending`（待受理）→ `assigned`（已派单）→ `processing`（处理中）→ `done`（已完成）→ `closed`（已关闭）/ `canceled`（已取消） |
 | aiSummary | string | 否 | AI 对描述的智能摘要/分类建议 |
 | assignee | string | 否 | 物业处理人 openid |

@@ -1,0 +1,25 @@
+<view class="page repair-wb {{careMode ? 'care-mode' : ''}}">
+  <view class="rw-head">
+    <view class="rw-kicker">维修端</view>
+    <view class="rw-title">抢单与处理工作台</view>
+    <view class="rw-user" wx:if="{{profile}}">{{profile.displayName}} · {{roleLabel}}</view>
+    <view class="rw-loading" wx:if="{{loading}}">正在校验登录态…</view>
+  </view>
+
+  <view class="rw-quota">
+    <view>
+      <view class="rw-quota__n">{{activeCount}} / {{limit}}</view>
+      <view class="rw-quota__l">当前处理中名额</view>
+    </view>
+    <view class="rw-quota__tip">全部分类合计最多 3 单</view>
+  </view>
+
+  <view class="rw-note">
+    维修人员账号与会话已接通。抢单池、我的工单、完工照片、释放申请将在下一步接入。
+  </view>
+
+  <view class="rw-actions">
+    <view class="rw-action" bindtap="onBackResident">返回居民端</view>
+    <view class="rw-action rw-action--danger" bindtap="onLogout">退出维修账号</view>
+  </view>
+</view>

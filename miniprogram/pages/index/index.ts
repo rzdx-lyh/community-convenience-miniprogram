@@ -8,6 +8,9 @@ import { COMMUNITY, COMMUNITY_SPOTS, resolveSpot, spotPickerLabels, spotToLocati
 import { store } from '../../store/global';
 import { navigateByTarget } from '../../utils/navigator';
 import { isUsableLocation, type UserLocation } from '../../utils/onboarding';
+import { requestCurrentLocation } from '../../utils/location';
+import { COMMUNITY_PLACES, placesNear, type NearbyPlace } from '../../config/community-places';
+import { isCareModeEnabled, setCareMode } from '../../utils/care';
 
 const info = wx.getWindowInfo();
 
@@ -81,6 +84,9 @@ Page({
     kw: '',
     locState: 'ok',
     locText: '阳光社区 · 3 号楼',
+    careMode: false,
+    nearby: [] as NearbyPlace[],
+    nearbyTotal: COMMUNITY_PLACES.length,
 
     quick: [
       { i: 'wrench', t: '报修', k: 'repair' },
@@ -102,16 +108,84 @@ Page({
 
   onLoad() {
     this.buildData();
-    // v1.2.1：wx.getLocation 接口被驳回后改为「社区位置手选」，不再读取手机定位
+    this.refreshLocationAndNearby(false);
+  },
+
+  /** 每次回到首页都重读关怀模式与手选位置，避免跨页状态滞后 */
+  onShow() {
+    const care = isCareModeEnabled();
+    if (care !== this.data.careMode) this.setData({ careMode: care });
+    this.refreshLocationAndNearby(false);
+  },
+
+  refreshLocationAndNearby(persist = false): void {
     const cached = store.get<UserLocation | null>(STORAGE_KEYS.USER_LOCATION, null);
+    if (isUsableLocation(cached) && cached?.source === 'gps') {
+      this.applyGpsLocation(cached, persist);
+      return;
+    }
     const spot = resolveSpot(isUsableLocation(cached) ? cached : null);
-    this.applySpot(spot, false);
+    this.applySpot(spot, persist);
   },
 
   /** 应用所选社区位置点（persist=true 时写入本地缓存） */
   applySpot(spot: CommunitySpot, persist = true): void {
     if (persist) store.set(STORAGE_KEYS.USER_LOCATION, spotToLocation(spot));
-    this.setData({ locState: 'ok', locText: `${COMMUNITY.name} · ${spot.name}` });
+    const nearby = placesNear(spot, 'all', 3);
+    this.setData({
+      locState: 'ok',
+      locText: `${COMMUNITY.name} · ${spot.name}`,
+      nearby,
+      nearbyTotal: COMMUNITY_PLACES.length,
+    });
+  },
+
+  /** 应用微信实时定位结果，不把经纬度直接展示给用户 */
+  applyGpsLocation(location: { latitude: number; longitude: number; accuracy?: number }, persist = true): void {
+    const saved: UserLocation = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      ts: Date.now(),
+      key: 'gps',
+      name: '当前位置',
+      source: 'gps',
+      accuracy: Number(location.accuracy) || 0,
+    };
+    if (persist) store.set(STORAGE_KEYS.USER_LOCATION, saved);
+    const nearby = placesNear(saved, 'all', 3);
+    const accuracy = saved.accuracy && saved.accuracy > 0 ? ` · 精度约 ${Math.round(saved.accuracy)} 米` : '';
+    this.setData({
+      locState: 'ok',
+      locText: `${COMMUNITY.name} · 当前位置${accuracy}`,
+      nearby,
+      nearbyTotal: COMMUNITY_PLACES.length,
+    });
+  },
+
+  async onLocateCurrent(): Promise<void> {
+    wx.showLoading({ title: '正在定位…', mask: true });
+    const result = await requestCurrentLocation();
+    wx.hideLoading();
+    if (result.ok) {
+      this.applyGpsLocation(result.location);
+      wx.showToast({ title: '定位成功', icon: 'success' });
+      return;
+    }
+    wx.showToast({ title: result.message, icon: 'none', duration: 2500 });
+  },
+
+  /** 首页快捷按钮与「我的」开关共用 setCareMode，状态实时同步 */
+  onToggleCare(): void {
+    const care = setCareMode(!this.data.careMode);
+    this.setData({ careMode: care });
+    try { wx.vibrateShort({ type: 'light' }); } catch { /* 不支持震动时静默 */ }
+    wx.showToast({ title: care ? '关怀模式已开启' : '关怀模式已关闭', icon: 'none' });
+  },
+
+  /** 首页最近点位 → 地图页直接聚焦对应 marker */
+  onNearbyTap(e: WechatMiniprogram.TouchEvent): void {
+    const id = String((e.currentTarget.dataset as { id?: string }).id ?? '');
+    wx.navigateTo({ url: `/pages/map/index${id ? `?focus=${encodeURIComponent(id)}` : ''}` });
   },
 
   buildData() {
@@ -154,8 +228,21 @@ Page({
     wx.switchTab({ url: '/pages/hall/index' });
   },
 
-  /** 选择社区内位置（楼栋/出入口）；不读取手机定位 */
+  /** 用户主动选择：实时定位或手动选择社区点位 */
   onLocTap(): void {
+    wx.showActionSheet({
+      itemList: ['定位当前位置', '手动选择社区位置'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          void this.onLocateCurrent();
+          return;
+        }
+        if (res.tapIndex === 1) this.onPickSpotManual();
+      },
+    });
+  },
+
+  onPickSpotManual(): void {
     wx.showActionSheet({
       itemList: spotPickerLabels(),
       success: (res) => {
@@ -215,4 +302,3 @@ Page({
     wx.navigateTo({ url: `/pages/notice/list/index${suffix}` });
   },
 });
-

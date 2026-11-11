@@ -74,6 +74,26 @@
 - 出参：`{ profile: User }`
 - 说明：首次登录自动创建 users 记录（role 默认 resident）
 
+### auth:staffLogin
+- 入参：`{ username, password, portalMode: 'management' | 'maintenance', device? }`
+- 出参：`{ token, expiresAt, profile: StaffProfile }`
+- 说明：工作人员/维修人员账号密码登录；密码使用 scrypt 哈希校验；连续失败 5 次锁定 15 分钟。
+
+### auth:staffSession
+- 入参：`{ token }`
+- 出参：`{ profile: StaffProfile, expiresAt }`
+- 说明：服务端重新校验会话、账号状态、角色与登录端。
+
+### auth:staffLogout
+- 入参：`{ token }`
+- 出参：`{ ok: boolean }`
+- 说明：立即吊销当前工作人员会话。
+
+### auth:staffChangePassword
+- 入参：`{ token, oldPassword, newPassword }`
+- 出参：`{ token, expiresAt, profile: StaffProfile }`
+- 说明：首次登录强制改密；改密后吊销旧会话并签发新令牌。
+
 ### user:updateProfile
 - 入参：`{ nickName?, phone?, building?, elderMode?, accountId? }`
 - 出参：`{ profile: User }`
@@ -94,7 +114,7 @@
 
 ## workorder：报修工单
 ### workorder:create
-- 入参：`{ title, description, category, images?: string[] }`
+- 入参：`{ title, description, category, images?: string[], location?: { name, latitude, longitude } }`
 - 出参：`{ id: string, aiSummary: string }`
 - 说明：创建后触发 AI 智能摘要（失败不阻断创建）；已接入 msgSecCheck
 

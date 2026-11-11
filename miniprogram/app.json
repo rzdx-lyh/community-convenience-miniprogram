@@ -1,12 +1,15 @@
 {
   "pages": [
+    "pages/auth/login/index",
     "pages/index/index",
     "pages/hall/index",
     "pages/circle/index",
     "pages/profile/index",
     "pages/auth/welcome/index",
-    "pages/auth/login/index",
     "pages/auth/setup/index",
+    "pages/auth/staff-password/index",
+    "pages/management/home/index",
+    "pages/maintenance/home/index",
     "pages/circle/post/index",
     "pages/circle/topic/index",
     "pages/circle/detail/index",
@@ -76,5 +79,11 @@
     ]
   },
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "requiredPrivateInfos": ["getLocation"],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于显示位置并计算附近服务点距离"
+    }
+  }
 }

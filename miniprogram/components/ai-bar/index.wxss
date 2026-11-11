@@ -15,7 +15,7 @@
   align-items: center;
   gap: var(--space-1);
   padding: 0 var(--space-3);
-  height: 80rpx;
+  min-height: calc(80rpx * var(--care-scale, 1));
   background: linear-gradient(120deg, var(--brand-light) 0%, #F3F0FE 100%);
   border: 2rpx solid rgba(31, 95, 214, 0.16);
   border-radius: var(--radius-m);
@@ -125,6 +125,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-1);
+  min-height: calc(64rpx * var(--care-scale, 1));
   padding: var(--space-2) var(--space-3);
   margin-bottom: var(--space-1);
   background: var(--bg);
@@ -192,7 +193,7 @@
 
 .ap__input {
   flex: 1;
-  height: 76rpx;
+  height: calc(76rpx * var(--care-scale, 1));
   padding: 0 var(--space-3);
   background: var(--bg);
   border-radius: var(--radius-full);
@@ -203,8 +204,8 @@
 .ap__send {
   flex: none;
   padding: 0 var(--space-4);
-  height: 76rpx;
-  line-height: 76rpx;
+  height: calc(76rpx * var(--care-scale, 1));
+  line-height: calc(76rpx * var(--care-scale, 1));
   background: var(--brand);
   color: var(--card);
   border-radius: var(--radius-full);

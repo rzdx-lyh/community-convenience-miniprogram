@@ -144,3 +144,18 @@
 .hv {
   opacity: 0.72;
 }
+
+/* 语音能力尚未开放：入口保留但明确标注「规划中」，不伪装成可用能力 */
+.aiask .voice--planned {
+  width: auto;
+  min-width: 116rpx;
+  padding: 0 12rpx;
+  border-radius: 34rpx;
+  gap: 4rpx;
+  opacity: .76;
+}
+.aiask .voice__tag {
+  font-size: calc(17rpx * var(--care-scale, 1));
+  font-weight: 700;
+}
+.care-mode .aiask .voice--planned { min-height: 88rpx; }

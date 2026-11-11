@@ -96,7 +96,7 @@ Page({
       wx.navigateBack();
       return;
     }
-    wx.switchTab({ url: '/pages/circle/index' });
+    wx.switchTab({ url: '/pages/index/index' });
   },
 });
 

@@ -10,7 +10,7 @@ import { toRelativeTime } from '../../utils/format';
 /** 社区名（单一真源：`config/community.ts`） */
 export const COMMUNITY_NAME = COMMUNITY.name;
 
-/** 首页「社区动态」展示条数（v1.2.1 / CR-019） */
+/** 首页「社区动态」展示条数（v1.2.4 / CR-019） */
 export const FEED_LIMIT = 3;
 
 export type UrgentState = 'loading' | 'normal' | 'empty' | 'error';
@@ -65,7 +65,7 @@ export function toUrgentVM(notice: Notice): UrgentVM {
 }
 
 /* ============================================================
- * v1.2.1 / CR-019 · 首屏「社区动态」补全模块
+ * v1.2.4 / CR-019 · 首屏「社区动态」补全模块
  * 复用 notice:list 出参（type=activity），零新增接口。
  * ============================================================ */
 

@@ -10,6 +10,50 @@ declare interface AuthLoginResult {
   profile: User;
 }
 
+declare type StaffRole = 'property' | 'admin' | 'super_admin' | 'maintenance';
+declare type PortalMode = 'resident' | 'management' | 'maintenance';
+
+declare interface StaffProfile {
+  _id: string;
+  username: string;
+  displayName: string;
+  role: StaffRole;
+  skills: WorkOrder['category'][];
+  portalMode: Exclude<PortalMode, 'resident'>;
+  mustChangePassword: boolean;
+  lastLoginAt: string;
+}
+
+declare interface AuthStaffLoginParams {
+  username: string;
+  password: string;
+  portalMode: Exclude<PortalMode, 'resident'>;
+  device?: Record<string, string>;
+}
+declare interface AuthStaffLoginResult {
+  token: string;
+  expiresAt: string;
+  profile: StaffProfile;
+}
+declare interface AuthStaffSessionParams {
+  token: string;
+}
+declare interface AuthStaffSessionResult {
+  profile: StaffProfile;
+  expiresAt: string;
+}
+declare interface AuthStaffLogoutParams {
+  token: string;
+}
+declare interface AuthStaffLogoutResult {
+  ok: boolean;
+}
+declare interface AuthStaffChangePasswordParams {
+  token: string;
+  oldPassword: string;
+  newPassword: string;
+}
+
 /* ============================== user ============================== */
 declare interface UserUpdateProfileParams {
   nickName?: string;
@@ -31,6 +75,7 @@ declare interface WorkOrderCreateParams {
   description: string;
   category: WorkOrder['category'];
   images?: string[];
+  location?: WorkOrder['location'];
 }
 declare interface WorkOrderCreateResult {
   id: string;

@@ -1,0 +1,25 @@
+<view class="page workbench {{careMode ? 'care-mode' : ''}}">
+  <view class="wb-head">
+    <view class="wb-kicker">管理端</view>
+    <view class="wb-title">社区服务工作台</view>
+    <view class="wb-user" wx:if="{{profile}}">{{profile.displayName}} · {{roleLabel}}</view>
+    <view class="wb-loading" wx:if="{{loading}}">正在校验登录态…</view>
+  </view>
+
+  <view class="wb-grid">
+    <view wx:for="{{cards}}" wx:key="k" class="wb-card">
+      <view class="wb-card__n">{{item.n}}</view>
+      <view class="wb-card__t">{{item.t}}</view>
+      <view class="wb-card__d">{{item.d}}</view>
+    </view>
+  </view>
+
+  <view class="wb-note">
+    工作人员账号与会话已接通。工单放单、验收、最终确认和居民反馈将在下一实施步骤接入。
+  </view>
+
+  <view class="wb-actions">
+    <view class="wb-action" bindtap="onBackResident">返回居民端</view>
+    <view class="wb-action wb-action--danger" bindtap="onLogout">退出工作人员账号</view>
+  </view>
+</view>

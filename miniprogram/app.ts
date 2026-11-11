@@ -4,7 +4,7 @@
  */
 import { ENV, STORAGE_KEYS } from './config/env';
 import { store } from './store/global';
-import { installCarePageHook, isCareModeEnabled } from './utils/care';
+import { installCarePageHook, isCareModeEnabled, type MiniPageOptions } from './utils/care';
 import { getCapsuleSafeWidth, getStatusBarHeight } from './utils/device';
 
 /**
@@ -14,7 +14,7 @@ import { getCapsuleSafeWidth, getStatusBarHeight } from './utils/device';
  * 页面根节点配合 {{careMode ? 'care-mode' : ''}}。
  */
 const pageScope = globalThis as unknown as {
-  Page?: (options: Record<string, any>) => unknown;
+  Page?: (options: MiniPageOptions) => unknown;
 };
 const basePage = pageScope.Page;
 if (typeof basePage === 'function') {
@@ -30,7 +30,8 @@ interface IAppOption {
     elderMode: boolean;
   };
   /** 首启资料设置守卫：未完成时统一跳到 setup 页 */
-  redirectToSetupIfNeeded(): void;
+  // 2026-11-10 审核整改：不再强制首屏登录/完善资料，游客可先浏览服务。
+  // 需要身份的操作（提交报修/发布等）由对应页面按需引导。
 }
 
 App<IAppOption>({
@@ -58,18 +59,5 @@ App<IAppOption>({
     });
 
     // TODO(FE-8): 首启隐私弹窗（agreedPrivacy）— 隐私协议未同意前禁止调用任何隐私接口
-  },
-
-  onShow() {
-    this.redirectToSetupIfNeeded();
-  },
-
-  redirectToSetupIfNeeded() {
-    if (store.get<boolean>(STORAGE_KEYS.SETUP_DONE, false)) return;
-    const pages = getCurrentPages();
-    const current = pages.length > 0 ? pages[pages.length - 1].route : '';
-    if (current === 'pages/auth/setup/index') return;
-    // 首启/清缓存后：先让用户设置头像、昵称和位置，再进入服务页
-    wx.reLaunch({ url: '/pages/auth/setup/index' });
   },
 });

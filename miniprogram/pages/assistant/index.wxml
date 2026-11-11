@@ -89,7 +89,7 @@
 
   <!-- 输入区（固定底部，避免长会话把输入框推走） -->
   <view class="aiask">
-    <view class="voice" bindtap="onVoice"><view class="ic ic-m ic-mic"></view></view>
+    <view class="voice voice--planned" bindtap="onVoice" aria-label="语音输入规划中"><view class="ic ic-m ic-mic"></view><text class="voice__tag">规划中</text></view>
     <input
       value="{{input}}"
       placeholder="问点什么：雨伞怎么借、血压高怎么办…"

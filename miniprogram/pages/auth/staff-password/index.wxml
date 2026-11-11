@@ -1,0 +1,23 @@
+<view class="page staff-pw {{careMode ? 'care-mode' : ''}}">
+  <view class="pw-card">
+    <view class="pw-icon"><view class="ic ic-m ic-lock"></view></view>
+    <view class="pw-title">首次登录需修改密码</view>
+    <view class="pw-sub">{{roleLabel}} · 初始密码仅用于首次登录</view>
+
+    <view class="pw-field">
+      <text class="pw-label">原密码</text>
+      <input class="pw-input" password value="{{oldPassword}}" placeholder="请输入初始密码" bindinput="onOldInput" />
+    </view>
+    <view class="pw-field">
+      <text class="pw-label">新密码</text>
+      <input class="pw-input" password value="{{newPassword}}" placeholder="至少 8 位" bindinput="onNewInput" />
+    </view>
+    <view class="pw-field">
+      <text class="pw-label">确认新密码</text>
+      <input class="pw-input" password value="{{confirmPassword}}" placeholder="再次输入新密码" bindinput="onConfirmInput" />
+    </view>
+
+    <view class="pw-submit {{busy ? 'off' : ''}}" bindtap="onSubmit">{{busy ? '正在提交…' : '保存并进入工作台'}}</view>
+    <view class="pw-back" bindtap="onBackLogin">返回登录</view>
+  </view>
+</view>

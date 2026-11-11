@@ -43,6 +43,15 @@
         <text>{{item.t}}</text>
       </view>
     </view>
+    <!-- 关怀模式快捷入口：与「我的」开关共用同一状态源 -->
+    <view class="care-entry {{careMode ? 'on' : ''}}" bindtap="onToggleCare" hover-class="hover-dim" role="button">
+      <view class="care-entry__ic"><view class="ic ic-s ic-elder"></view></view>
+      <view class="care-entry__m">
+        <text class="care-entry__t">关怀模式</text>
+        <text class="care-entry__d">{{careMode ? '已开启 · 全站大字与大按钮' : '未开启 · 点击放大字号和按钮'}}</text>
+      </view>
+      <text class="care-entry__state">{{careMode ? '已开启' : '未开启'}}</text>
+    </view>
   </view>
 
   <view class="body">
@@ -94,43 +103,41 @@
       </view>
     </view>
 
-    <!-- 附近服务 -->
+    <!-- 附近服务：直接展示最近 3 个点位，点击进入地图并聚焦 -->
     <view class="sec">
       <view class="st">
         <text class="b">附近服务</text>
-        <text class="em">按所选位置排序</text>
-        <text class="more" data-url="/pages/map/index" bindtap="onGo">地图 ›</text>
+        <text class="em">{{locText}} · 最近 3 个</text>
+        <text class="more" data-url="/pages/map/index" bindtap="onGo">全部 {{nearbyTotal}} 个 ›</text>
       </view>
       <view class="card card--pad">
-        <view class="row" data-url="/pages/map/index" bindtap="onGo" hover-class="hover-dim">
+        <view
+          class="row nearby-row"
+          wx:for="{{nearby}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onNearbyTap"
+          hover-class="hover-dim"
+        >
+          <view class="k" style="background:{{item.bg}};color:{{item.color}}">
+            <view class="ic ic-m {{item.icon}}" />
+          </view>
+          <view class="m">
+            <text class="m-t">{{item.name}}</text>
+            <text class="m-s">{{item.walk}} · 步行约 {{item.walkMin}} 分钟</text>
+          </view>
+          <text class="pstatus pstatus--{{item.statusTone}}">{{item.statusLabel}}</text>
+        </view>
+        <view class="row map-entry" data-url="/pages/map/index" bindtap="onGo" hover-class="hover-dim">
           <view class="k k-blue"><view class="ic ic-m ic-map" /></view>
           <view class="m">
-            <text class="m-t">社区地图 · 9 个点位</text>
-            <text class="m-s">点左上角位置可切换楼栋 · 距离按所选位置算</text>
+            <text class="m-t">查看完整社区地图</text>
+            <text class="m-s">地图 / 列表双视图 · 手选楼栋后自动重排</text>
           </view>
-          <text class="ar">›</text>
-        </view>
-        <view class="row" data-url="/pages/assistant/index" bindtap="onGo" hover-class="hover-dim">
-          <view class="k k-indigo"><view class="ic ic-m ic-chat" /></view>
-          <view class="m">
-            <text class="m-t">问 AI 管家</text>
-            <text class="m-s">免费模型在线 · 回答标注来源</text>
-          </view>
-          <text class="v v-teal">在线</text>
-          <text class="ar">›</text>
-        </view>
-        <view class="row" data-url="/pages/service/meal/index" bindtap="onGo" hover-class="hover-dim">
-          <view class="k k-teal"><view class="ic ic-m ic-bowl" /></view>
-          <view class="m">
-            <text class="m-t">智慧配餐 · 今日三餐</text>
-            <text class="m-s">控糖方案 · 1560 kcal · 可换菜</text>
-          </view>
-          <text class="v v-teal">新</text>
           <text class="ar">›</text>
         </view>
       </view>
     </view>
-
     <!-- AI 管家提醒 -->
     <view class="sec">
       <view class="st">

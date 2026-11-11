@@ -24,9 +24,9 @@
             <view class="ic ic-s ic-pin icw" />
             <text>{{prof.addr}}</text>
           </view>
-          <view class="pbadge">
+          <view class="pbadge" bindtap="onSetup" hover-class="hover-dim">
             <view class="ic ic-s ic-check-c icw" />
-            <text>微信登录</text>
+            <text>{{setupDone ? '资料已完善' : '未登录 · 点此完善'}}</text>
           </view>
         </view>
       </view>
@@ -138,24 +138,20 @@
             <view class="asw {{notice.act ? 'on' : ''}}" />
           </view>
 
-          <view class="pr">
-            <view class="plb">
-              <text class="t">字号</text>
-              <text class="d">特大等同关怀模式</text>
-            </view>
-            <view class="seg seg--inline">
-              <view class="g {{font === 'std' ? 'on' : ''}}" data-v="std" bindtap="onFont">标准</view>
-              <view class="g {{font === 'lg' ? 'on' : ''}}" data-v="lg" bindtap="onFont">大</view>
-              <view class="g {{font === 'xl' ? 'on' : ''}}" data-v="xl" bindtap="onFont">特大</view>
-            </view>
-          </view>
-
           <view class="pr" bindtap="onCare">
             <view class="plb">
               <text class="t">关怀模式</text>
-              <text class="d">放大全站字号，便于阅读</text>
+              <text class="d">放大全站字号与点击区域，便于阅读和操作</text>
             </view>
             <view class="asw {{care ? 'on' : ''}}" />
+          </view>
+
+          <view class="pr" bindtap="onStaffEntry">
+            <view class="plb">
+              <text class="t">工作人员登录</text>
+              <text class="d">物业 · 管理员 · 维修人员</text>
+            </view>
+            <text class="ar">›</text>
           </view>
 
           <view class="pr" data-url="/pages/map/index" bindtap="onGo">
@@ -191,14 +187,14 @@
           <view class="pr" bindtap="onAbout">
             <view class="plb">
               <text class="t">关于小程序</text>
-              <text class="d">1.4 · 邻里百事通小助手</text>
+              <text class="d">{{version}} · 邻里百事通小助手</text>
             </view>
             <text class="ar">›</text>
           </view>
-          <view class="pr" bindtap="onMine">
+          <view class="pr" data-url="/pages/notice/list/index" bindtap="onGo">
             <view class="plb">
-              <text class="t">我的圈子</text>
-              <text class="d">我的发布 · 回复 · 收藏</text>
+              <text class="t">社区公告</text>
+              <text class="d">停水停电 · 活动 · 办事通知</text>
             </view>
             <text class="ar">›</text>
           </view>
@@ -207,7 +203,7 @@
     </view>
 
     <view class="pfoot">
-      <text>1.4 · 社区便民</text>
+      <text>{{version}} · 社区便民</text>
       <text>便民信息与服务记录以实际社区为准</text>
     </view>
   </view>

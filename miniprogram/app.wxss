@@ -112,15 +112,15 @@ page {
 page.care-mode,
 .care-mode,
 .elder-mode {
-  --font-hero: 60rpx;
-  --font-title: 52rpx;
-  --font-card: 44rpx;
-  --font-body: 40rpx;
-  --font-sub: 36rpx;
-  --font-cap: 32rpx;
-  --font-btn: 42rpx;
-  --care-scale: 1.25;
-  line-height: 1.5;
+  --font-hero: 66rpx;
+  --font-title: 58rpx;
+  --font-card: 50rpx;
+  --font-body: 44rpx;
+  --font-sub: 40rpx;
+  --font-cap: 36rpx;
+  --font-btn: 46rpx;
+  --care-scale: 1.35;
+  line-height: 1.55;
 }
 
 /* ===== 通用工具类 ===== */
@@ -208,6 +208,25 @@ page.care-mode,
 .care-mode .zq {
   grid-template-columns: 1fr;
 }
+.care-mode .zqc {
+  box-sizing: border-box;
+  min-height: 250rpx;
+  padding: 26rpx 28rpx 76rpx;
+}
+.care-mode .zqc .p {
+  padding-right: 0;
+  line-height: 1.5;
+}
+.care-mode .zqc .cnt {
+  bottom: 20rpx;
+  font-size: var(--font-cap);
+  padding: 4rpx 14rpx;
+}
+.care-mode .zqc .ar {
+  right: 22rpx;
+  bottom: 18rpx;
+  font-size: 48rpx;
+}
 .care-mode .g4 {
   grid-template-columns: repeat(2, 1fr);
 }
@@ -219,4 +238,273 @@ page.care-mode,
 }
 .care-mode .pf-row {
   gap: 16rpx;
+}
+
+/* ===== 关怀模式：全局可点击控件（2026-11-09） =====
+ * 字号放大之外，统一保证按钮、输入框、标签、筛选和列表行的可读性与触控高度。
+ */
+.care-mode button,
+.care-mode input,
+.care-mode textarea,
+.care-mode picker {
+  font-size: var(--font-body);
+}
+
+.care-mode button,
+.care-mode .btn,
+.care-mode .btn2,
+.care-mode .btn3,
+.care-mode .btn--ghost,
+.care-mode .au-btn,
+.care-mode .submit,
+.care-mode .setup-submit,
+.care-mode .sheet__btn,
+.care-mode .sht-btn,
+.care-mode .sht-btn2,
+.care-mode .rec-btn,
+.care-mode .ls__btn,
+.care-mode .mapd__btn,
+.care-mode .act-signup,
+.care-mode .empty__btn,
+.care-mode .ap__send,
+.care-mode .send {
+  min-height: 88rpx;
+  font-size: var(--font-btn);
+}
+
+.care-mode input,
+.care-mode textarea,
+.care-mode .search__input,
+.care-mode .ap__input {
+  min-height: 88rpx;
+}
+
+.care-mode .sbox,
+.care-mode .search__box,
+.care-mode .aibar__in {
+  height: 96rpx;
+  min-height: 96rpx;
+}
+
+.care-mode .aibar__in {
+  border-radius: var(--radius-l);
+}
+
+.care-mode .sbox,
+.care-mode .search__box {
+  border-radius: 48rpx;
+}
+
+.care-mode .ap__input,
+.care-mode .ap__send {
+  height: 88rpx;
+  line-height: 88rpx;
+}
+
+.care-mode .tb .t,
+.care-mode .tabs .tab {
+  height: auto;
+  min-height: 76rpx;
+  padding: 10rpx 8rpx;
+  font-size: var(--font-sub);
+}
+
+.care-mode .chip,
+.care-mode .ctabs .c,
+.care-mode .seg .g,
+.care-mode .pgh-chip,
+.care-mode .slot-chip,
+.care-mode .dept-chip,
+.care-mode .bp,
+.care-mode .glucose,
+.care-mode .fasting,
+.care-mode .post,
+.care-mode .pickup,
+.care-mode .send,
+.care-mode .aipolish,
+.care-mode .voice,
+.care-mode .del,
+.care-mode .cancel,
+.care-mode .ckb,
+.care-mode .setup-agree,
+.care-mode .setup-loc,
+.care-mode .qty-i,
+.care-mode .sht-main,
+.care-mode .sheet__btn--main,
+.care-mode .f,
+.care-mode .apq {
+  min-height: 72rpx;
+  font-size: var(--font-sub);
+}
+
+.care-mode .seg .g,
+.care-mode .apq {
+  height: auto;
+  padding-top: 12rpx;
+  padding-bottom: 12rpx;
+}
+
+.care-mode .more,
+.care-mode .go,
+.care-mode .join,
+.care-mode .skip,
+.care-mode .lnk,
+.care-mode .rt,
+.care-mode .bk,
+.care-mode .pgh-bk,
+.care-mode .pgh-rt,
+.care-mode .ap__x,
+.care-mode .ap__human,
+.care-mode .ap__more,
+.care-mode .mapd__x,
+.care-mode .sh-x,
+.care-mode .search__clear {
+  font-size: var(--font-sub);
+}
+
+.care-mode .pr,
+.care-mode .row,
+.care-mode .mb,
+.care-mode .acell,
+.care-mode .pbc,
+.care-mode .match__row,
+.care-mode .opt,
+.care-mode .wkd,
+.care-mode .post2,
+.care-mode .pi,
+.care-mode .mc,
+.care-mode .ec,
+.care-mode .ei,
+.care-mode .act-feature,
+.care-mode .top__home,
+.care-mode .ls__btn,
+.care-mode .mapd__btn {
+  min-height: 104rpx;
+}
+
+.care-mode .pset .pr {
+  padding-top: 12rpx;
+  padding-bottom: 12rpx;
+}
+
+.care-mode .gi,
+.care-mode .cat,
+.care-mode .aigc {
+  min-height: 136rpx;
+}
+
+.care-mode .qk-i,
+.care-mode .pfa {
+  min-height: 96rpx;
+}
+
+.care-mode .qk div,
+.care-mode .qk .d,
+.care-mode .qk-i,
+.care-mode .gi .n,
+.care-mode .cat__name,
+.care-mode .cat__sub,
+.care-mode .aigc .p,
+.care-mode .aigc .h .b {
+  font-size: var(--font-sub);
+}
+
+.care-mode .gi .d {
+  font-size: var(--font-cap);
+}
+
+.care-mode .pset .pr .plb .t,
+.care-mode .row .m-t,
+.care-mode .cat__name,
+.care-mode .zqc .b {
+  font-size: var(--font-body);
+}
+
+.care-mode .pset .pr .plb .d,
+.care-mode .row .m-s,
+.care-mode .cat__sub,
+.care-mode .zqc .p {
+  font-size: var(--font-sub);
+}
+
+.care-mode .pstats .c .n {
+  font-size: var(--font-title);
+}
+
+.care-mode .pstats .c .l {
+  font-size: var(--font-cap);
+}
+
+/* ===== 关怀模式 2.0：通用布局防错位 =====
+ * 字号放大后，固定高度、绝对定位页头和单行标题最容易互相挤压。
+ * 这里只调整布局容器，不改变业务颜色与字号阶梯。
+ */
+.care-mode .sbar {
+  height: auto;
+  min-height: 64rpx;
+  padding-bottom: 6rpx;
+  box-sizing: border-box;
+}
+.care-mode .nav {
+  height: auto;
+  min-height: 104rpx;
+  padding: 8rpx 148rpx 8rpx 72rpx;
+  box-sizing: border-box;
+}
+.care-mode .nav .bk,
+.care-mode .nav .rt {
+  top: 0;
+  bottom: 0;
+  height: auto;
+  min-height: 104rpx;
+  box-sizing: border-box;
+}
+.care-mode .nav .rt {
+  right: 16rpx;
+  max-width: 136rpx;
+  justify-content: flex-end;
+  text-align: right;
+  white-space: normal;
+  line-height: 1.25;
+}
+.care-mode .nav > text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.care-mode .st {
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 8rpx;
+}
+.care-mode .st .b,
+.care-mode .st b {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.care-mode .st .em,
+.care-mode .st .more {
+  flex: none;
+  white-space: normal;
+}
+.care-mode .row > .m,
+.care-mode .pr .plb {
+  min-width: 0;
+}
+.care-mode .row > .ar,
+.care-mode .row > .v,
+.care-mode .pr > .ar,
+.care-mode .pr > .asw {
+  flex: none;
+}
+.care-mode .ctabs,
+.care-mode .tabs,
+.care-mode .tb,
+.care-mode .styrow {
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+.care-mode .seg {
+  flex-wrap: wrap;
 }

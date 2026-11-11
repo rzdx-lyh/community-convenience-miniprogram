@@ -84,3 +84,76 @@
   color: var(--t2);
   padding: 26rpx 0 0;
 }
+
+/* ===== 三端登录入口 ===== */
+.portal-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10rpx;
+  margin: 0 24rpx 18rpx;
+  padding: 8rpx;
+  border-radius: 20rpx;
+  background: #E8EEF8;
+}
+.portal-tab {
+  min-width: 0;
+  min-height: 92rpx;
+  padding: 12rpx 8rpx;
+  border-radius: 15rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  color: var(--t2);
+  text-align: center;
+  box-sizing: border-box;
+}
+.portal-tab.on {
+  color: var(--blue);
+  background: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(31, 95, 214, .12);
+}
+.portal-tab--hover { opacity: .82; }
+.portal-tab__n { font-size: calc(21rpx * var(--care-scale, 1)); font-weight: 800; }
+.portal-tab__d { font-size: calc(15rpx * var(--care-scale, 1)); line-height: 1.25; }
+
+.staff-form {
+  margin: 16rpx 0 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+.staff-field {
+  padding: 14rpx 18rpx;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--line);
+  background: #fff;
+}
+.staff-label {
+  display: block;
+  margin-bottom: 8rpx;
+  font-size: calc(19rpx * var(--care-scale, 1));
+  color: var(--t2);
+  font-weight: 700;
+}
+.staff-input {
+  width: 100%;
+  min-height: 52rpx;
+  font-size: calc(25rpx * var(--care-scale, 1));
+  color: var(--t1);
+  box-sizing: border-box;
+}
+
+.care-mode .portal-tabs {
+  grid-template-columns: 1fr;
+}
+.care-mode .portal-tab {
+  min-height: 104rpx;
+  align-items: flex-start;
+  padding: 14rpx 18rpx;
+  text-align: left;
+}
+.care-mode .portal-tab__d { font-size: var(--font-cap); }
+.care-mode .staff-field { padding: 16rpx 20rpx; }
+.care-mode .staff-input { min-height: 72rpx; }

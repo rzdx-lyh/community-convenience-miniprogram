@@ -59,6 +59,17 @@ const FLOW = {
 };
 const ACTION_TO_STATUS = { assign: 'assigned', process: 'processing', done: 'done' };
 
+/** 报修位置可选：只保存用户主动选择的社区点位，不接收轨迹或后台定位。 */
+function normalizeLocation(input) {
+  if (!input || typeof input !== 'object') return null;
+  const name = String(input.name || '').trim().slice(0, 40);
+  const latitude = Number(input.latitude);
+  const longitude = Number(input.longitude);
+  if (!name || !Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+  if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return null;
+  return { name, latitude, longitude };
+}
+
 /* --------------------------- workorder:create --------------------------- */
 async function create(event) {
   const openid = getOpenId();
@@ -72,6 +83,7 @@ async function create(event) {
   const description = String(event.description || '').trim();
   const category = String(event.category || '').trim();
   const images = Array.isArray(event.images) ? event.images.slice(0, 6) : [];
+  const location = normalizeLocation(event.location);
 
   if (!title) return fail(CODES.PARAM, '标题不能为空');
   if (title.length > 50) return fail(CODES.PARAM, '标题不超过 50 字');
@@ -96,6 +108,7 @@ async function create(event) {
     description,
     category,
     images,
+    ...(location ? { location } : {}),
     status: 'pending',
     aiSummary,
     createdAt: now,

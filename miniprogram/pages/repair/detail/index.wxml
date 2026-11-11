@@ -53,6 +53,18 @@
       </view>
     </view>
 
+    <!-- 报修位置（居民主动选择；无值整块不渲染） -->
+    <view wx:if="{{vm.hasLocation}}" class="panel loc-panel">
+      <text class="panel-title">问题位置</text>
+      <view class="loc-row">
+        <view class="loc-info">
+          <text class="loc-name">{{vm.locationName}}</text>
+          <text class="desc">位置由居民在社区点位中手动选择，不包含手机实时定位。</text>
+        </view>
+        <view class="loc-nav" bindtap="onOpenLocation"><text>导航</text></view>
+      </view>
+    </view>
+
     <!-- AI 摘要（无值整块不渲染） -->
     <view wx:if="{{vm.hasSummary}}" class="panel ai">
       <view class="ai-head">

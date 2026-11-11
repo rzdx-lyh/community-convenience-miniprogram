@@ -82,6 +82,9 @@ export interface DetailVM {
   hasSummary: boolean;
   images: string[];
   hasImages: boolean;
+  location: WorkOrder['location'] | null;
+  hasLocation: boolean;
+  locationName: string;
   /** 物业处理备注；与 assignee 都为空时整块不渲染 */
   handleNote: string;
   hasHandle: boolean;
@@ -107,6 +110,9 @@ export function toDetailVM(order: WorkOrder): DetailVM {
     hasSummary: Boolean(order.aiSummary),
     images: order.images ?? [],
     hasImages: (order.images ?? []).length > 0,
+    location: order.location ?? null,
+    hasLocation: Boolean(order.location?.name),
+    locationName: order.location?.name || '',
     handleNote: order.handleNote || '',
     hasHandle: Boolean(order.handleNote || order.assignee),
     assignee: order.assignee || '',
@@ -164,6 +170,20 @@ Page({
     const images = this.data.vm?.images ?? [];
     if (images.length === 0) return;
     wx.previewImage({ current: images[index] ?? images[0], urls: images });
+  },
+
+  /** 打开工单位置导航（位置为居民主动选择，不读取当前手机定位） */
+  onOpenLocation(): void {
+    const location = this.data.vm?.location;
+    if (!location) return;
+    wx.openLocation({
+      latitude: location.latitude,
+      longitude: location.longitude,
+      name: location.name,
+      address: `报修位置：${location.name}`,
+      scale: 18,
+      fail: () => toast('打开地图失败，请稍后重试'),
+    });
   },
 
   async onCancel(): Promise<void> {

@@ -48,6 +48,53 @@
     <text class="counter">{{description.length}}/200</text>
   </view>
 
+  <!-- 问题位置：使用当前手选楼栋，或在地图上选择社区点位；不读取手机定位 -->
+  <view class="block">
+    <text class="block-title">问题位置</text>
+    <view class="loc-card">
+      <view class="loc-main">
+        <view class="loc-ic"><view class="ic ic-m ic-pin"></view></view>
+        <view class="loc-m">
+          <text class="loc-name">{{location.name || '未选择位置'}}</text>
+          <text class="loc-desc">{{locationDesc || '请选择楼栋或社区点位'}}</text>
+        </view>
+      </view>
+      <view class="loc-actions">
+        <view class="loc-btn" bindtap="onUseCurrentSpot"><text>使用当前楼栋</text></view>
+        <view class="loc-btn loc-btn--main" bindtap="onToggleSpotPicker"><text>{{spotPickerVisible ? '收起地图' : '在地图上选点'}}</text></view>
+      </view>
+    </view>
+
+    <view wx:if="{{spotPickerVisible}}" class="spot-picker">
+      <map
+        class="spot-map"
+        latitude="{{spotMapLat}}"
+        longitude="{{spotMapLng}}"
+        scale="18"
+        markers="{{spotMarkers}}"
+        enable-zoom
+        enable-scroll
+        bindmarkertap="onSpotMarkerTap"
+      ></map>
+      <view class="spot-list">
+        <view
+          wx:for="{{spots}}"
+          wx:key="key"
+          class="spot-item {{selectedSpotKey === item.key ? 'on' : ''}}"
+          data-key="{{item.key}}"
+          bindtap="onSpotListItemTap"
+        >
+          <view class="spot-item__m">
+            <text class="spot-item__n">{{item.name}}</text>
+            <text class="spot-item__d">{{item.desc}}</text>
+          </view>
+          <text class="spot-item__s">{{selectedSpotKey === item.key ? '已选' : '选择'}}</text>
+        </view>
+      </view>
+      <view class="spot-close" bindtap="onCloseSpotPicker"><text>收起选点</text></view>
+    </view>
+  </view>
+
   <!-- CR-024：页面级 AI 入口（上下文 = 报修登记） -->
   <ai-bar page="repair-create" />
 

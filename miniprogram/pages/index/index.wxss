@@ -80,3 +80,107 @@
 .th-indigo .ic { background-color: #EDECFB; }
 
 .sec--last { margin-bottom: 16rpx; padding-bottom: 24rpx; }
+
+/* ===== 关怀模式快捷入口 ===== */
+.care-entry {
+  min-height: 72rpx;
+  margin-top: 18rpx;
+  padding: 12rpx 16rpx;
+  border-radius: 18rpx;
+  border: 2rpx solid rgba(255, 255, 255, .28);
+  background: rgba(255, 255, 255, .13);
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  color: #fff;
+}
+.care-entry.on {
+  border-color: #fff;
+  background: rgba(255, 255, 255, .24);
+}
+.care-entry__ic {
+  width: 54rpx;
+  height: 54rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.care-entry__m { flex: 1; min-width: 0; }
+.care-entry__t { display: block; font-size: calc(23rpx * var(--care-scale, 1)); font-weight: 800; }
+.care-entry__d { display: block; margin-top: 2rpx; font-size: calc(18rpx * var(--care-scale, 1)); opacity: .88; }
+.care-entry__state {
+  flex: none;
+  min-height: 48rpx;
+  padding: 0 14rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, .2);
+  font-size: calc(18rpx * var(--care-scale, 1));
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+/* ===== 首页最近 3 个服务点 ===== */
+.nearby-row .m { min-width: 0; }
+.nearby-row .m-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nearby-row .m-s { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nearby-row .pstatus { flex: none; margin-left: 8rpx; }
+.map-entry { border-top: 1px dashed var(--line); }
+.pstatus {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38rpx;
+  padding: 0 12rpx;
+  border-radius: 999rpx;
+  font-size: calc(17rpx * var(--care-scale, 1));
+  font-weight: 700;
+}
+.pstatus--ok { color: #0B6146; background: #E6F5F2; }
+.pstatus--busy { color: #8A5700; background: #FDF3E1; }
+.pstatus--off { color: #7A8596; background: #EEF1F5; }
+
+.care-mode .care-entry {
+  min-height: 112rpx;
+  align-items: flex-start;
+  padding-top: 16rpx;
+  padding-bottom: 16rpx;
+}
+.care-mode .care-entry__d,
+.care-mode .nearby-row .m-s { white-space: normal; }
+.care-mode .care-entry__state { min-height: 56rpx; }
+.care-mode .nearby-row { min-height: 124rpx; align-items: flex-start; }
+.care-mode .nearby-row .pstatus { align-self: center; }
+
+/* 关怀模式下快捷入口改成两列网格，状态徽标独立换行，避免横向挤压 */
+.care-mode .care-entry {
+  display: grid;
+  grid-template-columns: 56rpx minmax(0, 1fr);
+  align-items: start;
+  column-gap: 14rpx;
+  row-gap: 8rpx;
+  min-height: 112rpx;
+  padding: 16rpx;
+  box-sizing: border-box;
+}
+.care-mode .care-entry__ic {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+.care-mode .care-entry__m {
+  grid-column: 2;
+  grid-row: 1;
+}
+.care-mode .care-entry__state {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: start;
+  min-height: 52rpx;
+}
+.care-mode .care-entry__d,
+.care-mode .nearby-row .m-s {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

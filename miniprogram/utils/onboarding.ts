@@ -8,10 +8,14 @@ export interface UserLocation {
   longitude: number;
   /** 毫秒时间戳 */
   ts: number;
-  /** v1.2.1：手动选择的社区位置点 key（不再使用定位接口） */
+  /** v1.2.4：手动选择的社区位置点 key（不再使用定位接口） */
   key?: string;
-  /** v1.2.1：位置点名称，如「3 号楼」 */
+  /** v1.2.4：位置点名称，如「3 号楼」 */
   name?: string;
+  /** gps=微信实时定位；manual=社区手选点 */
+  source?: 'gps' | 'manual';
+  /** 微信定位精度（米） */
+  accuracy?: number;
 }
 
 /** 去掉首尾空白、连续空白压成一个空格；不改用户内部字符 */
@@ -41,7 +45,7 @@ export function formatCoords(latitude: number, longitude: number): string {
 }
 
 /**
- * 位置对象是否可用（v1.2.1：手选社区位置点后不再按时间过期）。
+ * 位置对象是否可用（v1.2.4：手选社区位置点后不再按时间过期）。
  * 只校验经纬度是否有限；`key` 用于恢复具体楼栋/出入口。
  */
 export function isUsableLocation(location: UserLocation | null | undefined): boolean {
@@ -51,7 +55,7 @@ export function isUsableLocation(location: UserLocation | null | undefined): boo
 
 /**
  * 缓存的定位是否仍然新鲜（默认 10 分钟）。
- * ⚠ v1.2.1 起 `wx.getLocation` 已被移除，本函数仅保留给历史缓存兼容与单测。
+ * ⚠ v1.2.4 起 `wx.getLocation` 已被移除，本函数仅保留给历史缓存兼容与单测。
  */
 export function isFreshLocation(
   location: UserLocation | null | undefined,

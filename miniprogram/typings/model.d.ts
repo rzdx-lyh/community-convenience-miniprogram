@@ -12,7 +12,7 @@ declare interface User {
   avatarUrl?: string;
   /** v1.2 · 社区账号，服务端懒生成，必返回且永远有值 */
   accountId: string;
-  role: 'resident' | 'property' | 'admin';
+  role: 'resident' | 'guardian' | 'property' | 'admin' | 'super_admin' | 'maintenance';
   building?: string;
   elderMode?: boolean;
   createdAt: string;
@@ -28,6 +28,12 @@ declare interface WorkOrder {
   category: 'water' | 'electric' | 'door' | 'public' | 'other';
   /** 云存储 fileID 数组 */
   images: string[];
+  /** 居民主动选择的报修位置（楼栋/社区点位，不保存轨迹） */
+  location?: {
+    name: string;
+    latitude: number;
+    longitude: number;
+  };
   status: 'pending' | 'assigned' | 'processing' | 'done' | 'closed' | 'canceled';
   aiSummary?: string;
   assignee?: string;
@@ -102,15 +108,15 @@ declare interface ServiceItem {
   targetParams?: Record<string, string>;
   /** targetType='toast' 时的提示文案 */
   tip?: string;
-  /** 一行补充说明（v1.2.1：如「2 小时起 · 60 元/小时」），列表卡副标题用 */
+  /** 一行补充说明（v1.2.4：如「2 小时起 · 60 元/小时」），列表卡副标题用 */
   desc?: string;
-  /** 角标文案（v1.2.1：如「认证师傅」「可补贴」） */
+  /** 角标文案（v1.2.4：如「认证师傅」「可补贴」） */
   badge?: string;
   sort: number;
 }
 
 /**
- * 服务子板块（v1.2.1 / CR-020）
+ * 服务子板块（v1.2.4 / CR-020）
  *
  * 背景：四类服务从 10 个平铺子项扩到 37 个，平铺后 ActionSheet 会滚不到底，
  * 因此在「分类 → 子项」之间插一层板块：生活基础 = 家政/缴费代办/生鲜零售，
@@ -147,7 +153,7 @@ declare interface ServiceCategory {
   status: 'online' | 'offline';
   /** 全部子项（= groups 扁平化；保留以兼容旧 service:list 出参与 firstItemOf） */
   items: ServiceItem[];
-  /** 子板块（v1.2.1 新增；旧数据缺省时由 groupsOf() 兜底合成单板块） */
+  /** 子板块（v1.2.4 新增；旧数据缺省时由 groupsOf() 兜底合成单板块） */
   groups?: ServiceGroup[];
 }
 

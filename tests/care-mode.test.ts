@@ -3,6 +3,8 @@ import {
   careRootClass,
   installCarePageHook,
   isCareModeEnabled,
+  type MiniPageContext,
+  type MiniPageOptions,
 } from '../miniprogram/utils/care';
 
 afterEach(() => {
@@ -27,27 +29,27 @@ describe('care mode', () => {
 
   it('injects careMode and refreshes it on show', () => {
     vi.stubGlobal('wx', { getStorageSync: () => true });
-    const base = vi.fn((options: any) => options);
+    const base = vi.fn((options: MiniPageOptions) => options);
     const hook = installCarePageHook(base);
     const originalOnShow = vi.fn();
-    const options: any = { data: { foo: 1 }, onShow: originalOnShow };
+    const options = { data: { foo: 1 }, onShow: originalOnShow } as unknown as MiniPageOptions;
 
     hook(options);
 
     expect(base).toHaveBeenCalledTimes(1);
-    expect(options.data.careMode).toBe(true);
+    expect(options.data?.careMode).toBe(true);
 
-    const ctx: any = {
+    const ctx: MiniPageContext & { data: Record<string, unknown> } = {
       data: { careMode: true },
       setData(patch: Record<string, unknown>) {
         this.data = { ...this.data, ...patch };
       },
     };
-    options.onShow.call(ctx);
+    options.onShow?.call(ctx);
     expect(originalOnShow).toHaveBeenCalledTimes(1);
 
     vi.stubGlobal('wx', { getStorageSync: () => false });
-    options.onShow.call(ctx);
+    options.onShow?.call(ctx);
     expect(ctx.data.careMode).toBe(false);
   });
 });

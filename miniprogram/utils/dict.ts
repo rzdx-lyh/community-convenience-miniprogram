@@ -61,8 +61,11 @@ export const PHONE_CATEGORY_LABELS: Record<PhoneItem['category'], string> = {
 /** 用户角色（契约 User.role 全集） */
 export const ROLE_LABELS: Record<User['role'], string> = {
   resident: '居民',
+  guardian: '监护人',
   property: '物业',
   admin: '管理员',
+  super_admin: '超级管理员',
+  maintenance: '维修人员',
 };
 
 /** 兜底取值：字典缺失时回退原始值，绝不返回空字符串导致白块 */

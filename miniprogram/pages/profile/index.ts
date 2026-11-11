@@ -2,7 +2,8 @@
  * 我的（按设计稿 pgProfile v1.4 重建）
  * 资料卡 + 数据统计 + 家庭与地址 + 我的服务 + 设置中心 + 帮助
  */
-import { STORAGE_KEYS } from '../../config/env';
+import { APP_VERSION, STORAGE_KEYS } from '../../config/env';
+import { setCareMode } from '../../utils/care';
 import { getProfile } from '../../services/auth';
 import { updateProfile } from '../../services/user';
 import { store } from '../../store/global';
@@ -37,6 +38,7 @@ Page({
   data: {
     statusBarHeight: info.statusBarHeight,
     capsuleGap: 8,
+    version: APP_VERSION,
 
     prof: {
       name: '社区用户',
@@ -47,10 +49,10 @@ Page({
     },
 
     stats: [
-      { n: 2, t: '我发的', url: '/pages/circle/mine/index' },
-      { n: 3, t: '我回复的', url: '/pages/circle/mine/index' },
-      { n: 1, t: '我收藏的', url: '/pages/circle/mine/index' },
+      { n: 2, t: '我的报修', url: '/pages/repair/list/index' },
       { n: 3, t: '我的预约', url: '/pages/service/book/index' },
+      { n: 1, t: '社区公告', url: '/pages/notice/list/index' },
+      { n: 11, t: '便民电话', url: '/pages/phonebook/index' },
     ],
 
     members: [
@@ -72,10 +74,11 @@ Page({
     ],
 
     notice: { wo: true, out: true, act: false } as Record<string, boolean>,
-    font: 'std',
     care: false,
     /** 由 app.ts 的 Page 钩子按 storage 注入；此处显式声明便于 setData 类型检查 */
     careMode: false,
+    /** 首启资料是否完善；未完善时展示「未登录 · 点此完善」 */
+    setupDone: false,
   },
 
   onLoad() {
@@ -95,6 +98,8 @@ Page({
     // 从其他页面返回时同步最新开关，避免 profile 与全局状态不一致
     const care = normalizeElderMode(store.peek<boolean>(STORAGE_KEYS.ELDER_MODE, false));
     if (care !== this.data.care) this.setData({ care });
+    const setupDone = store.peek<boolean>(STORAGE_KEYS.SETUP_DONE, false);
+    if (setupDone !== this.data.setupDone) this.setData({ setupDone });
     void this.loadProfile();
   },
 
@@ -146,22 +151,21 @@ Page({
     if (url) wx.navigateTo({ url });
   },
 
-  /** 关怀模式：写入 store（持久化 + 通知 app），页面根节点立即切换 .care-mode */
+  /** 关怀模式：与首页快捷按钮共用同一个状态源，页面根节点立即切换 */
   onCare(): void {
-    const care = !this.data.care;
+    const care = setCareMode(!this.data.care);
     this.setData({ care, careMode: care });
-    store.set(STORAGE_KEYS.ELDER_MODE, care);
     toast(care ? '关怀模式已开启' : '关怀模式已关闭');
+  },
+
+  onStaffEntry(): void {
+    wx.navigateTo({ url: '/pages/auth/login/index?portal=management' });
   },
 
   onNoticeSwitch(e: WechatMiniprogram.TouchEvent): void {
     const k = String(e.currentTarget.dataset.k ?? '');
     const notice = { ...this.data.notice, [k]: !this.data.notice[k] };
     this.setData({ notice });
-  },
-
-  onFont(e: WechatMiniprogram.TouchEvent): void {
-    this.setData({ font: String(e.currentTarget.dataset.v ?? 'std') });
   },
 
   onAddr(e: WechatMiniprogram.TouchEvent): void {
@@ -207,8 +211,16 @@ Page({
     });
   },
 
-  onMine(): void {
-    wx.navigateTo({ url: '/pages/circle/mine/index' });
+  /** 审核整改：游客先浏览，需要身份时再引导完善资料 */
+  onSetup(): void {
+    if (this.data.setupDone) {
+      toast('资料已完善');
+      return;
+    }
+    wx.navigateTo({
+      url: '/pages/auth/setup/index',
+      fail: () => toast('设置页暂时打不开，请稍后再试'),
+    });
   },
 
   /** 换头像：选图 → 传云存储 → 更新资料（2026-10-22） */

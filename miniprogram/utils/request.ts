@@ -39,7 +39,7 @@ const ERROR_TOAST: Record<number, string> = {
 
 function toastFor(code: number, msg: string): void {
   if (code === 503) return; // AI 已降级，契约约定不打扰用户
-  wx.showToast({ title: ERROR_TOAST[code] ?? msg ?? '请求失败', icon: 'none' });
+  wx.showToast({ title: msg || ERROR_TOAST[code] || '请求失败', icon: 'none' });
 }
 
 /** 单次云函数调用（不解包业务 code，交由上层判定） */
@@ -114,7 +114,7 @@ async function rawCallWithRelogin<T>(name: string, data: Record<string, unknown>
   try {
     return await rawCallWithColdStartRetry<T>(name, data);
   } catch (err) {
-    if (err instanceof ApiError && err.code === 401 && name !== 'auth:login') {
+    if (err instanceof ApiError && err.code === 401 && name !== 'auth:login' && !name.startsWith('auth:staff')) {
       try {
         await login();
       } catch {

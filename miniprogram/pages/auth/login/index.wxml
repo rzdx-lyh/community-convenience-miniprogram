@@ -1,4 +1,4 @@
-<!-- 登录页 · 微信一键登录 + 协议勾选（未勾选禁用） -->
+<!-- 三页签登录页：居民 / 管理端 / 维修端 -->
 <view class="page authp {{careMode ? 'care-mode' : ''}}">
   <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
     <text>08:42</text>
@@ -16,17 +16,70 @@
     </view>
   </view>
 
-  <view class="au-card">
-    <view class="au-t">登录后即可预约、报修与发布</view>
+  <view class="portal-tabs">
+    <view
+      wx:for="{{portals}}"
+      wx:key="key"
+      class="portal-tab {{portal === item.key ? 'on' : ''}}"
+      data-portal="{{item.key}}"
+      bindtap="onPortalTap"
+      hover-class="portal-tab--hover"
+    >
+      <text class="portal-tab__n">{{item.label}}</text>
+      <text class="portal-tab__d">{{item.desc}}</text>
+    </view>
+  </view>
 
-    <view class="au-btn {{busy ? 'busy' : ''}} {{agree ? '' : 'off'}}" hover-class="au-btn--hover" bindtap="onWxLogin">
-      <view class="au-wx"><view class="ic ic-s icw ic-chat" /></view>
-      <text>{{busy ? '正在登录…' : '微信一键登录'}}</text>
+  <view class="au-card">
+    <view wx:if="{{portal === 'resident'}}">
+      <view class="au-t">登录后即可预约、报修与登记</view>
+
+      <view class="au-btn {{busy ? 'busy' : ''}} {{agree ? '' : 'off'}}" hover-class="au-btn--hover" bindtap="onWxLogin">
+        <view class="au-wx"><view class="ic ic-s icw ic-chat" /></view>
+        <text>{{busy ? '正在登录…' : '微信一键登录'}}</text>
+      </view>
+
+      <view class="au-alt" bindtap="onPhoneLogin">
+        <text>手机号登录</text>
+        <text class="em">个人主体无法获取手机号，当前版本未开放</text>
+      </view>
     </view>
 
-    <view class="au-alt" bindtap="onPhoneLogin">
-      <text>手机号登录</text>
-      <text class="em">个人主体无法获取手机号，当前版本未开放</text>
+    <view wx:else>
+      <view class="au-t">{{portal === 'management' ? '管理端工作人员登录' : '维修端工作人员登录'}}</view>
+      <view class="staff-form">
+        <view class="staff-field">
+          <text class="staff-label">工作人员账号</text>
+          <input
+            class="staff-input"
+            value="{{username}}"
+            placeholder="请输入账号"
+            maxlength="30"
+            bindinput="onUsernameInput"
+          />
+        </view>
+        <view class="staff-field">
+          <text class="staff-label">密码</text>
+          <input
+            class="staff-input"
+            value="{{password}}"
+            password
+            placeholder="请输入密码"
+            maxlength="64"
+            confirm-type="done"
+            bindinput="onPasswordInput"
+            bindconfirm="onStaffLogin"
+          />
+        </view>
+      </view>
+      <view class="au-btn {{staffBusy ? 'busy' : ''}} {{agree ? '' : 'off'}}" hover-class="au-btn--hover" bindtap="onStaffLogin">
+        <view class="au-wx"><view class="ic ic-s icw ic-home" /></view>
+        <text>{{staffBusy ? '正在登录…' : '账号密码登录'}}</text>
+      </view>
+      <view class="au-alt">
+        <text>工作人员账号由社区超级管理员创建</text>
+        <text class="em">首次登录需修改初始密码；连续失败 5 次锁定 15 分钟</text>
+      </view>
     </view>
 
     <view class="ckb {{agree ? 'on' : ''}}" bindtap="onToggleAgree">
@@ -40,10 +93,10 @@
 
     <view class="au-tip">
       <view class="ic ic-s ic-lock" />
-      <text>仅收集办事必需信息：昵称、楼栋房号、联系方式；不下单不采集位置，不向第三方共享。</text>
+      <text>仅收集办事必需信息；工作人员登录会记录账号、角色、登录时间与操作审计，不保存明文密码。</text>
     </view>
   </view>
 
-  <view class="skip" bindtap="onSkip">先逛逛社区 ›</view>
-  <view class="au-foot">{{appVersion}} · 阳光社区 · 演示原型，不产生真实账号</view>
+  <view wx:if="{{portal === 'resident'}}" class="skip" bindtap="onSkip">先逛逛社区 ›</view>
+  <view class="au-foot">{{appVersion}} · 阳光社区 · {{portal === 'resident' ? '居民服务' : '工作人员入口'}}</view>
 </view>

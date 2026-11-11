@@ -1,5 +1,5 @@
 /**
- * 社区与「我的位置」配置（v1.2.1 · 2026-10-26）
+ * 社区与「我的位置」配置（v1.2.4 · 2026-10-26）
  *
  * 背景：`wx.getLocation`（获取当前地理位置/速度）的接口申请被微信驳回
  * （2026-10-24，理由：使用场景未符合开放范围）。本项目决定不再依赖任何定位接口，
@@ -66,8 +66,8 @@ export function nearestSpot(here: LatLng): CommunitySpot {
 
 /**
  * 解析本地缓存 → 社区位置点。
- * - v1.2.1 起的缓存带 `key`：按 key 恢复；
- * - 旧缓存只有经纬度（v1.2.1 及以前由 getLocation 写入）：取最近的位置点；
+ * - v1.2.4 起的缓存带 `key`：按 key 恢复；
+ * - 旧缓存只有经纬度（v1.2.4 及以前由 getLocation 写入）：取最近的位置点；
  * - 无缓存/非法值：回默认位置点。
  */
 export function resolveSpot(
@@ -89,6 +89,7 @@ export function spotToLocation(spot: CommunitySpot, ts = Date.now()) {
     name: spot.name,
     latitude: spot.latitude,
     longitude: spot.longitude,
+    source: 'manual',
     ts,
   };
 }

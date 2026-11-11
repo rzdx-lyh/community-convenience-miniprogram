@@ -1,4 +1,4 @@
-<!-- 社区地图（CR-028 新建 · 原生 map 组件替代原型 GL JS） -->
+<!-- 社区地图（零 Key / 零系统定位；地图与列表共享同一份数据） -->
 <view class="page {{careMode ? 'care-mode' : ''}}">
   <view class="sbar dark" style="padding-top:{{statusBarHeight}}px">
     <text>社区地图</text>
@@ -8,66 +8,84 @@
   <view class="nav">
     <view class="bk" bindtap="goBack"><text>‹</text></view>
     <text>社区地图</text>
-    <view class="rt" bindtap="onPickSpot">{{spotName ? '切换位置' : '选择位置'}}</view>
+    <view class="rt" bindtap="onLocationOptions">选择位置</view>
   </view>
 
-  <!-- 地图卡：分类条 + 原生地图 + 图例 -->
-  <view class="mapcard">
-    <view class="mapbar">
-      <view
-        wx:for="{{cats}}"
-        wx:key="k"
-        class="mc {{cat === item.k ? 'on' : ''}}"
-        data-k="{{item.k}}"
-        bindtap="onCatTap"
-      ><text>{{item.n}}</text></view>
-    </view>
-
-    <map
-      id="tmap"
-      class="tmap"
-      latitude="{{latitude}}"
-      longitude="{{longitude}}"
-      scale="{{scale}}"
-      markers="{{markers}}"
-      enable-zoom
-      enable-scroll
-      bindmarkertap="onMarkerTap"
-    ></map>
-
-    <view class="maplegend">
-      <view class="lg"><view class="lgd" style="background:#1F5FD6"></view><text>服务点</text></view>
-      <view class="lg"><view class="lgd" style="background:#0E7C6B"></view><text>便民设备</text></view>
-      <view class="lg"><view class="lgd" style="background:#A86A05"></view><text>生活配套</text></view>
-    </view>
+  <view class="view-switch" aria-label="切换地图或列表视图">
+    <view
+      wx:for="{{viewModes}}"
+      wx:key="k"
+      class="view-switch__item {{viewMode === item.k ? 'on' : ''}}"
+      data-k="{{item.k}}"
+      bindtap="onToggleView"
+    >{{item.n}}视图</view>
   </view>
 
-  <view class="tip">
-    位置为手动选择的社区点位（{{spotName || '社区中心'}}），不读取手机定位；距离按该点位计算。
-  </view>
-
-  <!-- 选中点位详情（替代原型底部弹层） -->
-  <view wx:if="{{selected}}" class="blk mapd">
-    <view class="mapd__h">
-      <view class="mapd__i" style="background:{{selected.bg}};color:{{selected.color}}">
-        <view class="ic ic-m {{selected.icon}}"></view>
+  <block wx:if="{{viewMode === 'map'}}">
+    <view class="mapcard">
+      <view class="mapbar">
+        <view
+          wx:for="{{cats}}"
+          wx:key="k"
+          class="mc {{cat === item.k ? 'on' : ''}}"
+          data-k="{{item.k}}"
+          bindtap="onCatTap"
+        ><text>{{item.n}}</text></view>
       </view>
-      <view class="mapd__m">
-        <view class="mapd__n">{{selected.name}}</view>
-        <view class="mapd__d">{{selected.desc}}</view>
+
+      <map
+        id="tmap"
+        class="tmap"
+        latitude="{{latitude}}"
+        longitude="{{longitude}}"
+        scale="{{scale}}"
+        markers="{{markers}}"
+        enable-zoom
+        enable-scroll
+        bindmarkertap="onMarkerTap"
+      ></map>
+
+      <view class="maplegend">
+        <view class="lg"><view class="lgd" style="background:#1F5FD6"></view><text>办事服务</text></view>
+        <view class="lg"><view class="lgd" style="background:#0E7C6B"></view><text>便民设备</text></view>
+        <view class="lg"><view class="lgd" style="background:#A86A05"></view><text>生活配套</text></view>
+        <view class="lg"><view class="lgd" style="background:#C9302C"></view><text>应急设施</text></view>
       </view>
-      <view class="mapd__x" bindtap="onClosePoi"><text>✕</text></view>
+
+      <view class="map-actions">
+        <view class="map-action map-action--main" bindtap="onLocateCurrent"><text>定位当前位置</text></view>
+        <view class="map-action" bindtap="onPickSpot"><text>手动选择楼栋</text></view>
+        <view class="map-action" bindtap="onCenter"><text>回到社区中心</text></view>
+      </view>
     </view>
-    <view class="mapd__rows">
-      <view class="mapd__row"><text class="mapd__k">距离</text><text>{{selected.walk}} · 步行约 {{selected.walkMin}} 分钟</text></view>
-      <view class="mapd__row"><text class="mapd__k">开放时间</text><text>{{selected.open}}</text></view>
+
+    <view class="tip">
+      当前起点：{{spotName || '社区中心'}}。可主动定位当前位置，也可手动选择楼栋；定位失败不影响地图使用。
     </view>
-    <view class="mapd__btn" bindtap="onOpenLocation"><text>打开地图导航</text></view>
-  </view>
+
+    <view wx:if="{{selected}}" class="blk mapd" catchtap="noop">
+      <view class="mapd__h">
+        <view class="mapd__i" style="background:{{selected.bg}};color:{{selected.color}}">
+          <view class="ic ic-m {{selected.icon}}"></view>
+        </view>
+        <view class="mapd__m">
+          <view class="mapd__n">{{selected.name}}</view>
+          <view class="mapd__d">{{selected.desc}}</view>
+        </view>
+        <view class="mapd__x" bindtap="onClosePoi"><text>✕</text></view>
+      </view>
+      <view class="mapd__rows">
+        <view class="mapd__row"><text class="mapd__k">状态</text><text class="pstatus pstatus--{{selected.statusTone}}">{{selected.statusLabel}}</text></view>
+        <view class="mapd__row"><text class="mapd__k">距离</text><text>{{selected.walk}} · 步行约 {{selected.walkMin}} 分钟</text></view>
+        <view class="mapd__row"><text class="mapd__k">开放时间</text><text>{{selected.open}}</text></view>
+      </view>
+      <view class="mapd__btn" bindtap="onOpenLocation"><text>打开地图导航</text></view>
+    </view>
+  </block>
 
   <view class="st st--poi">
     <view class="st__t">附近 {{points.length}} 个点位</view>
-    <text class="st__d">按步行距离排序</text>
+    <text class="st__d">地图与列表同排序 · 按距离</text>
   </view>
 
   <view class="poi">
@@ -85,18 +103,26 @@
       <view class="pi__m">
         <view class="pn">{{item.name}}</view>
         <view class="ps">{{item.desc}} · {{item.open}}</view>
+        <view class="pmeta">
+          <text class="pstatus pstatus--{{item.statusTone}}">{{item.statusLabel}}</text>
+          <text class="pmeta__walk">步行 {{item.walkMin}} 分钟</text>
+        </view>
       </view>
       <view class="pw">
         <text class="pw__v">{{item.walk}}</text>
-        <text class="pw__lb">步行</text>
+        <text class="pw__lb">距离</text>
       </view>
     </view>
   </view>
 
-  <view wx:if="{{points.length === 0}}" class="empty">该分类暂无点位</view>
+  <empty-state
+    wx:if="{{points.length === 0}}"
+    text="该分类暂无点位"
+    sub-text="可切换到「全部」查看全部社区服务点"
+  />
 
   <view class="aifoot">
     坐标采用 GCJ-02 火星坐标系，底图由微信原生地图提供。
-    <text class="aifoot__n">社区位置为手动选择，仅用于就近排序，不读取手机定位、不保存轨迹、不对其他居民展示。</text>
+    <text class="aifoot__n">定位仅在你主动点击时触发，用于就近排序；不保存移动轨迹、不对其他居民展示。</text>
   </view>
 </view>

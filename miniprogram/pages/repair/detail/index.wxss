@@ -227,3 +227,23 @@
 .care-mode .cancel {
   height: 110rpx;
 }
+
+/* 报修位置 */
+.loc-row { display: flex; align-items: center; gap: var(--space-3); }
+.loc-info { flex: 1; min-width: 0; }
+.loc-name { display: block; font-size: var(--font-body); font-weight: 700; color: var(--text-1); margin-bottom: 4rpx; }
+.loc-nav {
+  flex: none;
+  min-width: 128rpx;
+  min-height: 72rpx;
+  padding: 0 20rpx;
+  border-radius: var(--radius-full);
+  background: var(--brand-light);
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-sub);
+  font-weight: 700;
+}
+.care-mode .loc-nav { min-height: 88rpx; }

@@ -67,8 +67,6 @@
 .pset .pr .plb .t { display: block; }
 .pset .pr .plb .d { display: block; }
 
-.seg--inline { width: 252rpx; margin: 0; flex: none; }
-
 .pfoot {
   text-align: center;
   font-size: calc(19rpx * var(--care-scale, 1));
