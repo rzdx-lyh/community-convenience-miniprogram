@@ -28,6 +28,15 @@
       </view>
     </view>
 
+    <view class="med-entry" bindtap="onOpenMedication" hover-class="med-entry--hover">
+      <view class="med-entry__icon"><view class="ic ic-m ic-pill"></view></view>
+      <view class="med-entry__copy">
+        <text class="med-entry__k">NEW · 本地隐私</text>
+        <text class="med-entry__t">助药提醒</text>
+        <text class="med-entry__d">按医嘱记录药品、服用时间与每日打卡</text>
+      </view>
+      <text class="med-entry__ar">›</text>
+    </view>
     <view class="tip blue tip--row">
       <view class="ic ic-s ic-info" />
       <text>{{tabNote}}</text>

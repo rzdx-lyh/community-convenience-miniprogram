@@ -1,0 +1,119 @@
+<view class="page med-page {{careMode ? 'care-mode' : ''}}">
+  <view class="pgh pgh--teal" style="padding-top:{{statusBarHeight}}px">
+    <view class="pgh-nav">
+      <view class="pgh-bk" bindtap="goBack">‹</view>
+      <text class="pgh-t">助药提醒</text>
+      <text class="pgh-rt">仅存本机</text>
+    </view>
+    <view class="med-hero">
+      <view class="med-hero__icon"><view class="ic ic-l ic-pill"></view></view>
+      <view class="med-hero__copy">
+        <text class="med-hero__k">MEDICATION CARE</text>
+        <text class="med-hero__t">把医嘱变成今天能完成的小事</text>
+        <text class="med-hero__d">药品清单 · 服药打卡 · 到点提示</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="body med-body">
+    <view class="med-progress">
+      <view class="med-progress__top">
+        <view>
+          <text class="med-kicker">TODAY</text>
+          <view><text class="med-percent">{{stats.percent}}</text><text class="med-percent__u">%</text></view>
+          <text class="med-summary">{{stats.summary}}</text>
+        </view>
+        <view class="med-reminder {{reminderEnabled ? 'on' : ''}}" bindtap="onEnableReminder">
+          <view class="ic ic-s ic-bell"></view>
+          <text>{{reminderEnabled ? '到点提示已开' : '开启到点提示'}}</text>
+        </view>
+      </view>
+      <view class="med-bar"><view class="med-bar__in" style="width:{{stats.percent}}%"></view></view>
+      <view class="med-next">{{nextDose}}</view>
+      <view class="med-reminder-hint">{{reminderHint}}</view>
+    </view>
+
+    <view wx:if="{{stats.pending > 0}}" class="med-due">
+      <view class="med-due__dot"></view>
+      <view><text class="med-due__t">今天还有 {{stats.pending}} 次待处理</text><text class="med-due__d">请在完成后标记“已服用”或“已跳过”，不要自行加倍剂量。</text></view>
+    </view>
+
+    <view class="med-sec-head">
+      <view><text class="med-sec-k">TODAY'S PLAN</text><text class="med-sec-t">今日服药</text></view>
+      <text class="med-sec-n">{{stats.total}} 次</text>
+    </view>
+
+    <view wx:if="{{!doses.length}}" class="med-empty">
+      <view class="med-empty__icon"><view class="ic ic-l ic-pill"></view></view>
+      <text class="med-empty__t">今天还没有服药计划</text>
+      <text class="med-empty__d">添加医生或药师已经确定的药品和时间后，这里会出现今日清单。</text>
+    </view>
+    <view wx:else class="med-doses">
+      <view wx:for="{{doses}}" wx:key="key" class="med-dose med-dose--{{item.status}}">
+        <view class="med-dose__time">{{item.time}}</view>
+        <view class="med-dose__copy">
+          <view class="med-dose__top"><text class="med-dose__name">{{item.name}}</text><text class="med-dose__status">{{item.statusLabel}}</text></view>
+          <text class="med-dose__dosage">{{item.dosage}}</text>
+          <text class="med-dose__instruction">{{item.instruction}}</text>
+          <view wx:if="{{item.status === 'taken' || item.status === 'skipped'}}" class="med-dose__acts">
+            <view class="med-dose__undo" data-key="{{item.key}}" data-status="{{item.status}}" bindtap="onMarkDose">取消本条记录</view>
+          </view>
+          <view wx:else class="med-dose__acts">
+            <view class="med-dose__taken" data-key="{{item.key}}" data-status="taken" bindtap="onMarkDose">已服用</view>
+            <view class="med-dose__skip" data-key="{{item.key}}" data-status="skipped" bindtap="onMarkDose">跳过</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="med-sec-head med-sec-head--plans">
+      <view><text class="med-sec-k">MY MEDICINES</text><text class="med-sec-t">我的药品</text></view>
+      <text class="med-sec-n">{{plans.length}} 种</text>
+    </view>
+
+    <view wx:if="{{!plans.length}}" class="med-empty med-empty--plans">
+      <text class="med-empty__t">还没有添加药品</text>
+      <text class="med-empty__d">所有内容只保存在本机，不会上传云端。</text>
+    </view>
+    <view wx:else class="med-plans">
+      <view wx:for="{{plans}}" wx:key="id" class="med-plan">
+        <view class="med-plan__top">
+          <view class="med-plan__main"><text class="med-plan__name">{{item.name}}</text><text class="med-plan__dosage">{{item.dosage}}</text></view>
+          <switch checked="{{item.enabled}}" color="#147D70" data-id="{{item.id}}" bindchange="onTogglePlan" />
+        </view>
+        <view class="med-plan__meta"><text>{{item.timesText}}</text><text>{{item.rangeText}}</text></view>
+        <text class="med-plan__instruction">{{item.instruction}}</text>
+        <view class="med-plan__foot">
+          <text class="med-plan__state">{{item.enabled ? '计划中' : '已暂停'}}</text>
+          <view class="med-plan__links"><text data-id="{{item.id}}" bindtap="onEditPlan">编辑</text><text class="danger" data-id="{{item.id}}" bindtap="onDeletePlan">删除</text></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="med-safety" bindtap="onOpenHelp">
+      <view class="ic ic-m ic-info"></view>
+      <view><text class="med-safety__t">用药安全与隐私</text><text class="med-safety__d">本页不提供诊断、处方或剂量建议；数据仅保存在本机。点击查看完整提示。</text></view>
+    </view>
+    <view class="med-share-wrap"><button class="med-share" open-type="share">分享给家属查看功能</button></view>
+    <view class="med-gap"></view>
+  </view>
+
+  <view class="med-addbar">
+    <view class="med-addbar__btn" bindtap="onOpenEditor"><text class="med-addbar__plus">＋</text><text>添加药品计划</text></view>
+  </view>
+
+  <view wx:if="{{showEditor}}" class="med-mask" bindtap="onCloseEditor"></view>
+  <view wx:if="{{showEditor}}" class="med-sheet" catchtap="noop">
+    <view class="med-sheet__head"><view><text class="med-sheet__k">{{editingId ? 'EDIT PLAN' : 'NEW PLAN'}}</text><text class="med-sheet__t">{{editingId ? '编辑用药计划' : '添加用药计划'}}</text></view><view class="med-sheet__x" bindtap="onCloseEditor">×</view></view>
+    <scroll-view class="med-sheet__body" scroll-y>
+      <view class="med-field"><text class="med-label">药品名称</text><input class="med-input" value="{{draft.name}}" maxlength="40" placeholder="例：二甲双胍片" bindinput="onInputName" /></view>
+      <view class="med-field"><text class="med-label">每次剂量</text><input class="med-input" value="{{draft.dosage}}" maxlength="40" placeholder="例：1 片 / 0.5 g" bindinput="onInputDosage" /></view>
+      <view class="med-field"><text class="med-label">医嘱或服用说明</text><input class="med-input" value="{{draft.instruction}}" maxlength="80" placeholder="例：早餐后服用，按医生处方" bindinput="onInputInstruction" /></view>
+      <view class="med-field"><view class="med-label-row"><text class="med-label">每天服用时间</text><text class="med-label__hint">最多 6 个</text></view><view class="med-times"><view wx:for="{{draft.times}}" wx:key="*this" wx:for-item="t" class="med-time">{{t}}<text data-time="{{t}}" bindtap="onRemoveTime">×</text></view><picker mode="time" value="{{timePicker}}" bindchange="onPickTime"><view class="med-time med-time--add">＋ 添加</view></picker></view></view>
+      <view class="med-date-row"><view class="med-field med-field--half"><text class="med-label">开始日期</text><picker mode="date" value="{{draft.startDate}}" bindchange="onStartDate"><view class="med-input med-picker">{{draft.startDate}}</view></picker></view><view class="med-field med-field--half"><view class="med-label-row"><text class="med-label">结束日期</text><text wx:if="{{draft.endDate}}" class="med-label__hint" bindtap="onClearEndDate">清除</text></view><picker mode="date" value="{{draft.endDate || draft.startDate}}" bindchange="onEndDate"><view class="med-input med-picker">{{draft.endDate || '长期'}}</view></picker></view></view>
+      <view class="med-check {{draft.agreed ? 'on' : ''}}" bindtap="onToggleAgreed"><view class="med-check__box">{{draft.agreed ? '✓' : ''}}</view><text>我确认以上内容来自医生或药师的明确说明，不自行更改剂量。</text></view>
+      <view class="med-sheet__note">数据只保存在本机，不上传云端；漏服或需要调整剂量时请咨询医生或药师，勿自行加倍服用。</view>
+    </scroll-view>
+    <view class="med-sheet__foot"><view class="med-sheet__cancel" bindtap="onCloseEditor">取消</view><view class="med-sheet__save" bindtap="onSavePlan">{{editingId ? '保存修改' : '保存计划'}}</view></view>
+  </view>
+</view>

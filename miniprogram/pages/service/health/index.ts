@@ -69,6 +69,10 @@ Page({
     else wx.switchTab({ url: '/pages/index/index' });
   },
 
+  onOpenMedication(): void {
+    wx.navigateTo({ url: '/pages/service/medication/index' });
+  },
+
   onSwitchTab(e: WechatMiniprogram.TouchEvent): void {
     const t = String((e.currentTarget.dataset as { t?: string }).t ?? 'vaccine') as HealthTab;
     if (t === this.data.tab) return;

@@ -18,6 +18,8 @@ export interface EnvConfig {
   MOCK_DELAY: number;
   /** 订阅消息模板 ID（未申请 → 空数组，静默跳过） */
   SUBSCRIBE_TEMPLATE_IDS: string[];
+  /** 助药提醒订阅消息模板 ID（未申请 → 空数组） */
+  MEDICATION_TEMPLATE_IDS: string[];
   /** 分页默认条数（契约默认 10） */
   PAGE_SIZE: number;
   /** 分页单页上限（契约上限 50） */
@@ -35,12 +37,13 @@ export interface EnvConfig {
 }
 
 export const ENV: EnvConfig = {
-  USE_MOCK: false, // 2026-10-23 真云重部署后切换（v1.2.8 未变）
+  USE_MOCK: false, // 2026-10-23 真云重部署后切换（v1.3.0 未变）
   // CR-017-c：默认 false（开发/自测时显示「演示数据模式」标识，演示当天置 true 隐藏）
   DEMO_MODE: false,
   CLOUD_ENV_ID: 'cloud1-d5g1xuxxf9eb5b758', // 用户提供（2026-10-14）
   MOCK_DELAY: 300,
   SUBSCRIBE_TEMPLATE_IDS: [], // TODO(E1): 模板 ID 未申请，空数组静默跳过
+  MEDICATION_TEMPLATE_IDS: [], // 助药提醒后台模板未配置时使用页面内到点提示
   PAGE_SIZE: 10,
   MAX_PAGE_SIZE: 50,
   MAX_IMAGES: 6,
@@ -67,13 +70,13 @@ export function shouldShowMockBanner(useMock: boolean, demoMode: boolean): boole
 }
 
 /**
- * 应用版本（唯一真源，v1.2.8）。
+ * 应用版本（唯一真源，v1.3.0）。
  *
  * 与 `package.json`、`cloudfunctions` 下各包的 `package.json`、`README.md` 三处保持一致；
- * `tests/version.test.ts` 会断言四者相等，并在源码里扫出任何非 v1.2.8 的版本字样。
+ * `tests/version.test.ts` 会断言四者相等，并在源码里扫出任何非 v1.3.0 的版本字样。
  * 改版本只改这里 + 那三处清单，不要在注释里散落硬编码。
  */
-export const APP_VERSION = 'v1.2.8';
+export const APP_VERSION = 'v1.3.0';
 
 /** storage 键名集中管理，避免各处硬编码字符串 */
 export const STORAGE_KEYS = {
@@ -99,6 +102,10 @@ export const STORAGE_KEYS = {
   BILL_ACCOUNTS: 'ccfBillAccounts',
   /** CR-026：健康档案自测记录（本地存储，不上传云端） */
   HEALTH_RECORDS: 'ccfHealthRecords',
+  /** 助药提醒：药品计划与服药打卡，仅本地 */
+  MEDICATION_PLANS: 'ccfMedicationPlans',
+  MEDICATION_LOGS: 'ccfMedicationLogs',
+  MEDICATION_REMINDER_ENABLED: 'ccfMedicationReminderEnabled',
   /** CR-026：共享设备借用台账（本地存储，登记状态非设备状态） */
   TOOL_BORROWS: 'ccfToolBorrows',
   /** CR-026：快递代取代寄申请记录（本地存储） */
@@ -107,6 +114,6 @@ export const STORAGE_KEYS = {
   SETUP_DONE: 'ccfSetupDone',
   /** 首启设置的本地资料兜底（云端 401/断网时仍能显示） */
   SETUP_PROFILE: 'ccfSetupProfile',
-  /** 最近一次选择的社区位置（gcj02 + 时间戳；v1.2.8 起为手动选点，不读取手机定位） */
+  /** 最近一次选择的社区位置（gcj02 + 时间戳；v1.3.0 起为手动选点，不读取手机定位） */
   USER_LOCATION: 'ccfUserLocation',
 } as const;

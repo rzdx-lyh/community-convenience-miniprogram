@@ -29,6 +29,7 @@
     "pages/service/express/index",
     "pages/service/fresh/index",
     "pages/service/health/index",
+    "pages/service/medication/index",
     "pages/service/culture/index",
     "pages/service/activity/index",
     "pages/service/property/index",
