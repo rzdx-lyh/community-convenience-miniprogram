@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
+process.env.CCF_FORCE_MOCK = '1';
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- cloud function is CommonJS
 const workorder = require('../cloudfunctions/workorder/index.js') as {
   main: (event: Record<string, unknown>) => Promise<{ code: number; msg: string; data: unknown }>;
