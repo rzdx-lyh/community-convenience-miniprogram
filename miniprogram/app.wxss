@@ -3,6 +3,7 @@
    必须在最顶部：@import 只允许出现在文件开头 */
 @import "./styles/icons.wxss";
 @import "./styles/layout.wxss";
+@import "./styles/ui-kit.wxss";
 
 /* ============================================================
  * app.wxss · 全局样式与 Design Token
@@ -30,11 +31,13 @@ page {
   --indigo-light: #EEEAF6;
   /* 中性色（暖纸底 / 暖白卡片） */
   --bg: #F6F1E7;
+  --surface-2: #FBF7EF;
   --card: #FFFCF5;
   --text-1: #1C2B38;
   --text-2: #5B6874;
   --text-3: #8A949D;
   --line: #E4DCCF;
+  --line-strong: #D8D0C3;
   --mask: rgba(20, 28, 36, 0.52);
   /* 功能色 */
   --success: #147D70;
@@ -70,6 +73,7 @@ page {
   --radius-l: 28rpx;
   --radius-full: 999rpx;
   /* 阴影 */
+  --shadow-soft: 0 6rpx 18rpx rgba(38, 46, 56, 0.055);
   --shadow-card: 0 10rpx 30rpx rgba(46, 54, 64, 0.08);
   --shadow-urgent: 0 8rpx 24rpx rgba(195, 74, 54, 0.18);
   --shadow-float: 0 12rpx 32rpx rgba(23, 58, 94, 0.24);
