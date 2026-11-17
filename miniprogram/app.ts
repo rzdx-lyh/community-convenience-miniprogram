@@ -42,7 +42,7 @@ App<IAppOption>({
   },
 
   onLaunch() {
-    if (ENV.CLOUD_ENV_ID) {
+    if (!ENV.USE_MOCK && ENV.CLOUD_ENV_ID) {
       wx.cloud.init({ env: ENV.CLOUD_ENV_ID, traceUser: true });
     } else {
       // 未配 env 时云调用全部失败；mock 模式（USE_MOCK=true）不受影响

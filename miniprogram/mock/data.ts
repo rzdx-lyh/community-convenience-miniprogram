@@ -492,13 +492,39 @@ export const mockHandlers: Record<string, Handler> = {
     const list = status ? MOCK_WORKORDERS.filter((w) => w.status === status) : MOCK_WORKORDERS;
     return paginate<WorkOrder>(list, data);
   },
+  'workorder:staffList': (data) => {
+    const status = data.status as WorkOrder['status'] | undefined;
+    const list = status ? MOCK_WORKORDERS.filter((w) => w.status === status) : MOCK_WORKORDERS;
+    return paginate<WorkOrder>(list, data);
+  },
   'workorder:detail': (data) => ({
     workorder: MOCK_WORKORDERS.find((w) => w._id === String(data.id ?? '')) ?? MOCK_WORKORDERS[0],
   }),
   'workorder:cancel': () => ({ ok: true }),
-  'workorder:handle': (data) => ({
-    // CR-011：优先读定稿参数 handleAction，兼容读 action
-    workorder: { ...MOCK_WORKORDERS[0], status: String(data.handleAction ?? data.action ?? 'processing') },
+  'workorder:handle': (data) => {
+    // 直接运行版：把状态变化写回内存工单，管理端/维修端可以看到最新状态。
+    const id = String(data.id ?? '');
+    const target = MOCK_WORKORDERS.find((w) => w._id === id) ?? MOCK_WORKORDERS[0];
+    const action = String(data.handleAction ?? data.action ?? 'process');
+    const statusMap: Record<string, WorkOrder['status']> = {
+      assign: 'assigned',
+      process: 'processing',
+      done: 'done',
+    };
+    const nextStatus = statusMap[action] ?? (action as WorkOrder['status']);
+    const updated = { ...target, status: nextStatus, updatedAt: new Date().toISOString() };
+    const index = MOCK_WORKORDERS.findIndex((w) => w._id === target._id);
+    if (index >= 0) MOCK_WORKORDERS[index] = updated;
+    return { workorder: updated };
+  },
+  'workorder:analyzeImage': () => ({
+    degraded: true,
+    reason: '直接运行版使用本地演示识别结果，可继续手动修改后提交。',
+    analysis: {
+      category: 'water',
+      title: '厨房水管漏水',
+      description: '检测到厨房水槽下方疑似水管接口漏水，请确认具体位置并提交工单。',
+    },
   }),
 
   /* ---------- qa ---------- */
@@ -522,6 +548,34 @@ export const mockHandlers: Record<string, Handler> = {
       // 未命中知识库 → degraded=true，但 answer 仍然完整（含兜底话术），前端严禁据此替换为写死文案
       degraded: true,
       _riskLevel: 'none',
+    };
+  },
+  'qa:agent': (data) => {
+    const question = String(data.question ?? '');
+    const sessionId = String(data.sessionId ?? `s_mock_${Date.now()}`);
+    const riskAnswer = tryBuildRiskAnswer(question, sessionId);
+    if (riskAnswer) return riskAnswer;
+    const lower = question.toLowerCase();
+    let actions = [{ type: 'navigate', label: '去办事大厅', url: '/pages/hall/index' }];
+    let answer = `已为你识别问题「${question}」，建议先查看社区办事指南；如需现场处理，可以继续进入报修入口。`;
+    let sources = ['社区办事指南'];
+    if (lower.includes('伞') || lower.includes('地图') || lower.includes('在哪')) {
+      actions = [{ type: 'navigate', label: '在地图查看', url: '/pages/map/index' }];
+      answer = '已找到社区服务点相关指引：可以打开地图查看服务点、距离和步行时间。';
+      sources = ['社区服务地图', '社区办事指南'];
+    } else if (lower.includes('漏水') || lower.includes('报修') || lower.includes('维修')) {
+      actions = [{ type: 'navigate', label: '去提交报修', url: '/pages/repair/create/index' }];
+      answer = '已为你整理报修任务：请补充具体位置和现场描述，提交后可以在我的工单中查看处理进度。';
+      sources = ['社区报修指南', '物业服务流程'];
+    }
+    return {
+      answerId: `a_mock_agent_${Date.now()}`,
+      sessionId,
+      answer,
+      sources,
+      degraded: false,
+      _riskLevel: 'none',
+      _agent: { label: '社区服务规划', actions },
     };
   },
   'qa:history': () => ({ list: [], total: 0 }),
